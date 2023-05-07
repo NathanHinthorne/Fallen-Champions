@@ -1,5 +1,7 @@
 
 import java.util.*;
+import javafx.*;
+import javafx.scene.control.Alert;
 
 public interface Character {
 
@@ -19,12 +21,12 @@ public interface Character {
 
     /* Will be worked on later */
     public default int basicAtk() {
-        return hitPoints;
+        return minDmg;
     }
 
     /* Will be worked on later */
     public default int specialAtk() {
-        return atkSpd;
+        return maxDmg;
     }
     public default int getHitPoints() {
         return hitPoints;
@@ -32,7 +34,14 @@ public interface Character {
 
     /* Will be worked on later */
     public default void setHitPoints(int hp) {
-
+        if(hp < 0) {
+            // Code from https://stackoverflow.com/questions/39149242/how-can-i-do-an-error-messages-in-javafx
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("GAME ERROR!!!");
+            errorAlert.setContentText("Hit Points cannot be below zero!");
+            throw new IllegalArgumentException();
+        }
+        hp = hitPoints;
     }
 
 }

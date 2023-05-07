@@ -4,7 +4,13 @@ import javafx.*;
 
 public abstract class Hero implements Character {
 
-    void hero() {
+    private int myBlockChance;
+
+
+
+    void hero(int theHitPoints, int theHitChance, int theMindamage, int theMaxDamage) {
+
+
 
     }
 }
