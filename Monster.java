@@ -1,3 +1,7 @@
-public class Monster {
+public abstract class Monster implements Character {
+
+    public void Monster() {
+
+    }
 
 }
