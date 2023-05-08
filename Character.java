@@ -21,7 +21,7 @@ public interface Character {
 
     int specialCooldown = 0;
 
-    static float generateHitChance(float theLowChance, float theHighChance) {
+    public static float generateHitChance(float theLowChance, float theHighChance) {
         return theLowChance + MY_RANDOM.nextFloat(theHighChance - theLowChance + 1);
     }
 
