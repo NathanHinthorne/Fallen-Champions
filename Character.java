@@ -109,6 +109,14 @@ public interface Character {
         hp = hitPoints;
     }
 
+    public default int getSpecialCooldown() {
+        return specialCooldown;
+    }
+
+    public default void setSpecialCooldown(int theCooldown) {
+        theCooldown = specialCooldown;
+    }
+
 
 
 }

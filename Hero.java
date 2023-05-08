@@ -4,11 +4,15 @@ import javafx.*;
 
 public abstract class Hero implements Character {
 
-    private int myBlockChance;
 
 
+    void hero(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
 
-    void hero() {
-
+        setHitPoints(theHitPoints);
+        setAtkSpd(theAtkSpd);
+        setHitChance(theHitChance);
+        setMinDmg(theMinDmg);
+        setMaxDmg(theMaxDmg);
+        setSpecialCooldown(theCooldown);
     }
 }
