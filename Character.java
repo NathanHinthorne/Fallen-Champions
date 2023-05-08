@@ -1,6 +1,5 @@
 
 import java.util.*;
-import javafx.*;
 
 public interface Character {
 
@@ -27,24 +26,49 @@ public interface Character {
     }
 
     /* Will be worked on later */
-    public default int basicAtk(int theMinDamage) {
+    public default int basicAtk() {
         if(hitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        theMinDamage = minDmg;
-
         getHitChance();
 
         if(getHitChance() > 75) {
             // Attack successful
-            setHitPoints(getHitPoints() - theMinDamage);
-        } else {
+            setHitPoints(getHitPoints() - getMinDamage());
+        } else { // Will be worked on later, planned to be an error message
             // Attack failed
         }
 
         return minDmg;
+    }
+
+    public default int getMinDamage() {
+        return minDmg;
+    }
+
+    public default void setMinDmg(int theDmg) {
+        theDmg = minDmg;
+    }
+
+    public default int getMaxDamage() {
+        return maxDmg;
+    }
+
+    public default int getAtkSpd() {
+        return atkSpd;
+    }
+
+    public default void setAtkSpd(int theSpd) {
+        if(theSpd < 0 || theSpd > 1000) {
+            throw new IllegalArgumentException("Attack Speed cannot be less than 0 or greater than 500.");
+        }
+        theSpd = atkSpd;
+    }
+
+    public default void setMaxDmg(int theDmg) {
+        theDmg = maxDmg;
     }
 
     /* Will be worked on later */
@@ -52,6 +76,15 @@ public interface Character {
         if(hitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
+
+        getHitChance();
+
+        if(getHitChance() > 75) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
         }
 
         return maxDmg;
@@ -69,12 +102,13 @@ public interface Character {
         theChance = hitChance;
     }
 
-    /* Will be worked on later */
     public default void setHitPoints(int hp) {
         if(hp < 0) { // Will need to be looked at later
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
         hp = hitPoints;
     }
+
+
 
 }
