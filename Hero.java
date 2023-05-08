@@ -8,9 +8,7 @@ public abstract class Hero implements Character {
 
 
 
-    void hero(int theHitPoints, int theHitChance, int theMindamage, int theMaxDamage) {
-
-
+    void hero() {
 
     }
 }

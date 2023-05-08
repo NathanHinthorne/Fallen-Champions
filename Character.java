@@ -19,27 +19,45 @@ public interface Character {
 
     int specialCooldown = 0;
 
+
+
     /* Will be worked on later */
     public default int basicAtk() {
+        if(hitPoints < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
+
+
         return minDmg;
     }
 
     /* Will be worked on later */
     public default int specialAtk() {
+        if(hitPoints < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
+
         return maxDmg;
     }
     public default int getHitPoints() {
         return hitPoints;
     }
 
+    public default float getHitChance() {
+        return hitChance;
+    }
+
+    public default void setHitChance(float theChance) {
+
+        theChance = hitChance;
+    }
+
     /* Will be worked on later */
     public default void setHitPoints(int hp) {
-        if(hp < 0) {
-            // Code from https://stackoverflow.com/questions/39149242/how-can-i-do-an-error-messages-in-javafx
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setHeaderText("GAME ERROR!!!");
-            errorAlert.setContentText("Hit Points cannot be below zero!");
-            throw new IllegalArgumentException();
+        if(hp < 0) { // Will need to be looked at later
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
         hp = hitPoints;
     }
