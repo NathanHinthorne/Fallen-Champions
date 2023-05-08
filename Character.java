@@ -1,7 +1,6 @@
 
 import java.util.*;
 import javafx.*;
-import javafx.scene.control.Alert;
 
 public interface Character {
 
@@ -19,14 +18,19 @@ public interface Character {
 
     int specialCooldown = 0;
 
-
+    static float generateHitChance(final float theLowChance, final float theHighChance) {
+        return theLowChance + MY_RANDOM.nextFloat(theHighChance - theLowChance + 1);
+    }
 
     /* Will be worked on later */
-    public default int basicAtk() {
+    public default int basicAtk(final int theMinDamage, final int theMaxDamage) {
         if(hitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
+
+        generateHitChance(0,100);
+
 
 
         return minDmg;
