@@ -10,7 +10,11 @@ public interface Character {
 
     int atkSpd = 0;
 
-    float hitChance = 0;
+    float theLowChance = 0.0f;
+
+    float theHighChance = 100.0f;
+
+    float hitChance = generateHitChance(theLowChance, theHighChance);
 
     int minDmg = 0;
 
@@ -18,20 +22,27 @@ public interface Character {
 
     int specialCooldown = 0;
 
-    static float generateHitChance(final float theLowChance, final float theHighChance) {
+    static float generateHitChance(float theLowChance, float theHighChance) {
         return theLowChance + MY_RANDOM.nextFloat(theHighChance - theLowChance + 1);
     }
 
     /* Will be worked on later */
-    public default int basicAtk(final int theMinDamage, final int theMaxDamage) {
+    public default int basicAtk(int theMinDamage) {
         if(hitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        generateHitChance(0,100);
+        theMinDamage = minDmg;
 
+        getHitChance();
 
+        if(getHitChance() > 75) {
+            // Attack successful
+            setHitPoints(getHitPoints() - theMinDamage);
+        } else {
+            // Attack failed
+        }
 
         return minDmg;
     }
