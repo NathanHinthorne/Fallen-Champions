@@ -1,5 +1,3 @@
-package model;
-
 public class Dungeon {
 
     private Room[][] myDungeon;

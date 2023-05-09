@@ -1,5 +1,3 @@
-package model;
-
 public class Room {
 
     // should these characters be in the view?

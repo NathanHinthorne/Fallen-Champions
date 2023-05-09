@@ -1,5 +1,3 @@
-package model;
-
 public abstract class Monster implements Character {
 
     private int minHeal;
