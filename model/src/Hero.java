@@ -1,5 +1,3 @@
-import javafx.*;
-
 public abstract class Hero implements Character {
 
 
