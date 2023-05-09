@@ -1,17 +1,31 @@
 public class Dungeon {
 
-    private Room[][] myDungeon;
-    private int myDungeonWidth;
-    private int myDungeonHeight;
-    private int myHeroX;
-    private int myHeroY;
-    private Room myCurrRoom;
+    // static fields for toString
+    public static final char ABSTRACTION_PILLAR = 'A';
+    public static final char ENCAPSULATION_PILLAR = 'E';
+    public static final char INHERITANCE_PILLAR = 'I';
+    public static final char POLYMORPHISM_PILLAR = 'P';
+    public static final char EXIT = 'O';
+    public static final char PIT = 'X';
+    public static final char ENTRANCE = 'i';
+    public static final char HERO = 'H';
+    public static final char MULTIPLE = 'M';
+
 
     // make non-static if we add difficulty levels
     public static final double WALL_PERCENT = 0.25;
     public static final double ENEMY_PERCENT = 0.20;
     public static final double POTION_PERCENT = 0.10;
     public static final double PILLAR_PERCENT = 0.01;
+    public static final double PIT_PERCENT = 0.10;
+
+    // fields
+    private Room[][] myDungeon;
+    private int myDungeonWidth;
+    private int myDungeonHeight;
+    private int myHeroX;
+    private int myHeroY;
+    private Room myCurrRoom;
 
 
     /**
@@ -44,11 +58,26 @@ public class Dungeon {
         for (int i = 0; i < myDungeonHeight; i++) {
             for (int j = 0; j < myDungeonWidth; j++) {
 
+                room = new Room();
+
                 if (Math.random() < WALL_PERCENT) {
-                    myDungeon[i][j] = new Room("wall"); // place a wall here
+                    room.placeWall();
                 } else {
-                    myDungeon[i][j] = new Room(""); // place an empty room here
+                    if (Math.random() < ENEMY_PERCENT) {
+                        room.placeMonster();
+                    }
+                    if (Math.random() < POTION_PERCENT) {
+                        room.placePotion();
+                    }
+                    if (Math.random() < PILLAR_PERCENT) {
+                        room.placePillar();
+                    }
+                    if (Math.random() < PIT_PERCENT) {
+                        room.placePit();
+                    }
                 }
+
+                myDungeon[i][j] = room;
             }
         }
         return myDungeon;
