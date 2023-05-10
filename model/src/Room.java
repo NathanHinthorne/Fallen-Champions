@@ -1,11 +1,18 @@
 public class Room {
 
+    // make non-static if we add difficulty levels
+    public static final double HEALTH_POTION_CHANCE = 0.65; // vision potion chance is 0.35
+    public static final double ENEMY_CHANCE = 0.20;
+    public static final double POTION_CHANCE = 0.10;
+    public static final double PILLAR_CHANCE = 0.01;
+
+    // fields
     private Wall myWall;
     private Entrance myEntrance;
     private Exit myExit;
     private Monster myMonster;
-    private Potion myPotion;
-    private Pillar myPillar;
+    private AbstractPotion myPotion;
+    private AbstractPillar myPillar;
     private Pit myPit;
 
 
@@ -43,6 +50,7 @@ public class Room {
     }
 
 
+    // most 'place' method have factors determining which type of object to place
     public void placeWall() {
         myWall = new Wall();
     }
@@ -53,13 +61,20 @@ public class Room {
         myExit = new Exit();
     }
     public void placeMonster() {
-        myMonster = new Monster(); //TODO access the monster factory instead of creating a new monster
+        //TODO read from SQLite to determine what monster to place next
+        //TODO to create a new monster, access the monster factory
     }
     public void placePotion() {
-        myPotion = new Potion();
+
+        // randomly choose between placing a health potion and a vision potion
+        if (Math.random() < HEALTH_POTION_CHANCE) {
+            myPotion = new HealthPotion();
+        } else {
+            myPotion = new VisionPotion();
+        }
     }
     public void placePillar() {
-        myPillar = new Pillar();
+        myPillar = new AbstractPillar();
     }
     public void placePit() {
         myPit = new Pit();
