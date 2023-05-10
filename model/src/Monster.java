@@ -1,4 +1,4 @@
-public abstract class Monster implements Character {
+public abstract class Monster implements Character, Healable {
 
     private int minHeal;
 
@@ -41,6 +41,10 @@ public abstract class Monster implements Character {
 
     public void setHealChance(float theChance) {
         theChance = healChance;
+    }
+
+    public void heal() {
+        //TODO heal the monster
     }
 
 }

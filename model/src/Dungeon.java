@@ -1,17 +1,5 @@
 public class Dungeon {
 
-    // static fields for toString
-    public static final char ABSTRACTION_PILLAR = 'A';
-    public static final char ENCAPSULATION_PILLAR = 'E';
-    public static final char INHERITANCE_PILLAR = 'I';
-    public static final char POLYMORPHISM_PILLAR = 'P';
-    public static final char EXIT = 'O';
-    public static final char PIT = 'X';
-    public static final char ENTRANCE = 'i';
-    public static final char HERO = 'H';
-    public static final char MULTIPLE = 'M';
-
-
     // make non-static if we add difficulty levels
     public static final double WALL_CHANCE = 0.25;
     public static final double ENEMY_CHANCE = 0.20;
@@ -120,6 +108,12 @@ public class Dungeon {
     public String toString() {
         //TODO iterate over the dungeon 2D array.
         // for each room, determine what char to print based on what objects are in the room
+
+        for (int i = 0; i < myDungeonHeight; i++) {
+            for (int j = 0; j < myDungeonWidth; j++) {
+                System.out.print(myDungeon[i][j].toString());
+            }
+        }
 
         return null;
     }

@@ -1,5 +1,17 @@
 public class Room {
 
+    // static fields for toString
+    public static final char ABSTRACTION_PILLAR = 'A';
+    public static final char ENCAPSULATION_PILLAR = 'E';
+    public static final char INHERITANCE_PILLAR = 'I';
+    public static final char POLYMORPHISM_PILLAR = 'P';
+    public static final char EXIT = 'O';
+    public static final char PIT = 'X';
+    public static final char ENTRANCE = 'i';
+    public static final char HERO = 'H';
+    public static final char MULTIPLE = 'M';
+
+
     // make non-static if we add difficulty levels
     public static final double HEALTH_POTION_CHANCE = 0.65; // vision potion chance is 0.35
     public static final double ENEMY_CHANCE = 0.20;
@@ -27,7 +39,7 @@ public class Room {
     }
 
 
-    publuc boolean hasWall() {
+    public boolean hasWall() {
         return myWall != null;
     }
     public boolean hasEntrance() {
@@ -79,6 +91,13 @@ public class Room {
     public void placePit() {
         myPit = new Pit();
     }
+
+    @Override
+    public String toString() {
+
+
+    }
+
 
 
 }
