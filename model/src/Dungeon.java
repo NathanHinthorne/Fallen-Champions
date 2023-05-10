@@ -58,21 +58,21 @@ public class Dungeon {
         for (int i = 0; i < myDungeonHeight; i++) {
             for (int j = 0; j < myDungeonWidth; j++) {
 
-                room = new Room();
+                Room room = new Room();
 
-                if (Math.random() < WALL_PERCENT) {
+                if (Math.random() < WALL_PERCENT) { // if a wall is placed, no other objects can be placed in the room
                     room.placeWall();
                 } else {
-                    if (Math.random() < ENEMY_PERCENT) {
-                        room.placeMonster();
+                    if (Math.random() < ENEMY_PERCENT) { //TODO limit the number of enemies in the dungeon
+                        room.placeMonster();             //TODO use a list to accomplish this?
                     }
-                    if (Math.random() < POTION_PERCENT) {
+                    if (Math.random() < POTION_PERCENT) { //TODO limit the number of potions in the dungeon, or not?
                         room.placePotion();
                     }
-                    if (Math.random() < PILLAR_PERCENT) {
+                    if (Math.random() < PILLAR_PERCENT) { //TODO make each specific pillar class a singleton
                         room.placePillar();
                     }
-                    if (Math.random() < PIT_PERCENT) {
+                    if (Math.random() < PIT_PERCENT) {  //TODO limit the number of pits in the dungeon, or not?
                         room.placePit();
                     }
                 }
@@ -115,4 +115,12 @@ public class Dungeon {
         myCurrRoom = myDungeon[myHeroX][myHeroY];
     }
 
+
+    @Override
+    public String toString() {
+        //TODO iterate over the dungeon 2D array.
+        // for each room, determine what char to print based on what objects are in the room
+
+        return null;
+    }
 }
