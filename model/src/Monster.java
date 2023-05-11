@@ -6,7 +6,7 @@ public abstract class Monster implements Character, Healable {
 
     float healChance = Character.generateHitChance(theLowChance, theHighChance);
 
-    public Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
+    protected Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                  int theMinHeal, int theMaxHeal, float theHealChance) {
             setHitPoints(theHitPoints);
             setAtkSpd(theAtkSpd);
