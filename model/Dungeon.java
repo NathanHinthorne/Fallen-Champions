@@ -1,3 +1,5 @@
+package model;
+
 public class Dungeon {
 
     // make non-static if we add difficulty levels

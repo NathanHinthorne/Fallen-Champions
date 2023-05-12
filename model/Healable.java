@@ -1,3 +1,5 @@
+package model;
+
 public interface Healable {
 
     int minHeal = 5;

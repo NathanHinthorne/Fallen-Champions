@@ -1,3 +1,5 @@
+package model;
+
 public class Room {
 
     // static fields for toString
@@ -23,8 +25,8 @@ public class Room {
     private Entrance myEntrance;
     private Exit myExit;
     private Monster myMonster;
-    private AbstractPotion myPotion;
-    private AbstractPillar myPillar;
+    private Potion myPotion;
+    private Pillar myPillar;
     private Pit myPit;
 
 
@@ -86,7 +88,7 @@ public class Room {
         }
     }
     public void placePillar() {
-        myPillar = new AbstractPillar();
+        myPillar = new Pillar();
     }
     public void placePit() {
         myPit = new Pit();

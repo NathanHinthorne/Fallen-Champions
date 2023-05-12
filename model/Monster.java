@@ -1,3 +1,5 @@
+package model;
+
 public abstract class Monster implements Character, Healable {
 
     private int minHeal;

@@ -1,4 +1,6 @@
-public class HealthPotion extends AbstractPotion implements Healable {
+package model;
+
+public class HealthPotion extends Potion implements Healable {
 
     private int minHeal = 5;
     private int maxHeal = 10;
