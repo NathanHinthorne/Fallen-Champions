@@ -1,3 +1,5 @@
+package model.test;
+
 import model.Hero;
 
 public class TestHero extends Hero {

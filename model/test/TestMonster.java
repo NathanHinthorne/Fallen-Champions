@@ -1,3 +1,5 @@
+package model.test;
+
 import model.Monster;
 
 public class TestMonster extends Monster {
