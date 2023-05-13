@@ -1,8 +1,8 @@
-package model.test;
+package java.lang.model.test;
 
-import model.Monster;
+import java.lang.model.Monster;
 
-public class TestMonster extends Monster {
+public class TestMonster extends java.lang.Monster {
 
     private int myMinSpecial;
 

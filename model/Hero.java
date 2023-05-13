@@ -1,6 +1,6 @@
-package model;
+package java.lang.model;
 
-public abstract class Hero implements Character {
+public abstract class Hero implements java.lang.Character {
 
 
 

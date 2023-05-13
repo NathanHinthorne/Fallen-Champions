@@ -1,12 +1,12 @@
-package model;
+package java.lang.model;
 
-public abstract class Monster implements Character, Healable {
+public abstract class Monster implements java.lang.Character, java.lang.Healable {
 
     private int minHeal;
 
     private int maxHeal;
 
-    float healChance = Character.generateHitChance(theLowChance, theHighChance);
+    float healChance = java.lang.Character.generateHitChance(theLowChance, theHighChance);
 
     protected Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                  int theMinHeal, int theMaxHeal, float theHealChance) {
