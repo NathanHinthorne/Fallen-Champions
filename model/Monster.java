@@ -49,4 +49,8 @@ public abstract class Monster implements Character, Healable {
         //TODO heal the monster
     }
 
+    public String toString() {
+        return "[M]";
+    }
+
 }

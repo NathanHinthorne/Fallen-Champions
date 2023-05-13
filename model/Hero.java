@@ -13,4 +13,9 @@ public abstract class Hero implements Character {
         setMaxDmg(theMaxDmg);
         setSpecialCooldown(theCooldown);
     }
+
+
+    public String toString() {
+        return "[H]";
+    }
 }
