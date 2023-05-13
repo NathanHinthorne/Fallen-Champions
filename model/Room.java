@@ -94,6 +94,10 @@ public class Room {
         myPit = new Pit();
     }
 
+    public void removeWall() {
+        myWall = null;
+    }
+
     @Override
     public String toString() {
         if (hasWall()) {

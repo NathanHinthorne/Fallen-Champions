@@ -3,7 +3,8 @@ package model;
 public class Dungeon {
 
     // make non-static if we add difficulty levels
-//    public static final double WALL_CHANCE = 0.25;
+    public static final double NEW_ROOM_CHANCE = 0.10;
+    public static final double EXTENDED_ROOM_CHANCE = 0.70;
     public static final double ENEMY_CHANCE = 0.20;
     public static final double POTION_CHANCE = 0.10;
     public static final double PILLAR_CHANCE = 0.01;
@@ -36,8 +37,10 @@ public class Dungeon {
         myDungeon = new Room[theDungeonWidth][theDungeonHeight];
         updateCurrRoom();
 
-        // needed in constructor? or call directly from controller?
-        generateDungeon();
+        // keep generating dungeons until we get one that is traversable
+        do {
+            generateDungeon();
+        } while(!isTraversable());
     }
 
     /**
@@ -68,12 +71,22 @@ public class Dungeon {
         for (int y = 1; y < myDungeonHeight-1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < myDungeonWidth-1; x++) {
 
-                Room room = new Room();
-                myDungeon[y][y] = room;
+                Room room = myDungeon[y][y];
 
-                //TODO 2 Choices to determine where to place room
+                //TODO Two choices to determine where to place room
                 // 1. perlin noise
                 // 2. simple if statements
+                int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
+                if (numberOfEmptyRooms == 0) {
+                    if (Math.random() < NEW_ROOM_CHANCE) {
+                        room.removeWall();
+
+                    }
+                } else if (numberOfEmptyRooms == 1) {
+                    if (Math.random() < EXTENDED_ROOM_CHANCE) {
+                        room.removeWall();
+                    }
+                }
 
                 if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
                     room.placeMonster();             //TODO use a list to accomplish this?
@@ -90,7 +103,6 @@ public class Dungeon {
             }
         }
     }
-
 
     public int numberOfEmptyRooms(final int theX, final int theY) {
 
@@ -151,6 +163,11 @@ public class Dungeon {
         myCurrRoom = myDungeon[myHeroX][myHeroY];
     }
 
+    private boolean isTraversable() {
+        //TODO check if the room is traversable with a complicated algorithm
+
+        return true;
+    }
 
     @Override
     public String toString() {
