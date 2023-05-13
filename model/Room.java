@@ -4,16 +4,8 @@ public class Room {
 
     // static fields for toString
 
-    public static final char EMPTY = ' ';
-    public static final char WALL = '*';
-    public static final char ABSTRACTION_PILLAR = 'A';
-    public static final char ENCAPSULATION_PILLAR = 'E';
-    public static final char INHERITANCE_PILLAR = 'I';
-    public static final char POLYMORPHISM_PILLAR = 'P';
-    public static final char EXIT = 'O';
-    public static final char ENTRANCE = 'i';
-    public static final char PIT = 'X';
-    public static final char MULTIPLE = 'M';
+    public static final String EMPTY = " ";
+    public static final String MULTIPLE = "M";
 
 //    public static final char MONSTER = 'm';
 //    public static final char HERO = 'H';
@@ -46,6 +38,7 @@ public class Room {
     }
 
 
+
     private boolean hasWall() {
         return myWall != null;
     }
@@ -63,6 +56,10 @@ public class Room {
     }
     private boolean hasPit() {
         return myPit != null;
+    }
+    public boolean isEmpty() {
+        return !hasWall() && !hasEntrance() && !hasExit() &&
+                !hasMonster() && !hasPotion() && !hasPillar() && !hasPit();
     }
 
 
@@ -102,7 +99,7 @@ public class Room {
         if (hasWall()) {
             return myWall.toString();
         } else if (hasPotion() && hasPillar()) {
-            return "|"+MULTIPLE+"|"; // doesn't make sense in this context to make a class for multiple
+            return MULTIPLE; // doesn't make sense in this context to make a class for multiple
         } else if (hasPotion()) {
             return myPotion.toString();
         } else if (hasPillar()) {
@@ -114,7 +111,7 @@ public class Room {
         } else if (hasEntrance()) {
             return myEntrance.toString();
         } else {
-            return "|"+EMPTY+"|"; // doesn't make sense in this context to make a class for empty
+            return EMPTY; // doesn't make sense in this context to make a class for empty
         }
 
     }

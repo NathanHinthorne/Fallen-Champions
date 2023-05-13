@@ -3,7 +3,7 @@ package model;
 public class Dungeon {
 
     // make non-static if we add difficulty levels
-    public static final double WALL_CHANCE = 0.25;
+//    public static final double WALL_CHANCE = 0.25;
     public static final double ENEMY_CHANCE = 0.20;
     public static final double POTION_CHANCE = 0.10;
     public static final double PILLAR_CHANCE = 0.01;
@@ -36,7 +36,7 @@ public class Dungeon {
         myDungeon = new Room[theDungeonWidth][theDungeonHeight];
         updateCurrRoom();
 
-        // fill the dungeon with rooms
+        // needed in constructor? or call directly from controller?
         generateDungeon();
     }
 
@@ -45,32 +45,78 @@ public class Dungeon {
      */
     private Room[][] generateDungeon() {
 
-        for (int i = 0; i < myDungeonHeight; i++) {
-            for (int j = 0; j < myDungeonWidth; j++) {
+        // step 1: fill the dungeon COMPLETELY with walls
+        fillDungeonWithWalls();
 
-                Room room = new Room();
+        // step 2: randomly place empty rooms and rooms with items
+        fillDungeonWithEmptyRooms(); //TODO change method name to include items? or generate items in diff method?
 
-                if (Math.random() < WALL_CHANCE) { // if a wall is placed, no other objects can be placed in the room
-                    room.placeWall();
-                } else {
-                    if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
-                        room.placeMonster();             //TODO use a list to accomplish this?
-                    }
-                    if (Math.random() < POTION_CHANCE) { //TODO limit the number of potions in the dungeon, or not?
-                        room.placePotion();
-                    }
-                    if (Math.random() < PILLAR_CHANCE) { //TODO make each specific pillar class a singleton
-                        room.placePillar();
-                    }
-                    if (Math.random() < PIT_CHANCE) {  //TODO limit the number of pits in the dungeon, or not?
-                        room.placePit();
-                    }
-                }
+        return myDungeon;
+    }
 
-                myDungeon[i][j] = room;
+    private void fillDungeonWithWalls() {
+        for (int y = 0; y < myDungeonHeight; y++) {
+            for (int x = 0; x < myDungeonWidth; x++) {
+                myDungeon[y][x] = new Room();
+                myDungeon[y][x].placeWall();
             }
         }
-        return myDungeon;
+    }
+
+    private void fillDungeonWithEmptyRooms() {
+
+        for (int y = 1; y < myDungeonHeight-1; y++) { // skip over the edges of the dungeon
+            for (int x = 1; x < myDungeonWidth-1; x++) {
+
+                Room room = new Room();
+                myDungeon[y][y] = room;
+
+                //TODO 2 Choices to determine where to place room
+                // 1. perlin noise
+                // 2. simple if statements
+
+                if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
+                    room.placeMonster();             //TODO use a list to accomplish this?
+                }
+                if (Math.random() < POTION_CHANCE) { //TODO limit the number of potions in the dungeon, or not?
+                    room.placePotion();
+                }
+                if (Math.random() < PILLAR_CHANCE) { //TODO make each specific pillar class a singleton
+                    room.placePillar();
+                }
+                if (Math.random() < PIT_CHANCE) {  //TODO limit the number of pits in the dungeon, or not?
+                    room.placePit();
+                }
+            }
+        }
+    }
+
+
+    public int numberOfEmptyRooms(final int theX, final int theY) {
+
+        int count = 0;
+
+        // check top
+        if (myDungeon[theY-1][theX].isEmpty()) {
+            count++;
+        }
+
+        // check left
+        if (myDungeon[theY][theX-1].isEmpty()) {
+            count++;
+        }
+
+        // check right
+        if (myDungeon[theY][theX+1].isEmpty()) {
+            count++;
+        }
+
+        // check bottom
+        if (myDungeon[theY+1][theX].isEmpty()) {
+            count++;
+        }
+
+        return count;
     }
 
     // a method in the view will check for keyboard inputs

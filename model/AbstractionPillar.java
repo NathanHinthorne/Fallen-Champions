@@ -7,6 +7,6 @@ public class AbstractionPillar extends Pillar {
     }
 
     public String toString() {
-        return "Abstraction Pillar";
+        return "|A|";
     }
 }
