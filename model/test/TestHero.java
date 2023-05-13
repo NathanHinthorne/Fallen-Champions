@@ -8,9 +8,10 @@ public class TestHero extends Hero {
 
     private int myMaxSpecial;
 
-    protected TestHero(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg,
-                       int theCooldown) {
-        super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
+    protected TestHero() {
+        /* For Reference */
+        //super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
+        super(250, 8, 50, 30, 60, 10);
         setMyMinSpecial(50);
         setMyMaxSpecial(100);
     }
