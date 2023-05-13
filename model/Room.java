@@ -3,15 +3,20 @@ package model;
 public class Room {
 
     // static fields for toString
+
+    public static final char EMPTY = ' ';
+    public static final char WALL = '*';
     public static final char ABSTRACTION_PILLAR = 'A';
     public static final char ENCAPSULATION_PILLAR = 'E';
     public static final char INHERITANCE_PILLAR = 'I';
     public static final char POLYMORPHISM_PILLAR = 'P';
     public static final char EXIT = 'O';
-    public static final char PIT = 'X';
     public static final char ENTRANCE = 'i';
-    public static final char HERO = 'H';
+    public static final char PIT = 'X';
     public static final char MULTIPLE = 'M';
+
+//    public static final char MONSTER = 'm';
+//    public static final char HERO = 'H';
 
 
     // make non-static if we add difficulty levels
@@ -41,25 +46,22 @@ public class Room {
     }
 
 
-    public boolean hasWall() {
+    private boolean hasWall() {
         return myWall != null;
     }
-    public boolean hasEntrance() {
+    private boolean hasEntrance() {
         return myEntrance != null;
     }
-    public boolean hasExit() {
+    private boolean hasExit() {
         return myExit != null;
     }
-    public boolean hasMonster() {
-        return myMonster != null;
-    }
-    public boolean hasPotion() {
+    private boolean hasPotion() {
         return myPotion != null;
     }
-    public boolean hasPillar() {
+    private boolean hasPillar() {
         return myPillar != null;
     }
-    public boolean hasPit() {
+    private boolean hasPit() {
         return myPit != null;
     }
 
@@ -88,7 +90,8 @@ public class Room {
         }
     }
     public void placePillar() {
-        myPillar = new Pillar();
+        //TODO decide what type of pillar to place
+//        myPillar = new Pillar();
     }
     public void placePit() {
         myPit = new Pit();
@@ -96,7 +99,23 @@ public class Room {
 
     @Override
     public String toString() {
-
+        if (hasWall()) {
+            return myWall.toString();
+        } else if (hasPotion() && hasPillar()) {
+            return "|"+MULTIPLE+"|"; // doesn't make sense in this context to make a class for multiple
+        } else if (hasPotion()) {
+            return myPotion.toString();
+        } else if (hasPillar()) {
+            return myPillar.toString();
+        } else if (hasPit()) {
+            return myPit.toString();
+        } else if (hasExit()) {
+            return myExit.toString();
+        } else if (hasEntrance()) {
+            return myEntrance.toString();
+        } else {
+            return "|"+EMPTY+"|"; // doesn't make sense in this context to make a class for empty
+        }
 
     }
 

@@ -1,3 +1,5 @@
+import model.Hero;
+
 public class TestHero extends Hero {
 
     private int myMinSpecial;

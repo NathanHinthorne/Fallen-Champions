@@ -1,3 +1,5 @@
+import model.Monster;
+
 public class TestMonster extends Monster {
 
     private int myMinSpecial;

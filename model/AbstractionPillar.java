@@ -1,9 +1,12 @@
 package model;
 
-public class AbstractionPillar extends Pillar implements Collectable {
+public class AbstractionPillar extends Pillar {
 
-    @Override
-    public void collect() {
-        //TODO
+    public AbstractionPillar() {
+        super();
+    }
+
+    public String toString() {
+        return "Abstraction Pillar";
     }
 }
