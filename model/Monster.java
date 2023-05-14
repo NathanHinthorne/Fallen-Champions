@@ -6,8 +6,9 @@ public abstract class Monster extends Character implements Healable {
 
     private int maxHeal;
 
-    float healChance = Character.generateHitChance(theLowChance, theHighChance);
+    double healChance = 0.2; // 20% chance to heal
 
+    // super() is best suited for initializing the fields of the super class. You might want to use that instead. - Nathan
     protected Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                  int theMinHeal, int theMaxHeal, float theHealChance) {
             setHitPoints(theHitPoints);
@@ -37,11 +38,11 @@ public abstract class Monster extends Character implements Healable {
         theHeal = maxHeal;
     }
 
-    public float getHealChance() {
+    public double getHealChance() {
         return healChance;
     }
 
-    public void setHealChance(float theChance) {
+    public void setHealChance(double theChance) {
         theChance = healChance;
     }
 
