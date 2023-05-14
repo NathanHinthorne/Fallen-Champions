@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Monster implements Character, Healable {
+public abstract class Monster extends Character implements Healable {
 
     private int minHeal;
 
@@ -11,7 +11,7 @@ public abstract class Monster implements Character, Healable {
     protected Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                  int theMinHeal, int theMaxHeal, float theHealChance) {
             setHitPoints(theHitPoints);
-            setAtkSpd(theAtkSpd);
+            setSpd(theAtkSpd);
             setHitChance(theHitChance);
             setMinDmg(theMinDmg);
             setMaxDmg(theMaxDmg);

@@ -1,4 +1,5 @@
 package model;
+import java.util.Random;
 
 public class Dungeon {
 
@@ -9,6 +10,7 @@ public class Dungeon {
     public static final double POTION_CHANCE = 0.10;
     public static final double PILLAR_CHANCE = 0.01;
     public static final double PIT_CHANCE = 0.10;
+    public static final Random rand = new Random();
 
     // fields
     private Room[][] myDungeon;
@@ -49,15 +51,18 @@ public class Dungeon {
     private Room[][] generateDungeon() {
 
         // step 1: fill the dungeon COMPLETELY with walls
-        fillDungeonWithWalls();
+        fillWithWalls();
 
         // step 2: randomly place empty rooms and rooms with items
-        fillDungeonWithEmptyRooms(); //TODO change method name to include items? or generate items in diff method?
+        addEmptyRooms(); //TODO generate items in diff method?
+
+        // step 3: add entrance and exit
+        addEntranceAndExit();
 
         return myDungeon;
     }
 
-    private void fillDungeonWithWalls() {
+    private void fillWithWalls() {
         for (int y = 0; y < myDungeonHeight; y++) {
             for (int x = 0; x < myDungeonWidth; x++) {
                 myDungeon[y][x] = new Room();
@@ -66,7 +71,7 @@ public class Dungeon {
         }
     }
 
-    private void fillDungeonWithEmptyRooms() {
+    private void addEmptyRooms() {
 
         for (int y = 1; y < myDungeonHeight-1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < myDungeonWidth-1; x++) {
@@ -75,12 +80,11 @@ public class Dungeon {
 
                 //TODO Two choices to determine where to place room
                 // 1. perlin noise
-                // 2. simple if statements
+                // 2. simple if statements like below
                 int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
                 if (numberOfEmptyRooms == 0) {
                     if (Math.random() < NEW_ROOM_CHANCE) {
                         room.removeWall();
-
                     }
                 } else if (numberOfEmptyRooms == 1) {
                     if (Math.random() < EXTENDED_ROOM_CHANCE) {
@@ -102,6 +106,28 @@ public class Dungeon {
                 }
             }
         }
+    }
+
+    private void addEntranceAndExit() {
+
+        int x;
+        int y;
+
+        // keep generating coords for entrance until we get a room that is empty
+        do {
+            x = rand.nextInt(myDungeonWidth);
+            y = rand.nextInt(myDungeonHeight);
+
+        } while (!myDungeon[y][x].isEmpty());
+        myDungeon[y][x].placeEntrance();
+
+        // keep generating coords for an exit until we get a room that is empty
+        do {
+            x = rand.nextInt(myDungeonWidth);
+            y = rand.nextInt(myDungeonHeight);
+
+        } while (!myDungeon[y][x].isEmpty());
+        myDungeon[y][x].placeExit();
     }
 
     public int numberOfEmptyRooms(final int theX, final int theY) {

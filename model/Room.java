@@ -39,23 +39,26 @@ public class Room {
 
 
 
-    private boolean hasWall() {
+    public boolean hasWall() {
         return myWall != null;
     }
-    private boolean hasEntrance() {
+    public boolean hasEntrance() {
         return myEntrance != null;
     }
-    private boolean hasExit() {
+    public boolean hasExit() {
         return myExit != null;
     }
-    private boolean hasPotion() {
+    public boolean hasPotion() {
         return myPotion != null;
     }
-    private boolean hasPillar() {
+    public boolean hasPillar() {
         return myPillar != null;
     }
-    private boolean hasPit() {
+    public boolean hasPit() {
         return myPit != null;
+    }
+    private boolean hasMonster() {
+        return myMonster != null;
     }
     public boolean isEmpty() {
         return !hasWall() && !hasEntrance() && !hasExit() &&

@@ -2,33 +2,48 @@ package model;
 
 import java.util.*;
 
-public interface Character {
+public abstract class Character {
 
     final static Random MY_RANDOM = new Random();
+    public final int MAX_SPECIAL_COOLDOWN = 3;
 
-    int hitPoints = 0;
+    private int myHitPoints;
+    private int mySpd;
+    private float myLowHitChance;
+    private float myHighHitChance;
+    private int myMinDmg;
+    private int myMaxDmg;
+    private int mySpecialCooldown;
+    private float myHitChance;
 
-    int atkSpd = 0;
+    public Character() {
+        myHitPoints = 10;
+        mySpd = 10;
+        myLowHitChance = 0.0f;
+        myHighHitChance = 100.0f;
+        myHitChance = 0.0f;
+        myMinDmg = 1;
+        myMaxDmg = 10;
 
-    float theLowChance = 0.0f;
-
-    float theHighChance = 100.0f;
-
-    float hitChance = generateHitChance(theLowChance, theHighChance);
-
-    int minDmg = 0;
-
-    int maxDmg = 0;
-
-    int specialCooldown = 0;
+        myHitChance = generateHitChance(myLowHitChance, myHighHitChance);
+    }
 
     public static float generateHitChance(float theLowChance, float theHighChance) {
         return theLowChance + MY_RANDOM.nextFloat(theHighChance - theLowChance + 1);
     }
 
+    public void takeTurn() {
+        // I don't all that will be in here yet, but it will contain all the logic for the turn
+        // We at least know the cooldown should be decremented
+
+        if(mySpecialCooldown > 0) {
+            mySpecialCooldown--;
+        }
+    }
+
     /* Will be worked on later */
-    public default int basicAtk() {
-        if(hitPoints < 0)
+    public int basicAtk() {
+        if(myHitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
@@ -42,39 +57,39 @@ public interface Character {
             // Attack failed
         }
 
-        return minDmg;
+        return myMinDmg;
     }
 
-    public default int getMinDamage() {
-        return minDmg;
+    public int getMinDamage() {
+        return myMinDmg;
     }
 
-    public default void setMinDmg(int theDmg) {
-        theDmg = minDmg;
+    public void setMinDmg(int theDmg) {
+        theDmg = myMinDmg;
     }
 
-    public default int getMaxDamage() {
-        return maxDmg;
+    public int getMaxDamage() {
+        return myMaxDmg;
     }
 
-    public default int getAtkSpd() {
-        return atkSpd;
+    public int getSpd() {
+        return mySpd;
     }
 
-    public default void setAtkSpd(int theSpd) {
+    public void setSpd(int theSpd) {
         if(theSpd < 0 || theSpd > 1000) {
             throw new IllegalArgumentException("Attack Speed cannot be less than 0 or greater than 500.");
         }
-        theSpd = atkSpd;
+        theSpd = mySpd;
     }
 
-    public default void setMaxDmg(int theDmg) {
-        theDmg = maxDmg;
+    public void setMaxDmg(int theDmg) {
+        theDmg = myMaxDmg;
     }
 
     /* Will be worked on later */
-    public default int specialAtk() {
-        if(hitPoints < 0)
+    public int specialAtk() {
+        if(myHitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
@@ -88,34 +103,36 @@ public interface Character {
             // Attack failed
         }
 
-        return maxDmg;
-    }
-    public default int getHitPoints() {
-        return hitPoints;
-    }
+        mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
 
-    public default float getHitChance() {
-        return hitChance;
+        return myMaxDmg;
+    }
+    public int getHitPoints() {
+        return myHitPoints;
     }
 
-    public default void setHitChance(float theChance) {
-
-        theChance = hitChance;
+    public float getHitChance() {
+        return myHitChance;
     }
 
-    public default void setHitPoints(int hp) {
+    public void setHitChance(float theChance) {
+
+        theChance = myHitChance;
+    }
+
+    public void setHitPoints(int hp) {
         if(hp < 0) { // Will need to be looked at later
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
-        hp = hitPoints;
+        hp = myHitPoints;
     }
 
-    public default int getSpecialCooldown() {
-        return specialCooldown;
+    public int getSpecialCooldown() {
+        return mySpecialCooldown;
     }
 
-    public default void setSpecialCooldown(int theCooldown) {
-        theCooldown = specialCooldown;
+    public void setSpecialCooldown(int theCooldown) {
+        theCooldown = mySpecialCooldown;
     }
 
 

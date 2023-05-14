@@ -1,13 +1,15 @@
 package model;
 
-public abstract class Hero implements Character {
+public abstract class Hero extends Character {
 
 
+    // should this be protected or public? - Nathan
+    // should the constructor just be calling super() with the parameters of super() containing the given fields? - Nathan
 
     protected Hero(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
 
         setHitPoints(theHitPoints);
-        setAtkSpd(theAtkSpd);
+        setSpd(theAtkSpd);
         setHitChance(theHitChance);
         setMinDmg(theMinDmg);
         setMaxDmg(theMaxDmg);
