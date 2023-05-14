@@ -20,5 +20,14 @@ public class Enforcer extends Hero {
         thespecial3Cooldown = special3Cooldown;
     }
 
+    /* Will be worked on later */
+    public void specialAtk2() {
 
+    }
+    /* Will be worked on later */
+    public void specialAtk3() {
+
+    }
+
+    
 }
