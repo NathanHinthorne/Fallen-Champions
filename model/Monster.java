@@ -47,7 +47,8 @@ public abstract class Monster extends Character implements Healable {
     }
 
     public void heal() {
-        //TODO heal the monster
+        //TODO heal the monster by increasing hp determined by the healChance
+
     }
 
     public String toString() {
