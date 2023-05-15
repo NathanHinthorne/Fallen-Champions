@@ -8,7 +8,7 @@ public class AbstractionPillar extends Pillar {
         super();
     }
 
-    public static synchronized AbstractionPillar getInstance() {
+    public static synchronized AbstractionPillar getInstance() { // do we need an if statement checking if instance is null?
         return instance;
     }
 

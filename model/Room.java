@@ -7,15 +7,14 @@ public class Room {
     public static final String EMPTY = " ";
     public static final String MULTIPLE = "M";
 
-//    public static final char MONSTER = 'm';
-//    public static final char HERO = 'H';
-
 
     // make non-static if we add difficulty levels
-    public static final double HEALTH_POTION_CHANCE = 0.65; // vision potion chance is 0.35
-    public static final double ENEMY_CHANCE = 0.20;
-    public static final double POTION_CHANCE = 0.10;
-    public static final double PILLAR_CHANCE = 0.01;
+    public static final double HEALTH_POTION_CHANCE = 0.65;
+    // vision potion chance is 0.35
+    public static final double A_PILLAR_CHANCE = 0.25;
+    public static final double I_PILLAR_CHANCE = 0.25;
+    public static final double P_PILLAR_CHANCE = 0.25;
+    // E pillar chance is 0.25
 
     // fields
     private Wall myWall;
@@ -36,7 +35,6 @@ public class Room {
         myPillar = null;
         myPit = null;
     }
-
 
 
     public boolean hasWall() {
@@ -60,22 +58,23 @@ public class Room {
     private boolean hasMonster() {
         return myMonster != null;
     }
+
     public boolean isEmpty() {
         return !hasWall() && !hasEntrance() && !hasExit() &&
                 !hasMonster() && !hasPotion() && !hasPillar() && !hasPit();
     }
 
 
-    // most 'place' method have factors determining which type of object to place
+    // most 'place' methods have factors determining which type of object to place
     public void placeWall() {
         myWall = new Wall();
     }
     public void placeEntrance() {
         myEntrance = new Entrance();
-    }
+    } //TODO make entrance a singleton
     public void placeExit() {
         myExit = new Exit();
-    }
+    } //TODO make exit a singleton
     public void placeMonster() {
         //TODO read from SQLite to determine what monster to place next
         //TODO to create a new monster, access the monster factory
@@ -91,7 +90,16 @@ public class Room {
     }
     public void placePillar() {
         //TODO decide what type of pillar to place
-//        myPillar = new Pillar();
+
+        if (Math.random() < A_PILLAR_CHANCE)
+            myPillar = new AbstractionPillar();
+        else if (Math.random() < I_PILLAR_CHANCE)
+            myPillar = new InheritancePillar();
+        else if (Math.random() < P_PILLAR_CHANCE)
+            myPillar = new PolymorphismPillar();
+        else {
+            myPillar = new EncapsulationPillar();
+        }
     }
     public void placePit() {
         myPit = new Pit();
