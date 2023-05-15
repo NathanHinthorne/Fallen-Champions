@@ -2,8 +2,14 @@ package model;
 
 public class InheritancePillar extends Pillar {
 
-    public InheritancePillar() {
+    private static InheritancePillar instance = new InheritancePillar();
+
+    private InheritancePillar() {
         super();
+    }
+
+    public static synchronized InheritancePillar getInstance() {
+        return instance;
     }
 
     public String toString() {

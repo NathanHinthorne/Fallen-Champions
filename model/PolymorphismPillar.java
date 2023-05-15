@@ -2,8 +2,14 @@ package model;
 
 public class PolymorphismPillar extends Pillar {
 
-    public PolymorphismPillar() {
+    private static PolymorphismPillar instance = new PolymorphismPillar();
+
+    private PolymorphismPillar() {
         super();
+    }
+
+    public static synchronized PolymorphismPillar getInstance() {
+        return instance;
     }
 
     public String toString() {

@@ -10,7 +10,10 @@ public class VisionPotion extends Potion {
 
     @Override
     public void effect() {
-
+        /* TODO
+         * find way to reveal every surrounding room, this may pertain
+         * only to view, but we don't know yet.
+         */
     }
 
     @Override

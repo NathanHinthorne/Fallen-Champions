@@ -2,8 +2,14 @@ package model;
 
 public class AbstractionPillar extends Pillar {
 
-    public AbstractionPillar() {
+    private static AbstractionPillar instance = new AbstractionPillar();
+
+    private AbstractionPillar() {
         super();
+    }
+
+    public static synchronized AbstractionPillar getInstance() {
+        return instance;
     }
 
     public String toString() {
