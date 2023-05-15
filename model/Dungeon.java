@@ -208,4 +208,9 @@ public class Dungeon {
 
         return null;
     }
+
+    public Room getMyCurrRoom() {
+        return myCurrRoom;
+    }
+
 }
