@@ -23,8 +23,14 @@ public class HealthPotion extends Potion implements Healable {
 
     }
 
+    @Override
     public void effect() {
 
+    }
+
+    @Override
+    public String toString() {
+        return "Health Potion";
     }
 
 }

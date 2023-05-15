@@ -8,7 +8,13 @@ public class VisionPotion extends Potion {
         visibleRooms = new Room[3][3];
     }
 
+    @Override
     public void effect() {
 
+    }
+
+    @Override
+    public String toString() {
+        return "Vision Potion";
     }
 }
