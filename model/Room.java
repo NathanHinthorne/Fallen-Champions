@@ -92,7 +92,7 @@ public class Room {
         //TODO decide what type of pillar to place
 
         if (Math.random() < A_PILLAR_CHANCE)
-            myPillar = new AbstractionPillar();
+            myPillar = new AbstractionPillar(); // TODO something is wrong with pillar singletons.
         else if (Math.random() < I_PILLAR_CHANCE)
             myPillar = new InheritancePillar();
         else if (Math.random() < P_PILLAR_CHANCE)
