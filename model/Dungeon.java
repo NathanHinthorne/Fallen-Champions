@@ -92,17 +92,20 @@ public class Dungeon {
                     }
                 }
 
-                if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
-                    room.placeMonster();             //TODO use a list to accomplish this?
-                }
-                if (Math.random() < POTION_CHANCE) { //TODO limit the number of potions in the dungeon, or not?
-                    room.placePotion();
-                }
-                if (Math.random() < PILLAR_CHANCE) { //TODO make each specific pillar class a singleton
-                    room.placePillar();
-                }
-                if (Math.random() < PIT_CHANCE) {  //TODO limit the number of pits in the dungeon, or not?
-                    room.placePit();
+                if (room.isEmpty()) { // provided the wall was removed, place items in the room
+
+                    if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
+                        room.placeMonster();             //TODO use a list to accomplish this?
+                    }
+                    if (Math.random() < POTION_CHANCE) { //TODO limit the number of potions in the dungeon, or not?
+                        room.placePotion();
+                    }
+                    if (Math.random() < PILLAR_CHANCE) { //TODO make each specific pillar class a singleton
+                        room.placePillar();
+                    }
+                    if (Math.random() < PIT_CHANCE) {  //TODO limit the number of pits in the dungeon, or not?
+                        room.placePit();
+                    }
                 }
             }
         }
@@ -207,10 +210,6 @@ public class Dungeon {
         }
 
         return null;
-    }
-
-    public Room getMyCurrRoom() {
-        return myCurrRoom;
     }
 
 }

@@ -6,7 +6,6 @@ public class VisionPotion extends Potion {
 
     public VisionPotion() {
         visibleRooms = new Room[3][3];
-        visibleRooms[1][1] = Dungeon.getMyCurrRoom();
     }
 
     public void effect() {
