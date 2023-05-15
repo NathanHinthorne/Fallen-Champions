@@ -1,13 +1,12 @@
 package model;
-import controller.DungeonGame;
 
 import java.util.Random;
 
 public class HealthPotion extends Potion implements Healable {
 
-    private int minHeal = 5;
-    private int maxHeal = 10;
-    private double healChance = 50.0;
+    private int myMinHeal = 5;
+    private int myMaxHeal = 10;
+    private double myHealChance = 50.0;
     private static Random RANDOMIZER;
 
 
@@ -17,8 +16,8 @@ public class HealthPotion extends Potion implements Healable {
          * max and min, since you can't have a lower and upper bound,
          * then add the minimum back to bump it back into that range.
          */
-        int healAmt = RANDOMIZER.nextInt(maxHeal-minHeal);
-        healAmt += minHeal;
+        int healAmt = RANDOMIZER.nextInt(myMaxHeal - myMinHeal);
+        healAmt += myMinHeal;
 
         // Get Hero HP and heal
 

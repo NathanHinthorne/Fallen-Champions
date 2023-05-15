@@ -52,7 +52,7 @@ public abstract class Monster extends Character implements Healable {
     }
 
     public String toString() {
-        return "[M]";
+        return "M";
     }
 
 }

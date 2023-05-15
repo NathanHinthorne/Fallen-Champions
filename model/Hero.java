@@ -18,6 +18,6 @@ public abstract class Hero extends Character {
 
 
     public String toString() {
-        return "[H]";
+        return "H";
     }
 }
