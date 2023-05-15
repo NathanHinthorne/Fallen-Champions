@@ -7,6 +7,6 @@ public class PolymorphismPillar extends Pillar {
     }
 
     public String toString() {
-        return "|P|";
+        return "P";
     }
 }

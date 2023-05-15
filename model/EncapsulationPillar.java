@@ -7,6 +7,6 @@ public class EncapsulationPillar extends Pillar {
     }
 
     public String toString() {
-        return "|E|";
+        return "E";
     }
 }

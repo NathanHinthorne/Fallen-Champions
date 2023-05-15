@@ -7,6 +7,6 @@ public class InheritancePillar extends Pillar {
     }
 
     public String toString() {
-        return "|I|";
+        return "I";
     }
 }
