@@ -266,10 +266,11 @@ public class Dungeon {
 
         boolean isTraversable = true;
 
-        //TODO before this method, make sure there are all 4 pillars present within the dungeon
+        //before this method, make sure there are all 4 pillars present within the dungeon
+
         //TODO check if the entrance and exit are connected and that there are no unreachable rooms
-
-
+            //TODO to do this, use an algorithm to trace out every possible path from the entrance until the exit is found
+            //TODO need a condition to determine when every path has been checked
 
         return isTraversable;
     }
