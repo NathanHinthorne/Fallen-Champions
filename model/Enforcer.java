@@ -6,7 +6,7 @@ public class Enforcer extends Hero {
 
     private int special3Cooldown;
 
-    protected Enforcer() {
+    public Enforcer() {
         super(350, 4, 45, 120, 160, 20);
         setSpecial2Cooldown(50);
         setSpecial3Cooldown(65);

@@ -8,7 +8,7 @@ public class TestHero extends Hero {
 
     private int myMaxSpecial;
 
-    protected TestHero() {
+    public TestHero() {
         /* For Reference */
         //super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
         super(250, 8, 50, 30, 60, 10);

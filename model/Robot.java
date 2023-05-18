@@ -11,7 +11,7 @@ public class Robot extends Hero {
     private int special5Cooldown;
 
 
-    protected Robot(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
+    public Robot(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         super(500, 2, 35, 170, 230, 25);
         setSpecial2Cooldown(35);
         setSpecial3Cooldown(40);

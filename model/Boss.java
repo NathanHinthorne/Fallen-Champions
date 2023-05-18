@@ -3,7 +3,7 @@ package model;
 public class Boss extends Monster {
 
 
-    protected Boss(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown, int theMinHeal, int theMaxHeal, float theHealChance) {
+    public Boss(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown, int theMinHeal, int theMaxHeal, float theHealChance) {
         super(1500, 1, 97, 90, 230, 40, 130, 290, 99);
     }
 
