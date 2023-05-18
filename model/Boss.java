@@ -8,21 +8,77 @@ public class Boss extends Monster {
     }
 
     public void specialAtk2() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
     /* Will be worked on later */
     public void specialAtk3() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
     /* Will be worked on later */
     public void specialAtk4() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
     /* Will be worked on later */
     public void specialAtk5() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 }
