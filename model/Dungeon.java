@@ -8,15 +8,14 @@ public class Dungeon {
     public static final double EXTENDED_ROOM_CHANCE = 0.70;
     public static final double ENEMY_CHANCE = 0.20;
     public static final double POTION_CHANCE = 0.10;
-    public static final double HEALTH_POTION_CHANCE = 0.65; // vision potion chance is 0.35
     public static final double PILLAR_CHANCE = 0.01;
     public static final double PIT_CHANCE = 0.10;
     public static final Random rand = new Random();
 
     // fields
-    private Room[][] myDungeon;
-    private int myDungeonWidth;
-    private int myDungeonHeight;
+    final private Room[][] myDungeon;
+    final private int myDungeonWidth;
+    final private int myDungeonHeight;
     private int myHeroX;
     private int myHeroY;
     private int myEntranceX;
@@ -34,7 +33,7 @@ public class Dungeon {
      * @param theHeroX the starting x position of the hero
      * @param theHeroY the starting y position of the hero
      */
-    public Dungeon(int theDungeonWidth, int theDungeonHeight, int theHeroX, int theHeroY) {
+    public Dungeon(final int theDungeonWidth, final int theDungeonHeight, final int theHeroX, final int theHeroY) {
 
         // initialize fields
         myDungeonHeight = theDungeonHeight;
@@ -78,7 +77,7 @@ public class Dungeon {
     private void fillWithWalls() {
         for (int y = 0; y < myDungeonHeight; y++) {
             for (int x = 0; x < myDungeonWidth; x++) {
-                myDungeon[y][x] = new Room();
+                myDungeon[y][x] = new Room(y, x);
                 myDungeon[y][x].placeWall();
             }
         }
@@ -240,7 +239,7 @@ public class Dungeon {
      *
      * @param dir the direction to move the player
      */
-    public void playerMove(Direction dir) {
+    public void playerMove(final Direction dir) {
         if (dir == Direction.NORTH) {
             myHeroY--;
         } else if (dir == Direction.EAST) {
@@ -264,7 +263,7 @@ public class Dungeon {
      */
     private boolean isTraversable() {
 
-        boolean isTraversable = true;
+        boolean isTraversable = false;
 
         //before this method, make sure there are all 4 pillars present within the dungeon
 
@@ -272,7 +271,82 @@ public class Dungeon {
             //TODO to do this, use an algorithm to trace out every possible path from the entrance until the exit is found
             //TODO need a condition to determine when every path has been checked
 
+        //TODO pick a random direction to act as forward (as long as forward leads to empty room)
+        traverse(myEntranceX, myEntranceY, Direction.NORTH); //TODO change Direction.NORTH
+
         return isTraversable;
+    }
+
+
+    private void traverse(final int theX, final int theY, final Direction theForward) {
+
+        // determine what left and right should be based on forward
+        final Direction theRight;
+        final Direction theLeft;
+        if (theForward == Direction.NORTH) {
+            theRight = Direction.EAST;
+            theLeft = Direction.WEST;
+        } else if (theForward == Direction.EAST) {
+            theRight = Direction.SOUTH;
+            theLeft = Direction.NORTH;
+        } else if (theForward == Direction.SOUTH) {
+            theRight = Direction.WEST;
+            theLeft = Direction.EAST;
+        } else { // forward is west
+            theRight = Direction.NORTH;
+            theLeft = Direction.SOUTH;
+        }
+
+        // base case - successful
+        if (myDungeon[theX][theY].hasExit()) {
+            System.out.println("Exit found!");
+
+            return;
+        }
+
+        // need a base case for unsuccessful?
+
+
+        // base case and recursive case
+        Room forwardRoom = walk(theX, theY, theForward);
+        Room rightRoom = walk(theX, theY, theRight);
+        Room leftRoom = walk(theX, theY, theLeft);
+        int newY;
+        int newX;
+
+        if (!forwardRoom.hasWall()) {
+            newX = forwardRoom.getX();
+            newY = forwardRoom.getY();
+            traverse(newX, newY, theForward); //refactor to make traverse accept rooms instead of directions?
+        }                                                   // ex: forwardRoom instead of theForward
+        if (!rightRoom.hasWall()) {
+            newX = rightRoom.getX();
+            newY = rightRoom.getY();
+            traverse(theX, newY, theRight);
+        }
+        if (!leftRoom.hasWall()) {
+            newX = leftRoom.getX();
+            newY = leftRoom.getY();
+            traverse(theX, newY, theLeft);
+        }
+    }
+
+    private Room walk(final int theX, final int theY, final Direction dir) {
+        Room newRoom;
+
+        if (dir == Direction.NORTH) {
+            newRoom = myDungeon[theY-1][theX];
+        } else if (dir == Direction.EAST) {
+            newRoom = myDungeon[theY][theX+1];
+        } else if (dir == Direction.SOUTH) {
+            newRoom = myDungeon[theY+1][theX];
+        } else if (dir == Direction.WEST) {
+            newRoom = myDungeon[theY][theX-1];
+        } else {
+            newRoom = myDungeon[theY][theX];
+        }
+
+        return newRoom;
     }
 
     /**

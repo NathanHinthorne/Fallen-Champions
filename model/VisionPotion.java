@@ -2,18 +2,14 @@ package model;
 
 public class VisionPotion extends Potion {
 
-    Room visibleRooms[][];
-
     public VisionPotion() {
-        visibleRooms = new Room[3][3];
+
     }
 
     @Override
     public void effect() {
-        /* TODO
-         * find way to reveal every surrounding room, this may pertain
-         * only to view, but we don't know yet.
-         */
+        // TODO normally, the controller would call getView() when getting the 3x3 area for the View package
+        // TODO make the controller call the getExpandedView() method from Dungeon instead
     }
 
     @Override

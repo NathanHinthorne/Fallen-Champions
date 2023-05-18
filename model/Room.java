@@ -17,6 +17,8 @@ public class Room {
     // E pillar chance is 0.25
 
     // fields
+    private int myY;
+    private int myX;
     private Wall myWall;
     private Entrance myEntrance;
     private Exit myExit;
@@ -26,7 +28,9 @@ public class Room {
     private Pit myPit;
 
 
-    public Room() {
+    public Room(final int theY, final int theX) {
+        myY = theY;
+        myX = theX;
         myWall = null;
         myEntrance = null;
         myExit = null;
@@ -34,6 +38,14 @@ public class Room {
         myPotion = null;
         myPillar = null;
         myPit = null;
+    }
+
+    public int getX() {
+        return myX;
+    }
+
+    public int getY() {
+        return myY;
     }
 
 
