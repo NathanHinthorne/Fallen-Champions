@@ -11,7 +11,7 @@ public class Robot extends Hero {
     private int special5Cooldown;
 
 
-    protected Robot(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
+    public Robot(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         super(500, 2, 35, 170, 230, 25);
         setSpecial2Cooldown(35);
         setSpecial3Cooldown(40);
@@ -38,22 +38,70 @@ public class Robot extends Hero {
 
     /* Will be worked on later */
     public void specialAtk2() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
     }
 
     /* Will be worked on later */
     public void specialAtk3() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
     }
 
     /* Will be worked on later */
     public void specialAtk4() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
     }
 
     /* Will be worked on later */
     public void specialAtk5() {
+        if(getHitPoints() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 50) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
     }
 
 }

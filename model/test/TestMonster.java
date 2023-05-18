@@ -8,7 +8,7 @@ public class TestMonster extends Monster {
 
     private int myMaxSpecial;
 
-    protected TestMonster() {
+    public TestMonster() {
         /* For Reference */
         //super(theHitPoints,theAtkSpd,theHitChance,theMinDmg,theMaxDmg,theCooldown,theMinHeal,theMaxHeal,theHealChance);
         super(300, 5, 50.0f, 20, 40, 10, 6, 8, 80.0f);
