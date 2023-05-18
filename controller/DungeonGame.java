@@ -3,9 +3,10 @@ import model.*;
 
 public class DungeonGame {
 
-    private Hero myHero;
+    public Hero myHero;
+    public Monster myMonster;
 
-    private DunegeonGame() {
+    private DungeonGame() {
         myHero = new Warrior();
     }
 
