@@ -24,10 +24,39 @@ public class Scientist extends Hero {
 
     /* Will be worked on later */
     public void specialAtk2() {
+        if(getHitChance() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
+
+        getHitChance();
+
+        if(getHitChance() > 75) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
 
     }
     /* Will be worked on later */
     public void specialAtk3() {
+        if(getHitChance() < 0)
+        {
+            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        }
 
+        getHitChance();
+
+        if(getHitChance() > 75) {
+            // Attack successful
+            setHitPoints(getHitPoints() - getMaxDamage());
+        } else { // Will be worked on later, planned to be an error message
+            // Attack failed
+        }
+
+        //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 }

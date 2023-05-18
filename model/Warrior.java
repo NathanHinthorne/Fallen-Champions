@@ -5,7 +5,7 @@ public class Warrior extends Hero{
     private int special2Cooldown;
 
 
-    protected Warrior() {
+    public Warrior() {
         super(350, 4, 45, 120, 160, 20);
         setSpecial2Cooldown(50);
     }
