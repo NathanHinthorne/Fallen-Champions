@@ -49,7 +49,7 @@ public abstract class DungeonCharacter {
         }
 
 
-        if(myHitChance > 75.0f) {
+        if(myHitChance > getHitChance()) {
             // Attack successful
             setHitPoints(getHitPoints() - getMinDamage());
         } else { // Will be worked on later, planned to be an error message
