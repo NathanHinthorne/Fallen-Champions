@@ -2,7 +2,7 @@ package model;
 
 public class HeroFactory {
 
-    Hero myHero;
+    private Hero myHero;
 
     public Hero buildHero(String theValue) {
 

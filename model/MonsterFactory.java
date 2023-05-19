@@ -2,7 +2,7 @@ package model;
 
 public class MonsterFactory {
 
-    Monster myMonster;
+    private Monster myMonster;
 
     public Monster buildMonster(String theValue) {
 
