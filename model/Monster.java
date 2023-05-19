@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Monster extends Character implements Healable {
+public abstract class Monster extends DungeonCharacter implements Healable {
 
     private int minHeal;
 

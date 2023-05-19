@@ -2,7 +2,7 @@ package model;
 
 import java.util.*;
 
-public abstract class Character {
+public abstract class DungeonCharacter {
 
     final static Random MY_RANDOM = new Random();
     public final int MAX_SPECIAL_COOLDOWN = 3;
@@ -16,7 +16,7 @@ public abstract class Character {
     private int mySpecialCooldown;
     private float myHitChance;
 
-    public Character() {
+    public DungeonCharacter() {
         myHitPoints = 10;
         mySpd = 10;
         myLowHitChance = 0.0f;

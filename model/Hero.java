@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Hero extends Character {
+public abstract class Hero extends DungeonCharacter {
 
 
     // should this be protected or public? - Nathan
