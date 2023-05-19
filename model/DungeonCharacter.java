@@ -43,14 +43,13 @@ public abstract class DungeonCharacter {
 
     /* Will be worked on later */
     public int basicAtk() {
-        if(myHitPoints < 0)
+        if(myHitPoints <= 0)
         {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+            throw new IllegalArgumentException("Hit Points cannot be less than or equal to zero");
         }
 
-        getHitChance();
 
-        if(getHitChance() > 75) {
+        if(myHitChance > 75.0f) {
             // Attack successful
             setHitPoints(getHitPoints() - getMinDamage());
         } else { // Will be worked on later, planned to be an error message
