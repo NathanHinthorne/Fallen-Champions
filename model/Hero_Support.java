@@ -1,6 +1,6 @@
 package model;
 
-public class Support extends Hero implements Healable {
+public class Hero_Support extends Hero implements Healable {
 
     private int minHeal;
 
@@ -12,7 +12,7 @@ public class Support extends Hero implements Healable {
 
 
 
-    protected Support() {
+    protected Hero_Support() {
         super(85,4,75,35,80,15);
         setSpecial2Cooldown(15);
 

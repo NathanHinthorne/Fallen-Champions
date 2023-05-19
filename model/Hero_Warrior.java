@@ -1,11 +1,11 @@
 package model;
 
-public class Warrior extends Hero{
+public class Hero_Warrior extends Hero{
 
     private int special2Cooldown;
 
 
-    public Warrior() {
+    public Hero_Warrior() {
         super(350, 4, 45, 120, 160, 20);
         setSpecial2Cooldown(50);
     }

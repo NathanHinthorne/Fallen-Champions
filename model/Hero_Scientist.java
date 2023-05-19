@@ -1,6 +1,6 @@
 package model;
 
-public class Scientist extends Hero {
+public class Hero_Scientist extends Hero {
 
     private int special2Cooldown;
 
@@ -8,7 +8,7 @@ public class Scientist extends Hero {
 
 
 
-    public Scientist(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
+    public Hero_Scientist(/*int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown*/) {
         super(100, 5, 75, 80, 140, 15);
         setSpecial2Cooldown(40);
         setSpecial3Cooldown(50);

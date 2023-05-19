@@ -7,7 +7,7 @@ public class DungeonGame {
     public Monster myMonster;
 
     private DungeonGame() {
-        myHero = new Warrior();
+        myHero = new Hero_Warrior();
     }
 
     public static void main(String[] theArgs) {

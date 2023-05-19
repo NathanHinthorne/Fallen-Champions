@@ -1,9 +1,9 @@
 package model;
 
-public class Warlock extends Monster {
+public class Monster_Warlock extends Monster {
 
 
-    public Warlock() {
+    public Monster_Warlock() {
         super(300, 3, 55, 120, 300, 50, 65, 105, 25);
     }
 

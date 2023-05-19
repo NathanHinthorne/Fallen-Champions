@@ -2,27 +2,27 @@ package model;
 
 public class MonsterFactory {
 
-    public Monster buildMonster(int theValue) {
+    Monster myMonster;
 
-        Monster theMonster = null;
+    public Monster buildMonster(String theValue) {
 
-        if (theValue == 0) {
-            theMonster = new Skeleton();
-        } else if (theValue == 1) {
-            theMonster = new Ogre();
-        } else if (theValue == 2) {
-            theMonster = new Gremlin();
-        } else if (theValue == 3) {
-            theMonster = new Warlock();
+        if (theValue.equalsIgnoreCase("Skeleton")) {
+            myMonster = new Monster_Skeleton();
+        } else if (theValue.equalsIgnoreCase("Ogre")) {
+            myMonster = new Monster_Ogre();
+        } else if (theValue.equalsIgnoreCase("Gremlin")) {
+            myMonster = new Monster_Gremlin();
+        } else if (theValue.equalsIgnoreCase("Warlock")) {
+            myMonster = new Monster_Warlock();
         } else {
             /*
              * Temporary default value of the monster if
-             * theValue is out of range.
+             * theValue doesn't equal.
              */
-            theMonster = new Skeleton();
+            myMonster = new Monster_Skeleton();
         }
 
-        return theMonster;
+        return myMonster;
 
     }
 
