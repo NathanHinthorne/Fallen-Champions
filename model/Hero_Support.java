@@ -25,14 +25,12 @@ public class Hero_Support extends Hero implements Healable {
 
     /* Will be worked on later */
     public void specialAtk2() {
-        if(getHitChance() < 0)
+        if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        getHitChance();
-
-        if(getHitChance() > 75) {
+        if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
             setHitPoints(getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
