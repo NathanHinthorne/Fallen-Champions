@@ -9,7 +9,7 @@ public class Hero_Scientist extends Hero {
 
 
     public Hero_Scientist() {
-        super(100, 5, 75, 80, 140, 15);
+        super(100, 5, 75, 80, 78.5f, 35, 95, 2);
         setSpecial2Cooldown(40);
         setSpecial3Cooldown(50);
     }
