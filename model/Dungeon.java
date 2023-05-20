@@ -6,7 +6,7 @@ import java.util.Random;
 public class Dungeon {
 
     // make non-static if we add difficulty levels
-    public static final double NEW_ROOM_CHANCE = 0.10;
+    public static final double NEW_ROOM_CHANCE = 0.20;
     public static final double EXTENDED_ROOM_CHANCE = 0.70;
     public static final double ENEMY_CHANCE = 0.20;
     public static final double POTION_CHANCE = 0.10;
@@ -24,7 +24,7 @@ public class Dungeon {
     private int myEntranceY;
     private int myExitX;
     private int myExitY;
-    private Set<Pillars> placedPillars = new HashSet();
+    final private Set<Pillars> placedPillars = new HashSet();
 
 
     /**
@@ -143,7 +143,7 @@ public class Dungeon {
                         room.placePotion();
                     }
                     if (Math.random() < PILLAR_CHANCE) {
-                        room.placePillar();
+                        room.placePillar(placedPillars);
                     }
                     if (Math.random() < PIT_CHANCE) {
                         room.placePit();
@@ -293,13 +293,8 @@ public class Dungeon {
 
         //before this method, make sure there are all 4 pillars present within the dungeon
 
-        //TODO check if the entrance and exit are connected and that there are no unreachable rooms
-            //TODO to do this, use an algorithm to trace out every possible path from the entrance until the exit is found
-            //TODO need a condition to determine when every path has been checked
-
-        //TODO pick a random direction to act as forward (as long as forward leads to empty room)
+        //pick a random direction to act as forward (as long as forward leads to empty room)
         isTraversable = traverse(myEntranceX, myEntranceY, Direction.NORTH); //TODO change Direction.NORTH
-
 
         return isTraversable;
     }
@@ -329,11 +324,8 @@ public class Dungeon {
         if (myDungeon[theX][theY].hasExit()) {
             System.out.println("Exit found!");
 
-            return true; // ?? stops all of the method calls? will this one return statement solve the problem?
+            return true; // does this stop all of the method calls? will this one return statement solve the problem?
         }
-
-        // need a base case for unsuccessful?
-
 
         // base case and recursive case
         Room forwardRoom = walk(theX, theY, theForward);

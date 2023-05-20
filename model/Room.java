@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Set;
+
 public class Room {
 
     // static fields for toString
@@ -24,7 +26,7 @@ public class Room {
     private Exit myExit;
     private Monster myMonster;
     private Potion myPotion;
-    private Pillar myPillar;
+    private Pillars myPillar;
     private Pit myPit;
 
 
@@ -100,19 +102,21 @@ public class Room {
             myPotion = new VisionPotion();
         }
     }
-    public void placePillar() {
+    public void placePillar(Set<Pillars> thePlacedPillars) {
         //TODO decide what type of pillar to place
 
-        //TODO determine if the pillar we're about to place is inside a set of placed pillars.
+        //determine if the pillar we're about to place is inside a set of placed pillars.
 
-        if (Math.random() < A_PILLAR_CHANCE)
-            myPillar = new AbstractionPillar();
-        else if (Math.random() < I_PILLAR_CHANCE)
-            myPillar = new InheritancePillar();
-        else if (Math.random() < P_PILLAR_CHANCE)
-            myPillar = new PolymorphismPillar();
-        else {
-            myPillar = new EncapsulationPillar();
+        if (!thePlacedPillars.contains(Pillars.ABSTRACTION)) {
+            myPillar = Pillars.ABSTRACTION;
+        } else if (!thePlacedPillars.contains(Pillars.ENCAPSULATION)) {
+            myPillar = Pillars.ENCAPSULATION;
+        } else if (!thePlacedPillars.contains(Pillars.INHERITANCE)) {
+            myPillar = Pillars.INHERITANCE;
+        } else if (!thePlacedPillars.contains(Pillars.POLYMORPHISM)) {
+            myPillar = Pillars.POLYMORPHISM;
+        } else {
+            System.out.println("Tried to place a new pillar, but all 4 are already in the dungeon!");
         }
     }
     public void placePit() {
