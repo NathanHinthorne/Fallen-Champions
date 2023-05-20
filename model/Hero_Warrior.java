@@ -26,7 +26,7 @@ public class Hero_Warrior extends Hero{
             // Attack successful
             setHitPoints(getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
-            // Attack failed
+            // Attack failedd
         }
     }
 
