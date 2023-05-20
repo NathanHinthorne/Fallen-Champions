@@ -11,7 +11,7 @@ public class TestHero extends Hero {
     public TestHero() {
         /* For Reference */
         //super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
-        super(250, 8, 50, 30, 60, 10);
+        super(250, 8, 50, 50, 50, 20, 70, 10);
         setMyMinSpecial(50);
         setMyMaxSpecial(100);
     }
