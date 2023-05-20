@@ -17,13 +17,13 @@ public abstract class DungeonCharacter {
     private float myHitChance;
 
     public DungeonCharacter() {
-        myHitPoints = 10;
-        mySpd = 10;
-        myLowHitChance = 0.0f;
-        myHighHitChance = 100.0f;
-        myHitChance = 0.0f;
-        myMinDmg = 1;
-        myMaxDmg = 10;
+        setHitPoints(myHitPoints);
+        setSpd(mySpd);
+        setLowHitChance(myLowHitChance);
+        setHighHitChance(myHighHitChance);
+        setHitChance(myHitChance);
+        setMinDmg(myMinDmg);
+        setMaxDmg(myMaxDmg);
 
         myHitChance = generateHitChance(myLowHitChance, myHighHitChance);
     }
@@ -132,6 +132,24 @@ public abstract class DungeonCharacter {
 
     public void setSpecialCooldown(int theCooldown) {
         theCooldown = mySpecialCooldown;
+    }
+
+    public float getLowHitChance() {
+        return myLowHitChance;
+    }
+
+    public void setLowHitChance(float theLowChance) {
+
+        theLowChance = myLowHitChance;
+    }
+
+    public float getHighHitChance() {
+        return myHighHitChance;
+    }
+
+    public void setHighHitChance(float theHighChance) {
+
+        theHighChance = myHighHitChance;
     }
 
 
