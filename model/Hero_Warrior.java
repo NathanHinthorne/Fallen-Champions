@@ -6,7 +6,7 @@ public class Hero_Warrior extends Hero{
 
 
     public Hero_Warrior() {
-        super(350, 4, 45, 120, 160, 20);
+        super(350, 4, 45, 85, 65, 50, 110, 20);
         setSpecial2Cooldown(50);
     }
 
@@ -22,7 +22,6 @@ public class Hero_Warrior extends Hero{
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        getHitChance();
 
         if(getHitChance() > 50) {
             // Attack successful

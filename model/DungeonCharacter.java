@@ -24,8 +24,25 @@ public abstract class DungeonCharacter {
         setHitChance(myHitChance);
         setMinDmg(myMinDmg);
         setMaxDmg(myMaxDmg);
+        setSpecialCooldown(mySpecialCooldown);
 
-        myHitChance = generateHitChance(myLowHitChance, myHighHitChance);
+        myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
+    }
+
+    public DungeonCharacter(int theHitPoints, int theAtkSpd, float theLowHitChance,
+                            float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
+        setHitPoints(theHitPoints);
+        setSpd(theAtkSpd);
+        setLowHitChance(theLowHitChance);
+        setHighHitChance(theHighHitChance);
+        setHitChance(theHitChance);
+        setMinDmg(theMinDmg);
+        setMaxDmg(theMaxDmg);
+        setSpecialCooldown(theCooldown);
+
+        theHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
+
+
     }
 
     public static float generateHitChance(float theLowChance, float theHighChance) {
@@ -93,9 +110,8 @@ public abstract class DungeonCharacter {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        getHitChance();
 
-        if(getHitChance() > 75) {
+        if(myHitChance > getHitChance()) {
             // Attack successful
             setHitPoints(getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
