@@ -4,7 +4,7 @@ public class Monster_Boss extends Monster {
 
 
     public Monster_Boss() {
-        super(1500, 1, 97, 90, 230, 40, 130, 290, 99);
+        super(1500, 1, 97, 99, 98, 126, 500, 1, 99, 150, 85);
     }
 
     public void specialAtk2() {

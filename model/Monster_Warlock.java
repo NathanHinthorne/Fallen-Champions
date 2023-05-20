@@ -5,7 +5,7 @@ public class Monster_Warlock extends Monster {
 
     public Monster_Warlock() {
 
-        super(300, 3, 55, 120, 300, 50, 65, 105, 25);
+        super(300, 3, 55, 96, 56, 60, 125, 15, 65, 200, 20);
     }
 
     public void specialAtk2() {

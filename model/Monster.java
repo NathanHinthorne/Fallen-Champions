@@ -9,14 +9,10 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     double healChance;
 
     // super() is best suited for initializing the fields of the super class. You might want to use that instead. - Nathan
-    protected Monster(int theHitPoints, int theAtkSpd, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
+    protected Monster(int theHitPoints, int theAtkSpd,
+                      float theLowHitChance, float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                  int theMinHeal, int theMaxHeal, float theHealChance) {
-            setHitPoints(theHitPoints);
-            setSpd(theAtkSpd);
-            setHitChance(theHitChance);
-            setMinDmg(theMinDmg);
-            setMaxDmg(theMaxDmg);
-            setSpecialCooldown(theCooldown);
+            super(theHitPoints,theAtkSpd,theLowHitChance,theHighHitChance,theHitChance,theMinDmg,theMaxDmg,theCooldown);
             setMinHeal(theMinHeal);
             setMaxHeal(theMaxHeal);
             setHealChance(theHealChance);
