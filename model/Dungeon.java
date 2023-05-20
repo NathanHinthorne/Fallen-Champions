@@ -1,4 +1,6 @@
 package model;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Random;
 
 public class Dungeon {
@@ -22,7 +24,7 @@ public class Dungeon {
     private int myEntranceY;
     private int myExitX;
     private int myExitY;
-    private Room myCurrRoom;
+    private Set<Pillars> placedPillars = new HashSet();
 
 
     /**
@@ -36,27 +38,49 @@ public class Dungeon {
     public Dungeon(final int theDungeonWidth, final int theDungeonHeight, final int theHeroX, final int theHeroY) {
 
         // initialize fields
-        myDungeonHeight = theDungeonHeight;
-        myDungeonWidth = theDungeonWidth;
-        myHeroX = theHeroX;
-        myHeroY = theHeroY;
+        myDungeonWidth = setDungeonWidth(theDungeonWidth);
+        myDungeonHeight = setDungeonHeight(theDungeonHeight);
+        myHeroX = setHeroX(theHeroX);
+        myHeroY = setHeroY(theHeroY);
         myEntranceX = 0;
         myEntranceY = 0;
         myExitX = 2;
         myExitY = 0;
         myDungeon = new Room[theDungeonWidth][theDungeonHeight];
-        updateCurrRoom();
 
-        // keep generating dungeons until we get one that is traversable
-        do {
-            generateDungeon();
-        } while(!isTraversable());
+        generateDungeon();
+    }
+
+
+    private int setDungeonWidth(int theDungeonWidth) {
+        if (theDungeonWidth <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return theDungeonWidth;
+    }
+    private int setDungeonHeight(int theDungeonHeight) {
+        if (theDungeonHeight <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return theDungeonHeight;
+    }
+    private int setHeroX(int theHeroX) {
+        if (theHeroX <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return theHeroX;
+    }
+    private int setHeroY(int theHeroY) {
+        if (theHeroY <= 0) {
+            throw new IllegalArgumentException();
+        }
+        return theHeroY;
     }
 
     /**
      * Fills the dungeon with rooms and walls
      */
-    private Room[][] generateDungeon() {
+    private void generateDungeon() { //! don't return dungeon
 
         // step 1: fill the dungeon COMPLETELY with walls
         fillWithWalls();
@@ -68,7 +92,10 @@ public class Dungeon {
         addEntrance();
         addExit();
 
-        return myDungeon;
+        // keep generating dungeons until we get one that is traversable
+        while(!isTraversable()) {
+            generateDungeon();
+        }
     }
 
     /**
@@ -109,13 +136,13 @@ public class Dungeon {
 
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
-                    if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon
+                    if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon - probably not
                         room.placeMonster();             //TODO use a list to accomplish this?
                     }
                     if (Math.random() < POTION_CHANCE) {
                         room.placePotion();
                     }
-                    if (Math.random() < PILLAR_CHANCE) { //TODO make each specific pillar class a singleton
+                    if (Math.random() < PILLAR_CHANCE) {
                         room.placePillar();
                     }
                     if (Math.random() < PIT_CHANCE) {
@@ -127,9 +154,9 @@ public class Dungeon {
     }
 
     /**
-     * Adds an exit to the dungeon.
+     * Adds an entrance to the dungeon.
      */
-    private void addExit() {
+    private void addEntrance() {
         int x;
         int y;
 
@@ -146,9 +173,9 @@ public class Dungeon {
     }
 
     /**
-     * Adds an entrance to the dungeon.
+     * Adds an exit to the dungeon.
      */
-    private void addEntrance() {
+    private void addExit() {
         int x;
         int y;
 
@@ -205,7 +232,7 @@ public class Dungeon {
      * @param theY the y coordinate of the room
      * @return the number of walls adjacent to the given room
      */
-    private int numberOfWalls(final int theX, final int theY) {
+    private int numberOfWalls(final int theX, final int theY) { //! refactor for duplicate code after iteration?
 
         int count = 0;
 
@@ -253,7 +280,6 @@ public class Dungeon {
                     "Make sure playerMove() receives one of these:\n" +
                     "NORTH, EAST, SOUTH, WEST");
         }
-        updateCurrRoom();
     }
 
     /**
@@ -272,17 +298,19 @@ public class Dungeon {
             //TODO need a condition to determine when every path has been checked
 
         //TODO pick a random direction to act as forward (as long as forward leads to empty room)
-        traverse(myEntranceX, myEntranceY, Direction.NORTH); //TODO change Direction.NORTH
+        isTraversable = traverse(myEntranceX, myEntranceY, Direction.NORTH); //TODO change Direction.NORTH
+
 
         return isTraversable;
     }
 
 
-    private void traverse(final int theX, final int theY, final Direction theForward) {
+    private boolean traverse(final int theX, final int theY, final Direction theForward) {
 
-        // determine what left and right should be based on forward
         final Direction theRight;
         final Direction theLeft;
+
+        // determine what left and right should be based on forward
         if (theForward == Direction.NORTH) {
             theRight = Direction.EAST;
             theLeft = Direction.WEST;
@@ -301,7 +329,7 @@ public class Dungeon {
         if (myDungeon[theX][theY].hasExit()) {
             System.out.println("Exit found!");
 
-            return;
+            return true; // ?? stops all of the method calls? will this one return statement solve the problem?
         }
 
         // need a base case for unsuccessful?
@@ -322,13 +350,15 @@ public class Dungeon {
         if (!rightRoom.hasWall()) {
             newX = rightRoom.getX();
             newY = rightRoom.getY();
-            traverse(theX, newY, theRight);
+            traverse(newX, newY, theRight);
         }
         if (!leftRoom.hasWall()) {
             newX = leftRoom.getX();
             newY = leftRoom.getY();
-            traverse(theX, newY, theLeft);
+            traverse(newX, newY, theLeft);
         }
+
+        return false; // we did not find an exit
     }
 
     private Room walk(final int theX, final int theY, final Direction dir) {
@@ -350,19 +380,11 @@ public class Dungeon {
     }
 
     /**
-     * Updates the current room based on the hero's position.
-     */
-    private void updateCurrRoom() {
-        // update hero position
-        myCurrRoom = myDungeon[myHeroX][myHeroY];
-    }
-
-    /**
      * Returns a 3x3 grid of rooms centered on the hero.
      *
      * @return a 3x3 grid of rooms centered on the hero
      */
-    public Room[][] getView() {
+    public Room[][] getView() { //! return a string instead?
 
         Room[][] view = new Room[3][3];
 

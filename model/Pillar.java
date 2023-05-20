@@ -1,5 +1,6 @@
 package model;
 
+
 public abstract class Pillar implements Collectable {
 
     //TODO use singleton design pattern to ensure only one pillar of each type exists

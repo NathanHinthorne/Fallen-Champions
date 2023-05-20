@@ -5,7 +5,7 @@ public class Room {
     // static fields for toString
 
     public static final String EMPTY = " ";
-    public static final String MULTIPLE = "M";
+    public static final String MULTIPLE = "m";
 
 
     // make non-static if we add difficulty levels
@@ -103,8 +103,10 @@ public class Room {
     public void placePillar() {
         //TODO decide what type of pillar to place
 
+        //TODO determine if the pillar we're about to place is inside a set of placed pillars.
+
         if (Math.random() < A_PILLAR_CHANCE)
-            myPillar = new AbstractionPillar(); // TODO something is wrong with pillar singletons.
+            myPillar = new AbstractionPillar();
         else if (Math.random() < I_PILLAR_CHANCE)
             myPillar = new InheritancePillar();
         else if (Math.random() < P_PILLAR_CHANCE)
@@ -122,10 +124,10 @@ public class Room {
     }
 
     @Override
-    public String toString() {
+    public String toString() { //! add monster, multiple items (pits)?
         if (hasWall()) {
             return myWall.toString();
-        } else if (hasPotion() && hasPillar()) {
+        } else if (hasPotion() && hasPillar() || hasPotion() && hasPit()) { // add more cases for multiple
             return MULTIPLE; // doesn't make sense in this context to make a class for multiple
         } else if (hasPotion()) {
             return myPotion.toString();
@@ -137,12 +139,12 @@ public class Room {
             return myExit.toString();
         } else if (hasEntrance()) {
             return myEntrance.toString();
+        } else if (hasMonster()) {
+            return myMonster.toString();
         } else {
             return EMPTY; // doesn't make sense in this context to make a class for empty
         }
 
     }
-
-
 
 }
