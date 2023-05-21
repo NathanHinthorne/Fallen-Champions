@@ -17,6 +17,20 @@ public class DungeonGame {
     public Monster myMonster;
 
     private DungeonGame() {
+
+
+        /* These Hero and Monster factory uses are temporary,
+         * to see if they work properly.
+         */
+        myHero = HERO_FACTORY.buildHero("");
+        myMonster = MONSTER_FACTORY.buildMonster("");
+
+
+    }
+
+
+
+    public static void main(String[] theArgs) {
         SQLiteDataSource ds = null;
 
         try {
@@ -41,18 +55,6 @@ public class DungeonGame {
             System.exit( 0 );
         }
 
-        /* These Hero and Monster factory uses are temporary,
-         * to see if they work properly.
-         */
-        myHero = HERO_FACTORY.buildHero("");
-        myMonster = MONSTER_FACTORY.buildMonster("");
-
-
-    }
-
-
-
-    public static void main(String[] theArgs) {
         System.out.println("GAME CREATED");
     }
 
