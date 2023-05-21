@@ -27,6 +27,10 @@ public class DungeonGame {
             System.exit(0);
         }
 
+        String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
+                "MONSTER NAME NOT NULL, " +
+                "ANSWER TEXT NOT NULL )";
+
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
          */
