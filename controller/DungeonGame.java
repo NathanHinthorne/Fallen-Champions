@@ -22,8 +22,8 @@ public class DungeonGame {
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
          */
-        myHero = HERO_FACTORY.buildHero("");
-        myMonster = MONSTER_FACTORY.buildMonster("");
+        myHero = HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
+        myMonster = MONSTER_FACTORY.buildMonster(MonsterTypes.SKELETON);
 
 
     }

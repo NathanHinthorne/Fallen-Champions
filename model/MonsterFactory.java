@@ -4,23 +4,26 @@ public class MonsterFactory {
 
     private Monster myMonster;
 
-    public Monster buildMonster(String theValue) {
+    public Monster buildMonster(MonsterTypes theValue) {
 
-        if (theValue.equalsIgnoreCase("Skeleton")) {
+        if (theValue == MonsterTypes.SKELETON) {
             myMonster = new Monster_Skeleton();
-        } else if (theValue.equalsIgnoreCase("Ogre")) {
+        } else if (theValue == MonsterTypes.OGRE) {
             myMonster = new Monster_Ogre();
-        } else if (theValue.equalsIgnoreCase("Gremlin")) {
+        } else if (theValue == MonsterTypes.GREMLIN) {
             myMonster = new Monster_Gremlin();
-        } else if (theValue.equalsIgnoreCase("Warlock")) {
+        } else if (theValue == MonsterTypes.WARLOCK) {
             myMonster = new Monster_Warlock();
-        } else {
-            /*
-             * Temporary default value of the monster if
-             * theValue doesn't equal.
-             */
+        } else if (theValue == MonsterTypes.BOSS) {
+            myMonster = new Monster_Boss();
+        }
+
+        /* TEMPORARY DEFAULT VALUE
+        else {
+
             myMonster = new Monster_Skeleton();
         }
+        */
 
         return myMonster;
 

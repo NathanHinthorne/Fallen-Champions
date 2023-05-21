@@ -4,24 +4,18 @@ public class HeroFactory {
 
     private Hero myHero;
 
-    public Hero buildHero(String theValue) {
+    public Hero buildHero(HeroTypes theValue) {
 
-        if (theValue.equalsIgnoreCase("Enforcer")) {
+        if (theValue == HeroTypes.ENFORCER) {
             myHero = new Hero_Enforcer();
-        } else if (theValue.equalsIgnoreCase("Robot")) {
+        } else if (theValue == HeroTypes.ROBOT) {
             myHero = new Hero_Robot();
-        } else if (theValue.equalsIgnoreCase("Scientist")) {
+        } else if (theValue == HeroTypes.SCIENTIST) {
             myHero = new Hero_Scientist();
-        } else if (theValue.equalsIgnoreCase("Warrior")) {
-            myHero = new Hero_Warrior();
-        } else if (theValue.equalsIgnoreCase("Support")) {
+        } else if (theValue == HeroTypes.WARRIOR) {
+            myHero = new Hero_Scientist();
+        } else if (theValue == HeroTypes.SUPPORT) {
             myHero = new Hero_Support();
-        } else {
-            /*
-             * Temporary default value of the hero if
-             * theValue doesn't equal.
-             */
-            myHero = new Hero_Warrior();
         }
 
         return myHero;
