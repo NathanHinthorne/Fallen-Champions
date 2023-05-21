@@ -79,7 +79,8 @@ public class Room {
     }
 
 
-    // most 'place' methods have factors determining which type of object to place
+    // 'place' methods have factors determining which type of object to place
+    // the logic for *when* to place the object is found in the Dungeon class
     public void placeWall() {
         myWall = new Wall();
     }
