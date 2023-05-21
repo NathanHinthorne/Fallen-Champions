@@ -29,7 +29,17 @@ public class DungeonGame {
 
         String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
                 "MONSTER NAME NOT NULL, " +
-                "ANSWER TEXT NOT NULL )";
+                "MONSTER TYPE NOT NULL)";
+
+
+        try  ( Connection conn = ds.getConnection();
+               Statement stmt = conn.createStatement(); ) {
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit( 0 );
+        }
 
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
