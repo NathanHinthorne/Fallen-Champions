@@ -42,15 +42,48 @@ public class DungeonGame {
         }
 
         String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
-                "MONSTER NAME NOT NULL, " +
-                "MONSTER TYPE NOT NULL)";
+                "TYPE NOT NULL )";
 
 
-        try  ( Connection conn = ds.getConnection();
-               Statement stmt = conn.createStatement(); ) {
-
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement();) {
+            int rv = stmt.executeUpdate(query);
+            System.out.println("database executed successfully: " + rv);
 
         } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        // Temporary to test DB functionality
+        String query1 = "INSERT INTO monsters ( TYPE ) VALUES ( myMonster )";
+        String query2 = "INSERT INTO questions ( TYPE ) VALUES ( myMonster )";
+
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement();) {
+            int rv = stmt.executeUpdate(query1);
+            System.out.println("database executed successfully: " + rv);
+
+            rv = stmt.executeUpdate(query2);
+            System.out.println("database executed successfully: " + rv);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        query = "SELECT * FROM monsters";
+
+        try ( Connection conn = ds.getConnection();
+              Statement stmt = conn.createStatement(); ) {
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while ( rs.next() ) {
+                String monster = rs.getString( "TYPE" );
+
+                System.out.println( "Result: Monster = " + monster );
+            }
+        } catch ( SQLException e ) {
             e.printStackTrace();
             System.exit( 0 );
         }
