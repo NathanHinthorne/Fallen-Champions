@@ -49,6 +49,7 @@ public class Hero_Enforcer extends Hero {
             setHitPoints(getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
+            System.out.println("Attack Failed!");
         }
 
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
