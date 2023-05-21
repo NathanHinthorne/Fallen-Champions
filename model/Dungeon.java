@@ -304,6 +304,8 @@ public class Dungeon {
         //        playerMove(Direction.SOUTH);
         //    case "d":
         //        playerMove(Direction.WEST);
+        //    default:
+        //        System.out.println("Wrong Key, please select W,A,S,D");
         //}
 
         myScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
