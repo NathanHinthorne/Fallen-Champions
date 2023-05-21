@@ -1,6 +1,11 @@
 package model;
 import java.util.*;
 
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
 public class Dungeon {
 
     // make non-static if we add difficulty levels
@@ -24,6 +29,8 @@ public class Dungeon {
     private int myExitY;
     final private Set<Pillars> myPlacedPillars;
     final private List<Monster> myUnplacedMonsters;
+
+    Scene myScene;
 
 
     /**
@@ -287,17 +294,34 @@ public class Dungeon {
         Scanner sn = new Scanner(System.in);
         String inp;
 
-        inp = sn.next();
-        switch(inp) {
-            case "w":
-                playerMove(Direction.NORTH);
-            case "a":
-                playerMove(Direction.EAST);
-            case "s":
-                playerMove(Direction.SOUTH);
-            case "d":
-                playerMove(Direction.WEST);
-        }
+       //inp = sn.next();
+        //switch(inp) {
+        //    case "w":
+        //        playerMove(Direction.NORTH);
+        //    case "a":
+        //        playerMove(Direction.EAST);
+        //    case "s":
+        //        playerMove(Direction.SOUTH);
+        //    case "d":
+        //        playerMove(Direction.WEST);
+        //}
+
+        myScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode() == KeyCode.W) {
+                    playerMove(Direction.NORTH);
+                } else if (keyEvent.getCode() == KeyCode.A) {
+                    playerMove(Direction.EAST);
+                } else if (keyEvent.getCode() == KeyCode.S) {
+                    playerMove(Direction.SOUTH);
+                } else if (keyEvent.getCode() == KeyCode.D) {
+                    playerMove(Direction.WEST);
+                } else {
+                    System.out.println("Wrong Key, please select W,A,S,D");
+                }
+            }
+        });
     }
 
     /**
