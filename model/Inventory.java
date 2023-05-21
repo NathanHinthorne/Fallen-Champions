@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Inventory {
 
     private ArrayList<Collectable> myInventory;
-    private ArrayList<Pillar> myPillars;
+    private ArrayList<Character> myPillars;
     private int myPillarCount;
 
     // Custom inventory size based on class (maybe)
     public Inventory(int theSize) {
         myInventory = new ArrayList<Collectable>(theSize);
-        myPillars = new ArrayList<Pillar>(4);
+        myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
     }
 
@@ -19,17 +19,36 @@ public class Inventory {
     // PILLARS DO NOT AFFECT INVENTORY SIZE
     public Inventory() {
         myInventory = new ArrayList<Collectable>(4);
-        myPillars = new ArrayList<Pillar>(4);
+        myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
     }
 
     public void addToInventory(Collectable theItem) {
+
         myInventory.add(theItem);
     }
 
-    public void addPillar(Pillar thePillar) {
-        myPillars.add(thePillar);
+    /**
+     * Storing pillars in a separate ArrayList allows the
+     * player to carry usable items separately for a more
+     * fair inventory system.
+     *
+     * @param thePillar The pillar that was picked up by the player
+     *                  and will be stored in the ArrayList.
+     */
+    public void addPillar(Pillars thePillar) {
+
         myPillarCount++;
+        if (thePillar == Pillars.ABSTRACTION) {
+            myPillars.add('A');
+        } else if (thePillar == Pillars.INHERITANCE) {
+            myPillars.add('I');
+        } else if (thePillar == Pillars.ENCAPSULATION) {
+            myPillars.add('E');
+        } else if (thePillar == Pillars.POLYMORPHISM) {
+            myPillars.add('P');
+        }
+
     }
 
     /* When an item (potion) is used, it is consumed */
@@ -38,7 +57,7 @@ public class Inventory {
     }
 
     /* This will be used to check whether or not the
-     * player has every pillar or not.
+     * player has every pillar.
      */
     public boolean hasAllPillars() {
         if (myPillarCount == 4) {
