@@ -283,6 +283,23 @@ public class Dungeon {
         }
     }
 
+    public void movePlayer() {
+        Scanner sn = new Scanner(System.in);
+        String inp;
+
+        inp = sn.next();
+        switch(inp) {
+            case "w":
+                playerMove(Direction.NORTH);
+            case "a":
+                playerMove(Direction.EAST);
+            case "s":
+                playerMove(Direction.SOUTH);
+            case "d":
+                playerMove(Direction.WEST);
+        }
+    }
+
     /**
      * Checks if the dungeon is traversable.
      *
