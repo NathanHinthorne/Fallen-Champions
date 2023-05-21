@@ -5,6 +5,17 @@ public class Monster_Ogre extends Monster {
 
     public Monster_Ogre() {
 
-        super(125,6,65,85,75,65,85,15,75, 105, 35);
+        super(125,
+                6,
+                65,
+                85,
+                75,
+                65,
+                85,
+                15,
+                75,
+                105,
+                35,
+                MonsterTypes.OGRE);
     }
 }

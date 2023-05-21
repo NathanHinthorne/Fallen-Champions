@@ -13,7 +13,7 @@ public class Hero_Support extends Hero implements Healable {
 
 
     protected Hero_Support() {
-        super(85,4,35,75,55,35, 85, 3);
+        super(85,4,35,75,55,35, 85, 3, HeroTypes.SUPPORT);
         setSpecial2Cooldown(15);
 
     }

@@ -12,7 +12,7 @@ public class Hero_Robot extends Hero {
 
 
     public Hero_Robot() {
-        super(500, 2, 35, 75, 55, 105, 165, 25);
+        super(500, 2, 35, 75, 55, 105, 165, 25, HeroTypes.ROBOT);
         setSpecial2Cooldown(35);
         setSpecial3Cooldown(40);
         setSpecial4Cooldown(55);

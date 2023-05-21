@@ -159,6 +159,8 @@ public abstract class DungeonCharacter {
         theLowChance = myLowHitChance;
     }
 
+
+
     public float getHighHitChance() {
         return myHighHitChance;
     }
