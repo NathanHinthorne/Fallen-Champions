@@ -1,7 +1,5 @@
 package model;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Random;
+import java.util.*;
 
 public class Dungeon {
 
@@ -24,7 +22,8 @@ public class Dungeon {
     private int myEntranceY;
     private int myExitX;
     private int myExitY;
-    final private Set<Pillars> placedPillars = new HashSet();
+    final private Set<Pillars> myPlacedPillars;
+    final private List<Monster> myUnplacedMonsters;
 
 
     /**
@@ -47,6 +46,8 @@ public class Dungeon {
         myExitX = 2;
         myExitY = 0;
         myDungeon = new Room[theDungeonWidth][theDungeonHeight];
+        myPlacedPillars = new HashSet<Pillars>();
+        myUnplacedMonsters = new ArrayList<Monster>();
 
         generateDungeon();
     }
@@ -143,7 +144,7 @@ public class Dungeon {
                         room.placePotion();
                     }
                     if (Math.random() < PILLAR_CHANCE) {
-                        room.placePillar(placedPillars);
+                        room.placePillar(myPlacedPillars);
                     }
                     if (Math.random() < PIT_CHANCE) {
                         room.placePit();
