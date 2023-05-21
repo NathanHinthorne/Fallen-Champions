@@ -3,9 +3,7 @@ package model;
 public abstract class Hero extends DungeonCharacter {
 
 
-    // should this be protected or public? - Nathan
-    // should the constructor just be calling super() with the parameters of super() containing the given fields? - Nathan
-
+    // The hero type
     private HeroTypes myType;
 
     protected Hero(int theHitPoints, int theAtkSpd,
@@ -16,10 +14,18 @@ public abstract class Hero extends DungeonCharacter {
         setType(theType);
     }
 
+    /**
+     * Set the type of hero
+     * @param theVal the hero type to set
+     */
     public void setType(HeroTypes theVal) {
         myType = theVal;
     }
 
+    /**
+     * Gets the hero type
+     * @return the hero type
+     */
     public HeroTypes getType() {
         return myType;
     }

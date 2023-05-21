@@ -45,10 +45,19 @@ public abstract class DungeonCharacter {
 
     }
 
+    /**
+     * Generates the hit chance
+     * @param theLowChance the low chance
+     * @param theHighChance the high chance
+     * @return the hit chance
+     */
     public static float generateHitChance(float theLowChance, float theHighChance) {
         return theLowChance + MY_RANDOM.nextFloat(theHighChance - theLowChance + 1);
     }
 
+    /**
+     * Allows hero and monster to take turns
+     */
     public void takeTurn() {
         // I don't all that will be in here yet, but it will contain all the logic for the turn
         // We at least know the cooldown should be decremented
@@ -58,7 +67,10 @@ public abstract class DungeonCharacter {
         }
     }
 
-    /* Will be worked on later */
+    /**
+     * Allows for the hero or monster to attack
+     * @return the basic attack
+     */
     public int basicAtk() {
         if(myHitPoints <= 0)
         {
@@ -71,27 +83,48 @@ public abstract class DungeonCharacter {
             setHitPoints(getHitPoints() - getMinDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
+            System.out.println("Attack Failed!");
         }
 
         return myMinDmg;
     }
 
+    /**
+     * Gets the minimum hit damage
+     * @return the hit damage
+     */
     public int getMinDamage() {
         return myMinDmg;
     }
 
+    /**
+     * The the Mon Damage
+     * @param theDmg the damage to set
+     */
     public void setMinDmg(int theDmg) {
         theDmg = myMinDmg;
     }
 
+    /**
+     * Gets the maximum damage
+     * @return the maximum damage
+     */
     public int getMaxDamage() {
         return myMaxDmg;
     }
 
+    /**
+     * Gets the speed of the character
+     * @return the character speed
+     */
     public int getSpd() {
         return mySpd;
     }
 
+    /**
+     * Set the character speed
+     * @param theSpd the characer speed
+     */
     public void setSpd(int theSpd) {
         if(theSpd < 0 || theSpd > 1000) {
             throw new IllegalArgumentException("Attack Speed cannot be less than 0 or greater than 500.");
@@ -99,11 +132,18 @@ public abstract class DungeonCharacter {
         theSpd = mySpd;
     }
 
+    /**
+     * Set the maximum damage
+     * @param theDmg the damage to set
+     */
     public void setMaxDmg(int theDmg) {
         theDmg = myMaxDmg;
     }
 
-    /* Will be worked on later */
+    /**
+     * Allows the character to summon their special attack
+     * @return the special attack
+     */
     public int specialAtk() {
         if(myHitPoints < 0)
         {
@@ -116,25 +156,43 @@ public abstract class DungeonCharacter {
             setHitPoints(getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
+            System.out.println("Attack Failed!");
         }
 
         mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
 
         return myMaxDmg;
     }
+
+    /**
+     * Gets the hit points
+     * @return the hit points
+     */
     public int getHitPoints() {
         return myHitPoints;
     }
 
+    /**
+     * Gets the hit chance
+     * @return the hit chance
+     */
     public float getHitChance() {
         return myHitChance;
     }
 
+    /**
+     * Sets the hit chance
+     * @param theChance the hit chance
+     */
     public void setHitChance(float theChance) {
 
         theChance = myHitChance;
     }
 
+    /**
+     * Sets the hit points
+     * @param hp the hit points
+     */
     public void setHitPoints(int hp) {
         if(hp < 0) { // Will need to be looked at later
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -142,29 +200,51 @@ public abstract class DungeonCharacter {
         hp = myHitPoints;
     }
 
+    /**
+     * Gets the special cooldown
+     * @return the special cooldown
+     */
     public int getSpecialCooldown() {
         return mySpecialCooldown;
     }
 
+    /**
+     * Sets the special cooldown
+     * @param theCooldown the special cooldown
+     */
     public void setSpecialCooldown(int theCooldown) {
         theCooldown = mySpecialCooldown;
     }
 
+    /**
+     * Gets the low hit chance
+     * @return the low hit chance
+     */
     public float getLowHitChance() {
         return myLowHitChance;
     }
 
+    /**
+     * Sets the low hit chance
+     * @param theLowChance the low hit chance
+     */
     public void setLowHitChance(float theLowChance) {
 
         theLowChance = myLowHitChance;
     }
 
-
-
+    /**
+     * Gets the high hit chance
+     * @return the high hit chance
+     */
     public float getHighHitChance() {
         return myHighHitChance;
     }
 
+    /**
+     * Sets the high hit chance
+     * @param theHighChance the high hit chance
+     */
     public void setHighHitChance(float theHighChance) {
 
         theHighChance = myHighHitChance;

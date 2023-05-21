@@ -290,6 +290,9 @@ public class Dungeon {
         }
     }
 
+    /**
+     * Allows the player to move into a specified direction
+     */
     public void movePlayer() {
         Scanner sn = new Scanner(System.in);
         String inp;
