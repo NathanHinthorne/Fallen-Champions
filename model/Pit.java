@@ -1,6 +1,11 @@
 package model;
 
-public class Pit {
+import java.util.Random;
+
+public class Pit extends DungeonCharacter {
+
+    final static Random MY_RANDOM = new Random();
+
 
     private boolean myIsVisible;
 
@@ -13,10 +18,20 @@ public class Pit {
         myIsVisible = false;
     }
 
+    public static int generateNewHealth(int theLowHealth, int theHighHealth) {
+        return theLowHealth + MY_RANDOM.nextInt(theHighHealth - theLowHealth + 1);
+    }
+
     public void fall() {
         // TODO make hero lose health
 
         myIsVisible = true;
+
+        int theLowHealth = 20;
+        int theHighHealth = 80;
+
+        int fallHealth = generateNewHealth(theLowHealth, theHighHealth);
+        setHitPoints(getHitPoints() - fallHealth);
     }
 
     public String toString() {
