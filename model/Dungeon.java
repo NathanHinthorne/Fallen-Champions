@@ -1,10 +1,10 @@
 package model;
 import java.util.*;
 
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+//import javafx.event.EventHandler;
+//import javafx.scene.Scene;
+//import javafx.scene.input.KeyCode;
+//import javafx.scene.input.KeyEvent;
 
 public class Dungeon {
 
@@ -16,6 +16,8 @@ public class Dungeon {
     public static final double PILLAR_CHANCE = 0.01;
     public static final double PIT_CHANCE = 0.10;
     public static final Random rand = new Random();
+    private static Dungeon thisDungeon; // for singleton
+
 
     // fields
     final private Room[][] myDungeon;
@@ -28,9 +30,9 @@ public class Dungeon {
     private int myExitX;
     private int myExitY;
     final private Set<Pillars> myPlacedPillars;
-    final private List<Monster> myUnplacedMonsters;
+    final private Queue<Monster> myUnplacedMonsters;
 
-    Scene myScene;
+//    Scene myScene;
 
 
     /**
@@ -54,10 +56,21 @@ public class Dungeon {
         myExitY = 0;
         myDungeon = new Room[theDungeonWidth][theDungeonHeight];
         myPlacedPillars = new HashSet<Pillars>();
-        myUnplacedMonsters = new ArrayList<Monster>();
+        myUnplacedMonsters = new LinkedList<Monster>();
 
         generateDungeon();
     }
+
+    /**
+     * Gives the single instance of dungeon
+     *
+     * @return The dungeon
+     */
+//    public static Dungeon getDungeon() {
+//        if (thisDungeon != null) {
+//            thisDungeon = new Dungeon();
+//        }
+//    }
 
 
     private int setDungeonWidth(int theDungeonWidth) {
@@ -145,7 +158,7 @@ public class Dungeon {
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
                     if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon - probably not
-                        room.placeMonster();             //TODO use a list to accomplish this?
+                        room.placeMonster(myUnplacedMonsters);             //TODO use a list to accomplish this?
                     }
                     if (Math.random() < POTION_CHANCE) {
                         room.placePotion();
@@ -292,10 +305,28 @@ public class Dungeon {
 
     /**
      * Allows the player to move into a specified direction
+     *
+     * @param dir the direction to move the player
      */
-    public void movePlayer() {
-        Scanner sn = new Scanner(System.in);
-        String inp;
+    public void movePlayer(Direction dir) {
+
+        if (dir == Direction.NORTH) {
+            myHeroY--;
+        } else if (dir == Direction.EAST) {
+            myHeroX++;
+        } else if (dir == Direction.SOUTH) {
+            myHeroY++;
+        } else if (dir == Direction.WEST) {
+            myHeroX--;
+        } else {
+            System.out.println("Invalid direction was given.\n" +
+                    "Make sure movePlayer() receives one of these:\n" +
+                    "NORTH, EAST, SOUTH, WEST");
+        }
+    }
+
+//        Scanner sn = new Scanner(System.in);
+//        String inp;
 
        //inp = sn.next();
         //switch(inp) {
@@ -311,23 +342,23 @@ public class Dungeon {
         //        System.out.println("Wrong Key, please select W,A,S,D");
         //}
 
-        myScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.W) {
-                    playerMove(Direction.NORTH);
-                } else if (keyEvent.getCode() == KeyCode.A) {
-                    playerMove(Direction.EAST);
-                } else if (keyEvent.getCode() == KeyCode.S) {
-                    playerMove(Direction.SOUTH);
-                } else if (keyEvent.getCode() == KeyCode.D) {
-                    playerMove(Direction.WEST);
-                } else {
-                    System.out.println("Wrong Key, please select W,A,S,D");
-                }
-            }
-        });
-    }
+//        myScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent keyEvent) {
+//                if(keyEvent.getCode() == KeyCode.W) {
+//                    playerMove(Direction.NORTH);
+//                } else if (keyEvent.getCode() == KeyCode.A) {
+//                    playerMove(Direction.EAST);
+//                } else if (keyEvent.getCode() == KeyCode.S) {
+//                    playerMove(Direction.SOUTH);
+//                } else if (keyEvent.getCode() == KeyCode.D) {
+//                    playerMove(Direction.WEST);
+//                } else {
+//                    System.out.println("Wrong Key, please select W,A,S,D");
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Checks if the dungeon is traversable.
@@ -362,7 +393,7 @@ public class Dungeon {
         } else if (theForward == Direction.SOUTH) {
             theRight = Direction.WEST;
             theLeft = Direction.EAST;
-        } else { // forward is west
+        } else { // forward must be west
             theRight = Direction.NORTH;
             theLeft = Direction.SOUTH;
         }

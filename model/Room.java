@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 public class Room {
@@ -90,9 +92,9 @@ public class Room {
     public void placeExit() {
         myExit = new Exit();
     } //TODO make exit a singleton
-    public void placeMonster() {
-        //TODO read from SQLite to determine what monster to place next
-        //TODO to create a new monster, access the monster factory
+    public void placeMonster(Queue<Monster> theUnplacedMonsters) {
+        //read from myMonsters to determine which monster to place
+        myMonster = theUnplacedMonsters.remove();
     }
     public void placePotion() {
 

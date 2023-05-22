@@ -5,6 +5,6 @@ public enum MonsterTypes {
     OGRE,
     GREMLIN,
     WARLOCK,
-    BOSS;
+    BOSS
 
 }
