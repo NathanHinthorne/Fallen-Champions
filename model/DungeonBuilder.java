@@ -1,5 +1,5 @@
 package model;
 
 public interface DungeonBuilder {
-    public void buildDungeon();
+    public void buildDungeon(Dungeon dungeon);
 }

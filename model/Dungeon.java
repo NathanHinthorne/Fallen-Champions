@@ -43,7 +43,8 @@ public class Dungeon {
      * @param theHeroX the starting x position of the hero
      * @param theHeroY the starting y position of the hero
      */
-    public Dungeon(final int theDungeonWidth, final int theDungeonHeight, final int theHeroX, final int theHeroY) {
+    public Dungeon(final DungeonBuilder theDungeonBuilder, final int theDungeonWidth,
+                   final int theDungeonHeight, final int theHeroX, final int theHeroY) {
 
         // initialize fields
         myDungeonWidth = setDungeonWidth(theDungeonWidth);
@@ -58,9 +59,14 @@ public class Dungeon {
         myPlacedPillars = new HashSet<Pillars>();
         myUnplacedMonsters = new LinkedList<Monster>();
 
+        // build the dungeon
+        theDungeonBuilder.buildDungeon(this);
+
+        // generate the dungeon (put inside buildDungeon?) don't call it twice
         generateDungeon();
     }
 
+    //TODO for the singleton if needed
     /**
      * Gives the single instance of dungeon
      *
@@ -71,6 +77,27 @@ public class Dungeon {
 //            thisDungeon = new Dungeon();
 //        }
 //    }
+
+    // does "theDungeonBuilder.buildDungeon(this)" know to look in
+    // this inner class to find the buildDungeon method?
+    public static class SmallDungeonBuilder implements DungeonBuilder { // put parameters to the Dungeon constructor inside here?
+        @Override
+        public void buildDungeon(Dungeon dungeon) {
+
+        }
+    }
+    public static class MediumDungeonBuilder implements DungeonBuilder {
+        @Override
+        public void buildDungeon(Dungeon dungeon) {
+
+        }
+    }
+    public static class LargeDungeonBuilder implements DungeonBuilder {
+        @Override
+        public void buildDungeon(Dungeon dungeon) {
+
+        }
+    }
 
 
     private int setDungeonWidth(int theDungeonWidth) {
@@ -141,9 +168,10 @@ public class Dungeon {
 
                 Room room = myDungeon[y][y];
 
-                //TODO Two choices to determine where to place room
+                //TODO Three choices to determine where to place room
                 // 1. perlin noise
                 // 2. simple if statements like below
+                // 3. recursive method
                 int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
                 if (numberOfEmptyRooms == 0) {
                     if (Math.random() < NEW_ROOM_CHANCE) {

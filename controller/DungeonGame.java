@@ -18,6 +18,9 @@ public class DungeonGame {
 
     private DungeonGame() {
 
+        // test the dungeon builder - Nathan
+        Dungeon theDungeon = new Dungeon(new Dungeon.SmallDungeonBuilder());
+
 
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
