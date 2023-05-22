@@ -19,6 +19,9 @@ public class Monster_Warlock extends Monster {
                 MonsterTypes.WARLOCK);
     }
 
+    /**
+     * Second special Attack for Monster Boss
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {

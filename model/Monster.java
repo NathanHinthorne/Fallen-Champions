@@ -1,13 +1,13 @@
 package model;
 
 public abstract class Monster extends DungeonCharacter implements Healable {
-
+    // The minimum heal amount
     private int minHeal;
-
+    // The maximum heal amount
     private int maxHeal;
-
+    // The Heal Chance
     double healChance;
-
+    // The Monster type
     private MonsterTypes myType;
 
     // super() is best suited for initializing the fields of the super class. You might want to use that instead. - Nathan
@@ -21,39 +21,74 @@ public abstract class Monster extends DungeonCharacter implements Healable {
             setHealChance(theHealChance);
     }
 
+    /**
+     * Get the min heal
+     * @return the min heal
+     */
     public int getMinHeal() {
         return minHeal;
     }
 
+    /**
+     * Sets the min heal
+     * @param theHeal the min heal
+     */
     public void setMinHeal(int theHeal) {
         theHeal = minHeal;
     }
 
+    /**
+     * Gets the max heal
+     * @return the max heal
+     */
     public int getMaxHeal() {
         return maxHeal;
     }
 
+    /**
+     * Sets the max heal
+     * @param theHeal the max heal
+     */
     public void setMaxHeal(int theHeal) {
         theHeal = maxHeal;
     }
 
+    /**
+     * Gets the heal chance
+     * @return the heal chance
+     */
     public double getHealChance() {
         return healChance;
     }
 
+    /**
+     * Sets the heal chance
+     * @param theChance the heal chance
+     */
     public void setHealChance(double theChance) {
         theChance = healChance;
     }
 
+    /**
+     * Heal the monster
+     */
     public void heal() {
         //TODO heal the monster by increasing hp determined by the healChance
 
     }
 
+    /**
+     * Sets the type of monster
+     * @param theVal the monster type
+     */
     public void setType(MonsterTypes theVal) {
         myType = theVal;
     }
 
+    /**
+     * Gets the monster type
+     * @return the monster type
+     */
     public MonsterTypes getType() {
         return myType;
     }

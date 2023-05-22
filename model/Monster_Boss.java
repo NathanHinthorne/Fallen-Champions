@@ -18,6 +18,9 @@ public class Monster_Boss extends Monster {
                 MonsterTypes.BOSS);
     }
 
+    /**
+     * Second special attack for Monster Boss
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {
@@ -34,7 +37,9 @@ public class Monster_Boss extends Monster {
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
-    /* Will be worked on later */
+    /**
+     * Third special attack for Monster Boss
+     */
     public void specialAtk3() {
         if(getHitPoints() <= 0)
         {
@@ -51,7 +56,9 @@ public class Monster_Boss extends Monster {
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
-    /* Will be worked on later */
+    /**
+     * Fourth Special Attack for Mobster Boss
+     */
     public void specialAtk4() {
         if(getHitPoints() <= 0)
         {
@@ -68,7 +75,6 @@ public class Monster_Boss extends Monster {
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
-    /* Will be worked on later */
     public void specialAtk5() {
         if(getHitPoints() <= 0)
         {
