@@ -4,6 +4,11 @@ public class MonsterFactory {
 
     private Monster myMonster;
 
+    /**
+     * Builds the monster
+     * @param theValue the monster to build
+     * @return the built monster
+     */
     public Monster buildMonster(MonsterTypes theValue) {
 
         if (theValue == MonsterTypes.SKELETON) {
