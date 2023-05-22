@@ -1,9 +1,9 @@
 package model;
 
 public class Hero_Scientist extends Hero {
-
+    // The second cooldown
     private int special2Cooldown;
-
+    // The thirs cooldown
     private int special3Cooldown;
 
 
@@ -14,15 +14,25 @@ public class Hero_Scientist extends Hero {
         setSpecial3Cooldown(50);
     }
 
+    /**
+     * Gets the second special cooldown
+     * @param thespecial2Cooldown the cooldown
+     */
     public void setSpecial2Cooldown(int thespecial2Cooldown) {
         thespecial2Cooldown = special2Cooldown;
     }
 
+    /**
+     * Gets the third special cooldown
+     * @param thespecial3Cooldown the cooldown
+     */
     public void setSpecial3Cooldown(int thespecial3Cooldown) {
         thespecial3Cooldown = special3Cooldown;
     }
 
-    /* Will be worked on later */
+    /**
+     * Teh second special attack
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {
@@ -39,7 +49,10 @@ public class Hero_Scientist extends Hero {
         //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
 
     }
-    /* Will be worked on later */
+
+    /**
+     * The third special attack
+     */
     public void specialAtk3() {
         if(getHitPoints() <= 0)
         {
