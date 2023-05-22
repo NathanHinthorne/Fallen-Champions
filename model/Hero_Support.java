@@ -42,8 +42,14 @@ public class Hero_Support extends Hero implements Healable {
         //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
+    public static int generateHealChance(int theLowChance, int theHighChance) {
+        return theLowChance + MY_RANDOM.nextInt(theHighChance - theLowChance + 1);
+    }
+
     @Override
     public void heal() {
         //TODO heal the support hero
+        int healAmt = generateHealChance(minHeal, maxHeal);
+        setHitPoints(healAmt + getHitPoints());
     }
 }

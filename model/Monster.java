@@ -69,12 +69,17 @@ public abstract class Monster extends DungeonCharacter implements Healable {
         theChance = healChance;
     }
 
+    public static int generateHealChance(int theLowChance, int theHighChance) {
+        return theLowChance + MY_RANDOM.nextInt(theHighChance - theLowChance + 1);
+    }
+
     /**
      * Heal the monster
      */
     public void heal() {
         //TODO heal the monster by increasing hp determined by the healChance
-
+        int healAmt = generateHealChance(minHeal, maxHeal);
+        setHitPoints(healAmt + getHitPoints());
     }
 
     /**
