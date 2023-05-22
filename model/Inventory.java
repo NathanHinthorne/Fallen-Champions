@@ -2,30 +2,68 @@ package model;
 
 import java.util.ArrayList;
 
+/**
+ * The Inventory class holds items that the player
+ * is able to use at any time such as potions or different
+ * weapons.
+ * @author Brendan Smith
+ * @version 1.0 - 5/15/23
+ */
 public class Inventory {
 
-    private ArrayList<Collectable> myInventory;
-    private ArrayList<Character> myPillars;
-    private int myPillarCount;
+    /**
+     * Used to store items in an ArrayList of a defined
+     * size.
+     */
+    private final ArrayList<Collectable> myInventory;
+    /**
+     * Used ONLY to store pillars that the player acquires
+     * in the dungeon, used to see if the player is
+     * able to exit the dungeon.
+     */
+    private final ArrayList<Character> myPillars;
 
-    // Custom inventory size based on class (maybe)
+    private int myPillarCount;
+    private int myItemCount;
+    private boolean isFull;
+
+    /**
+     * Creates an Inventory for the player with a defined
+     * size.
+     * @param theSize The number of slots in the inventory.
+     */
     public Inventory(int theSize) {
         myInventory = new ArrayList<Collectable>(theSize);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
+        isFull = false;
     }
 
-    // Default inventory size of 4
-    // PILLARS DO NOT AFFECT INVENTORY SIZE
+    /**
+     * Constructs the default size of the Inventory, which
+     * is 4 slots.
+     */
     public Inventory() {
         myInventory = new ArrayList<Collectable>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
+        isFull = false;
     }
 
+    /**
+     * Adds an item to the player inventory, represented
+     * as an Arraylist.
+     * @param theItem The item to be added
+     */
     public void addToInventory(Collectable theItem) {
 
-        myInventory.add(theItem);
+        if (myItemCount == myInventory.size()) {
+            // Inventory full!
+        } else {
+            myInventory.add(theItem);
+            myItemCount++;
+        }
+
     }
 
     /**
@@ -51,13 +89,18 @@ public class Inventory {
 
     }
 
-    /* When an item (potion) is used, it is consumed */
+    /**
+     * For when the player uses (consumes) an item in the game,
+     * it is removed from the inventory.
+     * @param theItem The item to be removed.
+     */
     public void consumeItem(Collectable theItem) {
         myInventory.remove(theItem);
     }
 
-    /* This will be used to check whether or not the
-     * player has every pillar.
+    /**
+     * This is used to check whether the
+     * player has every pillar or not.
      */
     public boolean hasAllPillars() {
         if (myPillarCount == 4) {
@@ -66,10 +109,16 @@ public class Inventory {
         return false;
     }
 
+    /**
+     * Represents the current player inventory in
+     * String format.
+     * @return
+     */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Player Inventory: {");
+        sb.append("Player Inventory: [");
         for (int i = 0; i < myInventory.size(); i++) {
             sb.append(myInventory.get(i).toString() + ", ");
         }
@@ -77,6 +126,7 @@ public class Inventory {
         for (int i = 0; i < myPillars.size(); i++) {
             sb.append(myPillars.get(i).toString() + ", ");
         }
+        sb.append("]");
         return sb.toString();
     }
 
