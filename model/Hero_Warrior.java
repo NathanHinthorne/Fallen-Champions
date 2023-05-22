@@ -10,12 +10,17 @@ public class Hero_Warrior extends Hero{
         setSpecial2Cooldown(50);
     }
 
+    /**
+     * Set second special cooldown
+     * @param thespecial2Cooldown the cooldown
+     */
     public void setSpecial2Cooldown(int thespecial2Cooldown) {
         thespecial2Cooldown = special2Cooldown;
     }
 
-
-    /* Will be worked on later */
+    /**
+     * Second special attack
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {

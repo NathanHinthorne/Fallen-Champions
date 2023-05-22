@@ -19,24 +19,38 @@ public class Hero_Robot extends Hero {
         setSpecial5Cooldown(100);
     }
 
+    /**
+     * Sets second special cooldown
+     * @param thespecial2Cooldown the cooldown
+     */
     public void setSpecial2Cooldown(int thespecial2Cooldown) {
         thespecial2Cooldown = special2Cooldown;
     }
-
+    /**
+     * Sets third special cooldown
+     * @param thespecial3Cooldown the cooldown
+     */
     public void setSpecial3Cooldown(int thespecial3Cooldown) {
         thespecial3Cooldown = special3Cooldown;
     }
-
+    /**
+     * Sets fourth special cooldown
+     * @param thespecial4Cooldown the cooldown
+     */
     public void setSpecial4Cooldown(int thespecial4Cooldown) {
         thespecial4Cooldown = special4Cooldown;
     }
-
+    /**
+     * Sets fifth special cooldown
+     * @param thespecial5Cooldown the cooldown
+     */
     public void setSpecial5Cooldown(int thespecial5Cooldown) {
         thespecial5Cooldown = special5Cooldown;
     }
 
-
-    /* Will be worked on later */
+    /**
+     * Second special attack
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {
@@ -51,7 +65,9 @@ public class Hero_Robot extends Hero {
         }
     }
 
-    /* Will be worked on later */
+    /**
+     * Third special attack
+     */
     public void specialAtk3() {
         if(getHitPoints() <= 0)
         {
@@ -66,7 +82,9 @@ public class Hero_Robot extends Hero {
         }
     }
 
-    /* Will be worked on later */
+    /**
+     * Fourth special attack
+     */
     public void specialAtk4() {
         if(getHitPoints() <= 0)
         {
@@ -81,7 +99,9 @@ public class Hero_Robot extends Hero {
         }
     }
 
-    /* Will be worked on later */
+    /**
+     * Fifth special attack
+     */
     public void specialAtk5() {
         if(getHitPoints() <= 0)
         {

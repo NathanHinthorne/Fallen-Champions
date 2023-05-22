@@ -75,6 +75,9 @@ public class Monster_Boss extends Monster {
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
+    /**
+     * Fifth special attack for Scientist
+     */
     public void specialAtk5() {
         if(getHitPoints() <= 0)
         {

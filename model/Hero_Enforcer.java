@@ -12,15 +12,25 @@ public class Hero_Enforcer extends Hero {
         setSpecial3Cooldown(65);
     }
 
+    /**
+     * Sets the second special cooldown
+     * @param thespecial2Cooldown the second special cooldown
+     */
     public void setSpecial2Cooldown(int thespecial2Cooldown) {
         thespecial2Cooldown = special2Cooldown;
     }
 
+    /**
+     * Sets the third special cooldown
+     * @param thespecial3Cooldown the third special cooldown
+     */
     public void setSpecial3Cooldown(int thespecial3Cooldown) {
         thespecial3Cooldown = special3Cooldown;
     }
 
-    /* Will be worked on later */
+    /**
+     * The second special attack
+     */
     public void specialAtk2() {
         if(getHitPoints() <= 0)
         {
@@ -37,7 +47,10 @@ public class Hero_Enforcer extends Hero {
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
 
     }
-    /* Will be worked on later */
+
+    /**
+     * The third special attack
+     */
     public void specialAtk3() {
         if(getHitPoints() <= 0)
         {

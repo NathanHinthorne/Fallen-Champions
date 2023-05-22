@@ -6,8 +6,6 @@ public class Hero_Scientist extends Hero {
     // The thirs cooldown
     private int special3Cooldown;
 
-
-
     public Hero_Scientist() {
         super(100, 5, 75, 80, 78.5f, 35, 95, 2, HeroTypes.SCIENTIST);
         setSpecial2Cooldown(40);

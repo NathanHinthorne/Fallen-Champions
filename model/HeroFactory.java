@@ -4,6 +4,11 @@ public class HeroFactory {
 
     private Hero myHero;
 
+    /**
+     * Builds the hero
+     * @param theValue the hero to build
+     * @return the built hero
+     */
     public Hero buildHero(HeroTypes theValue) {
 
         if (theValue == HeroTypes.ENFORCER) {
