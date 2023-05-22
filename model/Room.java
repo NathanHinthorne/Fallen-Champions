@@ -15,10 +15,7 @@ public class Room {
     // make non-static if we add difficulty levels
     public static final double HEALTH_POTION_CHANCE = 0.65;
     // vision potion chance is 0.35
-    public static final double A_PILLAR_CHANCE = 0.25;
-    public static final double I_PILLAR_CHANCE = 0.25;
-    public static final double P_PILLAR_CHANCE = 0.25;
-    // E pillar chance is 0.25
+
 
     // fields
     private int myY;
@@ -132,26 +129,37 @@ public class Room {
 
     @Override
     public String toString() { //! add monster, multiple items (pits)?
+
+        // first determine how many items are in the room
+        int numItems = 0;
+        if (hasPotion()) { numItems++; }
+        if (hasPillar()) { numItems++; }
+        if (hasPit()) { numItems++; }
+        if (hasMonster()) { numItems++; }
+
+        // now determine what string to return
+        String result = "";
         if (hasWall()) {
-            return myWall.toString();
-        } else if (hasPotion() && hasPillar() || hasPotion() && hasPit()) { // add more cases for multiple
-            return MULTIPLE; // doesn't make sense in this context to make a class for multiple
+            result =  myWall.toString();
+        } else if (numItems > 1) {
+            result =  MULTIPLE; // doesn't make sense in this context to make a class for multiple
         } else if (hasPotion()) {
-            return myPotion.toString();
+            result =  myPotion.toString();
         } else if (hasPillar()) {
-            return myPillar.toString();
+            result =  myPillar.toString();
         } else if (hasPit()) {
-            return myPit.toString();
+            result =  myPit.toString();
         } else if (hasExit()) {
-            return myExit.toString();
+            result =  myExit.toString();
         } else if (hasEntrance()) {
-            return myEntrance.toString();
+            result =  myEntrance.toString();
         } else if (hasMonster()) {
-            return myMonster.toString();
+            result =  myMonster.toString();
         } else {
-            return EMPTY; // doesn't make sense in this context to make a class for empty
+            result =  EMPTY; // doesn't make sense in this context to make a class for empty
         }
 
+        return result;
     }
 
 }
