@@ -6,7 +6,7 @@ public class Pit extends DungeonCharacter {
 
     final static Random MY_RANDOM = new Random();
 
-
+    // Checks if the pit is visible
     private boolean myIsVisible;
 
 
@@ -18,10 +18,19 @@ public class Pit extends DungeonCharacter {
         myIsVisible = false;
     }
 
+    /**
+     * Gernerates new health
+     * @param theLowHealth the low health
+     * @param theHighHealth the high health
+     * @return the new health amount
+     */
     public static int generateNewHealth(int theLowHealth, int theHighHealth) {
         return theLowHealth + MY_RANDOM.nextInt(theHighHealth - theLowHealth + 1);
     }
 
+    /**
+     * Makes the hero lose health by falling into a hole
+     */
     public void fall() {
         // TODO make hero lose health
 
