@@ -1,11 +1,6 @@
 package model;
 import java.util.*;
 
-//import javafx.event.EventHandler;
-//import javafx.scene.Scene;
-//import javafx.scene.input.KeyCode;
-//import javafx.scene.input.KeyEvent;
-
 public class Dungeon {
 
     // make non-static if we add difficulty levels
@@ -31,9 +26,6 @@ public class Dungeon {
     private int myExitY;
     final private Set<Pillars> myPlacedPillars;
     final private Queue<Monster> myUnplacedMonsters;
-
-//    Scene myScene;
-
 
     /**
      * Creates a new dungeon with the given dimensions and starting position.
@@ -81,9 +73,68 @@ public class Dungeon {
     // does "theDungeonBuilder.buildDungeon(this)" know to look in
     // this inner class to find the buildDungeon method?
     public static class SmallDungeonBuilder implements DungeonBuilder { // put parameters to the Dungeon constructor inside here?
-        @Override
-        public void buildDungeon(Dungeon dungeon) {
+        private static final int SMALL_DUNGEON_WIDTH = 10;
+        private static final int SMALL_DUNGEON_HEIGHT = 10;
 
+        @Override
+        public void buildDungeon(final Dungeon theDungeon, final int theHeroX, final int theHeroY) {
+            // step 1: fill the dungeon COMPLETELY with walls
+            fillWithWalls(theDungeonWidth, theDungeonHeight);
+
+            // step 2: randomly place empty rooms
+
+
+            // step 3: fill empty rooms with objects
+
+
+            // step 4: add entrance and exit    --move out of inner class?
+            addEntrance();
+            addExit();
+
+            // step 5: keep building dungeons until we find one that's traversable   --move out of inner class?
+            while(!isTraversable()) {
+                generateDungeon();
+            }
+        }
+
+        /**
+         * Fills the entire dungeon with walls.
+         */
+        private void fillWithWalls(final Room[][] theDungeon, final int theDungeonWidth, final int theDungeonHeight) {
+            for (int y = 0; y < theDungeonHeight; y++) {
+                for (int x = 0; x < theDungeonWidth; x++) {
+                    theDungeon[y][x] = new Room(y, x);
+                    theDungeon[y][x].placeWall();
+                }
+            }
+        }
+
+        /**
+         * Removes certain walls to form walkways using a random walk algorithm.
+         */
+        private void addEmptyRooms(final Room[][] theDungeon, final int theDungeonWidth, final int theDungeonHeight) {
+
+            for (int y = 1; y < theDungeonHeight - 1; y++) { // skip over the edges of the dungeon
+                for (int x = 1; x < theDungeonWidth - 1; x++) {
+
+                    Room room = theDungeon[y][y];
+
+                    //TODO Three choices to determine where to place room
+                    // 1. perlin noise
+                    // 2. simple if statements like below
+                    // 3. recursive method
+                    int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
+                    if (numberOfEmptyRooms == 0) {
+                        if (Math.random() < NEW_ROOM_CHANCE) {
+                            room.removeWall();
+                        }
+                    } else if (numberOfEmptyRooms == 1) {
+                        if (Math.random() < EXTENDED_ROOM_CHANCE) {
+                            room.removeWall();
+                        }
+                    }
+                }
+            }
         }
     }
     public static class MediumDungeonBuilder implements DungeonBuilder {
@@ -331,27 +382,7 @@ public class Dungeon {
         }
     }
 
-    /**
-     * Allows the player to move into a specified direction
-     *
-     * @param dir the direction to move the player
-     */
-    public void movePlayer(Direction dir) {
-
-        if (dir == Direction.NORTH) {
-            myHeroY--;
-        } else if (dir == Direction.EAST) {
-            myHeroX++;
-        } else if (dir == Direction.SOUTH) {
-            myHeroY++;
-        } else if (dir == Direction.WEST) {
-            myHeroX--;
-        } else {
-            System.out.println("Invalid direction was given.\n" +
-                    "Make sure movePlayer() receives one of these:\n" +
-                    "NORTH, EAST, SOUTH, WEST");
-        }
-    }
+//    public void movePlayer(Direction dir) {
 
 //        Scanner sn = new Scanner(System.in);
 //        String inp;
