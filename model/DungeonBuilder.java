@@ -15,13 +15,16 @@ public abstract class DungeonBuilder {
     static final double PIT_CHANCE = 0.10;
     static final Random rand = new Random();
 
-    Room[][] myMaze;
-    int myMazeWidth;
-    int myMazeHeight;
-    int myEntranceX;
-    int myEntranceY;
-    int myExitX;
-    int myExitY;
+    static Room[][] myMaze;
+    static int myMazeWidth;
+    static int myMazeHeight;
+    static int myEntranceX;
+    static int myEntranceY;
+    static int myExitX;
+    static int myExitY;
+
+    static Queue<Monster> myUnplacedMonsters;
+    static Set<Pillars> myPlacedPillars;
 
 
     abstract public Dungeon buildDungeon();
@@ -40,23 +43,23 @@ public abstract class DungeonBuilder {
         myMazeHeight = theMazeHeight;
     }
 
+    // get methods?
 
 
-
-    public void fillWithWalls(Room[][] theMaze, int theDungeonWidth, int theDungeonHeight) {
-        for (int y = 0; y < theDungeonHeight; y++) {
-            for (int x = 0; x < theDungeonWidth; x++) {
-                theMaze[y][x] = new Room(y, x);
-                theMaze[y][x].placeWall();
+    protected void fillWithWalls() {
+        for (int y = 0; y < myMazeHeight; y++) {
+            for (int x = 0; x < myMazeWidth; x++) {
+                myMaze[y][x] = new Room(y, x);
+                myMaze[y][x].placeWall();
             }
         }
     }
 
-    public void fillWithEmptyRooms(Room[][] theMaze, int theDungeonWidth, int theDungeonHeight) {
-        for (int y = 1; y < theDungeonHeight - 1; y++) { // skip over the edges of the dungeon
-            for (int x = 1; x < theDungeonWidth - 1; x++) {
+    protected void fillWithEmptyRooms() {
+        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
+            for (int x = 1; x < myMazeWidth - 1; x++) {
 
-                Room room = theMaze[y][y];
+                Room room = myMaze[y][y];
 
                 //TODO Three choices to determine where to place room
                 // 1. perlin noise
@@ -76,30 +79,28 @@ public abstract class DungeonBuilder {
         }
     }
 
-    public void fillWithObjects(Room[][] theMaze, int theDungeonWidth, int theDungeonHeight,
-                                Queue<Monster> theUnplacedMonsters, Set<Pillars> thePlacedPillars) {
+    protected void fillWithObjects() {
 
-        for (int y = 1; y < theDungeonHeight - 1; y++) { // skip over the edges of the dungeon
-            for (int x = 1; x < theDungeonWidth - 1; x++) {
+        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
+            for (int x = 1; x < myMazeWidth - 1; x++) {
 
-                Room room = theMaze[y][y];
+                Room room = myMaze[y][y];
 
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
                     if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon - probably not
-                        room.placeMonster(theUnplacedMonsters);             //TODO use a list to accomplish this?
+                        room.placeMonster(myUnplacedMonsters);             //TODO use a list to accomplish this?
                     }
                     if (Math.random() < POTION_CHANCE) {
                         room.placePotion();
                     }
                     if (Math.random() < PILLAR_CHANCE) {
-                        room.placePillar(thePlacedPillars);
+                        room.placePillar(myPlacedPillars);
                     }
                     if (Math.random() < PIT_CHANCE) {
                         room.placePit();
                     }
                 }
-
             }
         }
     }
@@ -108,7 +109,7 @@ public abstract class DungeonBuilder {
     /**
      * Adds an entrance to the dungeon.
      */
-    private void addEntrance() {
+    protected void addEntrance() {
         int x;
         int y;
 
@@ -127,7 +128,7 @@ public abstract class DungeonBuilder {
     /**
      * Adds an exit to the dungeon.
      */
-    private void addExit() {
+    protected void addExit() {
         int x;
         int y;
 
@@ -149,7 +150,7 @@ public abstract class DungeonBuilder {
      *
      * @return true if the dungeon is traversable, false otherwise.
      */
-    private boolean isTraversable() {
+    protected boolean isTraversable() {
 
         boolean isTraversable = false;
 
@@ -240,27 +241,27 @@ public abstract class DungeonBuilder {
      * @param theY the y coordinate of the room
      * @return the number of empty rooms adjacent to the given room
      */
-    private int numberOfEmptyRooms(final Room[][] theMaze, final int theX, final int theY) {
+    private int numberOfEmptyRooms(final int theX, final int theY) {
 
         int count = 0;
 
         // check top
-        if (theMaze[theY - 1][theX].isEmpty()) {
+        if (myMaze[theY - 1][theX].isEmpty()) {
             count++;
         }
 
         // check left
-        if (theMaze[theY][theX - 1].isEmpty()) {
+        if (myMaze[theY][theX - 1].isEmpty()) {
             count++;
         }
 
         // check right
-        if (theMaze[theY][theX + 1].isEmpty()) {
+        if (myMaze[theY][theX + 1].isEmpty()) {
             count++;
         }
 
         // check bottom
-        if (theMaze[theY + 1][theX].isEmpty()) {
+        if (myMaze[theY + 1][theX].isEmpty()) {
             count++;
         }
 
@@ -274,27 +275,27 @@ public abstract class DungeonBuilder {
      * @param theY the y coordinate of the room
      * @return the number of walls adjacent to the given room
      */
-    private int numberOfWalls(final Room[][] theMaze, final int theX, final int theY) { //! refactor for duplicate code after iteration?
+    private int numberOfWalls(final int theX, final int theY) { //! refactor for duplicate code after iteration?
 
         int count = 0;
 
         // check top
-        if (theMaze[theY - 1][theX].hasWall()) {
+        if (myMaze[theY - 1][theX].hasWall()) {
             count++;
         }
 
         // check left
-        if (theMaze[theY][theX - 1].hasWall()) {
+        if (myMaze[theY][theX - 1].hasWall()) {
             count++;
         }
 
         // check right
-        if (theMaze[theY][theX + 1].hasWall()) {
+        if (myMaze[theY][theX + 1].hasWall()) {
             count++;
         }
 
         // check bottom
-        if (theMaze[theY + 1][theX].hasWall()) {
+        if (myMaze[theY + 1][theX].hasWall()) {
             count++;
         }
 
