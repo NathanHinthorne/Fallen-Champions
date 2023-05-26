@@ -18,13 +18,13 @@ public class DungeonGame {
 
     private DungeonGame() {
 
-        // this is my test of the dungeon builder -Nathan
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
         // large dungeon = hard difficulty
-        Dungeon theSmallDungeon = new Dungeon(new Dungeon.SmallDungeonBuilder());
-        Dungeon theMediumDungeon = new Dungeon(new Dungeon.SmallDungeonBuilder());
-        Dungeon theLargeDungeon = new Dungeon(new Dungeon.SmallDungeonBuilder());
+
+        // this is my test of the dungeon builder -Nathan
+        DungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); // declare the builder
+        Dungeon theDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
 
 
 
