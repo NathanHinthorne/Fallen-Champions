@@ -23,9 +23,9 @@ public class Dungeon {
     private Dungeon() { } // prevent external instantiation
 
     public static class SmallDungeonBuilder extends DungeonBuilder { // put parameters to the Dungeon constructor inside here?
+        private static final Difficulty DIFFICULTY = Difficulty.EASY;
         private static final int DUNGEON_WIDTH = 10;
         private static final int DUNGEON_HEIGHT = 10;
-
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
@@ -85,6 +85,7 @@ public class Dungeon {
 
             return unplacedMonsters;
         }
+
     }
     public static class MediumDungeonBuilder extends DungeonBuilder {
         private static final int DUNGEON_WIDTH = 20;
