@@ -21,6 +21,7 @@ public class MonsterBattle {
 
         if (theHero.getHitPoints() <= 0) {
             // End game
+            has_lost(1);
         } else if (theMonster.getHitPoints() <= 0) {
             // continue game
         }
@@ -38,6 +39,30 @@ public class MonsterBattle {
          * (Attack, heal. item, etc.)
          */
         return 0;
+    }
+
+    public static boolean has_won(int win) {
+        if(win == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean has_lost(int lose) {
+        if(lose == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean is_ongoing(int ongoing) {
+        if(ongoing == 0) {
+            return false;
+        } else if(has_won(1) || has_lost(1)) {
+            return false;
+        }
+
+        return true;
     }
 
 }
