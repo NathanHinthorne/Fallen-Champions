@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import model.*;
+import org.w3c.dom.Text;
 import view.*;
 
 public class DungeonGame {
@@ -99,6 +100,8 @@ public class DungeonGame {
         }
 
         System.out.println("GAME CREATED");
+
+        TextModeInterface.menu();
 
 
     }
