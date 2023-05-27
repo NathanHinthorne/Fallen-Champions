@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Point;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -23,25 +24,24 @@ public abstract class DungeonBuilder {
     static int myExitX;
     static int myExitY;
 
-    static Queue<Monster> myUnplacedMonsters;
-    static Set<Pillars> myPlacedPillars;
-
 
     abstract public Dungeon buildDungeon();
 
     abstract public Queue<Monster> readMonsters(); //read different monsters in from SQLite depending on difficulty
 
-    public void setMaze(Room[][] theMaze) {
+    protected void setMaze(Room[][] theMaze) {
         myMaze = theMaze;
     }
 
-    public void setMazeWidth(int theMazeWidth) {
+    protected void setMazeWidth(int theMazeWidth) {
         myMazeWidth = theMazeWidth;
     }
 
-    public void setMazeHeight(int theMazeHeight) {
+    protected void setMazeHeight(int theMazeHeight) {
         myMazeHeight = theMazeHeight;
     }
+
+
 
     // get methods?
 
@@ -79,7 +79,7 @@ public abstract class DungeonBuilder {
         }
     }
 
-    protected void fillWithObjects() {
+    protected void fillWithObjects(Queue<Monster> theUnplacedMonsters, Set<Pillars> thePlacedPillars) {
 
         for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < myMazeWidth - 1; x++) {
@@ -89,13 +89,13 @@ public abstract class DungeonBuilder {
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
                     if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon - probably not
-                        room.placeMonster(myUnplacedMonsters);             //TODO use a list to accomplish this?
+                        room.placeMonster(theUnplacedMonsters);             //TODO use a list to accomplish this?
                     }
                     if (Math.random() < POTION_CHANCE) {
                         room.placePotion();
                     }
                     if (Math.random() < PILLAR_CHANCE) {
-                        room.placePillar(myPlacedPillars);
+                        room.placePillar(thePlacedPillars);
                     }
                     if (Math.random() < PIT_CHANCE) {
                         room.placePit();
@@ -109,7 +109,7 @@ public abstract class DungeonBuilder {
     /**
      * Adds an entrance to the dungeon.
      */
-    protected void addEntrance() {
+    protected Point addEntrance() {
         int x;
         int y;
 
@@ -121,14 +121,13 @@ public abstract class DungeonBuilder {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeEntrance();
-        myEntranceX = x;
-        myEntranceY = y;
+        return new Point(x, y);
     }
 
     /**
      * Adds an exit to the dungeon.
      */
-    protected void addExit() {
+    protected Point addExit() {
         int x;
         int y;
 
@@ -140,8 +139,24 @@ public abstract class DungeonBuilder {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeExit();
-        myExitX = x;
-        myExitY = y;
+        return new Point(x, y);
+    }
+
+    /**
+     * Determines a valid starting point for the hero.
+     */
+    protected Point findStartingPoint() {
+        int x;
+        int y;
+
+        // keep generating coords for hero until we get a room that is empty
+        do {
+            x = rand.nextInt(myMazeWidth);
+            y = rand.nextInt(myMazeHeight);
+
+        } while (!myMaze[y][x].isEmpty());
+
+        return new Point(x, y);
     }
 
 

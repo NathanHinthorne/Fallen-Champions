@@ -103,7 +103,8 @@ public class Room {
         }
     }
     public void placePillar(Set<Pillars> thePlacedPillars) {
-        //TODO decide what type of pillar to place
+        //TODO (maybe) randomize what type of pillar to place.
+        //TODO for example, instead of ALWAYS placing the abstraction pillar first, randomly choose one of the 4.
 
         //determine if the pillar we're about to place is inside a set of placed pillars.
 

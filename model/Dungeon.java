@@ -1,4 +1,5 @@
 package model;
+import java.awt.Point;
 import java.util.*;
 
 public class Dungeon {
@@ -19,60 +20,29 @@ public class Dungeon {
     private static Set<Pillars> myPlacedPillars;
     private static Queue<Monster> myUnplacedMonsters;
 
-    /**
-     * Creates a new dungeon with the given dimensions and starting position.
-     *
-     * @param theDungeonWidth the width of the dungeon in rooms
-     * @param theDungeonHeight the height of the dungeon in rooms
-     * @param theHeroX the starting x position of the hero
-     * @param theHeroY the starting y position of the hero
-     */
-//    private Dungeon(final DungeonBuilder theDungeonBuilder, final int theDungeonWidth, // constructor should be DELETED after builder is finished
-//                   final int theDungeonHeight, final int theHeroX, final int theHeroY) {
-//
-//        // initialize fields
-//        myDungeonWidth = setDungeonWidth(theDungeonWidth);
-//        myDungeonHeight = setDungeonHeight(theDungeonHeight);
-//        myHeroX = setHeroX(theHeroX);
-//        myHeroY = setHeroY(theHeroY);
-//        myEntranceX = 0;
-//        myEntranceY = 0;
-//        myExitX = 2;
-//        myExitY = 0;
-//        myMaze = new Room[theDungeonWidth][theDungeonHeight];
-//        myPlacedPillars = new HashSet<Pillars>();
-//        myUnplacedMonsters = new LinkedList<Monster>();
-//    }
-
-    //TODO for the singleton if needed
-    /**
-     * Gives the single instance of dungeon
-     *
-     * @return The dungeon
-     */
-//    public static Dungeon getDungeon() {
-//        if (thisDungeon != null) {
-//            thisDungeon = new Dungeon();
-//        }
-//    }
-
+    private Dungeon() { } // prevent external instantiation
 
     public static class SmallDungeonBuilder extends DungeonBuilder { // put parameters to the Dungeon constructor inside here?
-        private static final int SMALL_DUNGEON_WIDTH = 10;
-        private static final int SMALL_DUNGEON_HEIGHT = 10;
+        private static final int DUNGEON_WIDTH = 10;
+        private static final int DUNGEON_HEIGHT = 10;
 
-//        myUnplacedMonsters = readMonsters();
-
-        setMaze(maze); // why is this not recognized from the abstract class?
-        setMazeWidth(SMALL_DUNGEON_WIDTH);
-        setMazeHeight(SMALL_DUNGEON_HEIGHT);
+        //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
         public Dungeon buildDungeon() {
             if (dungeon != null) { // for singleton
                 dungeon = new Dungeon();
             }
-            maze = new Room[SMALL_DUNGEON_HEIGHT][SMALL_DUNGEON_WIDTH];
+            maze = new Room[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+
+            // setup maze attributes
+            myUnplacedMonsters = readMonsters();
+            myPlacedPillars = new HashSet<Pillars>();
+
+            this.setMaze(maze);
+            this.setMazeWidth(DUNGEON_WIDTH);
+            this.setMazeHeight(DUNGEON_HEIGHT);
+
 
             // step 1: fill the dungeon COMPLETELY with walls
             fillWithWalls();
@@ -81,14 +51,22 @@ public class Dungeon {
             fillWithEmptyRooms();
 
             // step 3: fill empty rooms with objects
-            fillWithObjects();
+            fillWithObjects(myUnplacedMonsters, myPlacedPillars);
 
             // step 4: add entrance and exit
-            addEntrance();
-            addExit();
+            Point entranceCoords = addEntrance();
+            Point exitCoords = addExit();
+
+            myEntranceX = entranceCoords.x;
+            myEntranceY = entranceCoords.y;
+            myExitX = exitCoords.x;
+            myExitY = exitCoords.y;
 
             // step 5: find a starting point for the hero
-            
+            Point heroCoords = findStartingPoint();
+
+            myHeroX = heroCoords.x;
+            myHeroY = heroCoords.y;
 
             // step 6: keep building dungeons until we find one that's traversable
             while(!isTraversable()) {
@@ -103,48 +81,71 @@ public class Dungeon {
             Queue<Monster> unplacedMonsters = new LinkedList<>();
 
             //TODO access SQLite and fill up the queue
+            // make sure to access the correct table containing the monsters required for EASY difficulty
 
             return unplacedMonsters;
         }
     }
-//    public static class MediumDungeonBuilder implements DungeonBuilder {
-//
-//    }
-//    public static class LargeDungeonBuilder implements DungeonBuilder {
-//
-//    }
+    public static class MediumDungeonBuilder extends DungeonBuilder {
+        private static final int DUNGEON_WIDTH = 20;
+        private static final int DUNGEON_HEIGHT = 20;
 
-    // for inner classes to use
+        //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
+
+        @Override
+        public Dungeon buildDungeon() {
+            if (dungeon != null) { // for singleton
+                dungeon = new Dungeon();
+            }
+
+
+
+            return dungeon;
+        }
+
+        @Override
+        public Queue<Monster> readMonsters() {
+            Queue<Monster> unplacedMonsters = new LinkedList<>();
+
+            //TODO access SQLite and fill up the queue
+            // make sure to access the correct table containing the monsters required for MEDIUM difficulty
+
+            return unplacedMonsters;
+        }
+    }
+    public static class LargeDungeonBuilder extends DungeonBuilder {
+        private static final int DUNGEON_WIDTH = 30;
+        private static final int DUNGEON_HEIGHT = 30;
+
+        //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
+
+        @Override
+        public Dungeon buildDungeon() {
+            if (dungeon != null) { // for singleton
+                dungeon = new Dungeon();
+            }
+
+
+
+            return dungeon;
+        }
+
+        @Override
+        public Queue<Monster> readMonsters() {
+            Queue<Monster> unplacedMonsters = new LinkedList<>();
+
+            //TODO access SQLite and fill up the queue
+            // make sure to access the correct table containing the monsters required for HARD difficulty
+
+            return unplacedMonsters;
+        }
+    }
+
+    // for inner classes to use (if needed)
     private Room[][] getMaze() {
         return maze;
     }
     private Dungeon getDungeon() { return dungeon; }
-
-
-//    private int setDungeonWidth(int theDungeonWidth) {
-//        if (theDungeonWidth <= 0) {
-//            throw new IllegalArgumentException();
-//        }
-//        return theDungeonWidth;
-//    }
-//    private int setDungeonHeight(int theDungeonHeight) {
-//        if (theDungeonHeight <= 0) {
-//            throw new IllegalArgumentException();
-//        }
-//        return theDungeonHeight;
-//    }
-//    private int setHeroX(int theHeroX) {
-//        if (theHeroX <= 0) {
-//            throw new IllegalArgumentException();
-//        }
-//        return theHeroX;
-//    }
-//    private int setHeroY(int theHeroY) {
-//        if (theHeroY <= 0) {
-//            throw new IllegalArgumentException();
-//        }
-//        return theHeroY;
-//    }
 
 
     // a method in the view will check for keyboard inputs
