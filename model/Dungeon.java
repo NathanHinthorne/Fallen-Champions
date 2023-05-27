@@ -1,4 +1,11 @@
 package model;
+
+import org.sqlite.SQLiteDataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import java.awt.Point;
 import java.util.*;
 
@@ -82,6 +89,64 @@ public class Dungeon {
 
             //TODO access SQLite and fill up the queue
             // make sure to access the correct table containing the monsters required for EASY difficulty
+
+            SQLiteDataSource ds = null;
+
+            try {
+                ds = new SQLiteDataSource();
+                ds.setUrl("jdbc:sqlite:monsters.db");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+            System.out.println("Opened database successfully");
+
+            // create a table (not needed)
+//            String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
+//                    "TYPE NOT NULL )";
+//
+//            try (Connection conn = ds.getConnection();
+//                 Statement stmt = conn.createStatement();) {
+//                int rv = stmt.executeUpdate(query);
+//                System.out.println("database executed successfully: " + rv);
+//
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//                System.exit(0);
+//            }
+
+            // Temporary to test DB functionality
+            String query1 = "INSERT INTO monsters ( TYPE ) VALUES ( myMonster )";
+            String query2 = "INSERT INTO questions ( TYPE ) VALUES ( myMonster )";
+
+            try (Connection conn = ds.getConnection();
+                 Statement stmt = conn.createStatement();) {
+                int rv = stmt.executeUpdate(query1);
+                System.out.println("database executed successfully: " + rv);
+
+                rv = stmt.executeUpdate(query2);
+                System.out.println("database executed successfully: " + rv);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+
+            query = "SELECT * FROM monsters";
+
+            try ( Connection conn = ds.getConnection();
+                  Statement stmt = conn.createStatement(); ) {
+
+                ResultSet rs = stmt.executeQuery(query);
+
+                while ( rs.next() ) {
+                    String monster = rs.getString( "TYPE" );
+
+                    System.out.println( "Result: Monster = " + monster );
+                }
+            } catch ( SQLException e ) {
+                e.printStackTrace();
+                System.exit( 0 );
+            }
 
             return unplacedMonsters;
         }

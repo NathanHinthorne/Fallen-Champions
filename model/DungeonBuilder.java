@@ -42,10 +42,6 @@ public abstract class DungeonBuilder {
     }
 
 
-
-    // get methods?
-
-
     protected void fillWithWalls() {
         for (int y = 0; y < myMazeHeight; y++) {
             for (int x = 0; x < myMazeWidth; x++) {
