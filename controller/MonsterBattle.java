@@ -4,13 +4,19 @@ import view.*;
 
 public class MonsterBattle {
 
+    private Hero myHero;
+    private Monster myMonster;
+
+    public MonsterBattle(Hero theHero, Monster theMonster) {
+        myHero = theHero;
+        myMonster = theMonster;
+    }
+
     /**
      * Starts a new battle between the player and a random
      * monster.
-     * @param theHero The player
-     * @param theMonster The enemy faced
      */
-    public static void newBattle(Hero theHero, Monster theMonster) {
+    public void newBattle() {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
@@ -18,15 +24,43 @@ public class MonsterBattle {
 
         is__monsterbattle_ongoing(2);
 
-        while (theHero.getHitPoints() > 0  && theMonster.getHitPoints() > 0) {
+        while (myHero.getHitPoints() > 0  && myMonster.getHitPoints() > 0) {
             // Gameplay loop
+            // Get player input, then cast that input to playerOption(int x)
         }
 
-        if (theHero.getHitPoints() <= 0) {
+        if (myHero.getHitPoints() <= 0) {
             // End game
             has_lost(1);
-        } else if (theMonster.getHitPoints() <= 0) {
+        } else if (myMonster.getHitPoints() <= 0) {
             // continue game
+        }
+
+    }
+
+    /**
+     * Used to apply the choice the player made
+     * in a battle from view, attack, special,
+     * or item use represented as an int.
+     * @param theOption What the player chose to
+     *                  do.
+     */
+    public void playerOption(int theOption) {
+        /* TODO communicate with View to get
+         * the player's turn option
+         * (Attack, heal. item, etc.)
+         */
+
+
+        if (theOption == 0) {
+            // TODO basic attack
+            basicAttack(myHero, myMonster);
+        } else if (theOption == 1) {
+            // TODO special attack
+
+        } else if (theOption == 2) {
+            //TODO use item
+
         }
 
     }
@@ -35,13 +69,8 @@ public class MonsterBattle {
         theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.basicAtk());
     }
 
-
-    public int playerOption() {
-        /* TODO communicate with View to get
-         * the player's turn option
-         * (Attack, heal. item, etc.)
-         */
-        return 0;
+    private void specialAttack(DungeonCharacter theAttacker, DungeonCharacter theTarget) {
+        theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.specialAtk());
     }
 
     public static boolean has_won(int win) {
