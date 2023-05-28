@@ -1,6 +1,8 @@
 package view;
 //import model.*;
 import controller.*;
+import model.Direction;
+import model.Dungeon;
 import model.HeroFactory;
 import model.HeroTypes;
 
@@ -62,12 +64,46 @@ public class TextModeInterface {
 
     public static void gameplay_menu() {
         Scanner sc = new Scanner(System.in);
+
         while(MonsterBattle.is_ongoing(2)) {
             System.out.println("You are currently in the dungeon");
             System.out.println("Now make a selection");
+            System.out.println("1 move hero, 2 to display hero info, 3 to locate hero, 4 to use potion, 5 to quit");
             int selection = sc.nextInt();
             switch(selection) {
-
+                case 1:
+                    System.out.println("Now pick which direction you want to move");
+                    System.out.println("8 for up, 4 for left, 2 for down, 6 for right");
+                    selection = sc.nextInt();
+                    switch (selection) {
+                        case 2:
+                            Dungeon.playerMove(Direction.SOUTH);
+                        case 4:
+                            Dungeon.playerMove(Direction.WEST);
+                        case 6:
+                            Dungeon.playerMove(Direction.EAST);
+                        case 8:
+                            Dungeon.playerMove(Direction.NORTH);
+                    }
+                case 2:
+                    //
+                case 3:
+                    //
+                case 4:
+                    //
+                case 5:
+                    System.out.println("Are you sure you want to quit? 1 for yes, 2 for no");
+                    selection = sc.nextInt();
+                    switch (selection) {
+                        case 1:
+                            System.exit(0);
+                        case 2:
+                            continue;
+                        default:
+                            System.out.println("Please make a selection");
+                    }
+                default:
+                    System.out.println("Please make a selection");
             }
         }
     }

@@ -221,7 +221,7 @@ public class Dungeon {
      *
      * @param dir the direction to move the player
      */
-    public void playerMove(final Direction dir) {
+    public static void playerMove(final Direction dir) {
         if (dir == Direction.NORTH) {
             myHeroY--;
         } else if (dir == Direction.EAST) {
