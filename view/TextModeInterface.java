@@ -1,6 +1,6 @@
 package view;
-import model.*;
-import controller.DungeonGame;
+//import model.*;
+import controller.*;
 import java.util.Scanner;
 
 public class TextModeInterface {
@@ -16,6 +16,8 @@ public class TextModeInterface {
             switch(selection) {
                 case 1:
                     // Start Game
+                    MonsterBattle.is_ongoing(2);
+                    new DungeonGame();
                 case 2:
                     System.exit(0);
                 default:

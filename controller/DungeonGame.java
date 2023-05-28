@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
+
 import model.*;
 import org.w3c.dom.Text;
 import view.*;
@@ -18,7 +20,7 @@ public class DungeonGame {
     public Hero myHero;
     public Monster myMonster;
 
-    private DungeonGame() {
+    public DungeonGame() {
 
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
@@ -102,6 +104,8 @@ public class DungeonGame {
         System.out.println("GAME CREATED");
 
         TextModeInterface.menu();
+
+
 
 
     }

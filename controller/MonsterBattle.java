@@ -15,6 +15,9 @@ public class MonsterBattle {
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
+
+        is__monsterbattle_ongoing(2);
+
         while (theHero.getHitPoints() > 0  && theMonster.getHitPoints() > 0) {
             // Gameplay loop
         }
@@ -55,10 +58,19 @@ public class MonsterBattle {
         return false;
     }
 
-    public boolean is_ongoing(int ongoing) {
+    public static boolean is_ongoing(int ongoing) {
         if(ongoing == 0) {
             return false;
         } else if(has_won(1) || has_lost(1)) {
+            return false;
+        }
+
+        return true;
+    }
+    public static boolean is__monsterbattle_ongoing(int ongoing) {
+        if(ongoing == 0) {
+            return false;
+        } else if(has_won(1) || has_lost(1) ) {
             return false;
         }
 
