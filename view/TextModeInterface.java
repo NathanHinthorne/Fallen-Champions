@@ -18,6 +18,9 @@ public class TextModeInterface {
                     // Start Game
                     MonsterBattle.is_ongoing(2);
                     new DungeonGame();
+                    Introduction();
+                    choose_hero();
+                    gameplay_menu();
                 case 2:
                     System.exit(0);
                 default:
@@ -26,6 +29,21 @@ public class TextModeInterface {
         }
 
 
+    }
+
+    private static void choose_hero() {
+
+    }
+
+    private static void Introduction() {
+        System.out.println();
+    }
+
+    public static void gameplay_menu() {
+        Scanner sc = new Scanner(System.in);
+        while(true) {
+
+        }
     }
 
 
