@@ -63,7 +63,12 @@ public class TextModeInterface {
     public static void gameplay_menu() {
         Scanner sc = new Scanner(System.in);
         while(MonsterBattle.is_ongoing(2)) {
+            System.out.println("You are currently in the dungeon");
+            System.out.println("Now make a selection");
+            int selection = sc.nextInt();
+            switch(selection) {
 
+            }
         }
     }
 
