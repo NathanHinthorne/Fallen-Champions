@@ -2,14 +2,14 @@ package model;
 
 public class HeroFactory {
 
-    private Hero myHero;
+    private static Hero myHero;
 
     /**
      * Builds the hero
      * @param theValue the hero to build
      * @return the built hero
      */
-    public Hero buildHero(HeroTypes theValue) {
+    public static Hero buildHero(HeroTypes theValue) {
 
         if (theValue == HeroTypes.ENFORCER) {
             myHero = new Hero_Enforcer();
