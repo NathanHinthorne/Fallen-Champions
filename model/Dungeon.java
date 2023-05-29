@@ -242,7 +242,7 @@ public class Dungeon {
      *
      * @return a 3x3 grid of rooms centered on the hero
      */
-    public Room[][] getView() { //! return a string instead?
+    public static Room[][] getView() { //! return a string instead?
 
         Room[][] view = new Room[3][3];
 

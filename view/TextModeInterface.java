@@ -1,10 +1,7 @@
 package view;
 //import model.*;
 import controller.*;
-import model.Direction;
-import model.Dungeon;
-import model.HeroFactory;
-import model.HeroTypes;
+import model.*;
 
 import java.util.Scanner;
 
@@ -86,11 +83,19 @@ public class TextModeInterface {
                             Dungeon.playerMove(Direction.NORTH);
                     }
                 case 2:
-                    //
+                    Dungeon.getView();
                 case 3:
                     //
                 case 4:
-                    //
+                    System.out.println("Now select which potion you want to use");
+                    System.out.println("1 for vision, 2 for health");
+                    selection = sc.nextInt();
+                    switch(selection) {
+                        case 1:
+                            //VisionPotion.effect();
+                        case 2:
+                            //HealthPotion.heal();
+                    }
                 case 5:
                     System.out.println("Are you sure you want to quit? 1 for yes, 2 for no");
                     selection = sc.nextInt();
