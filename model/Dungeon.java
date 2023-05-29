@@ -102,8 +102,8 @@ public class Dungeon {
             System.out.println("Opened database successfully");
 
             // create a table (not needed)
-//            String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
-//                    "TYPE NOT NULL )";
+            String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
+                    "TYPE NOT NULL )";
 //
 //            try (Connection conn = ds.getConnection();
 //                 Statement stmt = conn.createStatement();) {

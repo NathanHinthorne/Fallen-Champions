@@ -24,7 +24,7 @@ public class HealthPotion extends Potion implements Healable {
     }
 
     @Override
-    public void effect() {
+    public void effect(Hero thePlayer) {
         // TODO find effective way of healing the player
     }
 

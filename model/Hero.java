@@ -5,6 +5,7 @@ public abstract class Hero extends DungeonCharacter {
 
     // The hero type
     private HeroTypes myType;
+    private Inventory myInventory;
 
     protected Hero(int theHitPoints, int theAtkSpd,
                    float theLowHitChance,
@@ -12,6 +13,7 @@ public abstract class Hero extends DungeonCharacter {
 
         super(theHitPoints, theAtkSpd, theLowHitChance, theHighHitChance, theHitChance, theMinDmg, theMaxDmg, theCooldown);
         setType(theType);
+        myInventory = new Inventory();
     }
 
     /**

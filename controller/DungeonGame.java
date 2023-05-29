@@ -17,6 +17,8 @@ public class DungeonGame {
     private static HeroFactory HERO_FACTORY = new HeroFactory();
     private static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
 
+    private static TextModeInterface myGame;
+
     public Hero myHero;
     public Monster myMonster;
 
@@ -37,6 +39,7 @@ public class DungeonGame {
          */
         myHero = HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
         myMonster = MONSTER_FACTORY.buildMonster(MonsterTypes.SKELETON);
+        myGame = new TextModeInterface();
 
 
     }
@@ -103,7 +106,7 @@ public class DungeonGame {
 
         System.out.println("GAME CREATED");
 
-        TextModeInterface.menu();
+        myGame.menu();
 
 
 
