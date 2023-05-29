@@ -83,17 +83,17 @@ public class TextModeInterface {
                             Dungeon.playerMove(Direction.NORTH);
                     }
                 case 2:
-                    Dungeon.getView();
+                    // Will be fixed later
                 case 3:
-                    //
+                    Dungeon.getView();
                 case 4:
                     System.out.println("Now select which potion you want to use");
                     System.out.println("1 for vision, 2 for health");
                     selection = sc.nextInt();
                     switch(selection) {
-                        case 1:
+                        case 1: // Will be fixed later
                             //VisionPotion.effect();
-                        case 2:
+                        case 2: // Will be fixed later
                             //HealthPotion.heal();
                     }
                 case 5:
