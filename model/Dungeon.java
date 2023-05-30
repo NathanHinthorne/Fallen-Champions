@@ -1,11 +1,5 @@
 package model;
 
-import org.sqlite.SQLiteDataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import java.awt.Point;
 import java.util.*;
 
@@ -43,7 +37,7 @@ public class Dungeon {
             Dungeon.myMaze = new Room[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
             // setup maze attributes
-            myUnplacedMonsters = readMonsters("Easy");
+            myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<Pillars>();
 
             this.setMaze(Dungeon.myMaze);
