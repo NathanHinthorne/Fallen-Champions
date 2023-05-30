@@ -56,7 +56,12 @@ public class DungeonGame {
                 // if save, save game
                 // if exit, exit game
             updateMap();
+            updatePlayerView();
         }
+
+
+
+
 
     }
 
@@ -70,8 +75,16 @@ public class DungeonGame {
         myDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
     }
 
+    /**
+     * Displays the dungeon map
+     */
     public static void updateMap() {
         System.out.println(myDungeon.toString());
     }
+
+    /**
+     * Displays what the player should be seeing in the GUI
+     */
+    public static void updatePlayerView() { System.out.println(myDungeon.getView()); }
 
 }

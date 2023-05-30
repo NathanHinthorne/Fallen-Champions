@@ -1,6 +1,13 @@
 package model;
 
+import org.sqlite.SQLiteDataSource;
+
 import java.awt.Point;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -27,8 +34,62 @@ public abstract class DungeonBuilder {
 
     abstract public Dungeon buildDungeon();
 
-//    abstract public Queue<Monster> readMonsters(String column?, String otherIdentifier?);   use this line instead
-    abstract public Queue<Monster> readMonsters(); //read different monsters in from SQLite depending on difficulty
+    protected Queue<Monster> readMonsters(final String difficulty) {
+        Queue<Monster> unplacedMonsters = new LinkedList<>();
+
+        //TODO access SQLite and fill up the queue
+        // make sure to access the correct table containing the monsters required for EASY difficulty
+
+        SQLiteDataSource ds = null;
+
+        try {
+            ds = new SQLiteDataSource();
+            ds.setUrl("jdbc:sqlite:Monster_Database.db");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+        System.out.println("Opened database successfully");
+
+        String query = "SELECT * FROM " + difficulty;
+
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement(); ) {
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            while ( rs.next() ) {
+                String monsterType = rs.getString( "TYPE" );
+
+                if(monsterType.equals("GREMLIN")) {
+                    unplacedMonsters.add(new Monster_Gremlin());
+
+                } else if (monsterType.equals("OGRE")) {
+                    unplacedMonsters.add(new Monster_Ogre());
+
+                } else if (monsterType.equals("SKELETON")) {
+                    unplacedMonsters.add(new Monster_Skeleton());
+
+                } else if (monsterType.equals("WARLOCK")) {
+                    unplacedMonsters.add(new Monster_Warlock());
+
+                } else if (monsterType.equals("BOSS")) {
+                    unplacedMonsters.add(new Monster_Boss());
+
+                } else {
+                    System.out.println("Invalid monster type");
+                    System.exit(0);
+                }
+
+            }
+        } catch ( SQLException e ) {
+            System.out.println("Could not access database");
+            e.printStackTrace();
+            System.exit( 0 );
+        }
+
+        return unplacedMonsters;
+    }
 
     protected void setMaze(Room[][] theMaze) {
         myMaze = theMaze;
