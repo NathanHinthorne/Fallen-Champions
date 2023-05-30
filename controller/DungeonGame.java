@@ -16,23 +16,14 @@ public class DungeonGame {
 
     private static HeroFactory HERO_FACTORY = new HeroFactory();
     private static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
-
+    private static Dungeon myDungeon;
     private static TextModeInterface myGame;
+    private static boolean gameOver = false; // set to true when player dies or exits dungeon
 
     public Hero myHero;
     public Monster myMonster;
 
     public DungeonGame() {
-
-        // small dungeon = easy difficulty
-        // medium dungeon = medium difficulty
-        // large dungeon = hard difficulty
-
-        // this is my test of the dungeon builder -Nathan
-        DungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); // declare the builder
-        Dungeon theDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
-
-
 
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
@@ -40,77 +31,47 @@ public class DungeonGame {
         myHero = HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
         myMonster = MONSTER_FACTORY.buildMonster(MonsterTypes.SKELETON);
         myGame = new TextModeInterface();
-
-
     }
 
 
 
     public static void main(String[] theArgs) {
-        SQLiteDataSource ds = null;
 
-        try {
-            ds = new SQLiteDataSource();
-            ds.setUrl("jdbc:sqlite:monsters.db");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
+        // setup
+        setupDungeon();
+        updateMap();
+
+        // game loop
+        while (!gameOver) {
+            // get player input from view (can be movement input, inventory input, save, exit, etc.)
+                // if movement input, check if valid
+                    // if invalid, prompt player to try again
+                    // if valid, move player
+                        // if player moves into a room with a monster, start battle
+                            // if player wins, continue game, earn rewards
+                            // if player loses, end game
+                // if inventory input, check if valid
+                    // if invalid, prompt player to try again
+                    // if valid, use item
+                // if save, save game
+                // if exit, exit game
+            updateMap();
         }
 
-        String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
-                "TYPE NOT NULL )";
+    }
 
 
-        try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement();) {
-            int rv = stmt.executeUpdate(query);
-            System.out.println("database executed successfully: " + rv);
+    public static void setupDungeon() {
+        // small dungeon = easy difficulty
+        // medium dungeon = medium difficulty
+        // large dungeon = hard difficulty
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
+        DungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); // declare the builder
+        myDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
+    }
 
-        // Temporary to test DB functionality
-        String query1 = "INSERT INTO monsters ( TYPE ) VALUES ( myMonster )";
-        String query2 = "INSERT INTO questions ( TYPE ) VALUES ( myMonster )";
-
-        try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement();) {
-            int rv = stmt.executeUpdate(query1);
-            System.out.println("database executed successfully: " + rv);
-
-            rv = stmt.executeUpdate(query2);
-            System.out.println("database executed successfully: " + rv);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        query = "SELECT * FROM monsters";
-
-        try ( Connection conn = ds.getConnection();
-              Statement stmt = conn.createStatement(); ) {
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            while ( rs.next() ) {
-                String monster = rs.getString( "TYPE" );
-
-                System.out.println( "Result: Monster = " + monster );
-            }
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-            System.exit( 0 );
-        }
-
-        System.out.println("GAME CREATED");
-
-        myGame.menu();
-
-
-
-
+    public static void updateMap() {
+        System.out.println(myDungeon.toString());
     }
 
 }
