@@ -49,7 +49,7 @@ public class DungeonGame {
                     // if valid, move player
                         // if player moves into a room with a monster, start battle
                             // if player wins, continue game, earn rewards
-                            // if player loses, end game
+                            // if player loses, gameOver = true
                 // if inventory input, check if valid
                     // if invalid, prompt player to try again
                     // if valid, use item

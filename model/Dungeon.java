@@ -31,8 +31,8 @@ public class Dungeon {
 
     public static class SmallDungeonBuilder extends DungeonBuilder { // put parameters to the Dungeon constructor inside here?
         private static final Difficulty DIFFICULTY = Difficulty.EASY;
-        private static final int DUNGEON_WIDTH = 10;
-        private static final int DUNGEON_HEIGHT = 10;
+        private static final int DUNGEON_WIDTH = 5;
+        private static final int DUNGEON_HEIGHT = 5;
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
@@ -94,7 +94,7 @@ public class Dungeon {
 
             try {
                 ds = new SQLiteDataSource();
-                ds.setUrl("jdbc:sqlite:monsters.db");
+                ds.setUrl("jdbc:sqlite:Monster_Database.db");
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(0);
@@ -102,8 +102,8 @@ public class Dungeon {
             System.out.println("Opened database successfully");
 
             // create a table (not needed)
-            String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
-                    "TYPE NOT NULL )";
+/*            String query = "CREATE TABLE IF NOT EXISTS monsters ( " +
+//                    "TYPE NOT NULL )";
 //
 //            try (Connection conn = ds.getConnection();
 //                 Statement stmt = conn.createStatement();) {
@@ -113,30 +113,29 @@ public class Dungeon {
 //            } catch (SQLException e) {
 //                e.printStackTrace();
 //                System.exit(0);
+              }*/
+
+//            String query1 = "INSERT INTO monsters ( TYPE ) VALUES ( myMonster )";
+//            String query2 = "INSERT INTO questions ( TYPE ) VALUES ( myMonster )";
+//
+//            try (Connection conn = ds.getConnection();
+//                 Statement stmt = conn.createStatement();) {
+//                int rv = stmt.executeUpdate(query1);
+//                System.out.println("database executed successfully: " + rv);
+//
+//                rv = stmt.executeUpdate(query2);
+//                System.out.println("database executed successfully: " + rv);
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//                System.exit(0);
 //            }
 
-            // Temporary to test DB functionality
-            String query1 = "INSERT INTO monsters ( TYPE ) VALUES ( myMonster )";
-            String query2 = "INSERT INTO questions ( TYPE ) VALUES ( myMonster )";
-
-            try (Connection conn = ds.getConnection();
-                 Statement stmt = conn.createStatement();) {
-                int rv = stmt.executeUpdate(query1);
-                System.out.println("database executed successfully: " + rv);
-
-                rv = stmt.executeUpdate(query2);
-                System.out.println("database executed successfully: " + rv);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                System.exit(0);
-            }
-
-            query = "SELECT * FROM monsters";
+            String query3 = "SELECT * FROM monsters";
 
             try ( Connection conn = ds.getConnection();
                   Statement stmt = conn.createStatement(); ) {
 
-                ResultSet rs = stmt.executeQuery(query);
+                ResultSet rs = stmt.executeQuery(query3);
 
                 while ( rs.next() ) {
                     String monster = rs.getString( "TYPE" );
@@ -152,8 +151,8 @@ public class Dungeon {
         }
     }
     public static class MediumDungeonBuilder extends DungeonBuilder {
-        private static final int DUNGEON_WIDTH = 20;
-        private static final int DUNGEON_HEIGHT = 20;
+        private static final int DUNGEON_WIDTH = 8;
+        private static final int DUNGEON_HEIGHT = 8;
 
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
@@ -179,8 +178,8 @@ public class Dungeon {
         }
     }
     public static class LargeDungeonBuilder extends DungeonBuilder {
-        private static final int DUNGEON_WIDTH = 30;
-        private static final int DUNGEON_HEIGHT = 30;
+        private static final int DUNGEON_WIDTH = 12;
+        private static final int DUNGEON_HEIGHT = 12;
 
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
