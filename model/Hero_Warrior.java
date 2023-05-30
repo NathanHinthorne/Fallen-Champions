@@ -15,13 +15,14 @@ public class Hero_Warrior extends Hero{
      * @param thespecial2Cooldown the cooldown
      */
     public void setSpecial2Cooldown(int thespecial2Cooldown) {
+
         thespecial2Cooldown = special2Cooldown;
     }
 
     /**
      * Second special attack
      */
-    public void specialAtk2() {
+    public void specialAtk2(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -29,7 +30,7 @@ public class Hero_Warrior extends Hero{
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
             System.out.println("Attack Failed!");

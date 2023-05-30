@@ -6,34 +6,33 @@ public class MonsterBattle {
 
     private Hero myHero;
     private Monster myMonster;
+    private boolean myGameOver;
 
     public MonsterBattle(Hero theHero, Monster theMonster) {
         myHero = theHero;
         myMonster = theMonster;
+        myGameOver = false;
     }
 
     /**
      * Starts a new battle between the player and a random
      * monster.
      */
-    public void newBattle() {
+    public void newBattle(DungeonCharacter thePlayer, DungeonCharacter theEnemy) {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
-
-        is__monsterbattle_ongoing(2);
-
-        while (myHero.getHitPoints() > 0  && myMonster.getHitPoints() > 0) {
-            // Gameplay loop
-            // Get player input, then cast that input to playerOption(int x)
-        }
-
-        if (myHero.getHitPoints() <= 0) {
-            // End game
-            has_lost(1);
-        } else if (myMonster.getHitPoints() <= 0) {
-            // continue game
+        if (thePlayer.getSpd() > theEnemy.getSpd()) {
+            while (!myGameOver) {
+                playerTurn();
+                monsterTurn();
+            }
+        } else {
+            while (!myGameOver) {
+                monsterTurn();
+                playerTurn();
+            }
         }
 
     }
@@ -51,10 +50,9 @@ public class MonsterBattle {
          * (Attack, heal. item, etc.)
          */
 
-
         if (theOption == 0) {
             // TODO basic attack
-            basicAttack(myHero, myMonster);
+
         } else if (theOption == 1) {
             // TODO special attack
 
@@ -65,13 +63,18 @@ public class MonsterBattle {
 
     }
 
-    private void basicAttack(DungeonCharacter theAttacker, DungeonCharacter theTarget) {
-        theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.basicAtk());
+    private void playerTurn() {
+
     }
 
-    private void specialAttack(DungeonCharacter theAttacker, DungeonCharacter theTarget) {
-        theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.specialAtk());
+    private void monsterTurn() {
+
     }
+
+
+
+
+
 
     public static boolean has_won(int win) {
         if(win == 1) {

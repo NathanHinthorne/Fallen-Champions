@@ -29,7 +29,7 @@ public class Hero_Support extends Hero implements Healable {
     /**
      * Second special attack for hero
      */
-    public void specialAtk2() {
+    public void specialAtk2(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -37,7 +37,7 @@ public class Hero_Support extends Hero implements Healable {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
             System.out.println("Attack Failed!");
