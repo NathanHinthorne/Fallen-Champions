@@ -27,6 +27,7 @@ public abstract class DungeonBuilder {
 
     abstract public Dungeon buildDungeon();
 
+//    abstract public Queue<Monster> readMonsters(String column?, String otherIdentifier?);   use this line instead
     abstract public Queue<Monster> readMonsters(); //read different monsters in from SQLite depending on difficulty
 
     protected void setMaze(Room[][] theMaze) {

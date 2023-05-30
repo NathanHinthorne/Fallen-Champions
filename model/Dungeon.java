@@ -150,7 +150,6 @@ public class Dungeon {
 
             return unplacedMonsters;
         }
-
     }
     public static class MediumDungeonBuilder extends DungeonBuilder {
         private static final int DUNGEON_WIDTH = 20;
