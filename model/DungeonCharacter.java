@@ -146,7 +146,7 @@ public abstract class DungeonCharacter {
      * Allows the character to summon their special attack
      * @return the special attack
      */
-    public int specialAtk() {
+    public int specialAtk(DungeonCharacter theTarget) {
         if(myHitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");

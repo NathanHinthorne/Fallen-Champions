@@ -1,8 +1,11 @@
 package controller;
 import model.*;
 import view.*;
+import java.util.Random;
 
 public class MonsterBattle {
+
+    private static Random RANDOMIZER = new Random();
 
     private Hero myHero;
     private Monster myMonster;
@@ -18,20 +21,20 @@ public class MonsterBattle {
      * Starts a new battle between the player and a random
      * monster.
      */
-    public void newBattle(DungeonCharacter thePlayer, DungeonCharacter theEnemy) {
+    public void newBattle(Hero thePlayer, Monster theEnemy) {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
         if (thePlayer.getSpd() > theEnemy.getSpd()) {
             while (!myGameOver) {
-                playerTurn();
-                monsterTurn();
+                playerTurn(thePlayer, theEnemy);
+                monsterTurn(theEnemy, thePlayer);
             }
         } else {
             while (!myGameOver) {
-                monsterTurn();
-                playerTurn();
+                monsterTurn(theEnemy, thePlayer);
+                playerTurn(thePlayer, theEnemy);
             }
         }
 
@@ -63,11 +66,23 @@ public class MonsterBattle {
 
     }
 
-    private void playerTurn() {
-
+    private void playerTurn(Hero thePlayer, Monster theEnemy) {
+        /**
+         * Read input from user to determine what to do
+         */
     }
 
-    private void monsterTurn() {
+    private void monsterTurn(Monster theEnemy, Hero thePlayer) {
+        // Bound to how many things the monster can do
+        int choice = RANDOMIZER.nextInt(3);
+
+        if (choice == 0) {
+            theEnemy.basicAtk(thePlayer);
+        } else if (choice == 1) {
+            theEnemy.specialAtk(thePlayer);
+        } else if (choice == 2) {
+            theEnemy.heal();
+        }
 
     }
 
