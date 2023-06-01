@@ -13,10 +13,10 @@ public abstract class DungeonBuilder {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
     static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
-    static final double ENEMY_CHANCE = 0.20;
-    static final double POTION_CHANCE = 0.10;
-    static final double PILLAR_CHANCE = 0.01;
-    static final double PIT_CHANCE = 0.10;
+    static final double ENEMY_CHANCE = 0.40;
+    static final double POTION_CHANCE = 0.30;
+    static final double PILLAR_CHANCE = 0.15;
+    static final double PIT_CHANCE = 0.20;
     static final Random rand = new Random();
 
     static Room[][] maze;
