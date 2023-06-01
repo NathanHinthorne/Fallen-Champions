@@ -27,6 +27,7 @@ public class Dungeon {
         private static final String DIFFICULTY = "Easy";
         private static final int DUNGEON_WIDTH = 5;
         private static final int DUNGEON_HEIGHT = 5;
+        private static final double BRANCH_OFF_CHANCE = 0.50;
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
@@ -43,6 +44,7 @@ public class Dungeon {
             this.setMaze(Dungeon.myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
+            this.setBranchOffChance(BRANCH_OFF_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -83,12 +85,13 @@ public class Dungeon {
         private static final String DIFFICULTY = "Medium";
         private static final int DUNGEON_WIDTH = 10;
         private static final int DUNGEON_HEIGHT = 10;
+        private static final double BRANCH_OFF_CHANCE = 0.55;
 
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon != null) { // for singleton
+            if (myDungeon == null) { // for singleton
                 myDungeon = new Dungeon();
             }
             Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
@@ -100,6 +103,7 @@ public class Dungeon {
             this.setMaze(Dungeon.myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
+            this.setBranchOffChance(BRANCH_OFF_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -136,8 +140,9 @@ public class Dungeon {
     }
     public static class LargeDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Hard";
-        private static final int DUNGEON_WIDTH = 12;
-        private static final int DUNGEON_HEIGHT = 12;
+        private static final int DUNGEON_WIDTH = 15;
+        private static final int DUNGEON_HEIGHT = 15;
+        private static final double BRANCH_OFF_CHANCE = 0.70;
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
@@ -154,6 +159,7 @@ public class Dungeon {
             this.setMaze(Dungeon.myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
+            this.setBranchOffChance(BRANCH_OFF_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls

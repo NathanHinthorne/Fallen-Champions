@@ -26,7 +26,7 @@ public abstract class DungeonBuilder {
     static int myEntranceY;
     static int myExitX;
     static int myExitY; // !!! make all fields private or protected?
-    static double myRoomBranchOffChance = 0.50;
+    static double myRoomBranchOffChance;
     static int numberOfEmptyRooms = 0;
 
     abstract public Dungeon buildDungeon();
@@ -100,8 +100,13 @@ public abstract class DungeonBuilder {
         myMazeHeight = theMazeHeight;
     }
 
+    protected void setBranchOffChance(final double theBranchOffChance) {
+        myRoomBranchOffChance = theBranchOffChance;
+    }
+
 
     protected void fillWithWalls() {
+        numberOfEmptyRooms = 0;
         for (int y = 0; y < myMazeHeight; y++) {
             for (int x = 0; x < myMazeWidth; x++) {
                 myMaze[y][x] = new Room(y, x);
@@ -112,23 +117,32 @@ public abstract class DungeonBuilder {
 
 
     protected void fillWithEmptyRooms() {
-        myMaze[1][myMazeWidth/2].removeWall(); // make sure the room near the  is empty
-        fillWithEmptyRooms(myMazeWidth/2-1, myMazeWidth/2); // start generating rooms from the
+        numberOfEmptyRooms = 0; // reset the number of empty rooms
+        myRoomBranchOffChance = 0.50; // reset the room branch off chance
+
+        fillWithEmptyRooms(myMazeWidth/2, myMazeWidth/2); // start generating rooms from the center
 
         int numberOfRooms = (myMazeWidth-2) * (myMazeHeight-2);
-        double roomToWallRatio = (double) numberOfEmptyRooms / numberOfRooms;
+        double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
-        while (roomToWallRatio < 0.40 || roomToWallRatio > 0.80) {
+        if (roomPercentage < 0.75 || roomPercentage > 0.85) {
             fillWithWalls();
             fillWithEmptyRooms();
         }
 
+        printThis(); // DEBUG METHOD
+    }
+
+    private void printThis() { // DEBUG METHOD
         for (int y = 0; y < myMazeHeight; y++) {
             System.out.println();
             for (int x = 0; x < myMazeWidth; x++) {
                 System.out.print(myMaze[y][x] + "  ");
             }
         }
+        System.out.println();
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println();
     }
 
     /**
