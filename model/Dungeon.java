@@ -60,10 +60,10 @@ public class Dungeon {
             Point entranceCoords = addEntrance(); //this line keeps running cuz it's not finding a room to place the entrance in
             Point exitCoords = addExit();
 
-            myEntranceX = entranceCoords.x;
-            myEntranceY = entranceCoords.y;
-            myExitX = exitCoords.x;
-            myExitY = exitCoords.y;
+            entranceX = entranceCoords.x;
+            entranceY = entranceCoords.y;
+            exitX = exitCoords.x;
+            exitY = exitCoords.y;
 
             // step 5: find a starting point for the hero
             Point heroCoords = findStartingPoint();
@@ -94,13 +94,13 @@ public class Dungeon {
             if (myDungeon == null) { // for singleton
                 myDungeon = new Dungeon();
             }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
+            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<Pillars>();
 
-            this.setMaze(Dungeon.myMaze);
+            this.setMaze(myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setBranchOffChance(BRANCH_OFF_CHANCE);
@@ -111,26 +111,31 @@ public class Dungeon {
 
             // step 2: randomly place empty rooms
             fillWithEmptyRooms();
+            System.out.println(myDungeon); // debug
 
             // step 3: fill empty rooms with objects
             fillWithObjects(myUnplacedMonsters, myPlacedPillars);
+            System.out.println(myDungeon); // debug
 
             // step 4: add entrance and exit
             Point entranceCoords = addEntrance();
             Point exitCoords = addExit();
+            System.out.println(myDungeon); // debug
 
-            myEntranceX = entranceCoords.x;
-            myEntranceY = entranceCoords.y;
-            myExitX = exitCoords.x;
-            myExitY = exitCoords.y;
+
+            entranceX = entranceCoords.x;
+            entranceY = entranceCoords.y;
+            exitX = exitCoords.x;
+            exitY = exitCoords.y;
 
             // step 5: find a starting point for the hero
             Point heroCoords = findStartingPoint();
+            System.out.println(myDungeon); // debug
 
             myHeroX = heroCoords.x;
             myHeroY = heroCoords.y;
 
-            // step 6: keep building dungeons until we find one that's traversable
+            // step 6: keep building dungeons until we find one that's traversable (NOT NEEDED?)
 //            while(!isTraversable()) {
 //                buildDungeon();
 //            }
@@ -175,10 +180,10 @@ public class Dungeon {
             Point entranceCoords = addEntrance();
             Point exitCoords = addExit();
 
-            myEntranceX = entranceCoords.x;
-            myEntranceY = entranceCoords.y;
-            myExitX = exitCoords.x;
-            myExitY = exitCoords.y;
+            entranceX = entranceCoords.x;
+            entranceY = entranceCoords.y;
+            exitX = exitCoords.x;
+            exitY = exitCoords.y;
 
             // step 5: find a starting point for the hero
             Point heroCoords = findStartingPoint();
@@ -278,7 +283,8 @@ public class Dungeon {
         for (int i = 0; i < myMazeHeight; i++) {
             sb.append("\n");
             for (int j = 0; j < myMazeWidth; j++) {
-                sb.append(myMaze[i][j].toString() + "  ");
+                sb.append(myMaze[i][j].toString());
+                sb.append("  ");
             }
         }
         return sb.toString();

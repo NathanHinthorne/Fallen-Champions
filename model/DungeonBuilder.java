@@ -19,14 +19,14 @@ public abstract class DungeonBuilder {
     static final double PIT_CHANCE = 0.10;
     static final Random rand = new Random();
 
-    static Room[][] myMaze;
-    static int myMazeWidth;
-    static int myMazeHeight;
-    static int myEntranceX;
-    static int myEntranceY;
-    static int myExitX;
-    static int myExitY; // !!! make all fields private or protected?
-    static double myRoomBranchOffChance;
+    static Room[][] maze;
+    static int mazeWidth;
+    static int mazeHeight;
+    static int entranceX;
+    static int entranceY;
+    static int exitX;
+    static int exitY; // !!! make all fields private or protected?
+    static double roomBranchOffChance;
     static int numberOfEmptyRooms = 0;
 
     abstract public Dungeon buildDungeon();
@@ -89,28 +89,28 @@ public abstract class DungeonBuilder {
     }
 
     protected void setMaze(final Room[][] theMaze) {
-        myMaze = theMaze;
+        maze = theMaze;
     }
 
     protected void setMazeWidth(final int theMazeWidth) {
-        myMazeWidth = theMazeWidth;
+        mazeWidth = theMazeWidth;
     }
 
     protected void setMazeHeight(final int theMazeHeight) {
-        myMazeHeight = theMazeHeight;
+        mazeHeight = theMazeHeight;
     }
 
     protected void setBranchOffChance(final double theBranchOffChance) {
-        myRoomBranchOffChance = theBranchOffChance;
+        roomBranchOffChance = theBranchOffChance;
     }
 
 
     protected void fillWithWalls() {
         numberOfEmptyRooms = 0;
-        for (int y = 0; y < myMazeHeight; y++) {
-            for (int x = 0; x < myMazeWidth; x++) {
-                myMaze[y][x] = new Room(y, x);
-                myMaze[y][x].placeWall();
+        for (int y = 0; y < mazeHeight; y++) {
+            for (int x = 0; x < mazeWidth; x++) {
+                maze[y][x] = new Room(y, x);
+                maze[y][x].placeWall();
             }
         }
     }
@@ -118,11 +118,11 @@ public abstract class DungeonBuilder {
 
     protected void fillWithEmptyRooms() {
         numberOfEmptyRooms = 0; // reset the number of empty rooms
-        myRoomBranchOffChance = 0.50; // reset the room branch off chance
+        roomBranchOffChance = 0.50; // reset the room branch off chance
 
-        fillWithEmptyRooms(myMazeWidth/2, myMazeWidth/2); // start generating rooms from the center
+        fillWithEmptyRooms(mazeWidth /2, mazeWidth /2); // start generating rooms from the center
 
-        int numberOfRooms = (myMazeWidth-2) * (myMazeHeight-2);
+        int numberOfRooms = (mazeWidth -2) * (mazeHeight -2);
         double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
         if (roomPercentage < 0.75 || roomPercentage > 0.85) {
@@ -130,20 +130,20 @@ public abstract class DungeonBuilder {
             fillWithEmptyRooms();
         }
 
-        printThis(); // DEBUG METHOD
+//        printThis(); // DEBUG METHOD
     }
 
-    private void printThis() { // DEBUG METHOD
-        for (int y = 0; y < myMazeHeight; y++) {
-            System.out.println();
-            for (int x = 0; x < myMazeWidth; x++) {
-                System.out.print(myMaze[y][x] + "  ");
-            }
-        }
-        System.out.println();
-        System.out.println("---------------------------------------------------------------------");
-        System.out.println();
-    }
+//    private void printThis() { // DEBUG METHOD
+//        for (int y = 0; y < myMazeHeight; y++) {
+//            System.out.println();
+//            for (int x = 0; x < myMazeWidth; x++) {
+//                System.out.print(myMaze[y][x] + "  ");
+//            }
+//        }
+//        System.out.println();
+//        System.out.println("---------------------------------------------------------------------");
+//        System.out.println();
+//    }
 
     /**
      * Recursive helper method to fill the maze with empty rooms.
@@ -153,7 +153,7 @@ public abstract class DungeonBuilder {
      */
     private static void fillWithEmptyRooms(final int theY, final int theX) {
 
-        Room room = myMaze[theY][theX];
+        Room room = maze[theY][theX];
 
         // base case
         if (!withinBounds(theY, theX)) return;
@@ -166,7 +166,7 @@ public abstract class DungeonBuilder {
 //        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
 
         // leave a chance for paths of empty rooms to branch off
-        if (Math.random() < myRoomBranchOffChance) {
+        if (Math.random() < roomBranchOffChance) {
 
             // 50% chance for a room to branch off to the left or right
             if (Math.random() < ROOM_LEFT_OR_RIGHT_CHANCE) { // branch right
@@ -204,25 +204,18 @@ public abstract class DungeonBuilder {
             fillWithEmptyRooms(theY, theX-1);
         }
 
-//        System.out.println();
-//        for (int y = 0; y < myMazeHeight; y++) {
-//            System.out.println();
-//            for (int x = 0; x < myMazeWidth; x++) {
-//                System.out.print(myMaze[y][x] + "  ");
-//            }
-//        }
-        myRoomBranchOffChance -= 0.03; // branch less and less frequently in the future
+        roomBranchOffChance -= 0.03; // branch less and less frequently in the future
 
     }
 
     private static Direction findTraversalDirection(final int theY, final int theX) {
         Direction traversalDirection;
 
-        if (myMaze[theY+1][theX].isEmpty()) { // check if the room below is empty
+        if (maze[theY+1][theX].isEmpty()) { // check if the room below is empty
             traversalDirection = Direction.NORTH;
-        } else if (myMaze[theY][theX-1].isEmpty()) { // check if the room to the left is empty
+        } else if (maze[theY][theX-1].isEmpty()) { // check if the room to the left is empty
             traversalDirection = Direction.EAST;
-        } else if (myMaze[theY-1][theX].isEmpty()) { // check if the room above is empty
+        } else if (maze[theY-1][theX].isEmpty()) { // check if the room above is empty
             traversalDirection = Direction.SOUTH;
         } else { // the room to the right must be empty
             traversalDirection = Direction.WEST;
@@ -232,21 +225,21 @@ public abstract class DungeonBuilder {
     }
 
     private static boolean withinBounds(final int theY, final int theX) {
-        Room room = myMaze[theY][theX];
+        Room room = maze[theY][theX];
 
         //inside maze and non visited room
-        return theY >= 1 && theY < myMazeHeight-1
-                && theX >= 1 && theX < myMazeWidth-1;
+        return theY >= 1 && theY < mazeHeight -1
+                && theX >= 1 && theX < mazeWidth -1;
     }
 
 
 
     protected void fillWithObjects(final Queue<Monster> theUnplacedMonsters, final Set<Pillars> thePlacedPillars) {
 
-        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
-            for (int x = 1; x < myMazeWidth - 1; x++) {
+        for (int y = 1; y < mazeHeight - 1; y++) { // skip over the edges of the dungeon
+            for (int x = 1; x < mazeWidth - 1; x++) {
 
-                Room room = myMaze[y][y];
+                Room room = maze[y][y];
 
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
@@ -265,6 +258,18 @@ public abstract class DungeonBuilder {
                 }
             }
         }
+
+        printObjects();
+    }
+
+    public void printObjects() {
+
+        for (int i = 0; i < mazeHeight; i++) {
+            System.out.println();
+            for (int j = 0; j < mazeWidth; j++) {
+                System.out.print(maze[i][j].toString() + "  ");
+            }
+        }
     }
 
 
@@ -277,12 +282,12 @@ public abstract class DungeonBuilder {
 
         // keep generating coords for entrance until we get a room that is empty
         do {
-            x = rand.nextInt(myMazeWidth);
-            y = rand.nextInt(myMazeHeight);
+            x = rand.nextInt(mazeWidth);
+            y = rand.nextInt(mazeHeight);
 
-        } while (!myMaze[y][x].isEmpty());
+        } while (!maze[y][x].isEmpty());
 
-        myMaze[y][x].placeEntrance();
+        maze[y][x].placeEntrance();
         return new Point(x, y);
     }
 
@@ -295,12 +300,12 @@ public abstract class DungeonBuilder {
 
         // keep generating coords for an exit until we get a room that is empty
         do {
-            x = rand.nextInt(myMazeWidth);
-            y = rand.nextInt(myMazeHeight);
+            x = rand.nextInt(mazeWidth);
+            y = rand.nextInt(mazeHeight);
 
-        } while (!myMaze[y][x].isEmpty());
+        } while (!maze[y][x].isEmpty());
 
-        myMaze[y][x].placeExit();
+        maze[y][x].placeExit();
         return new Point(x, y);
     }
 
@@ -313,10 +318,10 @@ public abstract class DungeonBuilder {
 
         // keep generating coords for hero until we get a room that is empty
         do {
-            x = rand.nextInt(myMazeWidth);
-            y = rand.nextInt(myMazeHeight);
+            x = rand.nextInt(mazeWidth);
+            y = rand.nextInt(mazeHeight);
 
-        } while (!myMaze[y][x].isEmpty());
+        } while (!maze[y][x].isEmpty());
 
         return new Point(x, y);
     }
@@ -330,7 +335,7 @@ public abstract class DungeonBuilder {
     protected boolean isTraversable() {
         //before this method, make sure there are all 4 pillars present within the dungeon
 
-        boolean isTraversable = traverse(myEntranceY, myEntranceX);
+        boolean isTraversable = traverse(entranceY, entranceX);
         return isTraversable;
     }
 
@@ -343,7 +348,7 @@ public abstract class DungeonBuilder {
      */
     private static boolean traverse(final int theY, final int theX) {
 
-        Room room = myMaze[theY][theX];
+        Room room = maze[theY][theX];
 
         boolean success = false;
 
@@ -368,11 +373,11 @@ public abstract class DungeonBuilder {
     }
 
     private static boolean validMove(final int theY, final int theX) {
-        Room room = myMaze[theY][theX];
+        Room room = maze[theY][theX];
 
         //inside maze and non visited room
-        return theY >= 1 && theY < myMazeHeight-1
-                && theX >= 1 && theX < myMazeWidth-1
+        return theY >= 1 && theY < mazeHeight -1
+                && theX >= 1 && theX < mazeWidth -1
                 && !room.hasWall();
     }
 
@@ -389,22 +394,22 @@ public abstract class DungeonBuilder {
         int count = 0;
 
         // check top
-        if (myMaze[theY - 1][theX].isEmpty()) {
+        if (maze[theY - 1][theX].isEmpty()) {
             count++;
         }
 
         // check left
-        if (myMaze[theY][theX - 1].isEmpty()) {
+        if (maze[theY][theX - 1].isEmpty()) {
             count++;
         }
 
         // check right
-        if (myMaze[theY][theX + 1].isEmpty()) {
+        if (maze[theY][theX + 1].isEmpty()) {
             count++;
         }
 
         // check bottom
-        if (myMaze[theY + 1][theX].isEmpty()) {
+        if (maze[theY + 1][theX].isEmpty()) {
             count++;
         }
 
