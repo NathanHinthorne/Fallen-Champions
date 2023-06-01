@@ -5,16 +5,19 @@ import java.util.Random;
 
 public class MonsterBattle {
 
-    private static Random RANDOMIZER = new Random();
+    private static final Random RANDOMIZER = new Random();
 
-    private Hero myHero;
-    private Monster myMonster;
+    private final Hero myHero;
+    private final Monster myMonster;
     private boolean myGameOver;
+    private boolean myVictory;
 
     public MonsterBattle(Hero theHero, Monster theMonster) {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;
+        myVictory = false;
+        newBattle(myHero, myMonster);
     }
 
     /**
@@ -70,6 +73,12 @@ public class MonsterBattle {
         /**
          * Read input from user to determine what to do
          */
+
+        if (theEnemy.getHitPoints() <= 0) {
+            myGameOver = true;
+            myVictory = false;
+        }
+
     }
 
     private void monsterTurn(Monster theEnemy, Hero thePlayer) {
@@ -82,6 +91,11 @@ public class MonsterBattle {
             theEnemy.specialAtk(thePlayer);
         } else if (choice == 2) {
             theEnemy.heal();
+        }
+
+        if (thePlayer.getHitPoints() <= 0) {
+            myGameOver = true;
+            myVictory = false;
         }
 
     }
