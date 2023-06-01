@@ -25,9 +25,9 @@ public abstract class DungeonBuilder {
     static int myEntranceX;
     static int myEntranceY;
     static int myExitX;
-    static int myExitY;
+    static int myExitY; // !!! make all fields private or protected?
     static double myRoomBranchOffChance = 0.50;
-
+    static int numberOfEmptyRooms = 0;
 
     abstract public Dungeon buildDungeon();
 
@@ -115,6 +115,14 @@ public abstract class DungeonBuilder {
         myMaze[1][myMazeWidth/2].removeWall(); // make sure the room near the  is empty
         fillWithEmptyRooms(myMazeWidth/2-1, myMazeWidth/2); // start generating rooms from the
 
+        int numberOfRooms = (myMazeWidth-2) * (myMazeHeight-2);
+        double roomToWallRatio = (double) numberOfEmptyRooms / numberOfRooms;
+
+        while (roomToWallRatio < 0.40 || roomToWallRatio > 0.80) {
+            fillWithWalls();
+            fillWithEmptyRooms();
+        }
+
         for (int y = 0; y < myMazeHeight; y++) {
             System.out.println();
             for (int x = 0; x < myMazeWidth; x++) {
@@ -140,6 +148,7 @@ public abstract class DungeonBuilder {
         Direction traversalDirection = findTraversalDirection(theY, theX);
 
         room.removeWall();
+        numberOfEmptyRooms++;
 //        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
 
         // leave a chance for paths of empty rooms to branch off

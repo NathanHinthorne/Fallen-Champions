@@ -108,12 +108,6 @@ public class Dungeon {
             // step 2: randomly place empty rooms
             fillWithEmptyRooms();
 
-            // step 3: confirm that the dungeon contains enough empty rooms
-            while(!hasEnoughEmptyRooms()) {
-                buildDungeon();
-            }
-
-
             // step 3: fill empty rooms with objects
             fillWithObjects(myUnplacedMonsters, myPlacedPillars);
 
