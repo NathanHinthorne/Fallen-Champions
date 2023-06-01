@@ -34,15 +34,15 @@ public class Dungeon {
             if (myDungeon != null) { // for singleton
                 myDungeon = new Dungeon();
             }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<Pillars>();
 
             this.setMaze(Dungeon.myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH);
-            this.setMazeHeight(DUNGEON_HEIGHT);
+            this.setMazeWidth(DUNGEON_WIDTH+2);
+            this.setMazeHeight(DUNGEON_HEIGHT+2);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -55,7 +55,7 @@ public class Dungeon {
             fillWithObjects(myUnplacedMonsters, myPlacedPillars);
 
             // step 4: add entrance and exit
-            Point entranceCoords = addEntrance();
+            Point entranceCoords = addEntrance(); //this line keeps running cuz it's not finding a room to place the entrance in
             Point exitCoords = addExit();
 
             myEntranceX = entranceCoords.x;
@@ -81,8 +81,8 @@ public class Dungeon {
 
     public static class MediumDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Medium";
-        private static final int DUNGEON_WIDTH = 8;
-        private static final int DUNGEON_HEIGHT = 8;
+        private static final int DUNGEON_WIDTH = 10;
+        private static final int DUNGEON_HEIGHT = 10;
 
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
@@ -91,15 +91,15 @@ public class Dungeon {
             if (myDungeon != null) { // for singleton
                 myDungeon = new Dungeon();
             }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<Pillars>();
 
             this.setMaze(Dungeon.myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH);
-            this.setMazeHeight(DUNGEON_HEIGHT);
+            this.setMazeWidth(DUNGEON_WIDTH+2);
+            this.setMazeHeight(DUNGEON_HEIGHT+2);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -145,15 +145,15 @@ public class Dungeon {
             if (myDungeon != null) { // for singleton
                 myDungeon = new Dungeon();
             }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<Pillars>();
 
             this.setMaze(Dungeon.myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH);
-            this.setMazeHeight(DUNGEON_HEIGHT);
+            this.setMazeWidth(DUNGEON_WIDTH+2);
+            this.setMazeHeight(DUNGEON_HEIGHT+2);
 
 
             // step 1: fill the dungeon COMPLETELY with walls

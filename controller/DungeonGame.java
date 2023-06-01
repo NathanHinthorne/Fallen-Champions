@@ -42,7 +42,8 @@ public class DungeonGame {
         updateMap();
 
         // game loop
-        while (!gameOver) {
+//        while (!gameOver) {
+
             // get player input from view (can be movement input, inventory input, save, exit, etc.)
                 // if movement input, check if valid
                     // if invalid, prompt player to try again
@@ -55,9 +56,11 @@ public class DungeonGame {
                     // if valid, use item
                 // if save, save game
                 // if exit, exit game
-            updateMap();
-            updatePlayerView();
-        }
+
+//            updateMap();
+//            updatePlayerView();
+
+//        }
 
 
     }
@@ -75,9 +78,7 @@ public class DungeonGame {
     /**
      * Displays the dungeon map
      */
-    public static void updateMap() {
-        System.out.println(myDungeon.toString());
-    }
+    public static void updateMap() { System.out.println(myDungeon.toString()); }
 
     /**
      * Displays what the player should be seeing in the GUI

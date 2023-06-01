@@ -7,16 +7,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public abstract class DungeonBuilder {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
-    static final double NEW_ROOM_CHANCE = 0.20;
-    static final double EXTENDED_ROOM_CHANCE = 0.70;
+    static final double ROOM_BRANCH_OFF_CHANCE = 0.40;
     static final double ENEMY_CHANCE = 0.20;
     static final double POTION_CHANCE = 0.10;
     static final double PILLAR_CHANCE = 0.01;
@@ -54,7 +50,7 @@ public abstract class DungeonBuilder {
         String query = "SELECT * FROM " + difficulty;
 
         try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement(); ) {
+             Statement stmt = conn.createStatement()) {
 
             ResultSet rs = stmt.executeQuery(query);
 
@@ -91,15 +87,15 @@ public abstract class DungeonBuilder {
         return unplacedMonsters;
     }
 
-    protected void setMaze(Room[][] theMaze) {
+    protected void setMaze(final Room[][] theMaze) {
         myMaze = theMaze;
     }
 
-    protected void setMazeWidth(int theMazeWidth) {
+    protected void setMazeWidth(final int theMazeWidth) {
         myMazeWidth = theMazeWidth;
     }
 
-    protected void setMazeHeight(int theMazeHeight) {
+    protected void setMazeHeight(final int theMazeHeight) {
         myMazeHeight = theMazeHeight;
     }
 
@@ -113,31 +109,79 @@ public abstract class DungeonBuilder {
         }
     }
 
+//    protected void fillWithEmptyRooms() {
+//        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
+//            for (int x = 1; x < myMazeWidth - 1; x++) {
+//
+//                Room room = myMaze[y][y];
+//
+//                //TODO Three choices to determine where to place room
+//                // 1. perlin noise
+//                // 2. simple if statements like below
+//                // 3. recursive method
+//                int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
+//                if (numberOfEmptyRooms == 0) {
+//                    if (Math.random() < NEW_ROOM_CHANCE) {
+//                        room.removeWall();
+//                    }
+//                } else if (numberOfEmptyRooms == 1) {
+//                    if (Math.random() < EXTENDED_ROOM_CHANCE) {
+//                        room.removeWall();
+//                    }
+//                }
+//            }
+//        }
+//    }
+
     protected void fillWithEmptyRooms() {
-        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
-            for (int x = 1; x < myMazeWidth - 1; x++) {
-
-                Room room = myMaze[y][y];
-
-                //TODO Three choices to determine where to place room
-                // 1. perlin noise
-                // 2. simple if statements like below
-                // 3. recursive method
-                int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
-                if (numberOfEmptyRooms == 0) {
-                    if (Math.random() < NEW_ROOM_CHANCE) {
-                        room.removeWall();
-                    }
-                } else if (numberOfEmptyRooms == 1) {
-                    if (Math.random() < EXTENDED_ROOM_CHANCE) {
-                        room.removeWall();
-                    }
-                }
-            }
-        }
+        fillWithEmptyRooms(myMazeHeight/2, myMazeWidth/2); // start generating rooms in the middle of the maze
     }
 
-    protected void fillWithObjects(Queue<Monster> theUnplacedMonsters, Set<Pillars> thePlacedPillars) {
+    /**
+     * Recursive helper method to fill the maze with empty rooms.
+     *
+     * @param theY the y coordinate of the current room
+     * @param theX the x coordinate of the current room
+     * @return
+     */
+    private static void fillWithEmptyRooms(final int theY, final int theX) {
+
+        Room room = myMaze[theY][theX];
+
+        // base case
+        if (!withinBounds(theY, theX)) return;
+
+        room.removeWall();
+        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
+
+
+        if (Math.random() < ROOM_BRANCH_OFF_CHANCE) {
+
+            Direction traversalDirection = Direction.findTraversalDirection(); // the direction the generator is moving in
+            if (traversalDirection == Direction.NORTH) {
+                fillWithEmptyRooms(theY, theX+1);
+            } else if (traversalDirection == Direction.EAST) {
+                fillWithEmptyRooms(theY, theX+1);
+
+            }
+        }
+
+    }
+
+    private static boolean withinBounds(final int theY, final int theX) {
+        Room room = myMaze[theY][theX];
+
+        //inside maze and non visited room
+        return theY >= 1 && theY < myMazeHeight-1
+                && theX >= 1 && theX < myMazeWidth-1
+                && !room.hasWall();
+    }
+
+
+
+
+
+    protected void fillWithObjects(final Queue<Monster> theUnplacedMonsters, final Set<Pillars> thePlacedPillars) {
 
         for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < myMazeWidth - 1; x++) {
@@ -224,88 +268,55 @@ public abstract class DungeonBuilder {
      * @return true if the dungeon is traversable, false otherwise.
      */
     protected boolean isTraversable() {
-
-        boolean isTraversable = false;
-
         //before this method, make sure there are all 4 pillars present within the dungeon
 
-        //pick a random direction to act as forward (as long as forward leads to empty room)
-        isTraversable = traverse(myEntranceX, myEntranceY, Direction.NORTH); //TODO change Direction.NORTH
-
+        boolean isTraversable = traverse(myEntranceY, myEntranceX);
         return isTraversable;
     }
 
+    /**
+     * Recursive method to check if the dungeon is traversable.
+     *
+     * @param theY the y coordinate of the room to check
+     * @param theX the x coordinate of the room to check
+     * @return true if the dungeon is traversable, false otherwise.
+     */
+    private static boolean traverse(final int theY, final int theX) {
 
-    private boolean traverse(final int theX, final int theY, final Direction theForward) {
+        Room room = myMaze[theY][theX];
 
-        final Direction theRight;
-        final Direction theLeft;
+        boolean success = false;
 
-        // determine what left and right should be based on forward
-        if (theForward == Direction.NORTH) {
-            theRight = Direction.EAST;
-            theLeft = Direction.WEST;
-        } else if (theForward == Direction.EAST) {
-            theRight = Direction.SOUTH;
-            theLeft = Direction.NORTH;
-        } else if (theForward == Direction.SOUTH) {
-            theRight = Direction.WEST;
-            theLeft = Direction.EAST;
-        } else { // forward must be west
-            theRight = Direction.NORTH;
-            theLeft = Direction.SOUTH;
+        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
+        if (validMove(theY, theX)) {
+
+            // base case
+            if (room.hasExit())
+                return true;
+
+            //not at exit so need to try other directions
+            success = traverse(theY+1, theX); //down
+            if (!success)
+                success = traverse(theY, theX+1); //right
+            if (!success)
+                success = traverse(theY-1, theX); //up
+            if (!success)
+                success = traverse(theY, theX-1); //left
+
         }
 
-        // base case - successful
-        if (myMaze[theX][theY].hasExit()) {
-            System.out.println("Exit found!");
-
-            return true; // does this stop all of the method calls? will this one return statement solve the problem?
-        }
-
-        // base case and recursive case
-        Room forwardRoom = walk(theX, theY, theForward);
-        Room rightRoom = walk(theX, theY, theRight);
-        Room leftRoom = walk(theX, theY, theLeft);
-        int newY;
-        int newX;
-
-        if (!forwardRoom.hasWall()) {
-            newX = forwardRoom.getX();
-            newY = forwardRoom.getY();
-            traverse(newX, newY, theForward); //refactor to make traverse accept rooms instead of directions?
-        }                                                   // ex: forwardRoom instead of theForward
-        if (!rightRoom.hasWall()) {
-            newX = rightRoom.getX();
-            newY = rightRoom.getY();
-            traverse(newX, newY, theRight);
-        }
-        if (!leftRoom.hasWall()) {
-            newX = leftRoom.getX();
-            newY = leftRoom.getY();
-            traverse(newX, newY, theLeft);
-        }
-
-        return false; // we did not find an exit
+        return success;
     }
 
-    private Room walk(final int theX, final int theY, final Direction dir) {
-        Room newRoom;
+    private static boolean validMove(final int theY, final int theX) {
+        Room room = myMaze[theY][theX];
 
-        if (dir == Direction.NORTH) {
-            newRoom = myMaze[theY - 1][theX];
-        } else if (dir == Direction.EAST) {
-            newRoom = myMaze[theY][theX + 1];
-        } else if (dir == Direction.SOUTH) {
-            newRoom = myMaze[theY + 1][theX];
-        } else if (dir == Direction.WEST) {
-            newRoom = myMaze[theY][theX - 1];
-        } else {
-            newRoom = myMaze[theY][theX];
-        }
-
-        return newRoom;
+        //inside maze and non visited room
+        return theY >= 1 && theY < myMazeHeight-1
+                && theX >= 1 && theX < myMazeWidth-1
+                && !room.hasWall();
     }
+
 
     /**
      * Determines the number of empty rooms adjacent (left/right/up/down) to the given room.
@@ -341,37 +352,4 @@ public abstract class DungeonBuilder {
         return count;
     }
 
-    /**
-     * Determines the number of walls adjacent (left/right/up/down) to the given room.
-     *
-     * @param theX the x coordinate of the room
-     * @param theY the y coordinate of the room
-     * @return the number of walls adjacent to the given room
-     */
-    private int numberOfWalls(final int theX, final int theY) { //! refactor for duplicate code after iteration?
-
-        int count = 0;
-
-        // check top
-        if (myMaze[theY - 1][theX].hasWall()) {
-            count++;
-        }
-
-        // check left
-        if (myMaze[theY][theX - 1].hasWall()) {
-            count++;
-        }
-
-        // check right
-        if (myMaze[theY][theX + 1].hasWall()) {
-            count++;
-        }
-
-        // check bottom
-        if (myMaze[theY + 1][theX].hasWall()) {
-            count++;
-        }
-
-        return count;
-    }
 }
