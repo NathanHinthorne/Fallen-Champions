@@ -71,8 +71,8 @@ public class DungeonGame {
         // medium dungeon = medium difficulty
         // large dungeon = hard difficulty
 
-        DungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); // declare the builder
-        myDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
+        DungeonBuilder theMediumDungeonBuilder = new Dungeon.MediumDungeonBuilder(); // declare the builder
+        myDungeon = theMediumDungeonBuilder.buildDungeon(); // use it to build the dungeon
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.*;
 public abstract class DungeonBuilder {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
-    static final double ROOM_BRANCH_OFF_CHANCE = 0.40;
     static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
     static final double ENEMY_CHANCE = 0.20;
     static final double POTION_CHANCE = 0.10;
@@ -27,6 +26,7 @@ public abstract class DungeonBuilder {
     static int myEntranceY;
     static int myExitX;
     static int myExitY;
+    static double myRoomBranchOffChance = 0.50;
 
 
     abstract public Dungeon buildDungeon();
@@ -143,7 +143,7 @@ public abstract class DungeonBuilder {
 //        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
 
         // leave a chance for paths of empty rooms to branch off
-        if (Math.random() < ROOM_BRANCH_OFF_CHANCE) {
+        if (Math.random() < myRoomBranchOffChance) {
 
             // 50% chance for a room to branch off to the left or right
             if (Math.random() < ROOM_LEFT_OR_RIGHT_CHANCE) { // branch right
@@ -188,6 +188,7 @@ public abstract class DungeonBuilder {
 //                System.out.print(myMaze[y][x] + "  ");
 //            }
 //        }
+        myRoomBranchOffChance -= 0.03; // branch less and less frequently in the future
 
     }
 
