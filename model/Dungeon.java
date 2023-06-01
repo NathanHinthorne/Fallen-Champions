@@ -270,8 +270,9 @@ public class Dungeon {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < myMazeHeight; i++) {
+            sb.append("\n");
             for (int j = 0; j < myMazeWidth; j++) {
-                sb.append(myMaze[i][j].toString());
+                sb.append(myMaze[i][j].toString() + "  ");
             }
         }
         return sb.toString();

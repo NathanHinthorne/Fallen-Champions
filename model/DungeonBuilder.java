@@ -112,7 +112,15 @@ public abstract class DungeonBuilder {
 
 
     protected void fillWithEmptyRooms() {
-        fillWithEmptyRooms(myMazeHeight/2, myMazeWidth/2); // start generating rooms in the middle of the maze
+        myMaze[1][myMazeWidth/2].removeWall(); // make sure the room near the  is empty
+        fillWithEmptyRooms(myMazeWidth/2-1, myMazeWidth/2); // start generating rooms from the
+
+        for (int y = 0; y < myMazeHeight; y++) {
+            System.out.println();
+            for (int x = 0; x < myMazeWidth; x++) {
+                System.out.print(myMaze[y][x] + "  ");
+            }
+        }
     }
 
     /**
@@ -124,13 +132,15 @@ public abstract class DungeonBuilder {
     private static void fillWithEmptyRooms(final int theY, final int theX) {
 
         Room room = myMaze[theY][theX];
-        Direction traversalDirection = findTraversalDirection(theY, theX); // the direction the generator is moving in
 
         // base case
         if (!withinBounds(theY, theX)) return;
 
+        // find the direction the path is getting generated in
+        Direction traversalDirection = findTraversalDirection(theY, theX);
+
         room.removeWall();
-        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
+//        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
 
         // leave a chance for paths of empty rooms to branch off
         if (Math.random() < ROOM_BRANCH_OFF_CHANCE) {
@@ -171,6 +181,14 @@ public abstract class DungeonBuilder {
             fillWithEmptyRooms(theY, theX-1);
         }
 
+//        System.out.println();
+//        for (int y = 0; y < myMazeHeight; y++) {
+//            System.out.println();
+//            for (int x = 0; x < myMazeWidth; x++) {
+//                System.out.print(myMaze[y][x] + "  ");
+//            }
+//        }
+
     }
 
     private static Direction findTraversalDirection(final int theY, final int theX) {
@@ -194,8 +212,7 @@ public abstract class DungeonBuilder {
 
         //inside maze and non visited room
         return theY >= 1 && theY < myMazeHeight-1
-                && theX >= 1 && theX < myMazeWidth-1
-                && !room.hasWall();
+                && theX >= 1 && theX < myMazeWidth-1;
     }
 
 
@@ -306,7 +323,7 @@ public abstract class DungeonBuilder {
 
         boolean success = false;
 
-        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
+//        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
         if (validMove(theY, theX)) {
 
             // base case
