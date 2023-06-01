@@ -14,6 +14,6 @@ public class VisionPotion extends Potion {
 
     @Override
     public String toString() {
-        return "Vision Potion";
-    }
+        return "p";
+    } // change char later
 }

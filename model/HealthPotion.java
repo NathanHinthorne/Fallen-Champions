@@ -30,7 +30,7 @@ public class HealthPotion extends Potion implements Healable {
 
     @Override
     public String toString() {
-        return "Health Potion";
-    }
+        return "p";
+    } // change char later
 
 }
