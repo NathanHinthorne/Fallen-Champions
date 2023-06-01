@@ -13,6 +13,7 @@ public abstract class DungeonBuilder {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
     static final double ROOM_BRANCH_OFF_CHANCE = 0.40;
+    static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
     static final double ENEMY_CHANCE = 0.20;
     static final double POTION_CHANCE = 0.10;
     static final double PILLAR_CHANCE = 0.01;
@@ -109,29 +110,6 @@ public abstract class DungeonBuilder {
         }
     }
 
-//    protected void fillWithEmptyRooms() {
-//        for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
-//            for (int x = 1; x < myMazeWidth - 1; x++) {
-//
-//                Room room = myMaze[y][y];
-//
-//                //TODO Three choices to determine where to place room
-//                // 1. perlin noise
-//                // 2. simple if statements like below
-//                // 3. recursive method
-//                int numberOfEmptyRooms = numberOfEmptyRooms(x, y);
-//                if (numberOfEmptyRooms == 0) {
-//                    if (Math.random() < NEW_ROOM_CHANCE) {
-//                        room.removeWall();
-//                    }
-//                } else if (numberOfEmptyRooms == 1) {
-//                    if (Math.random() < EXTENDED_ROOM_CHANCE) {
-//                        room.removeWall();
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     protected void fillWithEmptyRooms() {
         fillWithEmptyRooms(myMazeHeight/2, myMazeWidth/2); // start generating rooms in the middle of the maze
@@ -142,11 +120,11 @@ public abstract class DungeonBuilder {
      *
      * @param theY the y coordinate of the current room
      * @param theX the x coordinate of the current room
-     * @return
      */
     private static void fillWithEmptyRooms(final int theY, final int theX) {
 
         Room room = myMaze[theY][theX];
+        Direction traversalDirection = findTraversalDirection(theY, theX); // the direction the generator is moving in
 
         // base case
         if (!withinBounds(theY, theX)) return;
@@ -154,18 +132,61 @@ public abstract class DungeonBuilder {
         room.removeWall();
         System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
 
-
+        // leave a chance for paths of empty rooms to branch off
         if (Math.random() < ROOM_BRANCH_OFF_CHANCE) {
 
-            Direction traversalDirection = Direction.findTraversalDirection(); // the direction the generator is moving in
-            if (traversalDirection == Direction.NORTH) {
-                fillWithEmptyRooms(theY, theX+1);
-            } else if (traversalDirection == Direction.EAST) {
-                fillWithEmptyRooms(theY, theX+1);
+            // 50% chance for a room to branch off to the left or right
+            if (Math.random() < ROOM_LEFT_OR_RIGHT_CHANCE) { // branch right
+                if (traversalDirection == Direction.NORTH) {
+                    fillWithEmptyRooms(theY, theX+1);
+                } else if (traversalDirection == Direction.EAST) {
+                    fillWithEmptyRooms(theY+1, theX);
+                } else if (traversalDirection == Direction.SOUTH) {
+                    fillWithEmptyRooms(theY, theX-1);
+                } else { // traversalDirection == Direction.WEST
+                    fillWithEmptyRooms(theY-1, theX);
+                }
 
+            } else {                                        // branch left
+                if (traversalDirection == Direction.NORTH) {
+                    fillWithEmptyRooms(theY, theX-1);
+                } else if (traversalDirection == Direction.EAST) {
+                    fillWithEmptyRooms(theY-1, theX);
+                } else if (traversalDirection == Direction.SOUTH) {
+                    fillWithEmptyRooms(theY, theX+1);
+                } else { // traversalDirection == Direction.WEST
+                    fillWithEmptyRooms(theY+1, theX);
+                }
             }
         }
 
+        // continue generating the path of empty rooms
+        if (traversalDirection == Direction.NORTH) {
+            fillWithEmptyRooms(theY-1, theX);
+        } else if (traversalDirection == Direction.EAST) {
+            fillWithEmptyRooms(theY, theX+1);
+        } else if (traversalDirection == Direction.SOUTH) {
+            fillWithEmptyRooms(theY+1, theX);
+        } else { // traversalDirection == Direction.WEST
+            fillWithEmptyRooms(theY, theX-1);
+        }
+
+    }
+
+    private static Direction findTraversalDirection(final int theY, final int theX) {
+        Direction traversalDirection;
+
+        if (myMaze[theY+1][theX].isEmpty()) { // check if the room below is empty
+            traversalDirection = Direction.NORTH;
+        } else if (myMaze[theY][theX-1].isEmpty()) { // check if the room to the left is empty
+            traversalDirection = Direction.EAST;
+        } else if (myMaze[theY-1][theX].isEmpty()) { // check if the room above is empty
+            traversalDirection = Direction.SOUTH;
+        } else { // the room to the right must be empty
+            traversalDirection = Direction.WEST;
+        }
+
+        return traversalDirection;
     }
 
     private static boolean withinBounds(final int theY, final int theX) {
@@ -176,8 +197,6 @@ public abstract class DungeonBuilder {
                 && theX >= 1 && theX < myMazeWidth-1
                 && !room.hasWall();
     }
-
-
 
 
 
@@ -294,7 +313,7 @@ public abstract class DungeonBuilder {
             if (room.hasExit())
                 return true;
 
-            //not at exit so need to try other directions
+            // not at exit so need to try other directions
             success = traverse(theY+1, theX); //down
             if (!success)
                 success = traverse(theY, theX+1); //right
@@ -302,7 +321,6 @@ public abstract class DungeonBuilder {
                 success = traverse(theY-1, theX); //up
             if (!success)
                 success = traverse(theY, theX-1); //left
-
         }
 
         return success;
