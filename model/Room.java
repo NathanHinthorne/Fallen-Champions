@@ -78,7 +78,7 @@ public class Room {
     }
 
 
-    // 'place' methods have factors determining which type of object to place
+    // 'place' methods have factors determining *which* type of object to place
     // the logic for *when* to place the object is found in the Dungeon class
     public void placeWall() {
         myWall = new Wall();
@@ -128,6 +128,7 @@ public class Room {
         myWall = null;
     }
 
+
     @Override
     public String toString() { //! add monster, multiple items (pits)?
 
@@ -162,5 +163,4 @@ public class Room {
 
         return result;
     }
-
 }

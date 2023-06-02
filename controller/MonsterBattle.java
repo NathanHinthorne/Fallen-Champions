@@ -1,40 +1,53 @@
 package controller;
 import model.*;
 import view.*;
+import java.util.Random;
 
 public class MonsterBattle {
 
-    private Hero myHero;
-    private Monster myMonster;
+    private static final Random RANDOMIZER = new Random();
+
+    private final Hero myHero;
+    private final Monster myMonster;
+    private boolean myGameOver;
+    private boolean myVictory;
 
     public MonsterBattle(Hero theHero, Monster theMonster) {
         myHero = theHero;
         myMonster = theMonster;
+        myGameOver = false;
+        myVictory = false;
+        newBattle(myHero, myMonster);
     }
 
     /**
      * Starts a new battle between the player and a random
      * monster.
+     * @param thePlayer The player
+     * @param theEnemy The monster
+     * @return True if the player loses, false if they win.
      */
-    public void newBattle() {
+    public boolean newBattle(Hero thePlayer, Monster theEnemy) {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
-
-        is__monsterbattle_ongoing(2);
-
-        while (myHero.getHitPoints() > 0  && myMonster.getHitPoints() > 0) {
-            // Gameplay loop
-            // Get player input, then cast that input to playerOption(int x)
+        if (thePlayer.getSpd() > theEnemy.getSpd()) {
+            while (!myGameOver) {
+                playerTurn(thePlayer, theEnemy);
+                monsterTurn(theEnemy, thePlayer);
+            }
+        } else {
+            while (!myGameOver) {
+                monsterTurn(theEnemy, thePlayer);
+                playerTurn(thePlayer, theEnemy);
+            }
         }
 
-        if (myHero.getHitPoints() <= 0) {
-            // End game
-            has_lost(1);
-        } else if (myMonster.getHitPoints() <= 0) {
-            // continue game
+        if (myVictory) {
+            return false;
         }
+        return true;
 
     }
 
@@ -51,10 +64,9 @@ public class MonsterBattle {
          * (Attack, heal. item, etc.)
          */
 
-
         if (theOption == 0) {
             // TODO basic attack
-            basicAttack(myHero, myMonster);
+
         } else if (theOption == 1) {
             // TODO special attack
 
@@ -65,13 +77,43 @@ public class MonsterBattle {
 
     }
 
-    private void basicAttack(DungeonCharacter theAttacker, DungeonCharacter theTarget) {
-        theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.basicAtk());
+    private void playerTurn(Hero thePlayer, Monster theEnemy) {
+        /**
+         * Read input from user to determine what to do
+         */
+
+        if (theEnemy.getHitPoints() <= 0) {
+            myGameOver = true;
+            myVictory = false;
+        }
+
     }
 
-    private void specialAttack(DungeonCharacter theAttacker, DungeonCharacter theTarget) {
-        theTarget.setHitPoints(theTarget.getHitPoints() - theAttacker.specialAtk());
+    private void monsterTurn(Monster theEnemy, Hero thePlayer) {
+        // Bound to how many things the monster can do
+        int choice = RANDOMIZER.nextInt(3);
+
+        if (choice == 0) {
+            theEnemy.basicAtk(thePlayer);
+        } else if (choice == 1) {
+            theEnemy.specialAtk(thePlayer);
+        } else if (choice == 2 && theEnemy.getHitPoints() < theEnemy.getMaxHitPoints()) {
+            theEnemy.heal();
+        } else { // Failsafe
+            theEnemy.basicAtk(thePlayer);
+        }
+
+        if (thePlayer.getHitPoints() <= 0) {
+            myGameOver = true;
+            myVictory = false;
+        }
+
     }
+
+
+
+
+
 
     public static boolean has_won(int win) {
         if(win == 1) {

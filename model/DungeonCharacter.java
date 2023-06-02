@@ -8,6 +8,7 @@ public abstract class DungeonCharacter {
     public final int MAX_SPECIAL_COOLDOWN = 3;
 
     private int myHitPoints;
+    private int myMaxHitPoints;
     private int mySpd;
     private float myLowHitChance;
     private float myHighHitChance;
@@ -18,6 +19,7 @@ public abstract class DungeonCharacter {
 
     public DungeonCharacter() {
         setHitPoints(myHitPoints);
+        myMaxHitPoints = myHitPoints;
         setSpd(mySpd);
         setLowHitChance(myLowHitChance);
         setHighHitChance(myHighHitChance);
@@ -32,6 +34,7 @@ public abstract class DungeonCharacter {
     public DungeonCharacter(int theHitPoints, int theAtkSpd, float theLowHitChance,
                             float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         setHitPoints(theHitPoints);
+        myMaxHitPoints = myHitPoints;
         setSpd(theAtkSpd);
         setLowHitChance(theLowHitChance);
         setHighHitChance(theHighHitChance);
@@ -39,9 +42,7 @@ public abstract class DungeonCharacter {
         setMinDmg(theMinDmg);
         setMaxDmg(theMaxDmg);
         setSpecialCooldown(theCooldown);
-
         theHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
-
 
     }
 
@@ -71,16 +72,15 @@ public abstract class DungeonCharacter {
      * Allows for the hero or monster to attack
      * @return the basic attack
      */
-    public int basicAtk() {
+    public int basicAtk(DungeonCharacter theOther) {
         if(myHitPoints <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than or equal to zero");
         }
 
-
         if(myHitChance > getHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMinDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - this.getMinDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
             System.out.println("Attack Failed!");
@@ -94,14 +94,16 @@ public abstract class DungeonCharacter {
      * @return the hit damage
      */
     public int getMinDamage() {
+
         return myMinDmg;
     }
 
     /**
-     * The the Mon Damage
+     * The Min Damage
      * @param theDmg the damage to set
      */
     public void setMinDmg(int theDmg) {
+
         theDmg = myMinDmg;
     }
 
@@ -110,6 +112,7 @@ public abstract class DungeonCharacter {
      * @return the maximum damage
      */
     public int getMaxDamage() {
+
         return myMaxDmg;
     }
 
@@ -118,6 +121,7 @@ public abstract class DungeonCharacter {
      * @return the character speed
      */
     public int getSpd() {
+
         return mySpd;
     }
 
@@ -137,6 +141,7 @@ public abstract class DungeonCharacter {
      * @param theDmg the damage to set
      */
     public void setMaxDmg(int theDmg) {
+
         theDmg = myMaxDmg;
     }
 
@@ -144,7 +149,7 @@ public abstract class DungeonCharacter {
      * Allows the character to summon their special attack
      * @return the special attack
      */
-    public int specialAtk() {
+    public int specialAtk(DungeonCharacter theTarget) {
         if(myHitPoints < 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -169,6 +174,7 @@ public abstract class DungeonCharacter {
      * @return the hit points
      */
     public int getHitPoints() {
+
         return myHitPoints;
     }
 
@@ -177,6 +183,7 @@ public abstract class DungeonCharacter {
      * @return the hit chance
      */
     public float getHitChance() {
+
         return myHitChance;
     }
 
@@ -205,6 +212,7 @@ public abstract class DungeonCharacter {
      * @return the special cooldown
      */
     public int getSpecialCooldown() {
+
         return mySpecialCooldown;
     }
 
@@ -213,6 +221,7 @@ public abstract class DungeonCharacter {
      * @param theCooldown the special cooldown
      */
     public void setSpecialCooldown(int theCooldown) {
+
         theCooldown = mySpecialCooldown;
     }
 
@@ -221,6 +230,7 @@ public abstract class DungeonCharacter {
      * @return the low hit chance
      */
     public float getLowHitChance() {
+
         return myLowHitChance;
     }
 
@@ -238,6 +248,7 @@ public abstract class DungeonCharacter {
      * @return the high hit chance
      */
     public float getHighHitChance() {
+
         return myHighHitChance;
     }
 
@@ -248,6 +259,14 @@ public abstract class DungeonCharacter {
     public void setHighHitChance(float theHighChance) {
 
         theHighChance = myHighHitChance;
+    }
+
+    /**
+     * Returns the maximum HP for a character.
+     * @return the max HP.
+     */
+    public int getMaxHitPoints() {
+        return myMaxHitPoints;
     }
 
 

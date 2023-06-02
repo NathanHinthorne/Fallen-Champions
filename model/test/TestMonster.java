@@ -1,6 +1,7 @@
 package model.test;
 
 import model.Monster;
+import model.MonsterTypes;
 
 public class TestMonster extends Monster {
 
@@ -11,7 +12,18 @@ public class TestMonster extends Monster {
     public TestMonster() {
         /* For Reference */
         //super(theHitPoints,theAtkSpd,theHitChance,theMinDmg,theMaxDmg,theCooldown,theMinHeal,theMaxHeal,theHealChance);
-        super(250, 8, 50, 50, 50, 20, 70, 10, 10, 45, 45);
+        super(250,
+                8,
+                50,
+                50,
+                50,
+                20,
+                70,
+                10,
+                10,
+                45,
+                45,
+                MonsterTypes.GREMLIN);
         setMyMinSpecial(50);
         setMyMaxSpecial(100);
     }

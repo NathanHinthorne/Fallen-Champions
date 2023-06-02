@@ -1,6 +1,7 @@
 package model.test;
 
 import model.Hero;
+import model.HeroTypes;
 
 public class TestHero extends Hero {
 
@@ -11,7 +12,15 @@ public class TestHero extends Hero {
     public TestHero() {
         /* For Reference */
         //super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
-        super(250, 8, 50, 50, 50, 20, 70, 10);
+        super(250,
+                8,
+                50,
+                50,
+                50,
+                20,
+                70,
+                10,
+                HeroTypes.WARRIOR);
         setMyMinSpecial(50);
         setMyMaxSpecial(100);
     }

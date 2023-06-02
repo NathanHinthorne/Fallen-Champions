@@ -31,7 +31,7 @@ public class Hero_Enforcer extends Hero {
     /**
      * The second special attack
      */
-    public void specialAtk2() {
+    public void specialAtk2(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -39,7 +39,7 @@ public class Hero_Enforcer extends Hero {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
         }
@@ -51,7 +51,7 @@ public class Hero_Enforcer extends Hero {
     /**
      * The third special attack
      */
-    public void specialAtk3() {
+    public void specialAtk3(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -59,7 +59,7 @@ public class Hero_Enforcer extends Hero {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
             System.out.println("Attack Failed!");

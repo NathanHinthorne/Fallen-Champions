@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class TextModeInterface {
 
-    public static void menu() {
+    public void menu() {
         Scanner sc = new Scanner(System.in);
         while(true) {
             System.out.println("Welcome to Fallen Champions, TUI edition");
@@ -33,7 +33,7 @@ public class TextModeInterface {
 
     }
 
-    private static void choose_hero() {
+    private void choose_hero() {
         System.out.println("Choose your hero!");
         Scanner sc = new Scanner(System.in);
         int hero_choice = sc.nextInt();
@@ -53,13 +53,13 @@ public class TextModeInterface {
         }
     }
 
-    private static void Introduction() {
+    private void Introduction() {
         System.out.println("It's a bright, sunny day out. You enjoy the weather, have fun, do whatever, until one day...");
         System.out.println("You suddenly wake up in a deep dark dungeon with no memory, stuck in an ancient dungeon");
         System.out.println("You then realize that you are yourself a Fallen Champion! Can you escape the dungeon?");
     }
 
-    public static void gameplay_menu() {
+    public void gameplay_menu() {
         Scanner sc = new Scanner(System.in);
 
         while(MonsterBattle.is_ongoing(2)) {
@@ -83,18 +83,18 @@ public class TextModeInterface {
                             Dungeon.playerMove(Direction.NORTH);
                     }
                 case 2:
-                    // Will be fixed later
-                case 3:
                     Dungeon.getView();
+                case 3:
+                    //
                 case 4:
                     System.out.println("Now select which potion you want to use");
                     System.out.println("1 for vision, 2 for health");
                     selection = sc.nextInt();
                     switch(selection) {
-                        case 1: // Will be fixed later
-                            //VisionPotion.effect();
-                        case 2: // Will be fixed later
-                            //HealthPotion.heal();
+                        case 1:
+//                            VisionPotion.effect();
+                        case 2:
+//                            HealthPotion.heal();
                     }
                 case 5:
                     System.out.println("Are you sure you want to quit? 1 for yes, 2 for no");
