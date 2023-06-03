@@ -3,7 +3,7 @@ package model;
 public class Hero_Scientist extends Hero {
     // The second cooldown
     private int special2Cooldown;
-    // The thirs cooldown
+    // The third cooldown
     private int special3Cooldown;
 
     public Hero_Scientist() {
