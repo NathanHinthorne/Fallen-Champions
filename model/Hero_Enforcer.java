@@ -31,7 +31,8 @@ public class Hero_Enforcer extends Hero {
     /**
      * The second special attack
      */
-    public void specialAtk2(DungeonCharacter theOther) {
+    @Override
+    public void specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -51,7 +52,7 @@ public class Hero_Enforcer extends Hero {
     /**
      * The third special attack
      */
-    public void specialAtk3(DungeonCharacter theOther) {
+    public void specialAtk2(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");

@@ -31,7 +31,8 @@ public class Hero_Scientist extends Hero {
     /**
      * Teh second special attack
      */
-    public void specialAtk2(DungeonCharacter theOther) {
+    @Override
+    public void specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");

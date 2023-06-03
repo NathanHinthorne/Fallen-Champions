@@ -29,7 +29,8 @@ public class Hero_Support extends Hero implements Healable {
     /**
      * Second special attack for hero
      */
-    public void specialAtk2(DungeonCharacter theOther) {
+    @Override
+    public void specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -43,6 +44,8 @@ public class Hero_Support extends Hero implements Healable {
             System.out.println("Attack Failed!");
 
         }
+
+        heal(this);
 
         //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }

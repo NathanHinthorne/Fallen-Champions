@@ -24,16 +24,11 @@ public class DungeonGame {
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
 
-    public Hero myHero;
-    public Monster myMonster;
-
     public DungeonGame() {
 
         /* These Hero and Monster factory uses are temporary,
          * to see if they work properly.
          */
-        myHero = HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
-        myMonster = MONSTER_FACTORY.buildMonster(MonsterTypes.SKELETON);
         myGame = new TextModeInterface();
     }
 
@@ -67,6 +62,24 @@ public class DungeonGame {
             default:
                 System.out.println("Please make a proper selection:");
                 menuSelection = myGame.menu();
+        }
+    }
+
+    private static Hero setupHero(int theChoice) {
+        switch(theChoice) {
+            case 1:
+                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER);
+            case 2:
+                return HERO_FACTORY.buildHero(HeroTypes.ROBOT);
+            case 3:
+                return HERO_FACTORY.buildHero(HeroTypes.SUPPORT);
+            case 4:
+                return HERO_FACTORY.buildHero(HeroTypes.SCIENTIST);
+            case 5:
+                return HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
+            default:
+                System.out.println("Please choose a hero!");
+                return null;
         }
     }
 

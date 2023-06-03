@@ -32,6 +32,10 @@ public abstract class Hero extends DungeonCharacter {
         return myType;
     }
 
+    public Inventory getMyInventory() {
+        return myInventory;
+    }
+
 
     public String toString() {
         return "H";

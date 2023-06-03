@@ -21,7 +21,8 @@ public class Monster_Boss extends Monster {
     /**
      * Second special attack for Monster Boss
      */
-    public void specialAtk2() {
+    @Override
+    public void specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
@@ -29,7 +30,7 @@ public class Monster_Boss extends Monster {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
+            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
         }

@@ -90,6 +90,13 @@ public abstract class DungeonCharacter {
     }
 
     /**
+     * Allows the character to summon their special attack
+     */
+    public void specialAtk(DungeonCharacter theOther) {
+
+    }
+
+    /**
      * Gets the minimum hit damage
      * @return the hit damage
      */
@@ -143,30 +150,6 @@ public abstract class DungeonCharacter {
     public void setMaxDmg(int theDmg) {
 
         theDmg = myMaxDmg;
-    }
-
-    /**
-     * Allows the character to summon their special attack
-     * @return the special attack
-     */
-    public int specialAtk(DungeonCharacter theTarget) {
-        if(myHitPoints < 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
-
-
-        if(myHitChance > getHitChance()) {
-            // Attack successful
-            setHitPoints(getHitPoints() - getMaxDamage());
-        } else { // Will be worked on later, planned to be an error message
-            // Attack failed
-            System.out.println("Attack Failed!");
-        }
-
-        mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
-
-        return myMaxDmg;
     }
 
     /**

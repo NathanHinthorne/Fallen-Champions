@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 public class TextModeInterface {
 
+    private static final Scanner THE_SCANNER = new Scanner(System.in);
+
     public int menu() {
         System.out.println("Welcome to Fallen Champions, TUI edition");
         System.out.println("1 to start game, 2 to exit game");
@@ -14,22 +16,7 @@ public class TextModeInterface {
 
     public int chooseHero() {
         System.out.println("Choose your hero!");
-        Scanner sc = new Scanner(System.in);
-        int hero_choice = sc.nextInt();
-        switch(hero_choice) {
-            case 1:
-                HeroFactory.buildHero(HeroTypes.ENFORCER);
-            case 2:
-                HeroFactory.buildHero(HeroTypes.ROBOT);
-            case 3:
-                HeroFactory.buildHero(HeroTypes.SUPPORT);
-            case 4:
-                HeroFactory.buildHero(HeroTypes.SCIENTIST);
-            case 5:
-                HeroFactory.buildHero(HeroTypes.WARRIOR);
-            default:
-                System.out.println("Please choose a hero!");
-        }
+        return THE_SCANNER.nextInt();
     }
 
     public void Introduction() {
@@ -52,7 +39,39 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
 
+    public int chooseDifficulty() {
+        System.out.println("Choose your difficulty!");
+        System.out.println("1 for easy, 2 for medium, 3 for hard");
+        return THE_SCANNER.nextInt();
+    }
+    public int openBag(final Inventory myBag) {
+        System.out.println("Make your Selection 1-4 (press 5 to exit) :");
+        System.out.println(myBag.toString());
+        int ret = THE_SCANNER.nextInt();
+        if (ret < 1 && ret > 5) {
+            ret = openBag(myBag);
+        }
+        return ret;
+    }
 
+    public int quitProcess() {
+        System.out.println("Are you sure you want to quit?");
+        System.out.println("1 for yes, 2 for no");
+        return THE_SCANNER.nextInt();
+
+    }
+
+    public void displayHeroInfo(final Hero theHero) {
+
+        System.out.println("Stats");
+        System.out.println("-----------------------------------------------------");
+        System.out.println(theHero.getType());
+        System.out.println("Health: " + theHero.getHitPoints() + "/" + theHero.getMaxHitPoints());
+//        System.out.println("Attack: " + theHero.);  //TODO what get method to call for attack power?
+        System.out.println("Speed: " + theHero.getSpd());
+//        System.out.println("Level: " + theHero.getLevel());  //TODO add level-up functionality to hero
+
+    }
 
 
 }

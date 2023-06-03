@@ -11,7 +11,7 @@ public class HealthPotion extends Potion implements Healable {
 
 
 
-    public void heal() {
+    public void heal(final DungeonCharacter thePlayer) {
 
         /* generate a random int between 0 and the difference between
          * max and min, since you can't have a lower and upper bound,
