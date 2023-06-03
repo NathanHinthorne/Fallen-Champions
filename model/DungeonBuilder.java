@@ -34,9 +34,6 @@ public abstract class DungeonBuilder {
     protected Queue<Monster> readMonsters(final String difficulty) {
         Queue<Monster> unplacedMonsters = new LinkedList<>();
 
-        //TODO access SQLite and fill up the queue
-        // make sure to access the correct table containing the monsters required for EASY difficulty
-
         SQLiteDataSource ds = null;
 
         try {
@@ -46,7 +43,6 @@ public abstract class DungeonBuilder {
             e.printStackTrace();
             System.exit(0);
         }
-        System.out.println("Opened database successfully");
 
         String query = "SELECT * FROM " + difficulty;
 
@@ -125,7 +121,7 @@ public abstract class DungeonBuilder {
         int numberOfRooms = (mazeWidth -2) * (mazeHeight -2);
         double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
-        if (roomPercentage < 0.75 || roomPercentage > 0.85) {
+        if (roomPercentage < 0.80 || roomPercentage > 0.85) {
             fillWithWalls();
             fillWithEmptyRooms();
         }
@@ -258,8 +254,15 @@ public abstract class DungeonBuilder {
             }
         }
 
-        printObjects();
+        // confirm the maze contains all 4 pillars
+//        if (thePlacedPillars.size() != 4) {
+//            fillWithObjects(the);
+//        }
+
+        printObjects(); // debug
     }
+
+
 
     public void printObjects() {
 

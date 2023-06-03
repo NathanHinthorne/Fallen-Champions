@@ -45,7 +45,7 @@ public class Pit extends DungeonCharacter {
 
     public String toString() {
         if (myIsVisible) {
-            return "P";
+            return "X";
         } else {
             return Room.EMPTY;
         }

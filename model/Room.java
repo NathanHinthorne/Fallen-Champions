@@ -9,7 +9,8 @@ public class Room {
     // static fields for toString
 
     public static final String EMPTY = " ";
-    public static final String MULTIPLE = "m";
+    public static final String MULTIPLE = "/"; // multiple objects in one room
+    public static final String HERO = "H";
 
 
     // make non-static if we add difficulty levels
@@ -27,6 +28,7 @@ public class Room {
     private Potion myPotion;
     private Pillars myPillar;
     private Pit myPit;
+    private boolean myHero; // just a boolean since we don't have access to a hero object
 
 
     public Room(final int theY, final int theX) {
@@ -39,6 +41,7 @@ public class Room {
         myPotion = null;
         myPillar = null;
         myPit = null;
+        myHero = false;
     }
 
     public int getX() {
@@ -70,6 +73,9 @@ public class Room {
     }
     public boolean hasMonster() {
         return myMonster != null;
+    }
+    public boolean hasHero() {
+        return myHero;
     }
 
     public boolean isEmpty() {
@@ -127,6 +133,12 @@ public class Room {
     public void removeWall() {
         myWall = null;
     }
+    public void placeHero() {
+        myHero = true;
+    }
+    public void removeHero() {
+        myHero = false;
+    }
 
 
     @Override
@@ -142,9 +154,9 @@ public class Room {
         // now determine what string to return
         String result = "";
         if (hasWall()) {
-            result =  myWall.toString();
+            result = myWall.toString();
         } else if (numItems > 1) {
-            result =  MULTIPLE; // doesn't make sense in this context to make a class for multiple
+            result = MULTIPLE; // doesn't make sense in this context to make a class for multiple
         } else if (hasPotion()) {
             result =  myPotion.toString();
         } else if (hasPillar()) {
@@ -157,6 +169,12 @@ public class Room {
             result =  myEntrance.toString();
         } else if (hasMonster()) {
             result =  myMonster.toString();
+        } else if (hasHero()) {
+            result = HERO;   // doesn't make sense in this context to make a class for empty
+        } else if (hasEntrance()) {
+            result = myEntrance.toString();
+        } else if (hasExit()) {
+            result = myExit.toString();
         } else {
             result =  EMPTY; // doesn't make sense in this context to make a class for empty
         }

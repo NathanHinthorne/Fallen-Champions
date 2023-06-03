@@ -1,6 +1,6 @@
 package controller;
-import view.TextModeInterface;
 
+import view.TextModeInterface;
 import model.*;
 
 import java.io.FileInputStream;
@@ -13,7 +13,6 @@ public class DungeonGame {
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
-    private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
 
     // remove "my" prefix?
     private static Dungeon myDungeon; // from model
@@ -25,16 +24,14 @@ public class DungeonGame {
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
 
     public DungeonGame() {
-
-        /* These Hero and Monster factory uses are temporary,
-         * to see if they work properly.
-         */
-        myGame = new TextModeInterface();
+        // does anything need to be here?
     }
 
 
 
     public static void main(String[] theArgs) {
+
+        myGame = new TextModeInterface();
 
         // get user input to start game (1=start, 2=exit)
         int menuSelection = myGame.menu();
@@ -63,6 +60,7 @@ public class DungeonGame {
 
             case 2:
                 System.exit(0);
+
             default:
                 System.out.println("Please make a proper selection:");
                 menuSelection = myGame.menu();
