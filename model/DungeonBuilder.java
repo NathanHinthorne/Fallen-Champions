@@ -26,7 +26,7 @@ public abstract class DungeonBuilder {
     static int entranceY;
     static int exitX;
     static int exitY; // !!! make all fields private or protected?
-    static double roomBranchOffChance;
+    static double maxRoomBranchOffChance;
     static int numberOfEmptyRooms = 0;
 
     abstract public Dungeon buildDungeon();
@@ -96,8 +96,8 @@ public abstract class DungeonBuilder {
         mazeHeight = theMazeHeight;
     }
 
-    protected void setBranchOffChance(final double theBranchOffChance) {
-        roomBranchOffChance = theBranchOffChance;
+    protected void setMaxBranchOffChance(final double maxBranchOffChance) {
+        maxRoomBranchOffChance = maxBranchOffChance;
     }
 
 
@@ -114,32 +114,31 @@ public abstract class DungeonBuilder {
 
     protected void fillWithEmptyRooms() {
         numberOfEmptyRooms = 0; // reset the number of empty rooms
-        roomBranchOffChance = 0.50; // reset the room branch off chance
 
-        fillWithEmptyRooms(mazeWidth /2, mazeWidth /2); // start generating rooms from the center
+        fillWithEmptyRooms(mazeWidth /2, mazeWidth /2, maxRoomBranchOffChance); // start generating rooms from the center
 
         int numberOfRooms = (mazeWidth -2) * (mazeHeight -2);
         double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
-        if (roomPercentage < 0.80 || roomPercentage > 0.85) {
+        if (roomPercentage < 0.60 || roomPercentage > 0.80) { // (this if statement should barely ever execute)
             fillWithWalls();
-            fillWithEmptyRooms();
+            fillWithEmptyRooms(); // try again with the original branch off chance
         }
 
-//        printThis(); // DEBUG METHOD
+        printThis(); // DEBUG METHOD
     }
 
-//    private void printThis() { // DEBUG METHOD
-//        for (int y = 0; y < myMazeHeight; y++) {
-//            System.out.println();
-//            for (int x = 0; x < myMazeWidth; x++) {
-//                System.out.print(myMaze[y][x] + "  ");
-//            }
-//        }
-//        System.out.println();
-//        System.out.println("---------------------------------------------------------------------");
-//        System.out.println();
-//    }
+    private void printThis() { // DEBUG METHOD
+        for (int y = 0; y < mazeHeight; y++) {
+            System.out.println();
+            for (int x = 0; x < mazeWidth; x++) {
+                System.out.print(maze[y][x] + "  ");
+            }
+        }
+        System.out.println();
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println();
+    }
 
     /**
      * Recursive helper method to fill the maze with empty rooms.
@@ -147,7 +146,7 @@ public abstract class DungeonBuilder {
      * @param theY the y coordinate of the current room
      * @param theX the x coordinate of the current room
      */
-    private static void fillWithEmptyRooms(final int theY, final int theX) {
+    private static void fillWithEmptyRooms(final int theY, final int theX, double roomBranchOffChance) {
 
         Room room = maze[theY][theX];
 
@@ -157,50 +156,51 @@ public abstract class DungeonBuilder {
         // find the direction the path is getting generated in
         Direction traversalDirection = findTraversalDirection(theY, theX);
 
-        room.removeWall();
-        numberOfEmptyRooms++;
-//        System.out.println("DEBUG_PLACEROOMS - placed empty room at " + theX + ", " + theY);
+        if (room.hasWall()) { // remember, we might be looking at a room that was already generated
+            room.removeWall();
+            numberOfEmptyRooms++;
+        }
 
         // leave a chance for paths of empty rooms to branch off
         if (Math.random() < roomBranchOffChance) {
 
+            roomBranchOffChance -= 0.05; // branch less and less frequently in the future (REMOVE VARIABLE IF GAPS ARE TOO BIG IN CENTER)
+
             // 50% chance for a room to branch off to the left or right
             if (Math.random() < ROOM_LEFT_OR_RIGHT_CHANCE) { // branch right
                 if (traversalDirection == Direction.NORTH) {
-                    fillWithEmptyRooms(theY, theX+1);
+                    fillWithEmptyRooms(theY, theX+1, roomBranchOffChance);
                 } else if (traversalDirection == Direction.EAST) {
-                    fillWithEmptyRooms(theY+1, theX);
+                    fillWithEmptyRooms(theY+1, theX, roomBranchOffChance);
                 } else if (traversalDirection == Direction.SOUTH) {
-                    fillWithEmptyRooms(theY, theX-1);
+                    fillWithEmptyRooms(theY, theX-1, roomBranchOffChance);
                 } else { // traversalDirection == Direction.WEST
-                    fillWithEmptyRooms(theY-1, theX);
+                    fillWithEmptyRooms(theY-1, theX, roomBranchOffChance);
                 }
 
             } else {                                        // branch left
                 if (traversalDirection == Direction.NORTH) {
-                    fillWithEmptyRooms(theY, theX-1);
+                    fillWithEmptyRooms(theY, theX-1, roomBranchOffChance);
                 } else if (traversalDirection == Direction.EAST) {
-                    fillWithEmptyRooms(theY-1, theX);
+                    fillWithEmptyRooms(theY-1, theX, roomBranchOffChance);
                 } else if (traversalDirection == Direction.SOUTH) {
-                    fillWithEmptyRooms(theY, theX+1);
+                    fillWithEmptyRooms(theY, theX+1, roomBranchOffChance);
                 } else { // traversalDirection == Direction.WEST
-                    fillWithEmptyRooms(theY+1, theX);
+                    fillWithEmptyRooms(theY+1, theX, roomBranchOffChance);
                 }
             }
         }
 
         // continue generating the path of empty rooms
         if (traversalDirection == Direction.NORTH) {
-            fillWithEmptyRooms(theY-1, theX);
+            fillWithEmptyRooms(theY-1, theX, roomBranchOffChance);
         } else if (traversalDirection == Direction.EAST) {
-            fillWithEmptyRooms(theY, theX+1);
+            fillWithEmptyRooms(theY, theX+1, roomBranchOffChance);
         } else if (traversalDirection == Direction.SOUTH) {
-            fillWithEmptyRooms(theY+1, theX);
+            fillWithEmptyRooms(theY+1, theX, roomBranchOffChance);
         } else { // traversalDirection == Direction.WEST
-            fillWithEmptyRooms(theY, theX-1);
+            fillWithEmptyRooms(theY, theX-1, roomBranchOffChance);
         }
-
-        roomBranchOffChance -= 0.03; // branch less and less frequently in the future
     }
 
     private static Direction findTraversalDirection(final int theY, final int theX) {
