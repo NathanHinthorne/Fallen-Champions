@@ -40,8 +40,12 @@ public class DungeonGame {
         int menuSelection = myGame.menu();
         switch(menuSelection) {
             case 1:
-                // load the save files if they exist
-                loadGame();
+
+                // continue or new game (1 for new game, 2 for continue game)
+                int loadSelection = myGame.continueOrNewGameMenu();
+                if (loadSelection == 2) {
+                    loadGame();
+                }
 
                 // setup dungeon
                 int difficultySelection = myGame.chooseDifficulty();
@@ -121,17 +125,18 @@ public class DungeonGame {
                 }
 
 
-                DelayMachine.delay(2); // delay for 1 second
 
 
                 // determine if the player is on the same tile as a monster
                     // play monster encounter sound
+                    DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins)
 
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
 
-                
+
+                DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
                 // '1' to display hero info, '2' to display map, '3' open bag, '4' to quit, '5' to save game

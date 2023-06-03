@@ -73,5 +73,11 @@ public class TextModeInterface {
 
     }
 
+    public int continueOrNewGameMenu() {
+        System.out.println("Would you like to start a new game or continue a previous game?");
+        System.out.println("1 for new game, 2 for continue game");
+        return THE_SCANNER.nextInt();
+    }
+
 
 }
