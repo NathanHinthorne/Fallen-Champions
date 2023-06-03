@@ -6,5 +6,5 @@ public interface Healable {
     int myMaxHeal = 10;
     double healChance = 50.0;
 
-    public void heal();
+    public void heal(final DungeonCharacter theChar);
 }

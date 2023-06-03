@@ -205,7 +205,6 @@ public abstract class DungeonBuilder {
         }
 
         roomBranchOffChance -= 0.03; // branch less and less frequently in the future
-
     }
 
     private static Direction findTraversalDirection(final int theY, final int theX) {
@@ -239,7 +238,7 @@ public abstract class DungeonBuilder {
         for (int y = 1; y < mazeHeight - 1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < mazeWidth - 1; x++) {
 
-                Room room = maze[y][y];
+                Room room = maze[y][x];
 
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 

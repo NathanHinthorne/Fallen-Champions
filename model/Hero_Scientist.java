@@ -3,7 +3,7 @@ package model;
 public class Hero_Scientist extends Hero {
     // The second cooldown
     private int special2Cooldown;
-    // The thirs cooldown
+    // The third cooldown
     private int special3Cooldown;
 
     public Hero_Scientist() {
@@ -31,7 +31,8 @@ public class Hero_Scientist extends Hero {
     /**
      * Teh second special attack
      */
-    public void specialAtk2(DungeonCharacter theOther) {
+    @Override
+    public void specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");

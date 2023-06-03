@@ -98,7 +98,7 @@ public class MonsterBattle {
         } else if (choice == 1) {
             theEnemy.specialAtk(thePlayer);
         } else if (choice == 2 && theEnemy.getHitPoints() < theEnemy.getMaxHitPoints()) {
-            theEnemy.heal();
+            theEnemy.heal(theEnemy);
         } else { // Failsafe
             theEnemy.basicAtk(thePlayer);
         }
@@ -115,37 +115,37 @@ public class MonsterBattle {
 
 
 
-    public static boolean has_won(int win) {
-        if(win == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean has_lost(int lose) {
-        if(lose == 1) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean is_ongoing(int ongoing) {
-        if(ongoing == 0) {
-            return false;
-        } else if(has_won(1) || has_lost(1)) {
-            return false;
-        }
-
-        return true;
-    }
-    public static boolean is__monsterbattle_ongoing(int ongoing) {
-        if(ongoing == 0) {
-            return false;
-        } else if(has_won(1) || has_lost(1) ) {
-            return false;
-        }
-
-        return true;
-    }
+//    public static boolean has_won(int win) {
+//        if(win == 1) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public static boolean has_lost(int lose) {
+//        if(lose == 1) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public static boolean is_ongoing(int ongoing) {
+//        if(ongoing == 0) {
+//            return false;
+//        } else if(has_won(1) || has_lost(1)) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
+//    public static boolean is__monsterbattle_ongoing(int ongoing) {
+//        if(ongoing == 0) {
+//            return false;
+//        } else if(has_won(1) || has_lost(1) ) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
 }

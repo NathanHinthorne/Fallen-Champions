@@ -72,9 +72,9 @@ public class Dungeon {
             myHeroY = heroCoords.y;
 
             // step 6: keep building dungeons until we find one that's traversable
-            while(!isTraversable()) {
-                buildDungeon();
-            }
+//            while(!isTraversable()) {
+//                buildDungeon();
+//            }
 
             return myDungeon;
         }
@@ -192,9 +192,9 @@ public class Dungeon {
             myHeroY = heroCoords.y;
 
             // step 6: keep building dungeons until we find one that's traversable
-            while(!isTraversable()) {
-                buildDungeon();
-            }
+//            while(!isTraversable()) {
+//                buildDungeon();
+//            }
 
             return myDungeon;
         }
@@ -205,6 +205,10 @@ public class Dungeon {
         return myMaze;
     }
     private Dungeon getDungeon() { return myDungeon; }
+
+    public boolean heroOnMonster() {
+        return myMaze[myHeroY][myHeroX].hasMonster();
+    }
 
 
     // a method in the view will check for keyboard inputs
@@ -239,11 +243,8 @@ public class Dungeon {
 
         StringBuilder sb = new StringBuilder();
 
-        Room[][] view = new Room[3][3];
-
         for (int x = myHeroX - 1; x <= myHeroX + 1; x++) {
             for (int y = myHeroY - 1; y <= myHeroY + 1; y++) {
-//                view[x][y] = maze[x][y];
                 sb.append(myMaze[x][y].toString());
             }
         }
@@ -258,12 +259,10 @@ public class Dungeon {
      */
     public static String getExpandedView() {
 
-//        Room[][] view = new Room[7][7];
         StringBuilder sb = new StringBuilder();
 
         for (int x = myHeroX - 3; x <= myHeroX + 3; x++) {
             for (int y = myHeroY - 3; y <= myHeroY + 3; y++) {
-//                view[x][y] = maze[x][y];
                 sb.append(myMaze[x][y].toString());
             }
         }

@@ -15,7 +15,7 @@ public class Inventory {
      * Used to store items in an ArrayList of a defined
      * size.
      */
-    private final ArrayList<Collectable> myInventory;
+    private final ArrayList<Potion> myInventory;
     /**
      * Used ONLY to store pillars that the player acquires
      * in the dungeon, used to see if the player is
@@ -28,23 +28,11 @@ public class Inventory {
     private boolean isFull;
 
     /**
-     * Creates an Inventory for the player with a defined
-     * size.
-     * @param theSize The number of slots in the inventory.
-     */
-    public Inventory(int theSize) {
-        myInventory = new ArrayList<Collectable>(theSize);
-        myPillars = new ArrayList<Character>(4);
-        myPillarCount = 0;
-        isFull = false;
-    }
-
-    /**
      * Constructs the default size of the Inventory, which
      * is 4 slots.
      */
     public Inventory() {
-        myInventory = new ArrayList<Collectable>(4);
+        myInventory = new ArrayList<Potion>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
         isFull = false;
@@ -55,7 +43,7 @@ public class Inventory {
      * as an Arraylist.
      * @param theItem The item to be added
      */
-    public void addToInventory(Collectable theItem) {
+    public void addToInventory(Potion theItem) {
 
         if (myItemCount == myInventory.size()) {
             // Inventory full!
@@ -92,10 +80,11 @@ public class Inventory {
     /**
      * For when the player uses (consumes) an item in the game,
      * it is removed from the inventory.
-     * @param theItem The item to be removed.
+     * @param theIndex The index of the item to be removed.
      */
-    public void consumeItem(Collectable theItem) {
-        myInventory.remove(theItem);
+    public void consumeItem(final Hero thePlayer, int theIndex) {
+        myInventory.get(theIndex).effect(thePlayer);
+        myInventory.remove(theIndex);
     }
 
     /**
@@ -110,6 +99,22 @@ public class Inventory {
     }
 
     /**
+     * Returns the size of the Inventory the player has.
+     * @return the ArrayList Size.
+     */
+    public int getSize() {
+        return myInventory.size();
+    }
+
+    public int getMyPillarCount() {
+        return myPillarCount;
+    }
+
+    public int getMyItemCount() {
+        return myItemCount;
+    }
+
+    /**
      * Represents the current player inventory in
      * String format.
      * @return
@@ -120,9 +125,9 @@ public class Inventory {
 
         sb.append("Player Inventory: [");
         for (int i = 0; i < myInventory.size(); i++) {
-            sb.append(myInventory.get(i).toString() + ", ");
+            sb.append(i+1 + " - " + myInventory.get(i).toString() + ", ");
         }
-        sb.append("]    Current Pillars: [");
+        sb.append("]\nCurrent Pillars: [");
         for (int i = 0; i < myPillars.size(); i++) {
             sb.append(myPillars.get(i).toString() + ", ");
         }
