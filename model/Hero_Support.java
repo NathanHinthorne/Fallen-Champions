@@ -61,9 +61,9 @@ public class Hero_Support extends Hero implements Healable {
      * Heals the hero
      */
     @Override
-    public void heal() {
+    public void heal(final DungeonCharacter thePlayer) {
         //TODO heal the support hero
         int healAmt = generateHealChance(minHeal, maxHeal);
-        setHitPoints(healAmt + getHitPoints());
+        thePlayer.setHitPoints(getHitPoints() + healAmt);
     }
 }

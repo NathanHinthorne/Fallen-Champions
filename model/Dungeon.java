@@ -72,9 +72,9 @@ public class Dungeon {
             myHeroY = heroCoords.y;
 
             // step 6: keep building dungeons until we find one that's traversable
-            while(!isTraversable()) {
-                buildDungeon();
-            }
+//            while(!isTraversable()) {
+//                buildDungeon();
+//            }
 
             return myDungeon;
         }
@@ -192,9 +192,9 @@ public class Dungeon {
             myHeroY = heroCoords.y;
 
             // step 6: keep building dungeons until we find one that's traversable
-            while(!isTraversable()) {
-                buildDungeon();
-            }
+//            while(!isTraversable()) {
+//                buildDungeon();
+//            }
 
             return myDungeon;
         }
