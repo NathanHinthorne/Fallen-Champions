@@ -85,7 +85,7 @@ public class Dungeon {
         private static final String DIFFICULTY = "Medium";
         private static final int DUNGEON_WIDTH = 10;
         private static final int DUNGEON_HEIGHT = 10;
-        private static final double BRANCH_OFF_CHANCE = 0.55;
+        private static final double BRANCH_OFF_CHANCE = 0.7; // original: 0.55
 
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
@@ -147,7 +147,7 @@ public class Dungeon {
         private static final String DIFFICULTY = "Hard";
         private static final int DUNGEON_WIDTH = 15;
         private static final int DUNGEON_HEIGHT = 15;
-        private static final double BRANCH_OFF_CHANCE = 0.70;
+        private static final double BRANCH_OFF_CHANCE = 0.80; // original: 0.70
         //TODO add more static fields if we want them to change with difficulty (like potion, monster chances, etc.)
 
         @Override
@@ -219,6 +219,8 @@ public class Dungeon {
      * @param dir the direction to move the player
      */
     public static void playerMove(final Direction dir) {
+        myMaze[myHeroX][myHeroY].removeHero();
+
         if (dir == Direction.NORTH) {
             myHeroY--;
         } else if (dir == Direction.EAST) {
@@ -232,6 +234,7 @@ public class Dungeon {
                     "Make sure playerMove() receives one of these:\n" +
                     "NORTH, EAST, SOUTH, WEST");
         }
+        myMaze[myHeroX][myHeroY].placeHero();
     }
 
     /**
