@@ -13,7 +13,7 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
 
-    private void choose_hero() {
+    public int chooseHero() {
         System.out.println("Choose your hero!");
         Scanner sc = new Scanner(System.in);
         int hero_choice = sc.nextInt();
