@@ -76,7 +76,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     /**
      * Heal the monster
      */
-    public void heal() {
+    public void heal(final DungeonCharacter theCharacter) {
         //TODO heal the monster by increasing hp determined by the healChance
         int healAmt = generateHealChance(minHeal, maxHeal);
         setHitPoints(healAmt + getHitPoints());

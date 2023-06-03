@@ -98,7 +98,7 @@ public class MonsterBattle {
         } else if (choice == 1) {
             theEnemy.specialAtk(thePlayer);
         } else if (choice == 2 && theEnemy.getHitPoints() < theEnemy.getMaxHitPoints()) {
-            theEnemy.heal();
+            theEnemy.heal(theEnemy);
         } else { // Failsafe
             theEnemy.basicAtk(thePlayer);
         }
