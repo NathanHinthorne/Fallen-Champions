@@ -120,25 +120,25 @@ public abstract class DungeonBuilder {
         int numberOfRooms = (mazeWidth -2) * (mazeHeight -2);
         double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
-        if (roomPercentage < 0.80 || roomPercentage > 0.85) {
+        if (roomPercentage < 0.60 || roomPercentage > 0.80) { // (this if statement should barely ever execute)
             fillWithWalls();
             fillWithEmptyRooms(); // try again with the original branch off chance
         }
 
-//        printThis(); // DEBUG METHOD
+        printThis(); // DEBUG METHOD
     }
 
-//    private void printThis() { // DEBUG METHOD
-//        for (int y = 0; y < myMazeHeight; y++) {
-//            System.out.println();
-//            for (int x = 0; x < myMazeWidth; x++) {
-//                System.out.print(myMaze[y][x] + "  ");
-//            }
-//        }
-//        System.out.println();
-//        System.out.println("---------------------------------------------------------------------");
-//        System.out.println();
-//    }
+    private void printThis() { // DEBUG METHOD
+        for (int y = 0; y < mazeHeight; y++) {
+            System.out.println();
+            for (int x = 0; x < mazeWidth; x++) {
+                System.out.print(maze[y][x] + "  ");
+            }
+        }
+        System.out.println();
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println();
+    }
 
     /**
      * Recursive helper method to fill the maze with empty rooms.
@@ -156,13 +156,15 @@ public abstract class DungeonBuilder {
         // find the direction the path is getting generated in
         Direction traversalDirection = findTraversalDirection(theY, theX);
 
-        room.removeWall();
-        numberOfEmptyRooms++;
+        if (room.hasWall()) { // remember, we might be looking at a room that was already generated
+            room.removeWall();
+            numberOfEmptyRooms++;
+        }
 
         // leave a chance for paths of empty rooms to branch off
         if (Math.random() < roomBranchOffChance) {
 
-            roomBranchOffChance -= 0.03; // branch less and less frequently in the future
+            roomBranchOffChance -= 0.05; // branch less and less frequently in the future (REMOVE VARIABLE IF GAPS ARE TOO BIG IN CENTER)
 
             // 50% chance for a room to branch off to the left or right
             if (Math.random() < ROOM_LEFT_OR_RIGHT_CHANCE) { // branch right
@@ -199,8 +201,6 @@ public abstract class DungeonBuilder {
         } else { // traversalDirection == Direction.WEST
             fillWithEmptyRooms(theY, theX-1, roomBranchOffChance);
         }
-
-//        roomBranchOffChance -= 0.03; // branch less and less frequently in the future
     }
 
     private static Direction findTraversalDirection(final int theY, final int theX) {
