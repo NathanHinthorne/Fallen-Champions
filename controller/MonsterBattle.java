@@ -23,8 +23,11 @@ public class MonsterBattle {
     /**
      * Starts a new battle between the player and a random
      * monster.
+     * @param thePlayer The player
+     * @param theEnemy The monster
+     * @return True if the player loses, false if they win.
      */
-    public void newBattle(Hero thePlayer, Monster theEnemy) {
+    public boolean newBattle(Hero thePlayer, Monster theEnemy) {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
@@ -40,6 +43,11 @@ public class MonsterBattle {
                 playerTurn(thePlayer, theEnemy);
             }
         }
+
+        if (myVictory) {
+            return false;
+        }
+        return true;
 
     }
 
@@ -89,8 +97,10 @@ public class MonsterBattle {
             theEnemy.basicAtk(thePlayer);
         } else if (choice == 1) {
             theEnemy.specialAtk(thePlayer);
-        } else if (choice == 2) {
+        } else if (choice == 2 && theEnemy.getHitPoints() < theEnemy.getMaxHitPoints()) {
             theEnemy.heal();
+        } else { // Failsafe
+            theEnemy.basicAtk(thePlayer);
         }
 
         if (thePlayer.getHitPoints() <= 0) {

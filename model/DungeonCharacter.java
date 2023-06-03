@@ -8,6 +8,7 @@ public abstract class DungeonCharacter {
     public final int MAX_SPECIAL_COOLDOWN = 3;
 
     private int myHitPoints;
+    private int myMaxHitPoints;
     private int mySpd;
     private float myLowHitChance;
     private float myHighHitChance;
@@ -18,6 +19,7 @@ public abstract class DungeonCharacter {
 
     public DungeonCharacter() {
         setHitPoints(myHitPoints);
+        myMaxHitPoints = myHitPoints;
         setSpd(mySpd);
         setLowHitChance(myLowHitChance);
         setHighHitChance(myHighHitChance);
@@ -32,6 +34,7 @@ public abstract class DungeonCharacter {
     public DungeonCharacter(int theHitPoints, int theAtkSpd, float theLowHitChance,
                             float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         setHitPoints(theHitPoints);
+        myMaxHitPoints = myHitPoints;
         setSpd(theAtkSpd);
         setLowHitChance(theLowHitChance);
         setHighHitChance(theHighHitChance);
@@ -256,6 +259,14 @@ public abstract class DungeonCharacter {
     public void setHighHitChance(float theHighChance) {
 
         theHighChance = myHighHitChance;
+    }
+
+    /**
+     * Returns the maximum HP for a character.
+     * @return the max HP.
+     */
+    public int getMaxHitPoints() {
+        return myMaxHitPoints;
     }
 
 
