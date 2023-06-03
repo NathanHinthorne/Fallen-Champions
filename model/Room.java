@@ -68,7 +68,7 @@ public class Room {
     public boolean hasPit() {
         return myPit != null;
     }
-    private boolean hasMonster() {
+    public boolean hasMonster() {
         return myMonster != null;
     }
 

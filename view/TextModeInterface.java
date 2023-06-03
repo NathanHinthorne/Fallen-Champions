@@ -1,5 +1,4 @@
 package view;
-import controller.*;
 import model.*;
 
 import java.util.Scanner;

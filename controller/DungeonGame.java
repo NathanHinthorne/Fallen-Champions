@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DungeonGame {
+    private final static boolean CHEAT_MODE = false;
+
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
     private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
@@ -50,23 +52,22 @@ public class DungeonGame {
                 int difficultySelection = myGame.chooseDifficulty();
                 setupDungeon(difficultySelection);
 
-                myGame.Introduction(); // prints introduction
-                int heroChoice = myGame.chooseHero();
-                myHero = setupHero(heroChoice);
+                // print introduction
+                myGame.Introduction();
 
-                myGame.gameplayMenu();
+                // choose hero
+                int heroSelection = myGame.chooseHero();
+                myHero = setupHero(heroSelection);
+
+                // enter the main game loop
                 gameLoop();
+
             case 2:
                 System.exit(0);
             default:
                 System.out.println("Please make a proper selection:");
                 menuSelection = myGame.menu();
         }
-
-
-        updateMap();
-
-
     }
 
 
@@ -99,14 +100,20 @@ public class DungeonGame {
     private static void gameLoop() {
             while (!gameOver) { // while the hero is still alive
 
-                Dungeon.getView(); // display the player's view immediately after each move
+                // display a view of the dungeon immediately
+                if (CHEAT_MODE) {
+                    myDungeon.toString(); // display the entire dungeon
+                } else {
+                    myDungeon.getView(); // display the 3x3 player's view
+                }
+
 
                 DelayMachine.delay(2); // delay for 1 second
 
 
                 // determine if the player is on the same tile as a monster
                     // play monster encounter sound
-                    // play monster encounter cutscene?
+                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins)
 
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
@@ -134,12 +141,11 @@ public class DungeonGame {
                         break;
 
                     case 1: // hero info
-                        System.out.println("Now pick which direction you want to move");
-                        System.out.println("8 for up, 4 for left, 2 for down, 6 for right");
+                        myGame.displayHeroInfo(myHero);
                         break;
 
                     case 2: // display map
-                        updateMap();
+                        myDungeon.toString(); // display the entire dungeon
                         break;
 
                     case 3: // open bag
@@ -179,11 +185,21 @@ public class DungeonGame {
             System.out.println("Couldn't save game!");
         }
     }
+    // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
+    private static void loadGame() {
+        try {
+            FileInputStream fos = new FileInputStream("jvs.sav");
+            ObjectInputStream ois = new ObjectInputStream(fos);
+            myDungeon = (Dungeon) ois.readObject();
+            myHero = (Hero) ois.readObject();
+            ois.close();
+            System.out.print("Game loaded!\n");
+        } catch (Exception e) {
+            System.out.println("Couldn't load game!");
+        }
 
-    /**
-     * Displays the dungeon map
-     */
-    public static void updateMap() { System.out.println(myDungeon.toString()); }
+    }
+
 
 
 }
