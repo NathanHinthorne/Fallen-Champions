@@ -79,10 +79,10 @@ public abstract class DungeonCharacter {
      * @return the basic attack
      */
     public int basicAtk(DungeonCharacter theOther) {
-        if(myHitPoints <= 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than or equal to zero");
-        }
+//        if(myHitPoints <= 0)
+//        {
+//            throw new IllegalArgumentException("Hit Points cannot be less than or equal to zero");
+//        }
 
         myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
         int pointer = MY_RANDOM.nextInt(100);
@@ -91,19 +91,20 @@ public abstract class DungeonCharacter {
         if(myHitChance >= pointer) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - this.getMinDamage());
-            System.out.println("Attack successful: " + this.getMinDamage() + " DMG dealt");
-        } else { // Will be worked on later, planned to be an error message
+//            System.out.println("Attack successful: " + this.getMinDamage() + " DMG dealt");
+            return getMinDamage();
+        } else {
             // Attack failed
-            System.out.println("Attack Failed!");
+            return 0;
         }
-
-        return myMinDmg;
     }
 
     /**
      * Allows the character to summon their special attack
      */
-    public void specialAtk(DungeonCharacter theOther) {}
+    public int specialAtk(DungeonCharacter theOther) {
+        return 0;
+    }
 
     /**
      * Gets the minimum hit damage
@@ -193,9 +194,9 @@ public abstract class DungeonCharacter {
      * @param hp the hit points
      */
     public void setHitPoints(int hp) {
-        if(hp < 0) { // Will need to be looked at later
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+//        if(hp < 0) { // Will need to be looked at later
+//            throw new IllegalArgumentException("Hit Points cannot be less than zero");
+//        }
         myHitPoints = hp;
     }
 

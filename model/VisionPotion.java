@@ -7,9 +7,10 @@ public class VisionPotion extends Potion {
     }
 
     @Override
-    public void effect(final Hero thePlayer) {
+    public int effect(final Hero thePlayer) {
         // TODO normally, the controller would call getView() when getting the 3x3 area for the View package
         // TODO make the controller call the getExpandedView() method from Dungeon instead
+        return 0;
     }
 
     @Override

@@ -30,13 +30,9 @@ public class Hero_Support extends Hero implements Healable {
      * Second special attack for hero
      */
     @Override
-    public void specialAtk(DungeonCharacter theOther) {
-        if(getHitPoints() <= 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+    public int specialAtk(DungeonCharacter theOther) {
 
-        if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
+        if(getHitChance() >= getLowHitChance() && getHitChance() <= getHighHitChance()) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
@@ -48,6 +44,9 @@ public class Hero_Support extends Hero implements Healable {
         heal(this);
 
         //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
+
+        return getMaxDamage();
+
     }
 
     /**
@@ -64,9 +63,10 @@ public class Hero_Support extends Hero implements Healable {
      * Heals the hero
      */
     @Override
-    public void heal(final DungeonCharacter thePlayer) {
+    public int heal(final DungeonCharacter thePlayer) {
         //TODO heal the support hero
         int healAmt = generateHealChance(minHeal, maxHeal);
         thePlayer.setHitPoints(getHitPoints() + healAmt);
+        return healAmt;
     }
 }

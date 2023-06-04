@@ -11,7 +11,7 @@ public class HealthPotion extends Potion implements Healable {
 
 
 
-    public void heal(final DungeonCharacter thePlayer) {
+    public int heal(final DungeonCharacter thePlayer) {
 
         /* generate a random int between 0 and the difference between
          * max and min, since you can't have a lower and upper bound,
@@ -21,11 +21,12 @@ public class HealthPotion extends Potion implements Healable {
         healAmt += myMinHeal;
 
         thePlayer.setHitPoints(thePlayer.getHitPoints() + healAmt);
+        return healAmt;
     }
 
     @Override
-    public void effect(final Hero thePlayer) {
-       heal(thePlayer);
+    public int effect(final Hero thePlayer) {
+       return heal(thePlayer);
     }
 
     @Override

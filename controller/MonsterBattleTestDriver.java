@@ -40,6 +40,8 @@ public class MonsterBattleTestDriver {
 
         System.out.println();
 
+        theHero.getMyInventory().addToInventory(new HealthPotion());
+
         MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame);
         if (!battle.newBattle(theHero, theMonster)) {
             System.out.println("You Lose!");

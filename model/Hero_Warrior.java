@@ -23,13 +23,9 @@ public class Hero_Warrior extends Hero{
      * Second special attack
      */
     @Override
-    public void specialAtk(DungeonCharacter theOther) {
-        if(getHitPoints() <= 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+    public int specialAtk(DungeonCharacter theOther) {
 
-        if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
+        if(getHitChance() >= getLowHitChance() && getHitChance() <= getHighHitChance()) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
@@ -37,6 +33,7 @@ public class Hero_Warrior extends Hero{
             System.out.println("Attack Failed!");
 
         }
+        return getMaxDamage();
     }
 
 }

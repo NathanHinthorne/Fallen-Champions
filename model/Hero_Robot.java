@@ -52,11 +52,7 @@ public class Hero_Robot extends Hero {
      * Second special attack
      */
     @Override
-    public void specialAtk(DungeonCharacter theOther) {
-        if(getHitPoints() <= 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+    public int specialAtk(DungeonCharacter theOther) {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
@@ -64,6 +60,9 @@ public class Hero_Robot extends Hero {
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
         }
+
+        return getMaxDamage();
+
     }
 
     /**
