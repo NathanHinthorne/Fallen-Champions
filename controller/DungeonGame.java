@@ -50,7 +50,7 @@ public class DungeonGame {
                 // setup dungeon (1 for easy, 2 for medium, 3 for hard)
                 int difficultySelection = game.chooseDifficulty();
                 setupDungeon(difficultySelection);
-                System.out.println(dungeon); // empty line
+                System.out.println(); // empty line
 
                 // print introduction
                 game.Introduction();
@@ -129,9 +129,9 @@ public class DungeonGame {
 
                 // display a view of the dungeon immediately
                 if (CHEAT_MODE) {
-                    printDungeonMap();
+                    game.printDungeonMap(dungeon);
                 } else {
-                    printPlayerView(); // display the 3x3 player's view
+                    game.printPlayerView(dungeon); // display the 3x3 player's view
                 }
 
                 if (dungeon.heroIsTouchingMonster()) {
@@ -223,14 +223,6 @@ public class DungeonGame {
             System.out.println("Couldn't load game! Starting a new game...");
         }
 
-    }
-
-    private static void printDungeonMap() {
-        System.out.println(dungeon.toString());
-    }
-
-    private static void printPlayerView() {
-        System.out.println(dungeon.getView());
     }
 
 

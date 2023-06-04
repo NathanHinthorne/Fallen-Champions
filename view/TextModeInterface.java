@@ -74,6 +74,18 @@ public class TextModeInterface {
 
     }
 
+    public void printPlayerView(Dungeon theDungeon) {
+        System.out.println("Map:");
+        System.out.println(theDungeon.getView());
+        System.out.println();
+    }
+
+    public void printDungeonMap(Dungeon theDungeon) {
+        System.out.println("Map:");
+        System.out.println(theDungeon.toString());
+        System.out.println();
+    }
+
     public void displayHeroInfo(final Hero theHero) {
 
         System.out.println("Stats");
