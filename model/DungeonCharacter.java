@@ -16,6 +16,7 @@ public abstract class DungeonCharacter {
     private int myMaxDmg;
     private int mySpecialCooldown;
     private float myHitChance;
+    private float myHitChanceMedian;
 
     public DungeonCharacter() {
         setHitPoints(myHitPoints);
@@ -24,10 +25,12 @@ public abstract class DungeonCharacter {
         setLowHitChance(myLowHitChance);
         setHighHitChance(myHighHitChance);
         setHitChance(myHitChance);
+        setHitChanceMedian(myHitChanceMedian);
         setMinDmg(myMinDmg);
         setMaxDmg(myMaxDmg);
         setSpecialCooldown(mySpecialCooldown);
 
+        myHitChanceMedian = myLowHitChance + ((myHighHitChance - myLowHitChance) / 2);
         myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
     }
 
@@ -39,9 +42,12 @@ public abstract class DungeonCharacter {
         setLowHitChance(theLowHitChance);
         setHighHitChance(theHighHitChance);
         setHitChance(theHitChance);
+        setHitChanceMedian(myHitChanceMedian);
         setMinDmg(theMinDmg);
         setMaxDmg(theMaxDmg);
         setSpecialCooldown(theCooldown);
+
+        myHitChanceMedian = myLowHitChance + ((myHighHitChance - myLowHitChance) / 2);
         myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
 
     }
@@ -78,9 +84,12 @@ public abstract class DungeonCharacter {
             throw new IllegalArgumentException("Hit Points cannot be less than or equal to zero");
         }
 
-        if(myHitChance > getHitChance()) {
+        myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
+
+        if(myHitChance >= getHitChanceMedian()) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - this.getMinDamage());
+            System.out.println("Attack successful: " + this.getMinDamage() + " DMG dealt");
         } else { // Will be worked on later, planned to be an error message
             // Attack failed
             System.out.println("Attack Failed!");
@@ -248,6 +257,14 @@ public abstract class DungeonCharacter {
      */
     public int getMaxHitPoints() {
         return myMaxHitPoints;
+    }
+
+    public void setHitChanceMedian(float theChance) {
+        myHitChanceMedian = theChance;
+    }
+
+    public float getHitChanceMedian() {
+        return myHitChanceMedian;
     }
 
 

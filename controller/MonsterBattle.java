@@ -19,8 +19,8 @@ public class MonsterBattle {
         myMonster = theMonster;
         myGameOver = false;
         myVictory = false;
-        newBattle(myHero, myMonster);
         myGame = theView;
+        newBattle(myHero, myMonster);
     }
 
     /**
@@ -37,17 +37,17 @@ public class MonsterBattle {
          */
         if (thePlayer.getSpd() > theEnemy.getSpd()) {
             while (!myGameOver) {
-                System.out.println("Player Turn");
                 playerTurn(thePlayer, theEnemy);
-                System.out.println("Monster Turn");
+                DelayMachine.delay(3);
                 monsterTurn(theEnemy, thePlayer);
+                DelayMachine.delay(3);
             }
         } else {
             while (!myGameOver) {
-                System.out.println("Monster Turn");
                 monsterTurn(theEnemy, thePlayer);
-                System.out.println("Player Turn");
+                DelayMachine.delay(3);
                 playerTurn(thePlayer, theEnemy);
+                DelayMachine.delay(3);
             }
         }
 
