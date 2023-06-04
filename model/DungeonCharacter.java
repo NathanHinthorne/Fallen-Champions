@@ -191,9 +191,9 @@ public abstract class DungeonCharacter {
      * @param hp the hit points
      */
     public void setHitPoints(int hp) {
-        if(hp < 0) { // Will need to be looked at later
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+        //if(hp < 0) { // Will need to be looked at later
+        //    throw new IllegalArgumentException("Hit Points cannot be less than zero");
+        //}
         myHitPoints = hp;
     }
 
