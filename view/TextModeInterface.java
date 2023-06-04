@@ -64,7 +64,22 @@ public class TextModeInterface {
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
         }
+        if (ret > myBag.getSize()) {
+            System.out.println("That Slot is empty!");
+            ret = openBag(myBag);
+        }
         return ret;
+    }
+
+    public void usePotion(int theVal, Hero thePlayer) {
+        if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay() == "Health Potion") {
+            System.out.println("Used a Health Potion and restored "
+                    + thePlayer.getMyInventory().getArray().get(theVal).getDetail(thePlayer) + " HP!");
+        } else if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay() == "Vision Potion") {
+            System.out.println("Used a vision potion!");
+        } else {
+            System.out.println("Used a Debug Potion");
+        }
     }
 
     public int quitProcess() {
@@ -72,6 +87,18 @@ public class TextModeInterface {
         System.out.println("1 for yes, 2 for no");
         return THE_SCANNER.nextInt();
 
+    }
+
+    public void printPlayerView(Dungeon theDungeon) {
+        System.out.println("Map:");
+        System.out.println(theDungeon.getView());
+        System.out.println();
+    }
+
+    public void printDungeonMap(Dungeon theDungeon) {
+        System.out.println("Map:");
+        System.out.println(theDungeon.toString());
+        System.out.println();
     }
 
     public void displayHeroInfo(final Hero theHero) {

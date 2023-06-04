@@ -80,11 +80,13 @@ public class MonsterBattle {
         int choice = myGame.battleMenu(thePlayer, theEnemy);
         System.out.println();
 
+        // Basic Attack
         if (choice == 1) {
             int amt = thePlayer.basicAtk(theEnemy);
             myGame.playerMoves(choice, amt, thePlayer);
             DelayMachine.delay(2);
 
+        // Special Attack
         } else if (choice == 2) {
             int temp = thePlayer.getSpecialCooldown();
             int amt = thePlayer.specialAtk(theEnemy);
@@ -94,15 +96,20 @@ public class MonsterBattle {
                 playerTurn(thePlayer,theEnemy);
             }
 
+        // Open inventory
         } else if (choice == 3) {
             boolean itemused = false;
             int slot = myGame.openBag(thePlayer.getMyInventory());
             if (slot > 4 || slot < 0) {
                 playerTurn(thePlayer,theEnemy);
+            } else {
+                myGame.usePotion(slot-1, thePlayer);
+                thePlayer.getMyInventory().consumeItem(thePlayer, slot-1);
             }
 
         }
 
+        // Checks if the attack killed the enemy
         if (theEnemy.getHitPoints() <= 0) {
             myGameOver = true;
             myVictory = true;
@@ -119,24 +126,32 @@ public class MonsterBattle {
         int choice = RANDOMIZER.nextInt(3);
         theEnemy.takeTurn();
 
+        // Basic Attack
         if (choice == 0) {
             int amt = theEnemy.basicAtk(thePlayer);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
+
+        // Special Attack
         } else if (choice == 1 && theEnemy.getSpecialCooldown() <= 0) {
             int amt = theEnemy.specialAtk(thePlayer);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
+
+        // Heal
         } else if (choice == 2 && theEnemy.getHitPoints() < (theEnemy.getMaxHitPoints() - theEnemy.getMaxHeal())) {
             int amt = theEnemy.heal(theEnemy);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
-        } else { // Failsafe
+
+        // Basic attack failsafe
+        } else {
             int amt = theEnemy.basicAtk(thePlayer);
             myGame.monsterMoves(0, amt);
             DelayMachine.delay(2);
         }
 
+        // checks if the attack killed the player
         if (thePlayer.getHitPoints() <= 0) {
             myGameOver = true;
             myVictory = false;

@@ -108,8 +108,10 @@ public class Dungeon {
         StringBuilder sb = new StringBuilder();
 
         for (int x = myHeroX - 1; x <= myHeroX + 1; x++) {
+            sb.append("\n");
             for (int y = myHeroY - 1; y <= myHeroY + 1; y++) {
                 sb.append(myMaze[x][y].toString());
+                sb.append("  ");
             }
         }
         return sb.toString();
