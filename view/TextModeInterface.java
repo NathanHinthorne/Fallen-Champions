@@ -57,10 +57,11 @@ public class TextModeInterface {
         System.out.println("Opening bag...");
         DelayMachine.delay(3);
         System.out.println(myBag.toString());
-        System.out.println("You have " + myBag.getSize() + "/" + myBag.getMaxSize() + " storable Items.");
-        System.out.println("You have " + myBag.getMyPillarCount() + "/4 pillars.");
-        System.out.println("Choose from your inventory (1-4) (press 5 to exit):");
+        System.out.println("Items:   " + myBag.getSize() + "/" + myBag.getMaxSize());
+        System.out.println("Pillars: " + myBag.getMyPillarCount() + "/4");
+        System.out.print("Choose an item (1-4) (5 - Back) --> ");
         int ret = THE_SCANNER.nextInt();
+        System.out.println("-------------------");
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
         }
