@@ -33,29 +33,36 @@ public class DungeonGame {
 
         myGame = new TextModeInterface();
 
-        // get user input to start game (1=start, 2=exit)
+        // get user input to start game (1 for start, 2 for exit)
         int menuSelection = myGame.menu();
         switch(menuSelection) {
             case 1:
+
+                System.out.println(); // empty line
 
                 // continue or new game (1 for new game, 2 for continue game)
                 int loadSelection = myGame.continueOrNewGameMenu();
                 if (loadSelection == 2) {
                     loadGame();
                 }
+                System.out.println(); // empty line
 
-                // setup dungeon
+                // setup dungeon (1 for easy, 2 for medium, 3 for hard)
                 int difficultySelection = myGame.chooseDifficulty();
                 setupDungeon(difficultySelection);
+                System.out.println(myDungeon); // empty line
 
                 // print introduction
                 myGame.Introduction();
+                System.out.println(); // empty line
 
-                // choose hero
+                // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
                 int heroSelection = myGame.chooseHero();
                 myHero = setupHero(heroSelection);
+                System.out.println(); // empty line
 
-                // enter the main game loop
+                // enter the main game loop ('w' to move up, 'a' to move left, 's' to move down, 'd' to move right
+                //                           '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game)
                 gameLoop();
 
             case 2:
@@ -63,14 +70,14 @@ public class DungeonGame {
 
             default:
                 System.out.println("Please make a proper selection:");
-                menuSelection = myGame.menu();
+                menuSelection = myGame.menu(); // does this loop back to the top? //TODO test this
         }
     }
 
     private static Hero setupHero(int theChoice) {
         switch(theChoice) {
             case 1:
-                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER);
+                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER); // use this instead? HeroFactory.buildHero(HeroTypes.ENFORCER);
             case 2:
                 return HERO_FACTORY.buildHero(HeroTypes.ROBOT);
             case 3:
@@ -122,22 +129,19 @@ public class DungeonGame {
                     myDungeon.getView(); // display the 3x3 player's view
                 }
 
-
-
-
-                // determine if the player is on the same tile as a monster
+                if (myDungeon.heroIsTouchingMonster()) {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
-                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins)
+                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
 
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
-
+                }
 
                 DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
-                // '1' to display hero info, '2' to display map, '3' open bag, '4' to quit, '5' to save game
+                // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game
                 int gameMenuSelection = myGame.gameplayMenu();
                 switch(gameMenuSelection) {
                     case 's':
@@ -164,7 +168,7 @@ public class DungeonGame {
                         myDungeon.toString(); // display the entire dungeon
                         break;
 
-                    case 3: // open bag
+                    case 'e': // open bag
                         boolean choosing = true;
                         int itemSlot = myGame.openBag(myHero.getMyInventory());
                         myHero.getMyInventory().consumeItem(myHero, itemSlot);
@@ -211,7 +215,7 @@ public class DungeonGame {
             ois.close();
             System.out.print("Game loaded!\n");
         } catch (Exception e) {
-            System.out.println("Couldn't load game!");
+            System.out.println("Couldn't load game! Starting a new game...");
         }
 
     }
