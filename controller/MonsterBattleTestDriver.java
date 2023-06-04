@@ -1,5 +1,7 @@
 package controller;
 import model.*;
+import model.test.TestHero;
+import model.test.TestMonster;
 import view.TextModeInterface;
 
 public class MonsterBattleTestDriver {
@@ -7,8 +9,8 @@ public class MonsterBattleTestDriver {
     private static TextModeInterface myGame;
 
     public static void main(String[] theArgs) {
-        Hero theHero = new Hero_Warrior();
-        Monster theMonster = new Monster_Skeleton();
+        Hero theHero = new TestHero();
+        Monster theMonster = new TestMonster();
         myGame = new TextModeInterface();
 
         System.out.println("Player info:");
