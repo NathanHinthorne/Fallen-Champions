@@ -42,7 +42,7 @@ public abstract class DungeonCharacter {
         setMinDmg(theMinDmg);
         setMaxDmg(theMaxDmg);
         setSpecialCooldown(theCooldown);
-        theHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
+        myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
 
     }
 
@@ -92,9 +92,7 @@ public abstract class DungeonCharacter {
     /**
      * Allows the character to summon their special attack
      */
-    public void specialAtk(DungeonCharacter theOther) {
-
-    }
+    public void specialAtk(DungeonCharacter theOther) {}
 
     /**
      * Gets the minimum hit damage
@@ -111,7 +109,7 @@ public abstract class DungeonCharacter {
      */
     public void setMinDmg(int theDmg) {
 
-        theDmg = myMinDmg;
+        myMinDmg = theDmg;
     }
 
     /**
@@ -140,7 +138,7 @@ public abstract class DungeonCharacter {
         if(theSpd < 0 || theSpd > 1000) {
             throw new IllegalArgumentException("Attack Speed cannot be less than 0 or greater than 500.");
         }
-        theSpd = mySpd;
+        mySpd = theSpd;
     }
 
     /**
@@ -149,7 +147,7 @@ public abstract class DungeonCharacter {
      */
     public void setMaxDmg(int theDmg) {
 
-        theDmg = myMaxDmg;
+        myMaxDmg = theDmg;
     }
 
     /**
@@ -176,7 +174,7 @@ public abstract class DungeonCharacter {
      */
     public void setHitChance(float theChance) {
 
-        theChance = myHitChance;
+        myHitChance = theChance;
     }
 
     /**
@@ -187,7 +185,7 @@ public abstract class DungeonCharacter {
         if(hp < 0) { // Will need to be looked at later
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
-        hp = myHitPoints;
+        myHitPoints = hp;
     }
 
     /**
@@ -205,7 +203,7 @@ public abstract class DungeonCharacter {
      */
     public void setSpecialCooldown(int theCooldown) {
 
-        theCooldown = mySpecialCooldown;
+        mySpecialCooldown = theCooldown;
     }
 
     /**
@@ -223,7 +221,7 @@ public abstract class DungeonCharacter {
      */
     public void setLowHitChance(float theLowChance) {
 
-        theLowChance = myLowHitChance;
+        myLowHitChance = theLowChance;
     }
 
     /**
@@ -241,7 +239,7 @@ public abstract class DungeonCharacter {
      */
     public void setHighHitChance(float theHighChance) {
 
-        theHighChance = myHighHitChance;
+        myHighHitChance = theHighChance;
     }
 
     /**

@@ -32,7 +32,7 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
 
-    public int battleMenu(final int numberOfSpecials) { // is this parameter needed?
+    public int battleMenu() { // is this parameter needed?
         System.out.println("You are currently in battle");
         System.out.println("Now make a selection");
         System.out.println("1 to attack, 2 to use special attack, 3 to use potion");
