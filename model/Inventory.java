@@ -120,6 +120,8 @@ public class Inventory {
         return myItemCount;
     }
 
+    public ArrayList<Potion> getArray() { return myInventory; }
+
     /**
      * Represents the current player inventory in
      * String format.
