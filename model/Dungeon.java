@@ -5,11 +5,8 @@ import java.util.*;
 
 public class Dungeon {
 
-    //! put all fields only being used in the inner small/medium/large DungeonBuilder classes inside those inner classes
-    //! example: might need to move myUnplacedMonsters to inner classes
-
-    private static Dungeon myDungeon; // for singleton
-    static private Room[][] myMaze;
+    private static Dungeon myDungeon;
+    private static Room[][] myMaze;
     private static int myMazeWidth;
     private static int myMazeHeight;
     private static int myHeroX;
@@ -19,7 +16,7 @@ public class Dungeon {
     private static int myExitX;
     private static int myExitY;
     private static Set<Pillars> myPlacedPillars;
-    private static Queue<Monster> myUnplacedMonsters;
+    private static List<Monster> myUnplacedMonsters;
 
     private Dungeon() { } // prevent external instantiation
 
@@ -28,22 +25,23 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 5;
         private static final int DUNGEON_HEIGHT = 5;
         private static final double BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
+        private static final double PILLAR_CHANCE = 0.20;
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon != null) { // for singleton
-                myDungeon = new Dungeon();
-            }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
+
+            myDungeon = new Dungeon();
+            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
-            myPlacedPillars = new HashSet<Pillars>();
+            myPlacedPillars = new HashSet<>();
 
-            this.setMaze(Dungeon.myMaze);
+            this.setMaze(myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
+            this.setPillarChance(PILLAR_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -85,13 +83,13 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 10;
         private static final int DUNGEON_HEIGHT = 10;
         private static final double BRANCH_OFF_CHANCE = 0.55; // with decreasing branch chance: 0.55
+        private static final double PILLAR_CHANCE = 0.12;
 
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon == null) { // for singleton
-                myDungeon = new Dungeon();
-            }
+
+            myDungeon = new Dungeon();
             myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
@@ -102,6 +100,7 @@ public class Dungeon {
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
+            this.setPillarChance(PILLAR_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -109,17 +108,13 @@ public class Dungeon {
 
             // step 2: randomly place empty rooms
             fillWithEmptyRooms();
-            System.out.println(myDungeon); // debug
 
             // step 3: fill empty rooms with objects
             fillWithObjects(myUnplacedMonsters, myPlacedPillars);
-            System.out.println(myDungeon); // debug
 
             // step 4: add entrance and exit
             Point entranceCoords = addEntrance();
             Point exitCoords = addExit();
-            System.out.println(myDungeon); // debug
-
 
             entranceX = entranceCoords.x;
             entranceY = entranceCoords.y;
@@ -128,7 +123,6 @@ public class Dungeon {
 
             // step 5: find a starting point for the hero
             Point heroCoords = findStartingPoint();
-            System.out.println(myDungeon); // debug
 
             myHeroX = heroCoords.x;
             myHeroY = heroCoords.y;
@@ -146,23 +140,23 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 15;
         private static final int DUNGEON_HEIGHT = 15;
         private static final double BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
+        private static final double PILLAR_CHANCE = 0.10;
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon != null) { // for singleton
-                myDungeon = new Dungeon();
-            }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
+
+            myDungeon = new Dungeon();
+            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<>();
 
-            this.setMaze(Dungeon.myMaze);
+            this.setMaze(myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
-
+            this.setPillarChance(PILLAR_CHANCE);
 
             // step 1: fill the dungeon COMPLETELY with walls
             fillWithWalls();
@@ -197,13 +191,15 @@ public class Dungeon {
         }
     }
 
+
+
     // for inner classes to use (if needed)
     private Room[][] getMaze() {
         return myMaze;
     }
     private Dungeon getDungeon() { return myDungeon; }
 
-    public boolean heroOnMonster() {
+    public boolean heroIsTouchingMonster() {
         return myMaze[myHeroY][myHeroX].hasMonster();
     }
 

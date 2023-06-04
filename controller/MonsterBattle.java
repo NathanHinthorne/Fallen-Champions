@@ -1,23 +1,26 @@
 package controller;
 import model.*;
+import org.w3c.dom.Text;
 import view.*;
 import java.util.Random;
 
 public class MonsterBattle {
 
     private static final Random RANDOMIZER = new Random();
+    private final TextModeInterface myGame;
 
     private final Hero myHero;
     private final Monster myMonster;
     private boolean myGameOver;
     private boolean myVictory;
 
-    public MonsterBattle(Hero theHero, Monster theMonster) {
+    public MonsterBattle(Hero theHero, Monster theMonster, final TextModeInterface theView) {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;
         myVictory = false;
         newBattle(myHero, myMonster);
+        myGame = theView;
     }
 
     /**
@@ -34,12 +37,16 @@ public class MonsterBattle {
          */
         if (thePlayer.getSpd() > theEnemy.getSpd()) {
             while (!myGameOver) {
+                System.out.println("Player Turn");
                 playerTurn(thePlayer, theEnemy);
+                System.out.println("Monster Turn");
                 monsterTurn(theEnemy, thePlayer);
             }
         } else {
             while (!myGameOver) {
+                System.out.println("Monster Turn");
                 monsterTurn(theEnemy, thePlayer);
+                System.out.println("Player Turn");
                 playerTurn(thePlayer, theEnemy);
             }
         }
@@ -51,36 +58,26 @@ public class MonsterBattle {
 
     }
 
-    /**
-     * Used to apply the choice the player made
-     * in a battle from view, attack, special,
-     * or item use represented as an int.
-     * @param theOption What the player chose to
-     *                  do.
-     */
-    public void playerOption(int theOption) {
-        /* TODO communicate with View to get
-         * the player's turn option
-         * (Attack, heal. item, etc.)
-         */
 
-        if (theOption == 0) {
-            // TODO basic attack
-
-        } else if (theOption == 1) {
-            // TODO special attack
-
-        } else if (theOption == 2) {
-            //TODO use item
-
-        }
-
-    }
 
     private void playerTurn(Hero thePlayer, Monster theEnemy) {
         /**
          * Read input from user to determine what to do
          */
+        thePlayer.takeTurn();
+
+        int choice = myGame.battleMenu();
+
+        if (choice == 1) {
+            thePlayer.basicAtk(theEnemy);
+
+        } else if (choice == 2) {
+            thePlayer.specialAtk(theEnemy);
+
+        } else if (choice == 3) {
+            myGame.openBag(thePlayer.getMyInventory());
+
+        }
 
         if (theEnemy.getHitPoints() <= 0) {
             myGameOver = true;
@@ -92,6 +89,7 @@ public class MonsterBattle {
     private void monsterTurn(Monster theEnemy, Hero thePlayer) {
         // Bound to how many things the monster can do
         int choice = RANDOMIZER.nextInt(3);
+        theEnemy.takeTurn();
 
         if (choice == 0) {
             theEnemy.basicAtk(thePlayer);
