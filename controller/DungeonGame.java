@@ -50,7 +50,7 @@ public class DungeonGame {
                 // setup dungeon (1 for easy, 2 for medium, 3 for hard)
                 int difficultySelection = myGame.chooseDifficulty();
                 setupDungeon(difficultySelection);
-                System.out.println(); // empty line
+                System.out.println(myDungeon); // empty line
 
                 // print introduction
                 myGame.Introduction();
@@ -70,14 +70,14 @@ public class DungeonGame {
 
             default:
                 System.out.println("Please make a proper selection:");
-                menuSelection = myGame.menu();
+                menuSelection = myGame.menu(); // does this loop back to the top? //TODO test this
         }
     }
 
     private static Hero setupHero(int theChoice) {
         switch(theChoice) {
             case 1:
-                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER);
+                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER); // use this instead? HeroFactory.buildHero(HeroTypes.ENFORCER);
             case 2:
                 return HERO_FACTORY.buildHero(HeroTypes.ROBOT);
             case 3:

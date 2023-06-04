@@ -5,11 +5,8 @@ import java.util.*;
 
 public class Dungeon {
 
-    //! put all fields only being used in the inner small/medium/large DungeonBuilder classes inside those inner classes
-    //! example: might need to move myUnplacedMonsters to inner classes
-
-    private static Dungeon myDungeon; // for singleton
-    static private Room[][] myMaze;
+    private static Dungeon myDungeon;
+    private static Room[][] myMaze;
     private static int myMazeWidth;
     private static int myMazeHeight;
     private static int myHeroX;
@@ -32,16 +29,15 @@ public class Dungeon {
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon != null) { // for singleton
-                myDungeon = new Dungeon();
-            }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
+
+            myDungeon = new Dungeon();
+            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<>();
 
-            this.setMaze(Dungeon.myMaze);
+            this.setMaze(myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
@@ -92,9 +88,8 @@ public class Dungeon {
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon == null) { // for singleton
-                myDungeon = new Dungeon();
-            }
+
+            myDungeon = new Dungeon();
             myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
@@ -149,16 +144,15 @@ public class Dungeon {
 
         @Override
         public Dungeon buildDungeon() {
-            if (myDungeon != null) { // for singleton
-                myDungeon = new Dungeon();
-            }
-            Dungeon.myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
+
+            myDungeon = new Dungeon();
+            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
             myPlacedPillars = new HashSet<>();
 
-            this.setMaze(Dungeon.myMaze);
+            this.setMaze(myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
