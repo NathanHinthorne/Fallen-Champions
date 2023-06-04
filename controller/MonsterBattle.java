@@ -20,7 +20,6 @@ public class MonsterBattle {
         myGameOver = false;
         myVictory = false;
         myGame = theView;
-        newBattle(myHero, myMonster);
     }
 
     /**
@@ -58,15 +57,20 @@ public class MonsterBattle {
 
     }
 
-
-
+    /**
+     * Prompts the user for their choice and displays
+     * current Player and Monster HP and other info
+     * @param thePlayer
+     * @param theEnemy
+     */
     private void playerTurn(Hero thePlayer, Monster theEnemy) {
         /**
          * Read input from user to determine what to do
          */
         thePlayer.takeTurn();
 
-        int choice = myGame.battleMenu();
+        int choice = myGame.battleMenu(thePlayer, theEnemy);
+        System.out.println();
 
         if (choice == 1) {
             thePlayer.basicAtk(theEnemy);
@@ -81,7 +85,7 @@ public class MonsterBattle {
 
         if (theEnemy.getHitPoints() <= 0) {
             myGameOver = true;
-            myVictory = false;
+            myVictory = true;
         }
 
     }

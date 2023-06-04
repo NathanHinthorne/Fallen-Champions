@@ -34,10 +34,23 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
 
-    public int battleMenu() { // is this parameter needed?
-        System.out.println("You are currently in battle");
-        System.out.println("Now make a selection");
-        System.out.println("1 to attack, 2 to use special attack, 3 to use potion");
+    public int battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
+        double playerPerc = (theHero.getHitPoints() / theHero.getMaxHitPoints()) * 20.0;
+        System.out.println("-------------------");
+        System.out.println("Player HP:  " + theHero.getHitPoints());
+//        for (int i = 0; i < playerPerc; i++) {
+//            System.out.print("|");
+//        }
+//        System.out.println();
+
+        double monsterPerc = (theMonster.getHitPoints() / theMonster.getMaxHitPoints()) * 20.0;
+        System.out.println("Monster HP: " + theMonster.getHitPoints());
+//        for (int i = 0; i < monsterPerc; i++) {
+//            System.out.print("|");
+//        }
+//        System.out.println();
+
+        System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --- ");
         return THE_SCANNER.nextInt();
     }
 
