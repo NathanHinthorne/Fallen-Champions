@@ -1,4 +1,5 @@
 package view;
+import controller.DelayMachine;
 import model.*;
 
 import java.util.Scanner;
@@ -37,20 +38,13 @@ public class TextModeInterface {
     public int battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
         double playerPerc = (theHero.getHitPoints() / theHero.getMaxHitPoints()) * 20.0;
         System.out.println("-------------------");
-        System.out.println("Player HP:  " + theHero.getHitPoints());
-//        for (int i = 0; i < playerPerc; i++) {
-//            System.out.print("|");
-//        }
-//        System.out.println();
+        System.out.println("\nPlayer HP:  " + theHero.getHitPoints());
 
         double monsterPerc = (theMonster.getHitPoints() / theMonster.getMaxHitPoints()) * 20.0;
         System.out.println("Monster HP: " + theMonster.getHitPoints());
-//        for (int i = 0; i < monsterPerc; i++) {
-//            System.out.print("|");
-//        }
-//        System.out.println();
 
-        System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --- ");
+        System.out.println("\nMake your move!");
+        System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --> ");
         return THE_SCANNER.nextInt();
     }
 
@@ -60,8 +54,12 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
     public int openBag(final Inventory myBag) {
-        System.out.println("Make your Selection 1-4 (press 5 to exit) :");
+        System.out.println("Opening bag...");
+        DelayMachine.delay(3);
         System.out.println(myBag.toString());
+        System.out.println("You have " + myBag.getSize() + "/" + myBag.getMaxSize() + " storable Items.");
+        System.out.println("You have " + myBag.getMyPillarCount() + "/4 pillars.");
+        System.out.println("Choose from your inventory (1-4) (press 5 to exit):");
         int ret = THE_SCANNER.nextInt();
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
@@ -95,5 +93,49 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
 
+    public void monsterTurnText() {
+        System.out.println("-------------------");
+        System.out.println("The Enemy is making their move...");
+    }
 
+    public void monsterMoves(int theVal, int theHpAmt) {
+        if (theVal == 0) {
+            if (theHpAmt == 0) {
+                System.out.println("Their attack failed!");
+            } else {
+                System.out.println("The enemy performs an attack for " + theHpAmt + " damage!");
+            }
+        } else if (theVal == 1) {
+            if (theHpAmt == 0) {
+                System.out.println("Their special attack failed!");
+            } else {
+                System.out.println("The enemy performs a special attack for " + theHpAmt + " damage!");
+            }
+        } else if (theVal == 2) {
+
+            System.out.println("The enemy heals themselves for " + theHpAmt + " Health Points!");
+        }
+    }
+
+    public void playerMoves(int theVal, int theHpAmt, Hero thePlayer) {
+        System.out.println("-------------------");
+        if (theVal == 1) {
+            if (theHpAmt == 0) {
+                System.out.println("Your attack failed!");
+            } else {
+                System.out.println("You perform an attack for " + theHpAmt + " damage!");
+            }
+        } else if (theVal == 2) {
+            if (theHpAmt == 0) {
+                System.out.println("Your special attack failed!");
+            } else if (theHpAmt == -1) {
+                System.out.println("You cannot use your special for another "
+                        + thePlayer.getSpecialCooldown() + " moves!");
+            } else {
+                System.out.println("You perform a special attack for " + theHpAmt + " damage!");
+            }
+        } else if (theVal == 3) {
+            System.out.println("Opening bag...");
+        }
+    }
 }

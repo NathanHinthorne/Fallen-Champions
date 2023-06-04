@@ -40,6 +40,17 @@ public class MonsterBattleTestDriver {
 
         System.out.println();
 
+        Potion potion1 = new HealthPotion();
+
+        theHero.getMyInventory().addToInventory(potion1);
+        theHero.getMyInventory().addToInventory(new HealthPotion());
+        theHero.getMyInventory().addToInventory(new VisionPotion());
+        theHero.getMyInventory().addPillar(Pillars.INHERITANCE);
+
+        System.out.println(theHero.getMyInventory().toString());
+        System.out.println("Item # - " + theHero.getMyInventory().getMyItemCount());
+        System.out.println("size   - " + theHero.getMyInventory().getMaxSize());
+
         MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame);
         if (!battle.newBattle(theHero, theMonster)) {
             System.out.println("You Lose!");

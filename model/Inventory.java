@@ -25,6 +25,7 @@ public class Inventory {
 
     private int myPillarCount;
     private int myItemCount;
+    private int myMaxCapacity;
     private boolean isFull;
 
     /**
@@ -35,6 +36,7 @@ public class Inventory {
         myInventory = new ArrayList<Potion>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
+        myMaxCapacity = 4;
         isFull = false;
     }
 
@@ -45,7 +47,7 @@ public class Inventory {
      */
     public void addToInventory(Potion theItem) {
 
-        if (myItemCount == myInventory.size()) {
+        if (myItemCount == myMaxCapacity) {
             // Inventory full!
         } else {
             myInventory.add(theItem);
@@ -106,6 +108,10 @@ public class Inventory {
         return myInventory.size();
     }
 
+    public int getMaxSize() {
+        return myMaxCapacity;
+    }
+
     public int getMyPillarCount() {
         return myPillarCount;
     }
@@ -123,15 +129,24 @@ public class Inventory {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Player Inventory: [");
-        for (int i = 0; i < myInventory.size(); i++) {
-            sb.append(i+1 + " - " + myInventory.get(i).toString() + ", ");
+        sb.append("\nCurrent Pillars: ");
+        for (int i = 0; i < 4; i++) {
+            if (i >= myPillars.size()) {
+                sb.append("[ ]");
+            } else {
+                sb.append("[" + myPillars.get(i).toString() + "]");
+            }
         }
-        sb.append("]\nCurrent Pillars: [");
-        for (int i = 0; i < myPillars.size(); i++) {
-            sb.append(myPillars.get(i).toString() + ", ");
+
+        sb.append("\nPlayer Inventory:\n");
+        for (int i = 0; i < getMaxSize(); i++) {
+            if (i >= myInventory.size()) {
+                sb.append("[" + (i+1) + " - Empty]\n");
+            } else {
+                sb.append("[" + (i + 1) + " - " + myInventory.get(i).inventoryTextDisplay() + "]\n");
+            }
         }
-        sb.append("]");
+
         return sb.toString();
     }
 

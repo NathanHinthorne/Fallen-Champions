@@ -27,7 +27,7 @@ public class MonsterBattle {
      * monster.
      * @param thePlayer The player
      * @param theEnemy The monster
-     * @return True if the player loses, false if they win.
+     * @return True if the player wins, false if they lose.
      */
     public boolean newBattle(Hero thePlayer, Monster theEnemy) {
 
@@ -36,24 +36,32 @@ public class MonsterBattle {
          */
         if (thePlayer.getSpd() > theEnemy.getSpd()) {
             while (!myGameOver) {
-                playerTurn(thePlayer, theEnemy);
-                DelayMachine.delay(3);
-                monsterTurn(theEnemy, thePlayer);
-                DelayMachine.delay(3);
+                if (thePlayer.getHitPoints() > 0) {
+                    playerTurn(thePlayer, theEnemy);
+                    DelayMachine.delay(3);
+                }
+                if (theEnemy.getHitPoints() > 0) {
+                    monsterTurn(theEnemy, thePlayer);
+                    DelayMachine.delay(3);
+                }
             }
         } else {
             while (!myGameOver) {
-                monsterTurn(theEnemy, thePlayer);
-                DelayMachine.delay(3);
-                playerTurn(thePlayer, theEnemy);
-                DelayMachine.delay(3);
+                if (theEnemy.getHitPoints() > 0) {
+                    monsterTurn(theEnemy, thePlayer);
+                    DelayMachine.delay(3);
+                }
+                if (thePlayer.getHitPoints() > 0) {
+                    playerTurn(thePlayer, theEnemy);
+                    DelayMachine.delay(3);
+                }
             }
         }
 
         if (myVictory) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
 
     }
 
@@ -73,13 +81,25 @@ public class MonsterBattle {
         System.out.println();
 
         if (choice == 1) {
-            thePlayer.basicAtk(theEnemy);
+            int amt = thePlayer.basicAtk(theEnemy);
+            myGame.playerMoves(choice, amt, thePlayer);
+            DelayMachine.delay(2);
 
         } else if (choice == 2) {
-            thePlayer.specialAtk(theEnemy);
+            int temp = thePlayer.getSpecialCooldown();
+            int amt = thePlayer.specialAtk(theEnemy);
+            myGame.playerMoves(choice, amt, thePlayer);
+            DelayMachine.delay(2);
+            if (temp > 0) {
+                playerTurn(thePlayer,theEnemy);
+            }
 
         } else if (choice == 3) {
-            myGame.openBag(thePlayer.getMyInventory());
+            boolean itemused = false;
+            int slot = myGame.openBag(thePlayer.getMyInventory());
+            if (slot > 4 || slot < 0) {
+                playerTurn(thePlayer,theEnemy);
+            }
 
         }
 
@@ -92,17 +112,29 @@ public class MonsterBattle {
 
     private void monsterTurn(Monster theEnemy, Hero thePlayer) {
         // Bound to how many things the monster can do
+
+        myGame.monsterTurnText();
+        DelayMachine.delay(2);
+
         int choice = RANDOMIZER.nextInt(3);
         theEnemy.takeTurn();
 
         if (choice == 0) {
-            theEnemy.basicAtk(thePlayer);
-        } else if (choice == 1) {
-            theEnemy.specialAtk(thePlayer);
-        } else if (choice == 2 && theEnemy.getHitPoints() < theEnemy.getMaxHitPoints()) {
-            theEnemy.heal(theEnemy);
+            int amt = theEnemy.basicAtk(thePlayer);
+            myGame.monsterMoves(choice, amt);
+            DelayMachine.delay(2);
+        } else if (choice == 1 && theEnemy.getSpecialCooldown() <= 0) {
+            int amt = theEnemy.specialAtk(thePlayer);
+            myGame.monsterMoves(choice, amt);
+            DelayMachine.delay(2);
+        } else if (choice == 2 && theEnemy.getHitPoints() < (theEnemy.getMaxHitPoints() - theEnemy.getMaxHeal())) {
+            int amt = theEnemy.heal(theEnemy);
+            myGame.monsterMoves(choice, amt);
+            DelayMachine.delay(2);
         } else { // Failsafe
-            theEnemy.basicAtk(thePlayer);
+            int amt = theEnemy.basicAtk(thePlayer);
+            myGame.monsterMoves(0, amt);
+            DelayMachine.delay(2);
         }
 
         if (thePlayer.getHitPoints() <= 0) {

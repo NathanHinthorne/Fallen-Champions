@@ -32,13 +32,13 @@ public class Hero_Enforcer extends Hero {
      * The second special attack
      */
     @Override
-    public void specialAtk(DungeonCharacter theOther) {
+    public int specialAtk(DungeonCharacter theOther) {
         if(getHitPoints() <= 0)
         {
             throw new IllegalArgumentException("Hit Points cannot be less than zero");
         }
 
-        if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
+        if(getHitChance() >= getLowHitChance() && getHitChance() <= getHighHitChance()) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
         } else { // Will be worked on later, planned to be an error message
@@ -46,6 +46,8 @@ public class Hero_Enforcer extends Hero {
         }
 
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
+
+        return getMaxDamage();
 
     }
 

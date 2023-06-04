@@ -23,11 +23,7 @@ public class Monster_Warlock extends Monster {
      * Second special Attack for Monster Boss
      */
     @Override
-    public void specialAtk(DungeonCharacter theOther) {
-        if(getHitPoints() <= 0)
-        {
-            throw new IllegalArgumentException("Hit Points cannot be less than zero");
-        }
+    public int specialAtk(DungeonCharacter theOther) {
 
         if(getHitChance() > getLowHitChance() && getHitChance() < getHighHitChance()) {
             // Attack successful
@@ -39,6 +35,8 @@ public class Monster_Warlock extends Monster {
         }
 
         //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
+
+        return getMaxDamage();
 
     }
 }
