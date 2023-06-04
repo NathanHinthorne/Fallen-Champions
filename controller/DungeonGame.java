@@ -74,6 +74,11 @@ public class DungeonGame {
         }
     }
 
+    /**
+     * Set up the hero so the player can make a choice
+     * @param theChoice the hero to choose
+     * @return the hero choice
+     */
     private static Hero setupHero(int theChoice) {
         switch(theChoice) {
             case 1:
