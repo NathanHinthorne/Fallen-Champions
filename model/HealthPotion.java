@@ -25,6 +25,11 @@ public class HealthPotion extends Potion implements Healable {
     }
 
     @Override
+    public String inventoryTextDisplay() {
+        return "Health Potion";
+    }
+
+    @Override
     public int effect(final Hero thePlayer) {
        return heal(thePlayer);
     }

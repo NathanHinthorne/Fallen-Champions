@@ -32,16 +32,22 @@ public class TestMonster extends Monster {
     @Override
     public int specialAtk(DungeonCharacter theOther) {
 
-        if(getHitChance() >= getLowHitChance() && getHitChance() <= getHighHitChance()) {
-            // Attack successful
-            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
-            return getMaxDamage();
-        } else { // Will be worked on later, planned to be an error message
+        this.setHitChance(generateHitChance(getLowHitChance(), getHighHitChance()));
+        int pointer = MY_RANDOM.nextInt(100);
+
+        if(getHitChance() >= pointer) {
+            // Attack lands
+            if (getSpecialCooldown() < 1) {
+                theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
+                this.setSpecialCooldown(MAX_SPECIAL_COOLDOWN); // reset the cooldown
+                return getMaxDamage();
+            } else {
+                return -1;
+            }
+        } else {
             // Attack failed
             return 0;
         }
-
-        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
     public void setMyMinSpecial(int minSpecial) {

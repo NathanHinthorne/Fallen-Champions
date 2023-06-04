@@ -82,13 +82,17 @@ public class MonsterBattle {
 
         if (choice == 1) {
             int amt = thePlayer.basicAtk(theEnemy);
-            myGame.playerMoves(choice, amt);
+            myGame.playerMoves(choice, amt, thePlayer);
             DelayMachine.delay(2);
 
         } else if (choice == 2) {
+            int temp = thePlayer.getSpecialCooldown();
             int amt = thePlayer.specialAtk(theEnemy);
-            myGame.playerMoves(choice, amt);
+            myGame.playerMoves(choice, amt, thePlayer);
             DelayMachine.delay(2);
+            if (temp > 0) {
+                playerTurn(thePlayer,theEnemy);
+            }
 
         } else if (choice == 3) {
             boolean itemused = false;
@@ -119,7 +123,7 @@ public class MonsterBattle {
             int amt = theEnemy.basicAtk(thePlayer);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
-        } else if (choice == 1) {
+        } else if (choice == 1 && theEnemy.getSpecialCooldown() <= 0) {
             int amt = theEnemy.specialAtk(thePlayer);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);

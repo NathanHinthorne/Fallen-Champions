@@ -4,7 +4,7 @@ import java.util.*;
 
 public abstract class DungeonCharacter {
 
-    final static Random MY_RANDOM = new Random();
+    protected final static Random MY_RANDOM = new Random();
     public final int MAX_SPECIAL_COOLDOWN = 3;
 
     private int myHitPoints;

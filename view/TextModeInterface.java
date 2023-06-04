@@ -54,8 +54,12 @@ public class TextModeInterface {
         return THE_SCANNER.nextInt();
     }
     public int openBag(final Inventory myBag) {
-        System.out.println("Choose from your inventory (1-4) (press 5 to exit):");
+        System.out.println("Opening bag...");
+        DelayMachine.delay(3);
         System.out.println(myBag.toString());
+        System.out.println("You have " + myBag.getSize() + "/" + myBag.getMaxSize() + " storable Items.");
+        System.out.println("You have " + myBag.getMyPillarCount() + "/4 pillars.");
+        System.out.println("Choose from your inventory (1-4) (press 5 to exit):");
         int ret = THE_SCANNER.nextInt();
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
@@ -113,7 +117,7 @@ public class TextModeInterface {
         }
     }
 
-    public void playerMoves(int theVal, int theHpAmt) {
+    public void playerMoves(int theVal, int theHpAmt, Hero thePlayer) {
         System.out.println("-------------------");
         if (theVal == 1) {
             if (theHpAmt == 0) {
@@ -124,6 +128,9 @@ public class TextModeInterface {
         } else if (theVal == 2) {
             if (theHpAmt == 0) {
                 System.out.println("Your special attack failed!");
+            } else if (theHpAmt == -1) {
+                System.out.println("You cannot use your special for another "
+                        + thePlayer.getSpecialCooldown() + " moves!");
             } else {
                 System.out.println("You perform a special attack for " + theHpAmt + " damage!");
             }
