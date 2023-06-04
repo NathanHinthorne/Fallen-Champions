@@ -60,19 +60,11 @@ public abstract class DungeonBuilder {
         fillWithObjects();
 
         // step 4: add entrance and exit
-        Point entranceCoords = addEntrance();
-        Point exitCoords = addExit();
-
-        myEntranceX = entranceCoords.x;
-        myEntranceY = entranceCoords.y;
-        myExitX = exitCoords.x;
-        myExitY = exitCoords.y;
+        addEntrance();
+        addExit();
 
         // step 5: find a starting point for the hero
-        Point heroCoords = findStartingPoint();
-
-        myHeroX = heroCoords.x;
-        myHeroY = heroCoords.y;
+        findStartingPoint();
 
         // step 6: keep building dungeons until we find one that's traversable
 //            while(!isTraversable()) {
@@ -88,7 +80,7 @@ public abstract class DungeonBuilder {
         return dungeon;
     }
 
-    protected void readMonsters(final String difficulty) {
+    private void readMonsters(final String difficulty) {
 
         SQLiteDataSource ds = null;
 
@@ -140,7 +132,7 @@ public abstract class DungeonBuilder {
         Collections.shuffle(myUnplacedMonsters); // shuffle the monsters so they are placed randomly, regardless of type
     }
 
-    protected void fillWithWalls() {
+    private void fillWithWalls() {
         myNumberOfEmptyRooms = 0;
         for (int y = 0; y < myMazeHeight; y++) {
             for (int x = 0; x < myMazeWidth; x++) {
@@ -151,7 +143,7 @@ public abstract class DungeonBuilder {
     }
 
 
-    protected void fillWithEmptyRooms() {
+    private void fillWithEmptyRooms() {
         myNumberOfEmptyRooms = 0; // reset the number of empty rooms
 
         fillWithEmptyRooms(myMazeWidth /2, myMazeWidth /2, myMaxRoomBranchOffChance); // start generating rooms from the center
@@ -271,7 +263,7 @@ public abstract class DungeonBuilder {
 
 
 
-    protected void fillWithObjects() {
+    private void fillWithObjects() {
 
         for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < myMazeWidth - 1; x++) {
@@ -320,7 +312,7 @@ public abstract class DungeonBuilder {
     /**
      * Adds an entrance to the dungeon.
      */
-    protected Point addEntrance() {
+    private void addEntrance() {
         int x;
         int y;
 
@@ -332,13 +324,15 @@ public abstract class DungeonBuilder {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeEntrance();
-        return new Point(x, y);
+
+        myEntranceX = x;
+        myEntranceY = y;
     }
 
     /**
      * Adds an exit to the dungeon.
      */
-    protected Point addExit() {
+    private void addExit() {
         int x;
         int y;
 
@@ -350,13 +344,15 @@ public abstract class DungeonBuilder {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeExit();
-        return new Point(x, y);
+
+        myExitX = x;
+        myExitY = y;
     }
 
     /**
      * Determines a valid starting point for the hero.
      */
-    protected Point findStartingPoint() {
+    private void findStartingPoint() {
         int x;
         int y;
 
@@ -367,7 +363,10 @@ public abstract class DungeonBuilder {
 
         } while (!myMaze[y][x].isEmpty());
 
-        return new Point(x, y);
+        myMaze[y][x].placeHero();
+
+        myHeroX = x;
+        myHeroY = y;
     }
 
 
@@ -376,7 +375,7 @@ public abstract class DungeonBuilder {
      *
      * @return true if the dungeon is traversable, false otherwise.
      */
-    protected boolean isTraversable() {
+    private boolean isTraversable() {
         //before this method, make sure there are all 4 pillars present within the dungeon
 
         boolean isTraversable = traverse(myEntranceY, myEntranceX);

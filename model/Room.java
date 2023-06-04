@@ -156,6 +156,8 @@ public class Room {
         String result = "";
         if (hasWall()) {
             result = myWall.toString();
+        }  else if (hasHero()) {
+            result = HERO;
         } else if (numItems > 1) {
             result = MULTIPLE;
         } else if (hasPotion()) {
@@ -170,8 +172,6 @@ public class Room {
             result = ENTRANCE;
         } else if (hasMonster()) {
             result = myMonster.toString();
-        } else if (hasHero()) {
-            result = HERO;
         } else if (hasEntrance()) {
             result = myEntrance.toString();
         } else if (hasExit()) {

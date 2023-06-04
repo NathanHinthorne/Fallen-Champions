@@ -71,6 +71,10 @@ public class Dungeon {
         return myMaze[myHeroY][myHeroX].hasMonster();
     }
 
+    public boolean heroHasReachedExit() {
+        return myMaze[myHeroY][myHeroX].hasExit();
+    }
+
 
     // a method in the view will check for keyboard inputs
     // once triggered, it will tell the controller to call this method
@@ -80,22 +84,25 @@ public class Dungeon {
      * @param dir the direction to move the player
      */
     public void playerMove(final Direction dir) {
-        myMaze[myHeroX][myHeroY].removeHero();
+        Room oldRoom = myMaze[myHeroY][myHeroX];
 
-        if (dir == Direction.NORTH) {
+        if (dir == Direction.NORTH && !myMaze[myHeroY-1][myHeroX].hasWall()) {
             myHeroY--;
-        } else if (dir == Direction.EAST) {
+        } else if (dir == Direction.EAST && !myMaze[myHeroY][myHeroX+1].hasWall()) {
             myHeroX++;
-        } else if (dir == Direction.SOUTH) {
-            myHeroY--;
-        } else if (dir == Direction.WEST) {
+        } else if (dir == Direction.SOUTH && !myMaze[myHeroY+1][myHeroX].hasWall()) {
+            myHeroY++;
+        } else if (dir == Direction.WEST && !myMaze[myHeroY][myHeroX-1].hasWall()) {
             myHeroX--;
         } else {
             System.out.println("Invalid direction was given.\n" +
                     "Make sure playerMove() receives one of these:\n" +
                     "NORTH, EAST, SOUTH, WEST");
         }
-        myMaze[myHeroX][myHeroY].placeHero();
+        Room newRoom = myMaze[myHeroY][myHeroX];
+
+        oldRoom.removeHero();
+        newRoom.placeHero();
     }
 
     /**

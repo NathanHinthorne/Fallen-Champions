@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DungeonGame {
-    private final static boolean CHEAT_MODE = false;
+    private final static boolean CHEAT_MODE = true;
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
@@ -143,6 +143,12 @@ public class DungeonGame {
                     // if player loses, gameOver = true
                 }
 
+                if (dungeon.heroHasReachedExit()) {
+                    // play victory sound
+                    // play cutscene?
+                    gameOver = true;
+                }
+
                 DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
@@ -186,13 +192,12 @@ public class DungeonGame {
                         }
                         break;
 
-                    case 5:
-                        // save game (with serialization)
+                    case 5: // save
                         saveGame();
                         break;
 
                     default:
-                        System.out.println("Incorrect key");
+                        System.out.println("Please make a proper selection:");
                 }
         }
     }
