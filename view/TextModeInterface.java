@@ -69,7 +69,7 @@ public class TextModeInterface {
         System.out.println("Health: " + theHero.getHitPoints() + "/" + theHero.getMaxHitPoints());
 //        System.out.println("Attack: " + theHero.);  //TODO what get method to call for attack power?
         System.out.println("Speed: " + theHero.getSpd());
-//        System.out.println("Level: " + theHero.getLevel());  //TODO add level-up functionality to hero
+//        System.out.println("Level: " + theHero.getLevel());  //TODO add level-up functionality to hero (maybe)
 
     }
 

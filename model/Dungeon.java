@@ -19,7 +19,7 @@ public class Dungeon {
     private static int myExitX;
     private static int myExitY;
     private static Set<Pillars> myPlacedPillars;
-    private static Queue<Monster> myUnplacedMonsters;
+    private static List<Monster> myUnplacedMonsters;
 
     private Dungeon() { } // prevent external instantiation
 
@@ -28,6 +28,7 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 5;
         private static final int DUNGEON_HEIGHT = 5;
         private static final double BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
+        private static final double PILLAR_CHANCE = 0.20;
 
         @Override
         public Dungeon buildDungeon() {
@@ -44,6 +45,7 @@ public class Dungeon {
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
+            this.setPillarChance(PILLAR_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -85,6 +87,7 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 10;
         private static final int DUNGEON_HEIGHT = 10;
         private static final double BRANCH_OFF_CHANCE = 0.55; // with decreasing branch chance: 0.55
+        private static final double PILLAR_CHANCE = 0.12;
 
 
         @Override
@@ -102,6 +105,7 @@ public class Dungeon {
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
+            this.setPillarChance(PILLAR_CHANCE);
 
 
             // step 1: fill the dungeon COMPLETELY with walls
@@ -146,6 +150,7 @@ public class Dungeon {
         private static final int DUNGEON_WIDTH = 15;
         private static final int DUNGEON_HEIGHT = 15;
         private static final double BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
+        private static final double PILLAR_CHANCE = 0.10;
 
         @Override
         public Dungeon buildDungeon() {
@@ -162,7 +167,7 @@ public class Dungeon {
             this.setMazeWidth(DUNGEON_WIDTH+2);
             this.setMazeHeight(DUNGEON_HEIGHT+2);
             this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
-
+            this.setPillarChance(PILLAR_CHANCE);
 
             // step 1: fill the dungeon COMPLETELY with walls
             fillWithWalls();
@@ -197,13 +202,15 @@ public class Dungeon {
         }
     }
 
+
+
     // for inner classes to use (if needed)
     private Room[][] getMaze() {
         return myMaze;
     }
     private Dungeon getDungeon() { return myDungeon; }
 
-    public boolean heroOnMonster() {
+    public boolean heroIsTouchingMonster() {
         return myMaze[myHeroY][myHeroX].hasMonster();
     }
 

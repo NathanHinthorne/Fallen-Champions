@@ -125,13 +125,14 @@ public class DungeonGame {
 
 
 
-                // determine if the player is on the same tile as a monster
+                if (myDungeon.heroIsTouchingMonster()) {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
-                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins)
+                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
 
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
+                }
 
 
                 DelayMachine.delay(1); // delay for 1 second

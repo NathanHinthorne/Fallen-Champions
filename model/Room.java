@@ -9,7 +9,7 @@ public class Room {
     // static fields for toString
 
     public static final String EMPTY = " ";
-    public static final String MULTIPLE = "/"; // multiple objects in one room
+    public static final String MULTIPLE = "&"; // multiple objects in one room
     public static final String HERO = "H";
 
 
@@ -95,9 +95,9 @@ public class Room {
     public void placeExit() {
         myExit = new Exit();
     } //TODO make exit a singleton
-    public void placeMonster(Queue<Monster> theUnplacedMonsters) {
+    public void placeMonster(List<Monster> theUnplacedMonsters) {
         //read from myMonsters to determine which monster to place
-        myMonster = theUnplacedMonsters.remove();
+        myMonster = theUnplacedMonsters.remove(0); // remove the first monster from the list
     }
     public void placePotion() {
 

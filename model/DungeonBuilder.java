@@ -15,7 +15,7 @@ public abstract class DungeonBuilder {
     static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
     static final double ENEMY_CHANCE = 0.40;
     static final double POTION_CHANCE = 0.30;
-    static final double PILLAR_CHANCE = 0.15;
+    static double pillarChance; // not final since it changes with difficulty
     static final double PIT_CHANCE = 0.20;
     static final Random rand = new Random();
 
@@ -31,8 +31,8 @@ public abstract class DungeonBuilder {
 
     abstract public Dungeon buildDungeon();
 
-    protected Queue<Monster> readMonsters(final String difficulty) {
-        Queue<Monster> unplacedMonsters = new LinkedList<>();
+    protected List<Monster> readMonsters(final String difficulty) {
+        List<Monster> unplacedMonsters = new LinkedList<>();
 
         SQLiteDataSource ds = null;
 
@@ -81,6 +81,8 @@ public abstract class DungeonBuilder {
             System.exit( 0 );
         }
 
+        Collections.shuffle(unplacedMonsters); // shuffle the monsters so they are placed randomly, regardless of type
+
         return unplacedMonsters;
     }
 
@@ -98,6 +100,10 @@ public abstract class DungeonBuilder {
 
     protected void setMaxBranchOffChance(final double maxBranchOffChance) {
         maxRoomBranchOffChance = maxBranchOffChance;
+    }
+
+    protected void setPillarChance(final double thePillarChance) {
+        pillarChance = thePillarChance;
     }
 
 
@@ -120,15 +126,18 @@ public abstract class DungeonBuilder {
         int numberOfRooms = (mazeWidth -2) * (mazeHeight -2);
         double roomPercentage = (double) numberOfEmptyRooms / numberOfRooms;
 
-        if (roomPercentage < 0.60 || roomPercentage > 0.80) { // (this if statement should barely ever execute)
+        if (roomPercentage < 0.55 || roomPercentage > 0.75) { // (this if statement should barely ever execute)
             fillWithWalls();
             fillWithEmptyRooms(); // try again with the original branch off chance
         }
 
-        printThis(); // DEBUG METHOD
+//        debugPrintRooms(); // DEBUG METHOD
     }
 
-    private void printThis() { // DEBUG METHOD
+    private void debugPrintRooms() { // DEBUG METHOD
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Number of empty rooms: " + numberOfEmptyRooms + " out of " + ((mazeWidth -2) * (mazeHeight -2)));
+
         for (int y = 0; y < mazeHeight; y++) {
             System.out.println();
             for (int x = 0; x < mazeWidth; x++) {
@@ -229,7 +238,7 @@ public abstract class DungeonBuilder {
 
 
 
-    protected void fillWithObjects(final Queue<Monster> theUnplacedMonsters, final Set<Pillars> thePlacedPillars) {
+    protected void fillWithObjects(final List<Monster> theUnplacedMonsters, final Set<Pillars> thePlacedPillars) {
 
         for (int y = 1; y < mazeHeight - 1; y++) { // skip over the edges of the dungeon
             for (int x = 1; x < mazeWidth - 1; x++) {
@@ -244,7 +253,7 @@ public abstract class DungeonBuilder {
                     if (Math.random() < POTION_CHANCE) {
                         room.placePotion();
                     }
-                    if (Math.random() < PILLAR_CHANCE) {
+                    if (Math.random() < pillarChance) {
                         room.placePillar(thePlacedPillars);
                     }
                     if (Math.random() < PIT_CHANCE) {
