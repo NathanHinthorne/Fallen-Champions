@@ -5,189 +5,57 @@ import java.util.*;
 
 public class Dungeon {
 
-    private static Dungeon myDungeon;
-    private static Room[][] myMaze;
-    private static int myMazeWidth;
-    private static int myMazeHeight;
-    private static int myHeroX;
-    private static int myHeroY;
-    private static int myEntranceX;
-    private static int myEntranceY;
-    private static int myExitX;
-    private static int myExitY;
-    private static Set<Pillars> myPlacedPillars;
-    private static List<Monster> myUnplacedMonsters;
+    private Room[][] myMaze;
+    private int myMazeWidth;
+    private int myMazeHeight;
+    private int myHeroX;
+    private int myHeroY;
 
-    private Dungeon() { } // prevent external instantiation
 
-    public static class SmallDungeonBuilder extends DungeonBuilder { // put parameters to the Dungeon constructor inside here?
+    // enforce the usage of the builder for object construction and discourage direct instantiation
+    protected Dungeon() { }
+
+
+    public static class SmallDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Easy";
-        private static final int DUNGEON_WIDTH = 5;
-        private static final int DUNGEON_HEIGHT = 5;
-        private static final double BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
+        private static final int MAZE_WIDTH = 5;
+        private static final int MAZE_HEIGHT = 5;
+        private static final double MAX_BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
         private static final double PILLAR_CHANCE = 0.20;
 
-        @Override
+
         public Dungeon buildDungeon() {
 
-            myDungeon = new Dungeon();
-            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
-
-            // setup maze attributes
-            myUnplacedMonsters = readMonsters(DIFFICULTY);
-            myPlacedPillars = new HashSet<>();
-
-            this.setMaze(myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH+2);
-            this.setMazeHeight(DUNGEON_HEIGHT+2);
-            this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
-            this.setPillarChance(PILLAR_CHANCE);
-
-
-            // step 1: fill the dungeon COMPLETELY with walls
-            fillWithWalls();
-
-            // step 2: randomly place empty rooms
-            fillWithEmptyRooms();
-
-            // step 3: fill empty rooms with objects
-            fillWithObjects(myUnplacedMonsters, myPlacedPillars);
-
-            // step 4: add entrance and exit
-            Point entranceCoords = addEntrance(); //this line keeps running cuz it's not finding a room to place the entrance in
-            Point exitCoords = addExit();
-
-            entranceX = entranceCoords.x;
-            entranceY = entranceCoords.y;
-            exitX = exitCoords.x;
-            exitY = exitCoords.y;
-
-            // step 5: find a starting point for the hero
-            Point heroCoords = findStartingPoint();
-
-            myHeroX = heroCoords.x;
-            myHeroY = heroCoords.y;
-
-            // step 6: keep building dungeons until we find one that's traversable
-//            while(!isTraversable()) {
-//                buildDungeon();
-//            }
-
-            return myDungeon;
+            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
+                                            MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
         }
     }
 
 
     public static class MediumDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Medium";
-        private static final int DUNGEON_WIDTH = 10;
-        private static final int DUNGEON_HEIGHT = 10;
-        private static final double BRANCH_OFF_CHANCE = 0.55; // with decreasing branch chance: 0.55
+        private static final int MAZE_WIDTH = 10;
+        private static final int MAZE_HEIGHT = 10;
+        private static final double MAX_BRANCH_OFF_CHANCE = 0.55; // with decreasing branch chance: 0.55
         private static final double PILLAR_CHANCE = 0.12;
 
-
-        @Override
         public Dungeon buildDungeon() {
 
-            myDungeon = new Dungeon();
-            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
-
-            // setup maze attributes
-            myUnplacedMonsters = readMonsters(DIFFICULTY);
-            myPlacedPillars = new HashSet<>();
-
-            this.setMaze(myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH+2);
-            this.setMazeHeight(DUNGEON_HEIGHT+2);
-            this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
-            this.setPillarChance(PILLAR_CHANCE);
-
-
-            // step 1: fill the dungeon COMPLETELY with walls
-            fillWithWalls();
-
-            // step 2: randomly place empty rooms
-            fillWithEmptyRooms();
-
-            // step 3: fill empty rooms with objects
-            fillWithObjects(myUnplacedMonsters, myPlacedPillars);
-
-            // step 4: add entrance and exit
-            Point entranceCoords = addEntrance();
-            Point exitCoords = addExit();
-
-            entranceX = entranceCoords.x;
-            entranceY = entranceCoords.y;
-            exitX = exitCoords.x;
-            exitY = exitCoords.y;
-
-            // step 5: find a starting point for the hero
-            Point heroCoords = findStartingPoint();
-
-            myHeroX = heroCoords.x;
-            myHeroY = heroCoords.y;
-
-            // step 6: keep building dungeons until we find one that's traversable (NOT NEEDED?)
-//            while(!isTraversable()) {
-//                buildDungeon();
-//            }
-
-            return myDungeon;
+            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
+                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
         }
     }
-    public static class LargeDungeonBuilder extends DungeonBuilder {
+    public static class LargeDungeonBuilder extends DungeonBuilder { // no static fields here. instance fields in DungeonBuilder and set them up in the constructor
         private static final String DIFFICULTY = "Hard";
-        private static final int DUNGEON_WIDTH = 15;
-        private static final int DUNGEON_HEIGHT = 15;
-        private static final double BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
+        private static final int MAZE_WIDTH = 15;
+        private static final int MAZE_HEIGHT = 15;
+        private static final double MAX_BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
         private static final double PILLAR_CHANCE = 0.10;
 
-        @Override
         public Dungeon buildDungeon() {
 
-            myDungeon = new Dungeon();
-            myMaze = new Room[DUNGEON_HEIGHT+2][DUNGEON_WIDTH+2];
-
-            // setup maze attributes
-            myUnplacedMonsters = readMonsters(DIFFICULTY);
-            myPlacedPillars = new HashSet<>();
-
-            this.setMaze(myMaze);
-            this.setMazeWidth(DUNGEON_WIDTH+2);
-            this.setMazeHeight(DUNGEON_HEIGHT+2);
-            this.setMaxBranchOffChance(BRANCH_OFF_CHANCE);
-            this.setPillarChance(PILLAR_CHANCE);
-
-            // step 1: fill the dungeon COMPLETELY with walls
-            fillWithWalls();
-
-            // step 2: randomly place empty rooms
-            fillWithEmptyRooms();
-
-            // step 3: fill empty rooms with objects
-            fillWithObjects(myUnplacedMonsters, myPlacedPillars);
-
-            // step 4: add entrance and exit
-            Point entranceCoords = addEntrance();
-            Point exitCoords = addExit();
-
-            entranceX = entranceCoords.x;
-            entranceY = entranceCoords.y;
-            exitX = exitCoords.x;
-            exitY = exitCoords.y;
-
-            // step 5: find a starting point for the hero
-            Point heroCoords = findStartingPoint();
-
-            myHeroX = heroCoords.x;
-            myHeroY = heroCoords.y;
-
-            // step 6: keep building dungeons until we find one that's traversable
-//            while(!isTraversable()) {
-//                buildDungeon();
-//            }
-
-            return myDungeon;
+            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
+                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
         }
     }
 
@@ -197,7 +65,7 @@ public class Dungeon {
     private Room[][] getMaze() {
         return myMaze;
     }
-    private Dungeon getDungeon() { return myDungeon; }
+
 
     public boolean heroIsTouchingMonster() {
         return myMaze[myHeroY][myHeroX].hasMonster();
@@ -211,7 +79,7 @@ public class Dungeon {
      *
      * @param dir the direction to move the player
      */
-    public static void playerMove(final Direction dir) {
+    public void playerMove(final Direction dir) {
         myMaze[myHeroX][myHeroY].removeHero();
 
         if (dir == Direction.NORTH) {
@@ -235,7 +103,7 @@ public class Dungeon {
      *
      * @return a 3x3 grid of rooms centered on the hero
      */
-    public static String getView() { //! return a string instead?
+    public String getView() { //! return a string instead?
 
         StringBuilder sb = new StringBuilder();
 
@@ -253,7 +121,7 @@ public class Dungeon {
      *
      * @return a 7x7 grid of rooms centered on the hero
      */
-    public static String getExpandedView() {
+    public String getExpandedView() {
 
         StringBuilder sb = new StringBuilder();
 
@@ -283,5 +151,22 @@ public class Dungeon {
             }
         }
         return sb.toString();
+    }
+
+
+    public void setMaze(Room[][] theMaze) {
+        myMaze = theMaze;
+    }
+    public void setMazeWidth(int theWidth) {
+        myMazeWidth = theWidth;
+    }
+    public void setMazeHeight(int theHeight) {
+        myMazeHeight = theHeight;
+    }
+    public void setHeroX(int theX) {
+        myHeroX = theX;
+    }
+    public void setHeroY(int theY) {
+        myHeroY = theY;
     }
 }

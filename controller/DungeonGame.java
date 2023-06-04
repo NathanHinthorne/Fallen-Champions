@@ -15,11 +15,11 @@ public class DungeonGame {
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
 
     // remove "my" prefix?
-    private static Dungeon myDungeon; // from model
-    private static TextModeInterface myGame; // from view
+    private static Dungeon dungeon; // from model
+    private static TextModeInterface game; // from view
 
-    private static Hero myHero; // move to main?
-    private static Monster myMonster; // move to main?
+    private static Hero hero; // move to main and make non static?
+    private static Monster monster; // move to main and make non static?
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
 
@@ -31,34 +31,34 @@ public class DungeonGame {
 
     public static void main(String[] theArgs) {
 
-        myGame = new TextModeInterface();
+        game = new TextModeInterface();
 
         // get user input to start game (1 for start, 2 for exit)
-        int menuSelection = myGame.menu();
+        int menuSelection = game.menu();
         switch(menuSelection) {
             case 1:
 
                 System.out.println(); // empty line
 
                 // continue or new game (1 for new game, 2 for continue game)
-                int loadSelection = myGame.continueOrNewGameMenu();
+                int loadSelection = game.continueOrNewGameMenu();
                 if (loadSelection == 2) {
                     loadGame();
                 }
                 System.out.println(); // empty line
 
                 // setup dungeon (1 for easy, 2 for medium, 3 for hard)
-                int difficultySelection = myGame.chooseDifficulty();
+                int difficultySelection = game.chooseDifficulty();
                 setupDungeon(difficultySelection);
-                System.out.println(myDungeon); // empty line
+                System.out.println(dungeon); // empty line
 
                 // print introduction
-                myGame.Introduction();
+                game.Introduction();
                 System.out.println(); // empty line
 
                 // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
-                int heroSelection = myGame.chooseHero();
-                myHero = setupHero(heroSelection);
+                int heroSelection = game.chooseHero();
+                hero = setupHero(heroSelection);
                 System.out.println(); // empty line
 
                 // enter the main game loop ('w' to move up, 'a' to move left, 's' to move down, 'd' to move right
@@ -70,7 +70,7 @@ public class DungeonGame {
 
             default:
                 System.out.println("Please make a proper selection:");
-                menuSelection = myGame.menu(); // does this loop back to the top? //TODO test this
+                main(theArgs); // original code: "menuSelection = game.menu();"
         }
     }
 
@@ -106,18 +106,18 @@ public class DungeonGame {
         switch(theDifficulty) {
             case 1:
                 // Easy
-                DungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); // declare the builder
-                myDungeon = theSmallDungeonBuilder.buildDungeon(); // use it to build the dungeon
+                Dungeon.SmallDungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); //original: DungeonBuilder theSmallDungeonBuilder...
+                dungeon = theSmallDungeonBuilder.buildDungeon();
                 break;
             case 2:
                 // Medium
-                DungeonBuilder theMediumDungeonBuilder = new Dungeon.MediumDungeonBuilder(); // declare the builder
-                myDungeon = theMediumDungeonBuilder.buildDungeon(); // use it to build the dungeon
+                Dungeon.MediumDungeonBuilder  theMediumDungeonBuilder = new Dungeon.MediumDungeonBuilder();
+                dungeon = theMediumDungeonBuilder.buildDungeon();
                 break;
             case 3:
                 // Hard
-                DungeonBuilder theLargeDungeonBuilder = new Dungeon.LargeDungeonBuilder(); // declare the builder
-                myDungeon = theLargeDungeonBuilder.buildDungeon(); // use it to build the dungeon
+                Dungeon.LargeDungeonBuilder  theLargeDungeonBuilder = new Dungeon.LargeDungeonBuilder();
+                dungeon = theLargeDungeonBuilder.buildDungeon();
                 break;
             default:
                 System.out.println("Please make a proper selection:");
@@ -129,12 +129,12 @@ public class DungeonGame {
 
                 // display a view of the dungeon immediately
                 if (CHEAT_MODE) {
-                    myDungeon.toString(); // display the entire dungeon
+                    printDungeonMap();
                 } else {
-                    myDungeon.getView(); // display the 3x3 player's view
+                    printPlayerView(); // display the 3x3 player's view
                 }
 
-                if (myDungeon.heroIsTouchingMonster()) {
+                if (dungeon.heroIsTouchingMonster()) {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
@@ -147,40 +147,40 @@ public class DungeonGame {
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
                 // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game
-                int gameMenuSelection = myGame.gameplayMenu();
+                int gameMenuSelection = game.gameplayMenu();
                 switch(gameMenuSelection) {
                     case 's':
-                        Dungeon.playerMove(Direction.SOUTH);
+                        dungeon.playerMove(Direction.SOUTH);
                         break;
 
                     case 'a':
-                        Dungeon.playerMove(Direction.WEST);
+                        dungeon.playerMove(Direction.WEST);
                         break;
 
                     case 'd':
-                        Dungeon.playerMove(Direction.EAST);
+                        dungeon.playerMove(Direction.EAST);
                         break;
 
                     case 'w':
-                        Dungeon.playerMove(Direction.NORTH);
+                        dungeon.playerMove(Direction.NORTH);
                         break;
 
                     case 1: // hero info
-                        myGame.displayHeroInfo(myHero);
+                        game.displayHeroInfo(hero);
                         break;
 
                     case 2: // display map
-                        myDungeon.toString(); // display the entire dungeon
+                        dungeon.toString(); // display the entire dungeon
                         break;
 
                     case 'e': // open bag
                         boolean choosing = true;
-                        int itemSlot = myGame.openBag(myHero.getMyInventory());
-                        myHero.getMyInventory().consumeItem(myHero, itemSlot);
+                        int itemSlot = game.openBag(hero.getMyInventory());
+                        hero.getMyInventory().consumeItem(hero, itemSlot);
                         break;
 
                     case 4: // quit
-                        int quit = myGame.quitProcess();
+                        int quit = game.quitProcess();
                         if (quit == 0) {
                             gameOver = true;
                         }
@@ -201,8 +201,8 @@ public class DungeonGame {
         try {
             FileOutputStream fos = new FileOutputStream("jvs.sav");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(myDungeon);
-            oos.writeObject(myHero);
+            oos.writeObject(dungeon);
+            oos.writeObject(hero);
             oos.flush();
             oos.close();
             System.out.print("Game saved!\n");
@@ -215,14 +215,22 @@ public class DungeonGame {
         try {
             FileInputStream fos = new FileInputStream("jvs.sav");
             ObjectInputStream ois = new ObjectInputStream(fos);
-            myDungeon = (Dungeon) ois.readObject();
-            myHero = (Hero) ois.readObject();
+            dungeon = (Dungeon) ois.readObject();
+            hero = (Hero) ois.readObject();
             ois.close();
             System.out.print("Game loaded!\n");
         } catch (Exception e) {
             System.out.println("Couldn't load game! Starting a new game...");
         }
 
+    }
+
+    private static void printDungeonMap() {
+        System.out.println(dungeon.toString());
+    }
+
+    private static void printPlayerView() {
+        System.out.println(dungeon.getView());
     }
 
 

@@ -1,7 +1,6 @@
 package model;
 
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 public class Room {
@@ -11,6 +10,8 @@ public class Room {
     public static final String EMPTY = " ";
     public static final String MULTIPLE = "&"; // multiple objects in one room
     public static final String HERO = "H";
+    public static final String ENTRANCE = "o";
+    public static final String EXIT = "O";
 
 
     // make non-static if we add difficulty levels
@@ -156,27 +157,27 @@ public class Room {
         if (hasWall()) {
             result = myWall.toString();
         } else if (numItems > 1) {
-            result = MULTIPLE; // doesn't make sense in this context to make a class for multiple
+            result = MULTIPLE;
         } else if (hasPotion()) {
-            result =  myPotion.toString();
+            result = myPotion.toString();
         } else if (hasPillar()) {
-            result =  myPillar.toString();
+            result = myPillar.toString();
         } else if (hasPit()) {
-            result =  myPit.toString();
+            result = myPit.toString();
         } else if (hasExit()) {
-            result =  myExit.toString();
+            result = EXIT;
         } else if (hasEntrance()) {
-            result =  myEntrance.toString();
+            result = ENTRANCE;
         } else if (hasMonster()) {
-            result =  myMonster.toString();
+            result = myMonster.toString();
         } else if (hasHero()) {
-            result = HERO;   // doesn't make sense in this context to make a class for empty
+            result = HERO;
         } else if (hasEntrance()) {
             result = myEntrance.toString();
         } else if (hasExit()) {
             result = myExit.toString();
         } else {
-            result =  EMPTY; // doesn't make sense in this context to make a class for empty
+            result = EMPTY;
         }
 
         return result;
