@@ -37,7 +37,7 @@ public abstract class DungeonCharacter {
     public DungeonCharacter(int theHitPoints, int theAtkSpd, float theLowHitChance,
                             float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         setHitPoints(theHitPoints);
-        myMaxHitPoints = myHitPoints;
+        myMaxHitPoints = theHitPoints;
         setSpd(theAtkSpd);
         setLowHitChance(theLowHitChance);
         setHighHitChance(theHighHitChance);
@@ -85,8 +85,10 @@ public abstract class DungeonCharacter {
         }
 
         myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
+        int pointer = MY_RANDOM.nextInt(100);
 
-        if(myHitChance >= getHitChanceMedian()) {
+//        if(myHitChance >= getHitChanceMedian()) {
+        if(myHitChance >= pointer) {
             // Attack successful
             theOther.setHitPoints(theOther.getHitPoints() - this.getMinDamage());
             System.out.println("Attack successful: " + this.getMinDamage() + " DMG dealt");

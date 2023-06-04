@@ -40,7 +40,12 @@ public class MonsterBattleTestDriver {
 
         System.out.println();
 
-        MonsterBattle newBattle = new MonsterBattle(theHero, theMonster, myGame);
+        MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame);
+        if (!battle.newBattle(theHero, theMonster)) {
+            System.out.println("You Lose!");
+        } else {
+            System.out.println("You Win!");
+        }
 
     }
 
