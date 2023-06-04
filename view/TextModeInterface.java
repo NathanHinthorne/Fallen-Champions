@@ -16,6 +16,7 @@ public class TextModeInterface {
 
     public int chooseHero() {
         System.out.println("Choose your hero!");
+        System.out.println("1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior");
         return THE_SCANNER.nextInt();
     }
 
@@ -28,7 +29,8 @@ public class TextModeInterface {
     public int gameplayMenu() {
         System.out.println("You are currently in the dungeon");
         System.out.println("Now make a selection");
-        System.out.println("1 move hero, 2 to display hero info, 3 to locate hero, 4 open bag, 5 to quit, 6 to save game");
+        System.out.println("'w' to move up, 'a' to move left, 's' to move down, 'd' to move right\n" +
+                            "'1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game");
         return THE_SCANNER.nextInt();
     }
 

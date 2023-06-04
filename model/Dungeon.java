@@ -39,7 +39,7 @@ public class Dungeon {
 
             // setup maze attributes
             myUnplacedMonsters = readMonsters(DIFFICULTY);
-            myPlacedPillars = new HashSet<Pillars>();
+            myPlacedPillars = new HashSet<>();
 
             this.setMaze(Dungeon.myMaze);
             this.setMazeWidth(DUNGEON_WIDTH+2);
@@ -113,17 +113,13 @@ public class Dungeon {
 
             // step 2: randomly place empty rooms
             fillWithEmptyRooms();
-            System.out.println(myDungeon); // debug
 
             // step 3: fill empty rooms with objects
             fillWithObjects(myUnplacedMonsters, myPlacedPillars);
-            System.out.println(myDungeon); // debug
 
             // step 4: add entrance and exit
             Point entranceCoords = addEntrance();
             Point exitCoords = addExit();
-            System.out.println(myDungeon); // debug
-
 
             entranceX = entranceCoords.x;
             entranceY = entranceCoords.y;
@@ -132,7 +128,6 @@ public class Dungeon {
 
             // step 5: find a starting point for the hero
             Point heroCoords = findStartingPoint();
-            System.out.println(myDungeon); // debug
 
             myHeroX = heroCoords.x;
             myHeroY = heroCoords.y;

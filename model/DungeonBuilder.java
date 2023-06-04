@@ -268,12 +268,12 @@ public abstract class DungeonBuilder {
 //            fillWithObjects(the);
 //        }
 
-        printObjects(); // debug
+//        debugPrintObjects(); // debug
     }
 
 
 
-    public void printObjects() {
+    public void debugPrintObjects() {
 
         for (int i = 0; i < mazeHeight; i++) {
             System.out.println();
