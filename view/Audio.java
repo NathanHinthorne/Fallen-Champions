@@ -15,7 +15,6 @@ public final class Audio {
 
 
     // UI SOUNDS
-    protected static final File textSound = new File("SFX\\ui_dialogue.wav");
     protected static final File menuTwo = new File("view\\assets\\sound\\ui\\ui_menu_option_1.wav");
     protected static final File menuOne = new File("view\\assets\\sound\\ui\\ui_menu_option_2.wav");
     protected static final File beginGame = new File("view\\assets\\sound\\ui\\ui_spawn.wav");
@@ -37,28 +36,28 @@ public final class Audio {
     protected static final File specialTwo = new File("SFX\\special_player_mage.wav");
     protected static final File specialOne = new File("SFX\\special_player_droid.wav");
 
-    /**
-     * Method to print text letter by letter.
-     *
-     * @param theIn - The string to print.
-     */
-    public static void dialoguePrint(final String theIn) {
-
-        for (int i = 0; i < theIn.length(); i++) {
-
-            System.out.print(theIn.charAt(i));
-
-            try {
-                Thread.sleep(30);
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(textSound);
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioStream);
-                clip.start();
-            } catch (Exception e) {
-                System.out.print("");
-            }
-        }
-    }
+//    /**
+//     * Method to print text letter by letter.
+//     *
+//     * @param theIn - The string to print.
+//     */
+//    public static void dialoguePrint(final String theIn) {
+//
+//        for (int i = 0; i < theIn.length(); i++) {
+//
+//            System.out.print(theIn.charAt(i));
+//
+//            try {
+//                Thread.sleep(30);
+//                AudioInputStream audioStream = AudioSystem.getAudioInputStream(textSound);
+//                Clip clip = AudioSystem.getClip();
+//                clip.open(audioStream);
+//                clip.start();
+//            } catch (Exception e) {
+//                System.out.print("");
+//            }
+//        }
+//    }
 
     /**
      * Method used to play simplify playing sounds
@@ -75,7 +74,7 @@ public final class Audio {
             currentSound.open(audioStream);
             currentSound.start();
         } catch (Exception e) {
-            System.out.println("Could not open sound file!");
+            System.out.println("Could not open sound " + theFile.getName());
         }
     }
 

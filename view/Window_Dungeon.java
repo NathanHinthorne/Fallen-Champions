@@ -14,6 +14,8 @@ import java.util.Random;
 
 public class Window_Dungeon implements ActionListener {
 
+    private int myHp = 100;
+
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
     JSlider myVolume = new JSlider(-20, 0);
     JLabel myVolText = new JLabel("Music Volume");
@@ -37,6 +39,9 @@ public class Window_Dungeon implements ActionListener {
     JLabel myTile22;
     JLabel myDungeonBorder;
     JLabel myPlayerLabel;
+    JLabel myPlayerInfo;
+    JLabel myPlayerHealth1;
+    JLabel myPlayerHealth2;
 
     ImageIcon myWall;
     ImageIcon myPath;
@@ -55,6 +60,9 @@ public class Window_Dungeon implements ActionListener {
     JLabel myBackgroundField;
 
     public Window_Dungeon(Dungeon theDungeon, HeroTypes theType) {
+        Audio.playMusic(Audio.ambientSong, true);
+        Audio.play(Audio.beginGame);
+        myPlayerInfo = new JLabel("Class: " + theType.toString());
         setHeroSprite(theType);
         setupFrame();
         addListeners(theDungeon);
@@ -62,8 +70,6 @@ public class Window_Dungeon implements ActionListener {
     }
 
     private void setupFrame() {
-        Audio.playMusic(Audio.ambientSong, true);
-        Audio.play(Audio.beginGame);
 
         myWall = loadImage("assets\\images\\game_dungeon_wall.png");
         myPath = loadImage("assets\\images\\game_dungeon_path.png");
@@ -85,6 +91,8 @@ public class Window_Dungeon implements ActionListener {
         myDungeonBorder = new JLabel(myBorderImage);
         myDungeonBorder.setBounds(50,50,300,300);
         myPlayerLabel = new JLabel(myPlayerSprite);
+        myPlayerHealth1 = new JLabel("HP:");
+        myPlayerHealth2 = new JLabel(String.valueOf(myHp));
 
         // Image file prep
         myBackgroundField.setBounds(0,0,800,450);
@@ -132,8 +140,14 @@ public class Window_Dungeon implements ActionListener {
         myTile21.setBounds(155,245,90,90);
         myTile22.setBounds(245,245,90,90);
         myPlayerLabel.setBounds(160,160,80,80);
+        myPlayerInfo.setBounds(60, 12, 100, 80);
+        myPlayerHealth1.setBounds(280, 12, 40, 80);
+        myPlayerHealth2.setBounds(320, 12, 60, 80);
 
+        mainFrame.add(myPlayerHealth1);
+        mainFrame.add(myPlayerHealth2);
         mainFrame.add(myPlayerLabel);
+        mainFrame.add(myPlayerInfo);
         mainFrame.add(myTile00);
         mainFrame.add(myTile01);
         mainFrame.add(myTile02);
@@ -289,6 +303,10 @@ public class Window_Dungeon implements ActionListener {
         } else if (choice == 3) {
             Audio.play(Audio.step4);
         }
+    }
+
+    public void setHpGameMenu(int theIn) {
+        myHp = theIn;
     }
 
     @Override
