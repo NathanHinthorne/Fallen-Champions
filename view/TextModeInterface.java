@@ -197,4 +197,8 @@ public class TextModeInterface {
             System.out.println("Opening bag...");
         }
     }
+
+    public void displayVictoryMsg() {
+        System.out.println("You have escaped the dungeon!. Congratulations!!");
+    }
 }
