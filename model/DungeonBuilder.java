@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-public abstract class DungeonBuilder {
+public abstract class DungeonBuilder implements java.io.Serializable {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
     public static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
