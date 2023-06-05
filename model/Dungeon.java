@@ -125,7 +125,6 @@ public class Dungeon implements java.io.Serializable {
 
         oldRoom.removeHero();
         newRoom.placeHero();
-        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
     }
 
     /**
@@ -144,8 +143,6 @@ public class Dungeon implements java.io.Serializable {
                 sb.append("  ");
             }
         }
-
-        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
 
         return sb.toString();
     }
@@ -187,8 +184,6 @@ public class Dungeon implements java.io.Serializable {
                 sb.append("  ");
             }
         }
-
-        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
 
         return sb.toString();
     }

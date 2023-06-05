@@ -327,8 +327,6 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         myEntranceY = y;
         myHeroX = x;
         myHeroY = y;
-
-        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
     }
 
     /**

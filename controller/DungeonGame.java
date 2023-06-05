@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DungeonGame {
-    private final static boolean CHEAT_MODE = false;
+    private final static boolean CHEAT_MODE = true;
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
