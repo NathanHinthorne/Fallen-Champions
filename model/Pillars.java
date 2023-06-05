@@ -1,6 +1,6 @@
 package model;
 
-public enum Pillars {
+public enum Pillars implements java.io.Serializable {
     ABSTRACTION {
         @Override
         public String toString() {
