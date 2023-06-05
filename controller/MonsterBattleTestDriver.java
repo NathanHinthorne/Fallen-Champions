@@ -3,6 +3,7 @@ import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
 import view.TextModeInterface;
+import view.Window_MainMenu;
 
 public class MonsterBattleTestDriver {
 
@@ -11,6 +12,11 @@ public class MonsterBattleTestDriver {
     public static void main(String[] theArgs) {
         Hero theHero = new TestHero();
         Monster theMonster = new TestMonster();
+//
+//        Window_MainMenu mainMenu = new Window_MainMenu();
+
+//        /* BATTLE TEST
+
 
         System.out.println("Player info:");
         System.out.println("HP:      " + theHero.getHitPoints());
@@ -52,11 +58,14 @@ public class MonsterBattleTestDriver {
         System.out.println("size   - " + theHero.getMyInventory().getMaxSize());
 
         MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame);
-        if (!battle.newBattle(theHero, theMonster)) {
-            System.out.println("You Lose!");
-        } else {
+        if (battle.newBattle(theHero, theMonster)) {
             System.out.println("You Win!");
+        } else {
+            System.out.println("You Lose!");
         }
+
+
+//        */
 
     }
 
