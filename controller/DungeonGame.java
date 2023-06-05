@@ -135,6 +135,13 @@ public class DungeonGame {
                     game.printPlayerView(dungeon); // display the 3x3 player's view
                 }
 
+                if (CHEAT_MODE) {
+                    hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
+                    hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
+                    hero.getMyInventory().addPillar(Pillars.INHERITANCE);
+                    hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
+                }
+
                 if (dungeon.heroIsTouchingPotion()) {
                     // play ding sound
                     Potion potion = dungeon.getPotion();
