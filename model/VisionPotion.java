@@ -21,5 +21,10 @@ public class VisionPotion extends Potion implements java.io.Serializable {
     @Override
     public String toString() {
         return "p";
-    } // change char later
+    }
+
+    @Override
+    public String type() {
+        return "Vision Potion";
+    }
 }

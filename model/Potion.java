@@ -1,6 +1,6 @@
 package model;
 
-public class Potion implements java.io.Serializable {
+public abstract class Potion implements java.io.Serializable {
 
 
     public String inventoryTextDisplay() {
@@ -16,4 +16,6 @@ public class Potion implements java.io.Serializable {
         // For a vision potion, it will return the visible radius.
         return 0;
     }
+
+    public abstract String type();
 }

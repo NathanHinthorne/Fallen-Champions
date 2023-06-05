@@ -327,6 +327,8 @@ public abstract class DungeonBuilder {
         myEntranceY = y;
         myHeroX = x;
         myHeroY = y;
+
+        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
     }
 
     /**

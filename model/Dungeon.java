@@ -1,8 +1,5 @@
 package model;
 
-import java.awt.Point;
-import java.util.*;
-
 public class Dungeon implements java.io.Serializable {
 
     private Room[][] myMaze;
@@ -70,14 +67,35 @@ public class Dungeon implements java.io.Serializable {
     public boolean heroIsTouchingMonster() {
         return myMaze[myHeroY][myHeroX].hasMonster();
     }
-
-    public boolean heroHasReachedExit() {
+    public boolean heroIsTouchingExit() {
         return myMaze[myHeroY][myHeroX].hasExit();
     }
-
-    public boolean debugHeroInWall() {
+    public boolean heroIsTouchingWall() {
         return myMaze[myHeroY][myHeroX].hasWall();
     }
+    public boolean heroIsTouchingPit() {
+        return myMaze[myHeroY][myHeroX].hasPit();
+    }
+    public boolean heroIsTouchingPotion() {
+        return myMaze[myHeroY][myHeroX].hasPotion();
+    }
+    public boolean heroIsTouchingPillar() {
+        return myMaze[myHeroY][myHeroX].hasPillar();
+    }
+
+    public Potion getPotion() {
+        return myMaze[myHeroY][myHeroX].getPotion();
+    }
+    public Pillars getPillar() {
+        return myMaze[myHeroY][myHeroX].getPillar();
+    }
+    public Pit getPit() {
+        return myMaze[myHeroY][myHeroX].getPit();
+    }
+
+
+
+
 
 
     // a method in the view will check for keyboard inputs
@@ -99,14 +117,15 @@ public class Dungeon implements java.io.Serializable {
         } else if (dir == Direction.WEST && !myMaze[myHeroY][myHeroX-1].hasWall()) {
             myHeroX--;
         } else {
-            System.out.println("Invalid direction was given.\n" +
-                    "Make sure playerMove() receives one of these:\n" +
-                    "NORTH, EAST, SOUTH, WEST");
+            System.out.println();
+            System.out.println("Invalid direction was given to playerMove()");
+            System.out.println();
         }
         Room newRoom = myMaze[myHeroY][myHeroX];
 
         oldRoom.removeHero();
         newRoom.placeHero();
+        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
     }
 
     /**
@@ -114,17 +133,20 @@ public class Dungeon implements java.io.Serializable {
      *
      * @return a 3x3 grid of rooms centered on the hero
      */
-    public String getView() { //! return a string instead?
+    public String getView() {
 
         StringBuilder sb = new StringBuilder();
 
-        for (int x = myHeroX - 1; x <= myHeroX + 1; x++) {
+        for (int y = myHeroY - 1; y <= myHeroY + 1; y++) {
             sb.append("\n");
-            for (int y = myHeroY - 1; y <= myHeroY + 1; y++) {
-                sb.append(myMaze[x][y].toString());
+            for (int x = myHeroX - 1; x <= myHeroX + 1; x++) {
+                sb.append(myMaze[y][x].toString());
                 sb.append("  ");
             }
         }
+
+        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
+
         return sb.toString();
     }
 
@@ -138,9 +160,11 @@ public class Dungeon implements java.io.Serializable {
 
         StringBuilder sb = new StringBuilder();
 
-        for (int x = myHeroX - 3; x <= myHeroX + 3; x++) {
-            for (int y = myHeroY - 3; y <= myHeroY + 3; y++) {
-                sb.append(myMaze[x][y].toString());
+        for (int y = myHeroY - 3; y <= myHeroY + 3; y++) {
+            sb.append("\n");
+            for (int x = myHeroX - 3; x <= myHeroX + 3; x++) {
+                sb.append(myMaze[y][x].toString());
+                sb.append("  ");
             }
         }
         return sb.toString();
@@ -156,13 +180,16 @@ public class Dungeon implements java.io.Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < myMazeHeight; i++) {
+        for (int y = 0; y < myMazeHeight; y++) {
             sb.append("\n");
-            for (int j = 0; j < myMazeWidth; j++) {
-                sb.append(myMaze[i][j].toString());
+            for (int x = 0; x < myMazeWidth; x++) {
+                sb.append(myMaze[y][x].toString());
                 sb.append("  ");
             }
         }
+
+        System.out.println("hero is at " + myHeroX + ", " + myHeroY); // debug
+
         return sb.toString();
     }
 

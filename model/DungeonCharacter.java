@@ -2,7 +2,7 @@ package model;
 
 import java.util.*;
 
-public abstract class DungeonCharacter {
+public abstract class DungeonCharacter implements java.io.Serializable {
 
     protected final static Random MY_RANDOM = new Random();
     public final int MAX_SPECIAL_COOLDOWN = 3;

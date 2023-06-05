@@ -22,6 +22,7 @@ public class DungeonGame {
     private static Monster monster; // move to main and make non static?
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
+    private static boolean exitIsOpen = false; // set to true when player collects all pillars
 
     public DungeonGame() {
         // does anything need to be here?
@@ -134,6 +135,48 @@ public class DungeonGame {
                     game.printPlayerView(dungeon); // display the 3x3 player's view
                 }
 
+                if (dungeon.heroIsTouchingPotion()) {
+                    // play ding sound
+                    Potion potion = dungeon.getPotion();
+                    hero.getMyInventory().addToInventory(potion);
+                    game.displayPotionInfo(potion);
+                }
+
+                if (dungeon.heroIsTouchingPillar()) {
+                    // play ding sound
+
+                    Pillars pillar = dungeon.getPillar();
+                    hero.getMyInventory().addPillar(pillar);
+                    switch (pillar) {
+                        case ABSTRACTION:
+                            game.displayAbstractionPillarMsg();
+                            break;
+                        case ENCAPSULATION:
+                            game.displayEncapsulationPillarMsg();
+                            break;
+                        case INHERITANCE:
+                            game.displayInheritancePillarMsg();
+                            break;
+                        case POLYMORPHISM:
+                            game.displayPolymorphismPillarMsg();
+                            break;
+                    }
+
+                    if (hero.getMyInventory().getMyPillarCount() == 4) {
+                        exitIsOpen = true;
+                    }
+                }
+
+                if (dungeon.heroIsTouchingPit()) {
+                    // play pit sound
+
+                    dungeon.getPit().fall(hero);
+
+                    if (hero.getHitPoints() <= 0) {
+                        gameOver = true;
+                    }
+                }
+
                 if (dungeon.heroIsTouchingMonster()) {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
@@ -143,14 +186,18 @@ public class DungeonGame {
                     // if player loses, gameOver = true
                 }
 
-                if (dungeon.heroHasReachedExit()) {
-                    // play victory sound
-                    // play cutscene?
-                    gameOver = true;
+                if (dungeon.heroIsTouchingExit()) {
+                    if (exitIsOpen) {
+                        // play victory sound
+                        // play cutscene?
+                        gameOver = true;
+                    } else {
+                        System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
+                    }
                 }
 
-                if (dungeon.debugHeroInWall()) {
-                    System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE");
+                if (dungeon.heroIsTouchingWall()) {
+                    System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
                 }
 
                 DelayMachine.delay(1); // delay for 1 second
@@ -180,7 +227,7 @@ public class DungeonGame {
                         break;
 
                     case '2': // display map
-                        dungeon.toString(); // display the entire dungeon
+                        game.printDungeonMap(dungeon);
                         break;
 
                     case 'e': // open bag
@@ -237,4 +284,19 @@ public class DungeonGame {
 
 
 
+
+    // CHEAT SHEET for dungeon symbols:
+        //   = empty room
+        // * = wall
+        // H = hero
+        // M = monster
+        // X = pit
+        // o = entrance
+        // O = exit
+        // p = potion
+        // A = abstraction pillar
+        // I = inheritance pillar
+        // P = polymorphism pillar
+        // E = encapsulation pillar
+        // & = multiple items in the same room
 }
