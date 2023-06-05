@@ -75,10 +75,10 @@ public class TextModeInterface {
     }
 
     public void usePotion(int theVal, Hero thePlayer) {
-        if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay() == "Health Potion") {
+        if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay().equals("Health Potion")) {
             System.out.println("Used a Health Potion and restored "
                     + thePlayer.getMyInventory().getArray().get(theVal).getDetail(thePlayer) + " HP!");
-        } else if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay() == "Vision Potion") {
+        } else if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay().equals("Vision Potion")) {
             System.out.println("Used a vision potion!");
         } else {
             System.out.println("Used a Debug Potion");
@@ -116,6 +116,35 @@ public class TextModeInterface {
         System.out.println("-----------------------------------------------------");
 
     }
+
+    public void displayMonsterInfo(final Monster theMonster) {
+
+        System.out.println("Monster Stats");
+        System.out.println("-----------------------------------------------------");
+        System.out.println(theMonster.getType());
+        System.out.println("Health: " + theMonster.getHitPoints() + "/" + theMonster.getMaxHitPoints());
+    }
+
+    public void displayPotionInfo(final Potion thePotion) {
+        System.out.println("You collected a " + thePotion.type() + "!");
+    }
+    public void displayAbstractionPillarMsg() {
+        System.out.println("You collected an Abstraction Pillar!");
+    }
+
+    public void displayEncapsulationPillarMsg() {
+        System.out.println("You collected an Encapsulation Pillar!");
+    }
+
+    public void displayInheritancePillarMsg() {
+        System.out.println("You collected an Inheritance Pillar!");
+    }
+
+    public void displayPolymorphismPillarMsg() {
+        System.out.println("You collected a Polymorphism Pillar!");
+    }
+
+
 
     public int continueOrNewGameMenu() {
         System.out.println("Would you like to start a new game or continue a previous game?");

@@ -31,16 +31,15 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
     /**
      * Makes the hero lose health by falling into a hole
      */
-    public void fall() {
-        // TODO make hero lose health
+    public void fall(final Hero theHero) {
 
         myIsVisible = true;
 
         int theLowHealth = 20;
         int theHighHealth = 80;
 
-        int fallHealth = generateNewHealth(theLowHealth, theHighHealth);
-        setHitPoints(getHitPoints() - fallHealth);
+        int fallHealth = generateNewHealth(theLowHealth, theHighHealth); // don't know if this works
+        theHero.setHitPoints(getHitPoints() - fallHealth);
     }
 
     public String toString() {

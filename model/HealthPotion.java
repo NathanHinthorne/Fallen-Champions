@@ -60,6 +60,11 @@ public class HealthPotion extends Potion implements Healable {
     @Override
     public String toString() {
         return "p";
-    } // change char later
+    }
+
+    @Override
+    public String type() {
+        return "Vision Potion";
+    }
 
 }

@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Monster extends DungeonCharacter implements Healable,java.io.Serializable {
+public abstract class Monster extends DungeonCharacter implements Healable {
     // The minimum heal amount
     private int minHeal;
     // The maximum heal amount

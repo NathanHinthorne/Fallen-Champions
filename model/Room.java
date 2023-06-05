@@ -79,6 +79,16 @@ public class Room implements java.io.Serializable {
         return myHero;
     }
 
+    public Potion getPotion() {
+        return myPotion;
+    }
+    public Pillars getPillar() {
+        return myPillar;
+    }
+    public Pit getPit() {
+        return myPit;
+    }
+
     public boolean isEmpty() {
         return !hasWall() && !hasEntrance() && !hasExit() &&
                 !hasMonster() && !hasPotion() && !hasPillar() && !hasPit();
