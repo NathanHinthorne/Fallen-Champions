@@ -6,8 +6,12 @@ import view.*;
 
 public final class Audio {
 
+    // Separate clips so that they can both be stopped when need be
+    private static Clip currentSound;
+    private static Clip currentSong;
 
     protected static final File testSound = new File("view\\assets\\sound\\ui\\ui_testsound.wav");
+    protected static final File testSong = new File("view\\assets\\sound\\music\\music_testtrack.wav");
 
 
     // UI SOUNDS
@@ -59,11 +63,43 @@ public final class Audio {
 
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
+            currentSound = AudioSystem.getClip();
+            currentSound.open(audioStream);
+            currentSound.start();
         } catch (Exception e) {
             System.out.println("Could not open sound file!");
         }
     }
+
+    public static void playMusic(final File theFile, boolean theLoop) {
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
+            currentSong = AudioSystem.getClip();
+            currentSong.open(audioStream);;
+            FloatControl gain = (FloatControl) currentSong.getControl(FloatControl.Type.MASTER_GAIN);
+            gain.setValue(-10);
+            currentSong.start();
+            if (theLoop) {
+                currentSong.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        } catch (Exception e) {
+            System.out.println("Could not open sound file!");
+        }
+    }
+
+    public static void setVolume(int theVal) {
+        FloatControl gain = (FloatControl) currentSong.getControl(FloatControl.Type.MASTER_GAIN);
+        gain.setValue(theVal);
+    }
+
+    public static void stopAll() {
+        currentSound.stop();
+        currentSound.flush();
+        currentSound.close();
+        currentSong.stop();
+        currentSong.flush();
+        currentSong.close();
+    }
+
 }

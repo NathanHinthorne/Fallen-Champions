@@ -3,6 +3,8 @@ package view;
 import controller.DungeonGame;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,12 +13,14 @@ public class Window_Dungeon implements ActionListener {
 
     private DungeonGame myGame;
 
+
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
+    JSlider myVolume = new JSlider(-20, 0);
+    JLabel myVolText = new JLabel("Music Volume");
 
     JButton myBagButton = new JButton("Bag");
     JButton mySaveButton = new JButton("Save");
     JButton myMenuButton = new JButton("Menu");
-
     JButton myUp;
     JButton myDown;
     JButton myLeft;
@@ -42,6 +46,7 @@ public class Window_Dungeon implements ActionListener {
     ImageIcon myDownArrow;
     ImageIcon myLeftArrow;
     ImageIcon myRightArrow;
+    ImageIcon myPlayerSprite;
 
     ImageIcon myBackground;
     JLabel myBackgroundField;
@@ -53,6 +58,7 @@ public class Window_Dungeon implements ActionListener {
     }
 
     private void setupFrame() {
+        Audio.playMusic(Audio.testSong, true);
 
         myWall = loadImage("assets\\images\\game_dungeon_wall.png");
         myPath = loadImage("assets\\images\\game_dungeon_path.png");
@@ -86,6 +92,9 @@ public class Window_Dungeon implements ActionListener {
         myRight.setBounds(645,180,80,80);
         myRight.setFocusable(false);
 
+        myVolText.setBounds(450, 20, 120, 20);
+        myVolume.setBounds(570, 20, 190, 20);
+        myVolume.setValue(-10);
         myBagButton.setBounds(450,50,100,40);
         myBagButton.setFocusable(false);
         mySaveButton.setBounds(555,50,100,40);
@@ -94,6 +103,8 @@ public class Window_Dungeon implements ActionListener {
         myMenuButton.setFocusable(false);
 
         // Order is top to bottom
+        mainFrame.add(myVolume);
+        mainFrame.add(myVolText);
         mainFrame.add(myUp);
         mainFrame.add(myDown);
         mainFrame.add(myLeft);
@@ -164,8 +175,20 @@ public class Window_Dungeon implements ActionListener {
 
 
                 if (val == JOptionPane.YES_OPTION) {
+                    Audio.stopAll();
                     Window_MainMenu menu = new Window_MainMenu(myGame);
                     mainFrame.dispose();
+                }
+            }
+        });
+
+        myVolume.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (myVolume.getValue() == myVolume.getMinimum()) {
+                    Audio.setVolume(-80);
+                } else {
+                    Audio.setVolume(myVolume.getValue());
                 }
             }
         });
