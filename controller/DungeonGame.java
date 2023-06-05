@@ -142,13 +142,6 @@ public class DungeonGame {
                     hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
                 }
 
-                if (dungeon.heroIsTouchingPotion()) {
-                    // play ding sound
-                    Potion potion = dungeon.getPotion();
-                    hero.getMyInventory().addToInventory(potion);
-                    game.displayPotionInfo(potion);
-                }
-
                 if (dungeon.heroIsTouchingPillar()) {
                     // play ding sound
 
@@ -172,6 +165,13 @@ public class DungeonGame {
                     if (hero.getMyInventory().getMyPillarCount() == 4) {
                         exitIsOpen = true;
                     }
+                }
+
+                if (dungeon.heroIsTouchingPotion()) {
+                    // play ding sound
+                    Potion potion = dungeon.getPotion();
+                    hero.getMyInventory().addToInventory(potion);
+                    game.displayPotionInfo(potion);
                 }
 
                 if (dungeon.heroIsTouchingPit()) {

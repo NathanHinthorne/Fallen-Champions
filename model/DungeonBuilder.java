@@ -153,7 +153,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
             fillWithEmptyRooms(); // try again with the original branch off chance
         }
 
-        debugPrintRooms(); // DEBUG METHOD
+//        debugPrintRooms(); // DEBUG METHOD
     }
 
     private void debugPrintRooms() { // DEBUG METHOD
