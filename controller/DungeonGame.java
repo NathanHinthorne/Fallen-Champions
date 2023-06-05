@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DungeonGame {
-    private final static boolean CHEAT_MODE = true;
+    private final static boolean CHEAT_MODE = false;
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
@@ -149,6 +149,10 @@ public class DungeonGame {
                     gameOver = true;
                 }
 
+                if (dungeon.debugHeroInWall()) {
+                    System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE");
+                }
+
                 DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
@@ -171,11 +175,11 @@ public class DungeonGame {
                         dungeon.playerMove(Direction.NORTH);
                         break;
 
-                    case 1: // hero info
+                    case '1': // hero info
                         game.displayHeroInfo(hero);
                         break;
 
-                    case 2: // display map
+                    case '2': // display map
                         dungeon.toString(); // display the entire dungeon
                         break;
 
@@ -185,14 +189,14 @@ public class DungeonGame {
                         hero.getMyInventory().consumeItem(hero, itemSlot);
                         break;
 
-                    case 4: // quit
+                    case '4': // quit
                         int quit = game.quitProcess();
                         if (quit == 0) {
                             gameOver = true;
                         }
                         break;
 
-                    case 5: // save
+                    case '5': // save
                         saveGame();
                         break;
 

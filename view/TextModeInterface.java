@@ -32,7 +32,7 @@ public class TextModeInterface {
         System.out.println("Now make a selection");
         System.out.println("'w' to move up, 'a' to move left, 's' to move down, 'd' to move right\n" +
                             "'1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game");
-        return THE_SCANNER.nextInt();
+        return THE_SCANNER.next().charAt(0);
     }
 
     public int battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
