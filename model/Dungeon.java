@@ -75,6 +75,10 @@ public class Dungeon {
         return myMaze[myHeroY][myHeroX].hasExit();
     }
 
+    public boolean debugHeroInWall() {
+        return myMaze[myHeroY][myHeroX].hasWall();
+    }
+
 
     // a method in the view will check for keyboard inputs
     // once triggered, it will tell the controller to call this method

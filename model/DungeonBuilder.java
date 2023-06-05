@@ -63,9 +63,6 @@ public abstract class DungeonBuilder {
         addEntrance();
         addExit();
 
-        // step 5: find a starting point for the hero
-        findStartingPoint();
-
         // step 6: keep building dungeons until we find one that's traversable
 //            while(!isTraversable()) {
 //                buildDungeon();
@@ -324,9 +321,12 @@ public abstract class DungeonBuilder {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeEntrance();
+        myMaze[y][x].placeHero();
 
         myEntranceX = x;
         myEntranceY = y;
+        myHeroX = x;
+        myHeroY = y;
     }
 
     /**
@@ -347,26 +347,6 @@ public abstract class DungeonBuilder {
 
         myExitX = x;
         myExitY = y;
-    }
-
-    /**
-     * Determines a valid starting point for the hero.
-     */
-    private void findStartingPoint() {
-        int x;
-        int y;
-
-        // keep generating coords for hero until we get a room that is empty
-        do {
-            x = rand.nextInt(myMazeWidth);
-            y = rand.nextInt(myMazeHeight);
-
-        } while (!myMaze[y][x].isEmpty());
-
-        myMaze[y][x].placeHero();
-
-        myHeroX = x;
-        myHeroY = y;
     }
 
 
