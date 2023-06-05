@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @author Brendan Smith
  * @version 1.0 - 5/15/23
  */
-public class Inventory {
+public class Inventory implements java.io.Serializable {
 
     /**
      * Used to store items in an ArrayList of a defined

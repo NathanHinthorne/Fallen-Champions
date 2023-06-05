@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Hero extends DungeonCharacter {
+public abstract class Hero extends DungeonCharacter implements java.io.Serializable {
 
 
     // The hero type

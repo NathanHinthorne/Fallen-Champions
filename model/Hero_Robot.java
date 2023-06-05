@@ -1,6 +1,6 @@
 package model;
 
-public class Hero_Robot extends Hero {
+public class Hero_Robot extends Hero implements java.io.Serializable {
 
     private int special2Cooldown;
 

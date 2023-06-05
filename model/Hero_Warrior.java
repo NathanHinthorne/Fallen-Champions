@@ -1,6 +1,6 @@
 package model;
 
-public class Hero_Warrior extends Hero{
+public class Hero_Warrior extends Hero implements java.io.Serializable{
 
     private int special2Cooldown;
 

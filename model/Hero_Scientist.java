@@ -1,6 +1,6 @@
 package model;
 
-public class Hero_Scientist extends Hero {
+public class Hero_Scientist extends Hero implements java.io.Serializable {
     // The second cooldown
     private int special2Cooldown;
     // The third cooldown

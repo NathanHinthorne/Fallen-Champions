@@ -3,7 +3,7 @@ package model;
 import java.util.List;
 import java.util.Set;
 
-public class Room {
+public class Room implements java.io.Serializable {
 
     // static fields for toString
 

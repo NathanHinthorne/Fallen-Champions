@@ -1,6 +1,6 @@
 package model;
 
-public class Wall {
+public class Wall implements java.io.Serializable {
 
     @Override
     public String toString() {

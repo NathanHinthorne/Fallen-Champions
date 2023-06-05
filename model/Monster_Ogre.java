@@ -1,6 +1,6 @@
 package model;
 
-public class Monster_Ogre extends Monster {
+public class Monster_Ogre extends Monster implements java.io.Serializable {
 
 
     public Monster_Ogre() {

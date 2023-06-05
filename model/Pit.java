@@ -2,7 +2,7 @@ package model;
 
 import java.util.Random;
 
-public class Pit extends DungeonCharacter {
+public class Pit extends DungeonCharacter implements java.io.Serializable {
 
     final static Random MY_RANDOM = new Random();
 

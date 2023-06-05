@@ -1,6 +1,6 @@
 package model;
 
-public class VisionPotion extends Potion {
+public class VisionPotion extends Potion implements java.io.Serializable {
 
     public VisionPotion() {
 

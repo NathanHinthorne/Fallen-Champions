@@ -3,7 +3,7 @@ package model;
 import java.awt.Point;
 import java.util.*;
 
-public class Dungeon {
+public class Dungeon implements java.io.Serializable {
 
     private Room[][] myMaze;
     private int myMazeWidth;
