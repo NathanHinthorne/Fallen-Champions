@@ -1,6 +1,8 @@
 package view;
 
 import controller.DungeonGame;
+import model.Dungeon;
+import model.HeroTypes;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -8,11 +10,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 public class Window_Dungeon implements ActionListener {
-
-    private DungeonGame myGame;
-
 
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
     JSlider myVolume = new JSlider(-20, 0);
@@ -36,6 +36,7 @@ public class Window_Dungeon implements ActionListener {
     JLabel myTile21;
     JLabel myTile22;
     JLabel myDungeonBorder;
+    JLabel myPlayerLabel;
 
     ImageIcon myWall;
     ImageIcon myPath;
@@ -47,18 +48,22 @@ public class Window_Dungeon implements ActionListener {
     ImageIcon myLeftArrow;
     ImageIcon myRightArrow;
     ImageIcon myPlayerSprite;
+    ImageIcon myHealthPotionSprite;
+    ImageIcon myVisionPotionSprite;
 
     ImageIcon myBackground;
     JLabel myBackgroundField;
 
-    public Window_Dungeon(DungeonGame theGame) {
-        myGame = theGame;
+    public Window_Dungeon(Dungeon theDungeon, HeroTypes theType) {
+        setHeroSprite(theType);
         setupFrame();
-        addListeners();
+        addListeners(theDungeon);
+        ArrowActions();
     }
 
     private void setupFrame() {
-        Audio.playMusic(Audio.testSong, true);
+        Audio.playMusic(Audio.ambientSong, true);
+        Audio.play(Audio.beginGame);
 
         myWall = loadImage("assets\\images\\game_dungeon_wall.png");
         myPath = loadImage("assets\\images\\game_dungeon_path.png");
@@ -79,6 +84,7 @@ public class Window_Dungeon implements ActionListener {
         myBackgroundField = new JLabel(myBackground);
         myDungeonBorder = new JLabel(myBorderImage);
         myDungeonBorder.setBounds(50,50,300,300);
+        myPlayerLabel = new JLabel(myPlayerSprite);
 
         // Image file prep
         myBackgroundField.setBounds(0,0,800,450);
@@ -115,6 +121,7 @@ public class Window_Dungeon implements ActionListener {
 
         fetchTiles();
 
+
         myTile00.setBounds(65,65,90,90);
         myTile01.setBounds(155,65,90,90);
         myTile02.setBounds(245,65,90,90);
@@ -124,7 +131,9 @@ public class Window_Dungeon implements ActionListener {
         myTile20.setBounds(65,245,90,90);
         myTile21.setBounds(155,245,90,90);
         myTile22.setBounds(245,245,90,90);
+        myPlayerLabel.setBounds(160,160,80,80);
 
+        mainFrame.add(myPlayerLabel);
         mainFrame.add(myTile00);
         mainFrame.add(myTile01);
         mainFrame.add(myTile02);
@@ -163,12 +172,26 @@ public class Window_Dungeon implements ActionListener {
         myTile22 = new JLabel(myWall);
     }
 
-    private void addListeners() {
+    private void addListeners(Dungeon theDungeon) {
+
+        myBagButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Audio.play(Audio.menuTwo);
+            }
+        });
+
+        mySaveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Audio.play(Audio.menuTwo);
+            }
+        });
 
         myMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Audio.play(Audio.testSound);
+                Audio.play(Audio.menuTwo);
                 int val = JOptionPane.showConfirmDialog(null,
                         "Are you sure you return to the main menu?", "Return To Menu",
                         JOptionPane.YES_NO_OPTION);
@@ -176,7 +199,7 @@ public class Window_Dungeon implements ActionListener {
 
                 if (val == JOptionPane.YES_OPTION) {
                     Audio.stopAll();
-                    Window_MainMenu menu = new Window_MainMenu(myGame);
+                    Window_MainMenu menu = new Window_MainMenu(theDungeon);
                     mainFrame.dispose();
                 }
             }
@@ -206,17 +229,66 @@ public class Window_Dungeon implements ActionListener {
         return null;
     }
 
+    public void setHeroSprite(HeroTypes theType) {
+
+        if (theType == HeroTypes.ENFORCER) {
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_enforcer.png");
+        } else if (theType == HeroTypes.ROBOT) {
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_robot.png");
+        } else if (theType == HeroTypes.SCIENTIST) {
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_scientist.png");
+        } else if (theType == HeroTypes.WARRIOR) {
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_warrior.png");
+        } else if (theType == HeroTypes.SUPPORT) {
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_support.png");
+        } else { // Failsafe default value
+            myPlayerSprite = loadImage("assets\\images\\game_sprite_hero_default.png");
+        }
+    }
+
     private void ArrowActions() {
         myUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                playStep();
+            }
+        });
+        myLeft.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playStep();
+            }
+        });
+        myDown.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playStep();
+            }
+        });
+        myRight.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playStep();
             }
         });
     }
 
     private void setRoomOrWall(JLabel theTile) {
 
+    }
+
+    private void playStep() {
+        Random rand = new Random();
+        int choice = rand.nextInt(4);
+        if (choice == 0) {
+            Audio.play(Audio.step1);
+        } else if (choice == 1) {
+            Audio.play(Audio.step2);
+        } else if (choice == 2) {
+            Audio.play(Audio.step3);
+        } else if (choice == 3) {
+            Audio.play(Audio.step4);
+        }
     }
 
     @Override

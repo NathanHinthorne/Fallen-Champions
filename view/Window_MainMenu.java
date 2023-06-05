@@ -1,6 +1,7 @@
 package view;
 
 import controller.DungeonGame;
+import model.Dungeon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +9,7 @@ import java.awt.event.ActionListener;
 
 public class Window_MainMenu implements ActionListener {
 
+    Window_ChooseHero myChooseHeroWindow;
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
     JButton myStartButton = new JButton("New Game");
     JButton myLoadButton = new JButton("Continue");
@@ -20,14 +22,14 @@ public class Window_MainMenu implements ActionListener {
     JLabel myBackgroundField;
     JOptionPane myExitConfirm = new JOptionPane("Are you sure?");
 
-    public Window_MainMenu(DungeonGame theGame) {
+    public Window_MainMenu(Dungeon theDungeon) {
 
         setupFrame();
         myStartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Audio.play(Audio.testSound);
-                Window_Dungeon game = new Window_Dungeon(theGame);
+                Audio.play(Audio.menuTwo);
+                myChooseHeroWindow = new Window_ChooseHero(theDungeon);
                 mainFrame.dispose();
             }
         });
@@ -42,7 +44,7 @@ public class Window_MainMenu implements ActionListener {
         myExitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Audio.play(Audio.testSound);
+                Audio.play(Audio.menuTwo);
                 int val = JOptionPane.showConfirmDialog(myExitConfirm,
                         "Are you sure you want to quit?", "Quit Game",
                         JOptionPane.YES_NO_OPTION);
@@ -100,6 +102,10 @@ public class Window_MainMenu implements ActionListener {
         mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setResizable(false);
+    }
+
+    public Window_ChooseHero getMyChooseHeroWindow() {
+        return myChooseHeroWindow;
     }
 
     @Override

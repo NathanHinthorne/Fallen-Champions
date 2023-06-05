@@ -16,11 +16,19 @@ public final class Audio {
 
     // UI SOUNDS
     protected static final File textSound = new File("SFX\\ui_dialogue.wav");
-    protected static final File menuOne = new File("SFX\\ui_menu_1.wav");
-    protected static final File menuTwo = new File("SFX\\ui_menu_2.wav");
-    protected static final File beginGame = new File("SFX\\ui_gamestart.wav");
+    protected static final File menuTwo = new File("view\\assets\\sound\\ui\\ui_menu_option_1.wav");
+    protected static final File menuOne = new File("view\\assets\\sound\\ui\\ui_menu_option_2.wav");
+    protected static final File beginGame = new File("view\\assets\\sound\\ui\\ui_spawn.wav");
+    protected static final File powerUp = new File("view\\assets\\sound\\ui\\ui_powerup.wav");
 
-    protected static final File test = new File("assets\\Retro_-_Chip_Power.wav");
+    // MUSIC
+    protected static final File ambientSong = new File("view\\assets\\sound\\music\\music_ambient.wav");
+
+    // FOOTSTEPS
+    protected static final File step1 = new File("view\\assets\\sound\\ui\\game_step1.wav");
+    protected static final File step2 = new File("view\\assets\\sound\\ui\\game_step2.wav");
+    protected static final File step3 = new File("view\\assets\\sound\\ui\\game_step3.wav");
+    protected static final File step4 = new File("view\\assets\\sound\\ui\\game_step4.wav");
 
     // COMBAT SOUNDS
     protected static final File com_Dodge = new File("SFX\\class_dodge.wav");
