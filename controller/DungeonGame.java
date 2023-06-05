@@ -143,6 +143,16 @@ public class DungeonGame {
                     // if player loses, gameOver = true
                 }
 
+                if (dungeon.heroHasReachedExit()) {
+                    // play victory sound
+                    // play cutscene?
+                    gameOver = true;
+                }
+
+                if (dungeon.debugHeroInWall()) {
+                    System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE");
+                }
+
                 DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
@@ -165,11 +175,11 @@ public class DungeonGame {
                         dungeon.playerMove(Direction.NORTH);
                         break;
 
-                    case 1: // hero info
+                    case '1': // hero info
                         game.displayHeroInfo(hero);
                         break;
 
-                    case 2: // display map
+                    case '2': // display map
                         dungeon.toString(); // display the entire dungeon
                         break;
 
@@ -179,20 +189,19 @@ public class DungeonGame {
                         hero.getMyInventory().consumeItem(hero, itemSlot);
                         break;
 
-                    case 4: // quit
+                    case '4': // quit
                         int quit = game.quitProcess();
                         if (quit == 0) {
                             gameOver = true;
                         }
                         break;
 
-                    case 5:
-                        // save game (with serialization)
+                    case '5': // save
                         saveGame();
                         break;
 
                     default:
-                        System.out.println("Incorrect key");
+                        System.out.println("Please make a proper selection:");
                 }
         }
     }
