@@ -14,16 +14,43 @@ public class Window_MainMenu implements ActionListener {
     ImageIcon myLogo;
     JLabel myImageField;
 
+    ImageIcon myBackground;
+    JLabel myBackgroundField;
+
     public Window_MainMenu() {
 
+        setupFrame();
+        myStartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Audio.play(Audio.testSound);
+            }
+        });
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    private void setupFrame() {
         try {
             myLogo = new ImageIcon(getClass().getResource("assets\\images\\game_logo.png"));
             myImageField = new JLabel(myLogo);
         } catch (Exception e) {
-            System.out.println("Image Not Found!");
+            System.out.println("game_logo Not Found!");
+        }
+        try {
+            myBackground = new ImageIcon(getClass().getResource("assets\\images\\game_background.png"));
+            myBackgroundField = new JLabel(myBackground);
+        } catch (Exception e) {
+            System.out.println("game_background.png Not Found!");
         }
 
+        // Image file prep
         myImageField.setBounds(129,40,542,214);
+        myBackgroundField.setBounds(0,0,800,450);
 
         myStartButton.setBounds(340,250,120,40);
         myStartButton.setFocusable(false);
@@ -38,20 +65,21 @@ public class Window_MainMenu implements ActionListener {
         myExitButton.setFocusable(false);
         myExitButton.addActionListener(this);
 
+        // Order it top to bottom when being added
         mainFrame.add(myImageField);
         mainFrame.add(myStartButton);
         mainFrame.add(myLoadButton);
         mainFrame.add(myExitButton);
+        mainFrame.add(myBackgroundField);
+
+        // Finalizing mainFrame settings
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(800,450);
         mainFrame.setLayout(null);
         mainFrame.setVisible(true);
+        mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(null);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+        mainFrame.setResizable(false);
     }
 
 }
