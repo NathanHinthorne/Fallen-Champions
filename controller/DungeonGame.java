@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class DungeonGame {
-    private final static boolean CHEAT_MODE = false;
+    private final static boolean CHEAT_MODE = true;
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
@@ -135,11 +135,11 @@ public class DungeonGame {
                     game.printPlayerView(dungeon); // display the 3x3 player's view
                 }
 
-                if (dungeon.heroIsTouchingPotion()) {
-                    // play ding sound
-                    Potion potion = dungeon.getPotion();
-                    hero.getMyInventory().addToInventory(potion);
-                    game.displayPotionInfo(potion);
+                if (CHEAT_MODE) {
+                    hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
+                    hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
+                    hero.getMyInventory().addPillar(Pillars.INHERITANCE);
+                    hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
                 }
 
                 if (dungeon.heroIsTouchingPillar()) {
@@ -162,9 +162,16 @@ public class DungeonGame {
                             break;
                     }
 
-                    if (hero.getMyInventory().getMyPillarCount() == 4) {
+                    if (hero.getMyInventory().hasAllPillars()) {
                         exitIsOpen = true;
                     }
+                }
+
+                if (dungeon.heroIsTouchingPotion()) {
+                    // play ding sound
+                    Potion potion = dungeon.getPotion();
+                    hero.getMyInventory().addToInventory(potion);
+                    game.displayPotionInfo(potion);
                 }
 
                 if (dungeon.heroIsTouchingPit()) {
@@ -187,10 +194,13 @@ public class DungeonGame {
                 }
 
                 if (dungeon.heroIsTouchingExit()) {
-                    if (exitIsOpen) {
+//                    if (exitIsOpen) {
+                    if (hero.getMyInventory().getMyPillarCount() >= 4) {
                         // play victory sound
                         // play cutscene?
+                        game.displayVictoryMsg();
                         gameOver = true;
+                        break;
                     } else {
                         System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
                     }
@@ -200,7 +210,7 @@ public class DungeonGame {
                     System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
                 }
 
-                DelayMachine.delay(1); // delay for 1 second
+//                DelayMachine.delay(1); // delay for 1 second
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
                 // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game
