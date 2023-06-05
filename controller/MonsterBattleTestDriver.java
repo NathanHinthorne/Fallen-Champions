@@ -12,8 +12,9 @@ public class MonsterBattleTestDriver {
     public static void main(String[] theArgs) {
         Hero theHero = new TestHero();
         Monster theMonster = new TestMonster();
+        DungeonGame newGame = new DungeonGame();
 
-        Window_MainMenu mainMenu = new Window_MainMenu();
+        Window_MainMenu mainMenu = new Window_MainMenu(newGame);
 
         /* BATTLE TEST
 
