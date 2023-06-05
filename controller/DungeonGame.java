@@ -191,7 +191,7 @@ public class DungeonGame {
 
                     case '4': // quit
                         int quit = game.quitProcess();
-                        if (quit == 0) {
+                        if (quit == 1) {
                             gameOver = true;
                         }
                         break;
