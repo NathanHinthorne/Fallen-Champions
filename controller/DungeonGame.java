@@ -217,6 +217,7 @@ public class DungeonGame {
             System.out.print("Game saved!\n");
         } catch (Exception e) {
             System.out.println("Couldn't save game!");
+            System.out.println(e.getClass() + ": " + e.getMessage());
         }
     }
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
