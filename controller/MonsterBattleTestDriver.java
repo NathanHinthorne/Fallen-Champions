@@ -12,10 +12,10 @@ public class MonsterBattleTestDriver {
     public static void main(String[] theArgs) {
         Hero theHero = new TestHero();
         Monster theMonster = new TestMonster();
-//
-//        Window_MainMenu mainMenu = new Window_MainMenu();
 
-//        /* BATTLE TEST
+        Window_MainMenu mainMenu = new Window_MainMenu();
+
+        /* BATTLE TEST
 
 
         System.out.println("Player info:");
