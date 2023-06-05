@@ -3,17 +3,22 @@ import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
 import view.TextModeInterface;
+import view.Window_Dungeon;
 import view.Window_MainMenu;
 
 public class MonsterBattleTestDriver {
 
     private static TextModeInterface myGame = new TextModeInterface();
+    private static Dungeon dungeon;
+    private static Hero theHero = new TestHero();
+    private static Monster theMonster = new TestMonster();
 
     public static void main(String[] theArgs) {
-        Hero theHero = new TestHero();
-        Monster theMonster = new TestMonster();
 
-        Window_MainMenu mainMenu = new Window_MainMenu();
+        setupDungeon(2);
+        DungeonGame newGame = new DungeonGame();
+
+        Window_MainMenu mainMenu = new Window_MainMenu(dungeon);
 
         /* BATTLE TEST
 
@@ -67,6 +72,36 @@ public class MonsterBattleTestDriver {
 
 //        */
 
+    }
+
+    public static void setHero(HeroTypes theType) {
+        theHero.setType(theType);
+    }
+
+    public static void setupDungeon(final int theDifficulty) {
+        // small dungeon = easy difficulty
+        // medium dungeon = medium difficulty
+        // large dungeon = hard difficulty
+
+        switch(theDifficulty) {
+            case 1:
+                // Easy
+                Dungeon.SmallDungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); //original: DungeonBuilder theSmallDungeonBuilder...
+                dungeon = theSmallDungeonBuilder.buildDungeon();
+                break;
+            case 2:
+                // Medium
+                Dungeon.MediumDungeonBuilder  theMediumDungeonBuilder = new Dungeon.MediumDungeonBuilder();
+                dungeon = theMediumDungeonBuilder.buildDungeon();
+                break;
+            case 3:
+                // Hard
+                Dungeon.LargeDungeonBuilder  theLargeDungeonBuilder = new Dungeon.LargeDungeonBuilder();
+                dungeon = theLargeDungeonBuilder.buildDungeon();
+                break;
+            default:
+                System.out.println("Please make a proper selection:");
+        }
     }
 
 }

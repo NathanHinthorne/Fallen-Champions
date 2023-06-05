@@ -6,17 +6,29 @@ import view.*;
 
 public final class Audio {
 
+    // Separate clips so that they can both be stopped when need be
+    private static Clip currentSound;
+    private static Clip currentSong;
 
     protected static final File testSound = new File("view\\assets\\sound\\ui\\ui_testsound.wav");
+    protected static final File testSong = new File("view\\assets\\sound\\music\\music_testtrack.wav");
 
 
     // UI SOUNDS
     protected static final File textSound = new File("SFX\\ui_dialogue.wav");
-    protected static final File menuOne = new File("SFX\\ui_menu_1.wav");
-    protected static final File menuTwo = new File("SFX\\ui_menu_2.wav");
-    protected static final File beginGame = new File("SFX\\ui_gamestart.wav");
+    protected static final File menuTwo = new File("view\\assets\\sound\\ui\\ui_menu_option_1.wav");
+    protected static final File menuOne = new File("view\\assets\\sound\\ui\\ui_menu_option_2.wav");
+    protected static final File beginGame = new File("view\\assets\\sound\\ui\\ui_spawn.wav");
+    protected static final File powerUp = new File("view\\assets\\sound\\ui\\ui_powerup.wav");
 
-    protected static final File test = new File("assets\\Retro_-_Chip_Power.wav");
+    // MUSIC
+    protected static final File ambientSong = new File("view\\assets\\sound\\music\\music_ambient.wav");
+
+    // FOOTSTEPS
+    protected static final File step1 = new File("view\\assets\\sound\\ui\\game_step1.wav");
+    protected static final File step2 = new File("view\\assets\\sound\\ui\\game_step2.wav");
+    protected static final File step3 = new File("view\\assets\\sound\\ui\\game_step3.wav");
+    protected static final File step4 = new File("view\\assets\\sound\\ui\\game_step4.wav");
 
     // COMBAT SOUNDS
     protected static final File com_Dodge = new File("SFX\\class_dodge.wav");
@@ -59,11 +71,43 @@ public final class Audio {
 
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
+            currentSound = AudioSystem.getClip();
+            currentSound.open(audioStream);
+            currentSound.start();
         } catch (Exception e) {
             System.out.println("Could not open sound file!");
         }
     }
+
+    public static void playMusic(final File theFile, boolean theLoop) {
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
+            currentSong = AudioSystem.getClip();
+            currentSong.open(audioStream);;
+            FloatControl gain = (FloatControl) currentSong.getControl(FloatControl.Type.MASTER_GAIN);
+            gain.setValue(-10);
+            currentSong.start();
+            if (theLoop) {
+                currentSong.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        } catch (Exception e) {
+            System.out.println("Could not open sound file!");
+        }
+    }
+
+    public static void setVolume(int theVal) {
+        FloatControl gain = (FloatControl) currentSong.getControl(FloatControl.Type.MASTER_GAIN);
+        gain.setValue(theVal);
+    }
+
+    public static void stopAll() {
+        currentSound.stop();
+        currentSound.flush();
+        currentSound.close();
+        currentSong.stop();
+        currentSong.flush();
+        currentSong.close();
+    }
+
 }
