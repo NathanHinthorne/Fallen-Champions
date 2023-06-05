@@ -65,7 +65,9 @@ public class TextModeInterface {
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
         }
-        if (ret > myBag.getSize()) {
+        if (ret == 5) {
+            return ret;
+        } else if (ret > myBag.getSize()) {
             System.out.println("That Slot is empty!");
             ret = openBag(myBag);
         }
