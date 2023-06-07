@@ -20,6 +20,7 @@ public class MonsterBattle {
         myGameOver = false;
         myVictory = false;
         myGame = theView;
+        newBattle(theHero,theMonster);
     }
 
     /**

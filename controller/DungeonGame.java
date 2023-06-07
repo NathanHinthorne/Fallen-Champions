@@ -188,6 +188,7 @@ public class DungeonGame {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
+                    new MonsterBattle(hero,monster,game);
 
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
