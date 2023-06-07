@@ -45,26 +45,31 @@ public class DungeonGame {
                 int loadSelection = game.continueOrNewGameMenu();
                 if (loadSelection == 2) {
                     loadGame();
+                    gameLoop();
+                } else if (loadSelection == 1) {
+                    System.out.println(); // empty line
+
+                    // setup dungeon (1 for easy, 2 for medium, 3 for hard)
+                    int difficultySelection = game.chooseDifficulty();
+                    setupDungeon(difficultySelection);
+                    System.out.println(); // empty line
+
+                    // print introduction
+                    game.Introduction();
+                    System.out.println(); // empty line
+
+                    // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
+                    int heroSelection = game.chooseHero();
+                    hero = setupHero(heroSelection);
+                    System.out.println(); // empty line
+
+                    // enter the main game loop ('w' to move up, 'a' to move left, 's' to move down, 'd' to move right
+                    //                           '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game)
+                    gameLoop();
+                } else {
+                    System.out.println("Please make a proper selection!");
                 }
-                System.out.println(); // empty line
 
-                // setup dungeon (1 for easy, 2 for medium, 3 for hard)
-                int difficultySelection = game.chooseDifficulty();
-                setupDungeon(difficultySelection);
-                System.out.println(); // empty line
-
-                // print introduction
-                game.Introduction();
-                System.out.println(); // empty line
-
-                // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
-                int heroSelection = game.chooseHero();
-                hero = setupHero(heroSelection);
-                System.out.println(); // empty line
-
-                // enter the main game loop ('w' to move up, 'a' to move left, 's' to move down, 'd' to move right
-                //                           '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game)
-                gameLoop();
 
             case 2:
                 System.exit(0);
@@ -188,8 +193,8 @@ public class DungeonGame {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
-                    new MonsterBattle(hero,monster,game);
 
+                    new MonsterBattle(hero,monster,game);
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
                 }
