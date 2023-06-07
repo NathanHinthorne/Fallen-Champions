@@ -14,6 +14,8 @@ public class DungeonGame {
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
 
+    private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
+
     // remove "my" prefix?
     private static Dungeon dungeon; // from model
     private static TextModeInterface game; // from view
@@ -193,7 +195,6 @@ public class DungeonGame {
                     // play monster encounter sound
                     DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
-
                     new MonsterBattle(hero,monster,game);
                     // if player wins, continue game, earn rewards
                     // if player loses, gameOver = true
