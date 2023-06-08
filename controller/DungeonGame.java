@@ -13,7 +13,6 @@ public class DungeonGame {
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
-
     private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
 
     private static Dungeon dungeon; // from model
@@ -146,6 +145,8 @@ public class DungeonGame {
                     game.printPlayerView(dungeon); // display the 3x3 player's view
                 }
 
+                game.displayHeroHealth(hero);
+
                 if (dungeon.heroIsTouchingPillar()) {
                     // play ding sound
 
@@ -275,6 +276,26 @@ public class DungeonGame {
 
                     case '5': // save
                         saveGame();
+                        break;
+
+                    case 'i':
+                        System.out.println("Room has:");
+                        dungeon.roomAbove();
+                        break;
+
+                    case 'l':
+                        System.out.println("Room has:");
+                        dungeon.roomRight();
+                        break;
+
+                    case 'k':
+                        System.out.println("Room has:");
+                        dungeon.roomBelow();
+                        break;
+
+                    case 'j':
+                        System.out.println("Room has:");
+                        dungeon.roomLeft();
                         break;
 
                     default:

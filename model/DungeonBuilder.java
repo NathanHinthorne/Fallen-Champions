@@ -26,11 +26,12 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     private int myHeroX;
     private int myHeroY;
     protected double myMaxRoomBranchOffChance;
-    protected int myNumberOfEmptyRooms = 0;
+    protected int myNumberOfEmptyRooms;
     private String myDifficulty;
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
     protected DungeonBuilder() { }
+
 
     public Dungeon buildDungeon(final String theDifficulty, final int theMazeWidth, final int theMazeHeight,
                                    final double theMaxBranchOffChance, final double thePillarChance,
@@ -39,7 +40,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         Dungeon dungeon = new Dungeon();
         myMazeWidth = theMazeWidth;
         myMazeHeight = theMazeHeight;
-        myMaze = new Room[theMazeHeight + 2][theMazeWidth + 2];
+        myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
         myUnplacedMonsters = new LinkedList<>();
         myMaxRoomBranchOffChance = theMaxBranchOffChance;
@@ -48,7 +49,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         myPotionChance = thePotionChance;
         myPitChance = thePitChance;
         myDifficulty = theDifficulty;
-//        myHeroX
+
 
         readMonsters(myDifficulty);
 
@@ -62,10 +63,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         fillWithObjects();
 
         // step 4: add entrance and exit
-        addHero();
+        addEntrance();
         addExit();
 
-        // step 6: keep building dungeons until we find one that's traversable
+        // step 5: keep building dungeons until we find one that's traversable
 //            while(!isTraversable()) {
 //                buildDungeon();
 //            }
@@ -79,9 +80,45 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         return dungeon;
     }
 
-    private void restartDungeon() {
-        buildDungeon(myDifficulty, myMazeWidth, myMazeHeight, myMaxRoomBranchOffChance, myPillarChance,
-                myMonsterChance, myPotionChance, myPitChance);
+    private void restartRoomFilling() {
+        System.out.println();
+        System.out.println("DEBUG: previous bad dungeon:");
+        debugPrintObjects();
+        System.out.println();
+
+        myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
+        myPlacedPillars = new HashSet<>();
+        myUnplacedMonsters = new LinkedList<>();
+
+        readMonsters(myDifficulty);
+
+        // step 1: fill the dungeon COMPLETELY with walls
+        fillWithWalls();
+
+        // step 2: randomly place empty rooms
+        fillWithEmptyRooms();
+    }
+
+    private void restartObjectPlacing() {
+        System.out.println();
+        System.out.println("DEBUG: previous bad dungeon:");
+        debugPrintObjects();
+        System.out.println();
+
+        myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
+        myPlacedPillars = new HashSet<>();
+        myUnplacedMonsters = new LinkedList<>();
+
+        readMonsters(myDifficulty);
+
+        // step 1: fill the dungeon COMPLETELY with walls
+        fillWithWalls();
+
+        // step 2: randomly place empty rooms
+        fillWithEmptyRooms();
+
+        // step 3: fill empty rooms with objects
+        fillWithObjects();
     }
 
     private void readMonsters(final String difficulty) {
@@ -150,13 +187,13 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     private void fillWithEmptyRooms() {
         myNumberOfEmptyRooms = 0; // reset the number of empty rooms
 
-        fillWithEmptyRooms(myMazeWidth /2, myMazeWidth /2, myMaxRoomBranchOffChance); // start generating rooms from the center
+        fillWithEmptyRooms(myMazeWidth / 2, myMazeWidth / 2, myMaxRoomBranchOffChance); // start generating rooms from the center
 
         int numberOfRooms = (myMazeWidth -2) * (myMazeHeight -2);
         double roomPercentage = (double) myNumberOfEmptyRooms / numberOfRooms;
 
         if (roomPercentage < 0.55 || roomPercentage > 0.75) { // (this if statement should barely ever execute)
-            restartDungeon(); // try again with the original branch off chance
+            restartRoomFilling(); // try again with the original branch off chance
         }
 
 //        debugPrintRooms(); // DEBUG METHOD
@@ -293,7 +330,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
         // confirm the maze contains all 4 pillars
         if (myPlacedPillars.size() != 4) {
-            restartDungeon();
+            restartObjectPlacing();
         }
 
 //        debugPrintObjects(); // debug
@@ -315,7 +352,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     /**
      * Adds an entrance to the dungeon.
      */
-    private void addHero() {
+    private void addEntrance() {
         int x;
         int y;
 

@@ -19,9 +19,9 @@ public class Dungeon implements java.io.Serializable {
         private static final int MAZE_HEIGHT = 7;
         private static final double MAX_BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
         private static final double PILLAR_CHANCE = 0.20;
-        public static final double ENEMY_CHANCE = 0.40;
-        public static final double POTION_CHANCE = 0.30;
-        public static final double PIT_CHANCE = 0.20;
+        public static final double ENEMY_CHANCE = 0.35;
+        public static final double POTION_CHANCE = 0.25;
+        public static final double PIT_CHANCE = 0.00;
 
 
         public Dungeon buildDungeon() {
@@ -50,8 +50,8 @@ public class Dungeon implements java.io.Serializable {
         private static final String DIFFICULTY = "Hard";
         private static final int MAZE_WIDTH = 15;
         private static final int MAZE_HEIGHT = 15;
-        private static final double MAX_BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
-        private static final double PILLAR_CHANCE = 0.04;
+        private static final double MAX_BRANCH_OFF_CHANCE = 0.58; // with decreasing branch chance: 0.60
+        private static final double PILLAR_CHANCE = 0.035;
         public static final double ENEMY_CHANCE = 0.3;
         public static final double POTION_CHANCE = 0.25;
         public static final double PIT_CHANCE = 0.15;
@@ -207,5 +207,20 @@ public class Dungeon implements java.io.Serializable {
     }
     public void setHeroY(int theY) {
         myHeroY = theY;
+    }
+
+
+    public void roomAbove() {
+        myMaze[myHeroY-1][myHeroX].getContents();
+    }
+
+    public void roomBelow() {
+        myMaze[myHeroY+1][myHeroX].getContents();
+    }
+    public void roomLeft() {
+        myMaze[myHeroY][myHeroX-1].getContents();
+    }
+    public void roomRight() {
+        myMaze[myHeroY][myHeroX+1].getContents();
     }
 }

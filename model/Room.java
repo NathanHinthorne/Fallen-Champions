@@ -22,7 +22,6 @@ public class Room implements java.io.Serializable {
     private int myY;
     private int myX;
     private Wall myWall;
-    private Entrance myEntrance;
     private Exit myExit;
     private Monster myMonster;
     private Potion myPotion;
@@ -35,7 +34,6 @@ public class Room implements java.io.Serializable {
         myY = theY;
         myX = theX;
         myWall = null;
-        myEntrance = null;
         myExit = null;
         myMonster = null;
         myPotion = null;
@@ -55,9 +53,6 @@ public class Room implements java.io.Serializable {
 
     public boolean hasWall() {
         return myWall != null;
-    }
-    public boolean hasEntrance() {
-        return myEntrance != null;
     }
     public boolean hasExit() {
         return myExit != null;
@@ -92,7 +87,7 @@ public class Room implements java.io.Serializable {
     }
 
     public boolean isEmpty() {
-        return !hasWall() && !hasEntrance() && !hasExit() &&
+        return !hasWall() && !hasExit() &&
                 !hasMonster() && !hasPotion() && !hasPillar() && !hasPit();
     }
 
@@ -102,9 +97,6 @@ public class Room implements java.io.Serializable {
     public void placeWall() {
         myWall = new Wall();
     }
-    public void placeEntrance() {
-        myEntrance = new Entrance();
-    } //TODO make entrance a singleton
     public void placeExit() {
         myExit = new Exit();
     } //TODO make exit a singleton
@@ -190,8 +182,6 @@ public class Room implements java.io.Serializable {
             result = EXIT;
         } else if (hasMonster()) {
             result = myMonster.toString();
-        } else if (hasEntrance()) {
-            result = myEntrance.toString();
         } else if (hasExit()) {
             result = myExit.toString();
         } else {
@@ -199,5 +189,23 @@ public class Room implements java.io.Serializable {
         }
 
         return result;
+    }
+
+    public void getContents() {
+        System.out.print("Room contents: ");
+
+        if (hasExit()) {
+            System.out.print("Exit, ");
+        } if (hasPotion()) {
+            System.out.print("Potion, ");
+        } if (hasPillar()) {
+            System.out.print("Pillar, ");
+        } if (hasPit()) {
+            System.out.print("Pit, ");
+        } if (hasMonster()) {
+            System.out.print("Monster, ");
+        }
+
+        System.out.println();
     }
 }

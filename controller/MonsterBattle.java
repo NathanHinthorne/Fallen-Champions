@@ -84,11 +84,11 @@ public class MonsterBattle {
 
         // Special Attack
         } else if (choice == 2) {
-            int temp = myHero.getSpecialCooldown();
+            int cooldown = myHero.getSpecialCooldown();
             int amt = myHero.specialAtk(myMonster);
             myGame.playerMoves(choice, amt, myHero);
             DelayMachine.delay(2);
-            if (temp > 0) {
+            if (cooldown > 0) {
                 playerTurn();
             }
 

@@ -28,8 +28,10 @@ public class TextModeInterface {
     }
 
     public int gameplayMenu() {
+        System.out.println();
+        System.out.println("[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]");
         System.out.println("You are currently in the dungeon");
-        System.out.println("Now make a selection");
+        System.out.println("Please make a selection");
         System.out.println("'w' to move up, 'a' to move left, 's' to move down, 'd' to move right\n" +
                             "'1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game");
         return THE_SCANNER.next().charAt(0);
@@ -212,5 +214,9 @@ public class TextModeInterface {
 
     public void displayCheatModeMsg() {
         System.out.println("YOU CHEATER! I SEE WHAT YOU'RE DOING THERE! ಠ_ಠ");
+    }
+
+    public void displayHeroHealth(Hero hero) {
+        System.out.println("Health: " + hero.getHitPoints() + "/" + hero.getMaxHitPoints());
     }
 }
