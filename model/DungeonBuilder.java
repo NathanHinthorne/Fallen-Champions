@@ -25,10 +25,6 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     private int myMazeHeight;
     private int myHeroX;
     private int myHeroY;
-    private int myEntranceX;
-    private int myEntranceY;
-    private int myExitX;
-    private int myExitY;
     protected double myMaxRoomBranchOffChance;
     protected int myNumberOfEmptyRooms = 0;
     private String myDifficulty;
@@ -52,6 +48,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         myPotionChance = thePotionChance;
         myPitChance = thePitChance;
         myDifficulty = theDifficulty;
+//        myHeroX
 
         readMonsters(myDifficulty);
 
@@ -65,7 +62,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         fillWithObjects();
 
         // step 4: add entrance and exit
-        addEntrance();
+        addHero();
         addExit();
 
         // step 6: keep building dungeons until we find one that's traversable
@@ -260,11 +257,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     }
 
     private boolean withinBounds(final int theY, final int theX) {
-        Room room = myMaze[theY][theX];
 
         //inside maze and non visited room
-        return theY >= 1 && theY < myMazeHeight -1
-                && theX >= 1 && theX < myMazeWidth -1;
+        return theY >= 1 && theY < myMazeHeight - 1
+                && theX >= 1 && theX < myMazeWidth - 1;
     }
 
 
@@ -319,7 +315,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     /**
      * Adds an entrance to the dungeon.
      */
-    private void addEntrance() {
+    private void addHero() {
         int x;
         int y;
 
@@ -330,11 +326,8 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
         } while (!myMaze[y][x].isEmpty());
 
-        myMaze[y][x].placeEntrance();
         myMaze[y][x].placeHero();
 
-        myEntranceX = x;
-        myEntranceY = y;
         myHeroX = x;
         myHeroY = y;
     }
@@ -354,65 +347,62 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         } while (!myMaze[y][x].isEmpty());
 
         myMaze[y][x].placeExit();
-
-        myExitX = x;
-        myExitY = y;
     }
 
 
-    /**
-     * Checks if the dungeon is traversable.
-     *
-     * @return true if the dungeon is traversable, false otherwise.
-     */
-    private boolean isTraversable() {
-        //before this method, make sure there are all 4 pillars present within the dungeon
+//    /**
+//     * Checks if the dungeon is traversable.
+//     *
+//     * @return true if the dungeon is traversable, false otherwise.
+//     */
+//    private boolean isTraversable() {
+//        //before this method, make sure there are all 4 pillars present within the dungeon
+//
+//        boolean isTraversable = traverse(myHeroY, myHeroX);
+//        return isTraversable;
+//    }
 
-        boolean isTraversable = traverse(myEntranceY, myEntranceX);
-        return isTraversable;
-    }
+//    /**
+//     * Recursive method to check if the dungeon is traversable.
+//     *
+//     * @param theY the y coordinate of the room to check
+//     * @param theX the x coordinate of the room to check
+//     * @return true if the dungeon is traversable, false otherwise.
+//     */
+//    private boolean traverse(final int theY, final int theX) {
+//
+//        Room room = myMaze[theY][theX];
+//
+//        boolean success = false;
+//
+////        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
+//        if (validMove(theY, theX)) {
+//
+//            // base case
+//            if (room.hasExit())
+//                return true;
+//
+//            // not at exit so need to try other directions
+//            success = traverse(theY+1, theX); //down
+//            if (!success)
+//                success = traverse(theY, theX+1); //right
+//            if (!success)
+//                success = traverse(theY-1, theX); //up
+//            if (!success)
+//                success = traverse(theY, theX-1); //left
+//        }
+//
+//        return success;
+//    }
 
-    /**
-     * Recursive method to check if the dungeon is traversable.
-     *
-     * @param theY the y coordinate of the room to check
-     * @param theX the x coordinate of the room to check
-     * @return true if the dungeon is traversable, false otherwise.
-     */
-    private boolean traverse(final int theY, final int theX) {
-
-        Room room = myMaze[theY][theX];
-
-        boolean success = false;
-
-//        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
-        if (validMove(theY, theX)) {
-
-            // base case
-            if (room.hasExit())
-                return true;
-
-            // not at exit so need to try other directions
-            success = traverse(theY+1, theX); //down
-            if (!success)
-                success = traverse(theY, theX+1); //right
-            if (!success)
-                success = traverse(theY-1, theX); //up
-            if (!success)
-                success = traverse(theY, theX-1); //left
-        }
-
-        return success;
-    }
-
-    private boolean validMove(final int theY, final int theX) {
-        Room room = myMaze[theY][theX];
-
-        //inside maze and non visited room
-        return theY >= 1 && theY < myMazeHeight -1
-                && theX >= 1 && theX < myMazeWidth -1
-                && !room.hasWall();
-    }
+//    private boolean validMove(final int theY, final int theX) {
+//        Room room = myMaze[theY][theX];
+//
+//        //inside maze and non visited room
+//        return theY >= 1 && theY < myMazeHeight -1
+//                && theX >= 1 && theX < myMazeWidth -1
+//                && !room.hasWall();
+//    }
 
 
 //    /**
@@ -448,12 +438,5 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 //
 //        return count;
 //    }
-
-    protected int getMyHeroX() {
-        return myHeroX;
-    }
-    protected int getMyHeroY() {
-        return myHeroY;
-    }
 
 }

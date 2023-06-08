@@ -331,11 +331,10 @@ public class DungeonGame {
     // CHEAT SHEET for dungeon symbols:
         //   = empty room
         // * = wall
-        // H = hero
+        // ◉ = hero
         // M = monster
         // X = pit
-        // o = entrance
-        // O = exit
+        // ▮ = exit
         // p = potion
         // A = abstraction pillar
         // I = inheritance pillar

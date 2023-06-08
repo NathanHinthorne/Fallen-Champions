@@ -207,7 +207,7 @@ public class TextModeInterface {
     }
 
     public void displayBattleLoseMsg() {
-        System.out.println("You have been defeated. Get good scrub.");
+        System.out.println("You have been defeated. GIT GUD SCRUB!");
     }
 
     public void displayCheatModeMsg() {

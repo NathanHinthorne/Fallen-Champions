@@ -9,9 +9,8 @@ public class Room implements java.io.Serializable {
 
     public static final String EMPTY = " ";
     public static final String MULTIPLE = "&"; // multiple objects in one room
-    public static final String HERO = "H";
-    public static final String ENTRANCE = "o";
-    public static final String EXIT = "O";
+    public static final String HERO = "◉";
+    public static final String EXIT = "▮";
 
 
     // make non-static if we add difficulty levels
@@ -189,8 +188,6 @@ public class Room implements java.io.Serializable {
             result = myPit.toString();
         } else if (hasExit()) {
             result = EXIT;
-        } else if (hasEntrance()) {
-            result = ENTRANCE;
         } else if (hasMonster()) {
             result = myMonster.toString();
         } else if (hasEntrance()) {
