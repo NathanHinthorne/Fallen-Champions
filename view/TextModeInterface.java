@@ -201,4 +201,16 @@ public class TextModeInterface {
     public void displayVictoryMsg() {
         System.out.println("You have escaped the dungeon!. Congratulations!!");
     }
+
+    public void displayBattleWinMsg() {
+        System.out.println("You completely obliterated that guy! GET REKT");
+    }
+
+    public void displayBattleLoseMsg() {
+        System.out.println("You have been defeated. Get good scrub.");
+    }
+
+    public void displayCheatModeMsg() {
+        System.out.println("YOU CHEATER! I SEE WHAT YOU'RE DOING THERE! ಠ_ಠ");
+    }
 }

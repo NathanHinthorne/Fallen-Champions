@@ -19,12 +19,15 @@ public class Dungeon implements java.io.Serializable {
         private static final int MAZE_HEIGHT = 7;
         private static final double MAX_BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
         private static final double PILLAR_CHANCE = 0.20;
+        public static final double ENEMY_CHANCE = 0.40;
+        public static final double POTION_CHANCE = 0.30;
+        public static final double PIT_CHANCE = 0.20;
 
 
         public Dungeon buildDungeon() {
 
             return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
-                                            MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
+                                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
         }
     }
     public static class MediumDungeonBuilder extends DungeonBuilder {
@@ -33,11 +36,14 @@ public class Dungeon implements java.io.Serializable {
         private static final int MAZE_HEIGHT = 10;
         private static final double MAX_BRANCH_OFF_CHANCE = 0.55; // with decreasing branch chance: 0.55
         private static final double PILLAR_CHANCE = 0.12;
+        public static final double ENEMY_CHANCE = 0.40;
+        public static final double POTION_CHANCE = 0.30;
+        public static final double PIT_CHANCE = 0.20;
 
         public Dungeon buildDungeon() {
 
             return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
-                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
+                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
         }
     }
     public static class LargeDungeonBuilder extends DungeonBuilder { // no static fields here. instance fields in DungeonBuilder and set them up in the constructor
@@ -45,12 +51,16 @@ public class Dungeon implements java.io.Serializable {
         private static final int MAZE_WIDTH = 15;
         private static final int MAZE_HEIGHT = 15;
         private static final double MAX_BRANCH_OFF_CHANCE = 0.60; // with decreasing branch chance: 0.60
-        private static final double PILLAR_CHANCE = 0.10;
+        private static final double PILLAR_CHANCE = 0.04;
+        public static final double ENEMY_CHANCE = 0.40;
+        public static final double POTION_CHANCE = 0.30;
+        public static final double PIT_CHANCE = 0.20;
+
 
         public Dungeon buildDungeon() {
 
             return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
-                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
+                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
         }
     }
 

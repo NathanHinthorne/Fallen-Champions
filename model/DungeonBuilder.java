@@ -2,7 +2,6 @@ package model;
 
 import org.sqlite.SQLiteDataSource;
 
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,14 +12,14 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
     // include as parameters to buildDungeon if we want these to change with difficulty levels
     public static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
-    public static final double ENEMY_CHANCE = 0.40;
-    public static final double POTION_CHANCE = 0.30;
-    public static final double PIT_CHANCE = 0.20;
     public static final Random rand = new Random();
 
     private Set<Pillars> myPlacedPillars;
     private List<Monster> myUnplacedMonsters;
     protected double myPillarChance;
+    protected double myMonsterChance;
+    protected double myPotionChance;
+    protected double myPitChance;
     private Room[][] myMaze;
     private int myMazeWidth;
     private int myMazeHeight;
@@ -32,12 +31,14 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     private int myExitY;
     protected double myMaxRoomBranchOffChance;
     protected int myNumberOfEmptyRooms = 0;
+    private String myDifficulty;
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
     protected DungeonBuilder() { }
 
     public Dungeon buildDungeon(final String theDifficulty, final int theMazeWidth, final int theMazeHeight,
-                                   final double theMaxBranchOffChance, final double thePillarChance) {
+                                   final double theMaxBranchOffChance, final double thePillarChance,
+                                   final double theMonsterChance, final double thePotionChance, final double thePitChance) {
 
         Dungeon dungeon = new Dungeon();
         myMazeWidth = theMazeWidth;
@@ -47,8 +48,12 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         myUnplacedMonsters = new LinkedList<>();
         myMaxRoomBranchOffChance = theMaxBranchOffChance;
         myPillarChance = thePillarChance;
+        myMonsterChance = theMonsterChance;
+        myPotionChance = thePotionChance;
+        myPitChance = thePitChance;
+        myDifficulty = theDifficulty;
 
-        readMonsters(theDifficulty);
+        readMonsters(myDifficulty);
 
         // step 1: fill the dungeon COMPLETELY with walls
         fillWithWalls();
@@ -75,6 +80,11 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         dungeon.setHeroY(myHeroY);
 
         return dungeon;
+    }
+
+    private void restartDungeon() {
+        buildDungeon(myDifficulty, myMazeWidth, myMazeHeight, myMaxRoomBranchOffChance, myPillarChance,
+                myMonsterChance, myPotionChance, myPitChance);
     }
 
     private void readMonsters(final String difficulty) {
@@ -149,8 +159,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         double roomPercentage = (double) myNumberOfEmptyRooms / numberOfRooms;
 
         if (roomPercentage < 0.55 || roomPercentage > 0.75) { // (this if statement should barely ever execute)
-            fillWithWalls();
-            fillWithEmptyRooms(); // try again with the original branch off chance
+            restartDungeon(); // try again with the original branch off chance
         }
 
 //        debugPrintRooms(); // DEBUG METHOD
@@ -269,16 +278,17 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
-                    if (Math.random() < ENEMY_CHANCE) { //TODO limit the number of enemies in the dungeon - probably not
+                    if (Math.random() < myMonsterChance) { //TODO limit the number of enemies in the dungeon - probably not
                         room.placeMonster(myUnplacedMonsters);             //TODO use a list to accomplish this?
                     }
-                    if (Math.random() < POTION_CHANCE) {
+                    if (Math.random() < myPotionChance) {
                         room.placePotion();
                     }
                     if (Math.random() < myPillarChance) {
+                        System.out.println("DEBUG: Placed a pillar at " + x + ", " + y);
                         room.placePillar(myPlacedPillars);
                     }
-                    if (Math.random() < PIT_CHANCE) {
+                    if (Math.random() < myPitChance) {
                         room.placePit();
                     }
                 }
@@ -286,9 +296,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         }
 
         // confirm the maze contains all 4 pillars
-//        if (thePlacedPillars.size() != 4) {
-//            fillWithObjects(the);
-//        }
+        if (myPlacedPillars.size() != 4) {
+            restartDungeon();
+        }
 
 //        debugPrintObjects(); // debug
     }

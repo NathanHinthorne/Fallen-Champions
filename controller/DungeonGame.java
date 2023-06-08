@@ -16,7 +16,6 @@ public class DungeonGame {
 
     private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
 
-    // remove "my" prefix?
     private static Dungeon dungeon; // from model
     private static TextModeInterface game; // from view
 
@@ -132,6 +131,12 @@ public class DungeonGame {
     }
 
     private static void gameLoop() {
+            // setup work before game starts looping
+            if (CHEAT_MODE) {
+                game.displayCheatModeMsg();
+                cheatModeStuff();
+            }
+
             while (!gameOver) { // while the hero is still alive
 
                 // display a view of the dungeon immediately
@@ -139,13 +144,6 @@ public class DungeonGame {
                     game.printDungeonMap(dungeon);
                 } else {
                     game.printPlayerView(dungeon); // display the 3x3 player's view
-                }
-
-                if (CHEAT_MODE) {
-                    hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
-                    hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
-                    hero.getMyInventory().addPillar(Pillars.INHERITANCE);
-                    hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
                 }
 
                 if (dungeon.heroIsTouchingPillar()) {
@@ -197,17 +195,20 @@ public class DungeonGame {
                     System.out.println("You have encountered a monster!");
 
                     DelayMachine.delay(2); // delay for 1 second
-                    // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
+                    // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
+
                     MonsterBattle battle = new MonsterBattle(hero,monster,game);
                     boolean winnerWinnerChickenDinner = battle.newBattle();
 
                     if (winnerWinnerChickenDinner) {
                         // play victory sound
                         // win cutscene
+                        game.displayBattleWinMsg();
                         // earn rewards
                     } else {
                         // play defeat sound
                         // defeat cutscene
+                        game.displayBattleLoseMsg();
                         gameOver = true;
                         break;
                     }
@@ -216,7 +217,7 @@ public class DungeonGame {
                 if (dungeon.heroIsTouchingExit()) {
                     if (exitIsOpen) {
                         // play victory sound
-                        // play cutscene?
+                        // play cutscene
                         game.displayVictoryMsg();
                         gameOver = true;
                         break;
@@ -309,6 +310,19 @@ public class DungeonGame {
             System.out.println("Couldn't load game! Starting a new game...");
         }
 
+    }
+
+    private static void cheatModeStuff() {
+        hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
+        hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
+        hero.getMyInventory().addPillar(Pillars.INHERITANCE);
+        hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
+
+        hero.getMyInventory().addToInventory(new HealthPotion());
+        hero.getMyInventory().addToInventory(new HealthPotion());
+        hero.getMyInventory().addToInventory(new HealthPotion());
+        hero.getMyInventory().addToInventory(new HealthPotion());
+        hero.getMyInventory().addToInventory(new HealthPotion());
     }
 
 
