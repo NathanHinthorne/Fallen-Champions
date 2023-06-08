@@ -21,7 +21,6 @@ public class DungeonGame {
     private static TextModeInterface game; // from view
 
     private static Hero hero; // move to main and make non static?
-    private static Monster monster; // move to main and make non static?
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
     private static boolean exitIsOpen = false; // set to true when player collects all pillars
@@ -192,17 +191,30 @@ public class DungeonGame {
                 }
 
                 if (dungeon.heroIsTouchingMonster()) {
+                    Monster monster = dungeon.getMonster();
+
                     // play monster encounter sound
+                    System.out.println("You have encountered a monster!");
+
                     DelayMachine.delay(2); // delay for 1 second
                     // play monster encounter cutscene? (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
-                    new MonsterBattle(hero,monster,game);
-                    // if player wins, continue game, earn rewards
-                    // if player loses, gameOver = true
+                    MonsterBattle battle = new MonsterBattle(hero,monster,game);
+                    boolean winnerWinnerChickenDinner = battle.newBattle();
+
+                    if (winnerWinnerChickenDinner) {
+                        // play victory sound
+                        // win cutscene
+                        // earn rewards
+                    } else {
+                        // play defeat sound
+                        // defeat cutscene
+                        gameOver = true;
+                        break;
+                    }
                 }
 
                 if (dungeon.heroIsTouchingExit()) {
-//                    if (exitIsOpen) {
-                    if (hero.getMyInventory().getMyPillarCount() >= 4) {
+                    if (exitIsOpen) {
                         // play victory sound
                         // play cutscene?
                         game.displayVictoryMsg();

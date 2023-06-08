@@ -18,42 +18,39 @@ public class MonsterBattle {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;
-        myVictory = false;
         myGame = theView;
-        newBattle(theHero,theMonster);
+        myVictory = false;
     }
 
     /**
      * Starts a new battle between the player and a random
      * monster.
-     * @param thePlayer The player
-     * @param theEnemy The monster
      * @return True if the player wins, false if they lose.
      */
-    public boolean newBattle(Hero thePlayer, Monster theEnemy) {
+    public boolean newBattle() {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
-        if (thePlayer.getSpd() > theEnemy.getSpd()) {
+        if (myHero.getSpd() > myMonster.getSpd()) {
             while (!myGameOver) {
-                if (thePlayer.getHitPoints() > 0) {
-                    playerTurn(thePlayer, theEnemy);
+                if (myHero.getHitPoints() > 0) {
+                    playerTurn();
                     DelayMachine.delay(3);
                 }
-                if (theEnemy.getHitPoints() > 0) {
-                    monsterTurn(theEnemy, thePlayer);
+                if (myMonster.getHitPoints() > 0) {
+                    monsterTurn();
                     DelayMachine.delay(3);
                 }
             }
         } else {
             while (!myGameOver) {
-                if (theEnemy.getHitPoints() > 0) {
-                    monsterTurn(theEnemy, thePlayer);
+                if (myMonster.getHitPoints() > 0) {
+                    monsterTurn();
                     DelayMachine.delay(3);
                 }
-                if (thePlayer.getHitPoints() > 0) {
-                    playerTurn(thePlayer, theEnemy);
+                if (myHero.getHitPoints() > 0) {
+                    playerTurn();
                     DelayMachine.delay(3);
                 }
             }
@@ -69,91 +66,89 @@ public class MonsterBattle {
     /**
      * Prompts the user for their choice and displays
      * current Player and Monster HP and other info
-     * @param thePlayer
-     * @param theEnemy
      */
-    private void playerTurn(Hero thePlayer, Monster theEnemy) {
+    private void playerTurn() {
         /**
          * Read input from user to determine what to do
          */
-        thePlayer.takeTurn();
+        myHero.takeTurn();
 
-        int choice = myGame.battleMenu(thePlayer, theEnemy);
+        int choice = myGame.battleMenu(myHero, myMonster);
         System.out.println();
 
         // Basic Attack
         if (choice == 1) {
-            int amt = thePlayer.basicAtk(theEnemy);
-            myGame.playerMoves(choice, amt, thePlayer);
+            int amt = myHero.basicAtk(myMonster);
+            myGame.playerMoves(choice, amt, myHero);
             DelayMachine.delay(2);
 
         // Special Attack
         } else if (choice == 2) {
-            int temp = thePlayer.getSpecialCooldown();
-            int amt = thePlayer.specialAtk(theEnemy);
-            myGame.playerMoves(choice, amt, thePlayer);
+            int temp = myHero.getSpecialCooldown();
+            int amt = myHero.specialAtk(myMonster);
+            myGame.playerMoves(choice, amt, myHero);
             DelayMachine.delay(2);
             if (temp > 0) {
-                playerTurn(thePlayer,theEnemy);
+                playerTurn();
             }
 
         // Open inventory
         } else if (choice == 3) {
             boolean itemused = false;
-            int slot = myGame.openBag(thePlayer.getMyInventory());
+            int slot = myGame.openBag(myHero.getMyInventory());
             if (slot > 4 || slot < 0) {
-                playerTurn(thePlayer,theEnemy);
+                playerTurn();
             } else {
-                myGame.usePotion(slot-1, thePlayer);
-                thePlayer.getMyInventory().consumeItem(thePlayer, slot-1);
+                myGame.usePotion(slot-1, myHero);
+                myHero.getMyInventory().consumeItem(myHero, slot-1);
             }
 
         }
 
         // Checks if the attack killed the enemy
-        if (theEnemy.getHitPoints() <= 0) {
+        if (myMonster.getHitPoints() <= 0) {
             myGameOver = true;
             myVictory = true;
         }
 
     }
 
-    private void monsterTurn(Monster theEnemy, Hero thePlayer) {
+    private void monsterTurn() {
         // Bound to how many things the monster can do
 
         myGame.monsterTurnText();
         DelayMachine.delay(2);
 
         int choice = RANDOMIZER.nextInt(3);
-        theEnemy.takeTurn();
+        myMonster.takeTurn();
 
         // Basic Attack
         if (choice == 0) {
-            int amt = theEnemy.basicAtk(thePlayer);
+            int amt = myMonster.basicAtk(myHero);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
 
         // Special Attack
-        } else if (choice == 1 && theEnemy.getSpecialCooldown() <= 0) {
-            int amt = theEnemy.specialAtk(thePlayer);
+        } else if (choice == 1 && myMonster.getSpecialCooldown() <= 0) {
+            int amt = myMonster.specialAtk(myHero);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
 
         // Heal
-        } else if (choice == 2 && theEnemy.getHitPoints() < (theEnemy.getMaxHitPoints() - theEnemy.getMaxHeal())) {
-            int amt = theEnemy.heal(theEnemy);
+        } else if (choice == 2 && myMonster.getHitPoints() < (myMonster.getMaxHitPoints() - myMonster.getMaxHeal())) {
+            int amt = myMonster.heal(myMonster);
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
 
         // Basic attack failsafe
         } else {
-            int amt = theEnemy.basicAtk(thePlayer);
+            int amt = myMonster.basicAtk(myHero);
             myGame.monsterMoves(0, amt);
             DelayMachine.delay(2);
         }
 
         // checks if the attack killed the player
-        if (thePlayer.getHitPoints() <= 0) {
+        if (myHero.getHitPoints() <= 0) {
             myGameOver = true;
             myVictory = false;
         }

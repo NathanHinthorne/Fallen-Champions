@@ -88,6 +88,9 @@ public class Room implements java.io.Serializable {
     public Pit getPit() {
         return myPit;
     }
+    public Monster getMonster() {
+        return myMonster;
+    }
 
     public boolean isEmpty() {
         return !hasWall() && !hasEntrance() && !hasExit() &&

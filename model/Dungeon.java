@@ -27,8 +27,6 @@ public class Dungeon implements java.io.Serializable {
                                             MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
         }
     }
-
-
     public static class MediumDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Medium";
         private static final int MAZE_WIDTH = 10;
@@ -54,13 +52,6 @@ public class Dungeon implements java.io.Serializable {
             return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
                     MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE);
         }
-    }
-
-
-
-    // for inner classes to use (if needed)
-    private Room[][] getMaze() {
-        return myMaze;
     }
 
 
@@ -91,6 +82,9 @@ public class Dungeon implements java.io.Serializable {
     }
     public Pit getPit() {
         return myMaze[myHeroY][myHeroX].getPit();
+    }
+    public Monster getMonster() {
+        return myMaze[myHeroY][myHeroX].getMonster();
     }
 
 
