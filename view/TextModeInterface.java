@@ -186,16 +186,18 @@ public class TextModeInterface {
                 System.out.println("You perform an attack for " + theHpAmt + " damage!");
             }
         } else if (theVal == 2) {
-            if (theHpAmt == 0) {
-                System.out.println("Your special attack failed!");
-            } else if (theHpAmt == -1) {
+            if (theHpAmt == -1) {
                 System.out.println("You cannot use your special for another "
                         + thePlayer.getSpecialCooldown() + " moves!");
+            } else if (theHpAmt == 0) {
+                System.out.println("Your special attack failed!");
             } else {
                 System.out.println("You perform a special attack for " + theHpAmt + " damage!");
             }
         } else if (theVal == 3) {
             System.out.println("Opening bag...");
+        } else {
+            playerMoves(theVal, theHpAmt, thePlayer);
         }
     }
 

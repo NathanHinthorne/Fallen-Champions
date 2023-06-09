@@ -25,8 +25,10 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
         int theLowHealth = 10;
         int theHighHealth = 40;
 
-        int fallHealth = generateNewHealth(theLowHealth, theHighHealth); // don't know if this works
-        theHero.setHitPoints(getHitPoints() - fallHealth);
+        int fallDamage = generateNewHealth(theLowHealth, theHighHealth); // don't know if this works
+        theHero.setHitPoints(theHero.getHitPoints() - fallDamage);
+
+        return fallDamage;
     }
 
     public String toString() {

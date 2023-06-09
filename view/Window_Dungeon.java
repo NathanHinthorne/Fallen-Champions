@@ -3,6 +3,7 @@ package view;
 import controller.DungeonGame;
 import model.Dungeon;
 import model.HeroTypes;
+import model.Room;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -10,11 +11,14 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Window_Dungeon implements ActionListener {
 
     private int myHp = 100;
+    int mySize;
+    JLabel[][] myTiles;
 
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
     JSlider myVolume = new JSlider(-20, 0);
@@ -27,16 +31,19 @@ public class Window_Dungeon implements ActionListener {
     JButton myDown;
     JButton myLeft;
     JButton myRight;
+//
+//    JLabel myTile00;
+//    JLabel myTile01;
+//    JLabel myTile02;
+//    JLabel myTile10;
+//    JLabel myTile11;
+//    JLabel myTile12;
+//    JLabel myTile20;
+//    JLabel myTile21;
+//    JLabel myTile22;
 
-    JLabel myTile00;
-    JLabel myTile01;
-    JLabel myTile02;
-    JLabel myTile10;
-    JLabel myTile11;
-    JLabel myTile12;
-    JLabel myTile20;
-    JLabel myTile21;
-    JLabel myTile22;
+
+
     JLabel myDungeonBorder;
     JLabel myPlayerLabel;
     JLabel myPlayerInfo;
@@ -65,9 +72,11 @@ public class Window_Dungeon implements ActionListener {
         myPlayerInfo = new JLabel("Class: " + theType.toString());
         setHeroSprite(theType);
         setupFrame();
+        initializeTiles(theDungeon);
         addListeners(theDungeon);
         ArrowActions();
     }
+
 
     private void setupFrame() {
 
@@ -95,26 +104,31 @@ public class Window_Dungeon implements ActionListener {
         myPlayerHealth2 = new JLabel(String.valueOf(myHp));
 
         // Image file prep
-        myBackgroundField.setBounds(0,0,800,450);
+        myBackgroundField.setBounds(0,0,1600,900);
 
-        myUp.setBounds(565,100,80,80);
+        myUp.setBounds((mainFrame.getWidth()-235),100,80,80);
         myUp.setFocusable(false);
-        myDown.setBounds(565,260,80,80);
+        myDown.setBounds((mainFrame.getWidth()-235),260,80,80);
         myDown.setFocusable(false);
-        myLeft.setBounds(485,180,80,80);
+        myLeft.setBounds((mainFrame.getWidth()-315),180,80,80);
         myLeft.setFocusable(false);
-        myRight.setBounds(645,180,80,80);
+        myRight.setBounds((mainFrame.getWidth()-155),180,80,80);
         myRight.setFocusable(false);
 
-        myVolText.setBounds(450, 20, 120, 20);
-        myVolume.setBounds(570, 20, 190, 20);
+        myVolText.setBounds((mainFrame.getWidth()-350), 20, 120, 20);
+        myVolume.setBounds((mainFrame.getWidth()-230), 20, 190, 20);
         myVolume.setValue(-10);
-        myBagButton.setBounds(450,50,100,40);
+        myBagButton.setBounds((mainFrame.getWidth()-350),50,100,40);
         myBagButton.setFocusable(false);
-        mySaveButton.setBounds(555,50,100,40);
+        mySaveButton.setBounds((mainFrame.getWidth()-245),50,100,40);
         mySaveButton.setFocusable(false);
-        myMenuButton.setBounds(660,50,100,40);
+        myMenuButton.setBounds((mainFrame.getWidth()-140),50,100,40);
         myMenuButton.setFocusable(false);
+
+        myPlayerLabel.setBounds(160,160,80,80);
+        myPlayerInfo.setBounds(60, 12, 100, 80);
+        myPlayerHealth1.setBounds(280, 12, 40, 80);
+        myPlayerHealth2.setBounds(320, 12, 60, 80);
 
         // Order is top to bottom
         mainFrame.add(myVolume);
@@ -126,65 +140,60 @@ public class Window_Dungeon implements ActionListener {
         mainFrame.add(myBagButton);
         mainFrame.add(mySaveButton);
         mainFrame.add(myMenuButton);
-
-        fetchTiles();
-
-
-        myTile00.setBounds(65,65,90,90);
-        myTile01.setBounds(155,65,90,90);
-        myTile02.setBounds(245,65,90,90);
-        myTile10.setBounds(65,155,90,90);
-        myTile11.setBounds(155,155,90,90);
-        myTile12.setBounds(245,155,90,90);
-        myTile20.setBounds(65,245,90,90);
-        myTile21.setBounds(155,245,90,90);
-        myTile22.setBounds(245,245,90,90);
-        myPlayerLabel.setBounds(160,160,80,80);
-        myPlayerInfo.setBounds(60, 12, 100, 80);
-        myPlayerHealth1.setBounds(280, 12, 40, 80);
-        myPlayerHealth2.setBounds(320, 12, 60, 80);
-
         mainFrame.add(myPlayerHealth1);
         mainFrame.add(myPlayerHealth2);
         mainFrame.add(myPlayerLabel);
         mainFrame.add(myPlayerInfo);
-        mainFrame.add(myTile00);
-        mainFrame.add(myTile01);
-        mainFrame.add(myTile02);
-        mainFrame.add(myTile10);
-        mainFrame.add(myTile11);
-        mainFrame.add(myTile12);
-        mainFrame.add(myTile20);
-        mainFrame.add(myTile21);
-        mainFrame.add(myTile22);
-
         mainFrame.add(myDungeonBorder);
-
-
         mainFrame.add(myBackgroundField);
 
         // Finalizing mainFrame settings
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mainFrame.setSize(800,450);
+        mainFrame.setSize(1600,900);
         mainFrame.setLayout(null);
         mainFrame.setVisible(true);
         mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setResizable(false);
 
+//        fetchTiles();
+
+//        myTile00.setBounds(65,65,90,90);
+//        myTile01.setBounds(155,65,90,90);
+//        myTile02.setBounds(245,65,90,90);
+//        myTile10.setBounds(65,155,90,90);
+//        myTile11.setBounds(155,155,90,90);
+//        myTile12.setBounds(245,155,90,90);
+//        myTile20.setBounds(65,245,90,90);
+//        myTile21.setBounds(155,245,90,90);
+//        myTile22.setBounds(245,245,90,90);
+
+//
+//        mainFrame.add(myTile00);
+//        mainFrame.add(myTile01);
+//        mainFrame.add(myTile02);
+//        mainFrame.add(myTile10);
+//        mainFrame.add(myTile11);
+//        mainFrame.add(myTile12);
+//        mainFrame.add(myTile20);
+//        mainFrame.add(myTile21);
+//        mainFrame.add(myTile22);
+
+
+
     }
 
-    private void fetchTiles() {
-        myTile00 = new JLabel(myWall);
-        myTile01 = new JLabel(myExit);
-        myTile02 = new JLabel(myWall);
-        myTile10 = new JLabel(myPath);
-        myTile11 = new JLabel(myPath);
-        myTile12 = new JLabel(myPath);
-        myTile20 = new JLabel(myWall);
-        myTile21 = new JLabel(myEntrance);
-        myTile22 = new JLabel(myWall);
-    }
+//    private void fetchTiles() {
+//        myTile00 = new JLabel(myWall);
+//        myTile01 = new JLabel(myExit);
+//        myTile02 = new JLabel(myWall);
+//        myTile10 = new JLabel(myPath);
+//        myTile11 = new JLabel(myPath);
+//        myTile12 = new JLabel(myPath);
+//        myTile20 = new JLabel(myWall);
+//        myTile21 = new JLabel(myEntrance);
+//        myTile22 = new JLabel(myWall);
+//    }
 
     private void addListeners(Dungeon theDungeon) {
 
@@ -307,6 +316,40 @@ public class Window_Dungeon implements ActionListener {
 
     public void setHpGameMenu(int theIn) {
         myHp = theIn;
+    }
+
+    public void initializeTiles(final Dungeon theRooms) {
+
+        int x = 65;
+        int y = 65;
+
+        if (theRooms.getDifficulty() == "Easy"){
+            myTiles = new JLabel[7][7];
+            mySize = 7;
+        } else if (theRooms.getDifficulty() == "Medium"){
+            myTiles = new JLabel[10][10];
+            mySize = 10;
+        } else if (theRooms.getDifficulty() == "Hard"){
+            myTiles = new JLabel[15][15];
+            mySize = 15;
+        }
+
+        for (int i = 0; i < mySize; i ++) {
+            for (int j = 0; j < mySize; i ++) {
+                if ((theRooms.getMyMaze())[i][j].toString() == "*") {
+                    myTiles[i][j] = new JLabel(myWall);
+                } else if ((theRooms.getMyMaze())[i][j].toString() == Room.EMPTY) {
+                    myTiles[i][j] = new JLabel(myPath);
+                } else { // temporarily fills the rest with paths, ignoring items.
+                    myTiles[i][j] = new JLabel(myPath);
+                }
+                myTiles[i][j].setBounds(x,y,90,90);
+                mainFrame.add(myTiles[i][j]);
+                x += 90;
+                y += 90;
+            }
+        }
+
     }
 
     @Override

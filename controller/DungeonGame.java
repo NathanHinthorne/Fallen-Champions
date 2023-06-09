@@ -194,7 +194,7 @@ public class DungeonGame {
                     Monster monster = dungeon.getMonster();
 
                     // play monster encounter sound
-                    System.out.println("You have encountered a monster!");
+                    game.displayMonsterEncounterMsg(monster);
 
                     DelayMachine.delay(1); // delay for 0.5 seconds
                     // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
@@ -225,7 +225,7 @@ public class DungeonGame {
                         gameOver = true;
                         break;
                     } else {
-                        System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
+                        game.exitLocked();
                     }
                 }
 
@@ -282,7 +282,9 @@ public class DungeonGame {
                     case 'e': // open bag
                         boolean choosing = true;
                         int itemSlot = game.openBag(hero.getMyInventory());
-                        hero.getMyInventory().consumeItem(hero, itemSlot);
+                        if (itemSlot < 5 || itemSlot > 0) {
+                            hero.getMyInventory().consumeItem(hero, itemSlot);
+                        }
                         break;
 
                     case '4': // quit
@@ -357,9 +359,6 @@ public class DungeonGame {
         hero.getMyInventory().addPillar(Pillars.INHERITANCE);
         hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
 
-        hero.getMyInventory().addToInventory(new HealthPotion());
-        hero.getMyInventory().addToInventory(new HealthPotion());
-        hero.getMyInventory().addToInventory(new HealthPotion());
         hero.getMyInventory().addToInventory(new HealthPotion());
         hero.getMyInventory().addToInventory(new HealthPotion());
     }

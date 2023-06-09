@@ -13,18 +13,18 @@ public class Hero_Support extends Hero implements Healable,java.io.Serializable 
 
 
     protected Hero_Support() {
-        super(85,4,35,75,55,35, 85, 3, HeroTypes.SUPPORT);
-        setSpecial2Cooldown(15);
+        super(85,4,35,75,55,35, 85, 0, HeroTypes.SUPPORT);
+//        setSpecial2Cooldown(15);
 
     }
 
-    /**
-     * Sets the special cooldown
-     * @param thespecial2Cooldown the special cooldown
-     */
-    public void setSpecial2Cooldown(int thespecial2Cooldown) {
-        thespecial2Cooldown = special2Cooldown;
-    }
+//    /**
+//     * Sets the special cooldown
+//     * @param thespecial2Cooldown the special cooldown
+//     */
+//    public void setSpecial2Cooldown(int thespecial2Cooldown) {
+//        thespecial2Cooldown = special2Cooldown;
+//    }
 
     /**
      * Second special attack for hero
@@ -32,21 +32,25 @@ public class Hero_Support extends Hero implements Healable,java.io.Serializable 
     @Override
     public int specialAtk(DungeonCharacter theOther) {
 
-        if(getHitChance() >= getLowHitChance() && getHitChance() <= getHighHitChance()) {
-            // Attack successful
-            theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
-        } else { // Will be worked on later, planned to be an error message
-            // Attack failed
-            System.out.println("Attack Failed!");
+        this.setHitChance(generateHitChance(getLowHitChance(), getHighHitChance()));
+        int pointer = MY_RANDOM.nextInt(100);
 
+        if(getHitChance() >= pointer) {
+            // Attack lands
+            if (getSpecialCooldown() < 1) {
+                theOther.setHitPoints(theOther.getHitPoints() - getMaxDamage());
+                this.setSpecialCooldown(MAX_SPECIAL_COOLDOWN); // reset the cooldown
+                this.heal(this);
+                return getMaxDamage();
+            } else {
+                return -1;
+            }
+        } else {
+            // Attack failed
+            return 0;
         }
 
-        heal(this);
-
-        //mySpecialCooldown = MAX_SPECIAL_COOLDOWN; // reset the cooldown
-
-        return getMaxDamage();
-
+        //getSpecialCooldown() = MAX_SPECIAL_COOLDOWN; // reset the cooldown
     }
 
     /**
