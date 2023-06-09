@@ -235,7 +235,7 @@ public class DungeonGame {
 
 //                DelayMachine.delay(1); // delay for 1 second
 
-                if ()
+//                if ()
 
                 if (hero.usingVisionPotion()) {
                     dungeon.makeRoomsVisible();
@@ -276,7 +276,7 @@ public class DungeonGame {
                         break;
 
                     case '2': // display map
-                        game.printDungeonMap(dungeon);
+//                        game.printDungeonMap(dungeon);
                         break;
 
                     case 'e': // open bag
