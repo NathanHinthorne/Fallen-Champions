@@ -34,7 +34,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
      * @param theHeal the min heal
      */
     public void setMinHeal(int theHeal) {
-        theHeal = minHeal;
+        minHeal = theHeal;
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
      * @param theHeal the max heal
      */
     public void setMaxHeal(int theHeal) {
-        theHeal = maxHeal;
+        maxHeal = theHeal;
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
      * @param theChance the heal chance
      */
     public void setHealChance(double theChance) {
-        theChance = healChance;
+        healChance = theChance;
     }
 
     public static int generateHealChance(int theLowChance, int theHighChance) {
