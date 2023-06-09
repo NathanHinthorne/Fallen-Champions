@@ -101,6 +101,14 @@ public class Dungeon implements java.io.Serializable {
         myMaze[myHeroY][myHeroX].removeMonster();
     }
 
+    public void removePotion() {
+        myMaze[myHeroY][myHeroX].removePotion();
+    }
+    public void removePillar() {
+        myMaze[myHeroY][myHeroX].removePillar();
+    }
+
+
     public String getDifficulty() {
         return myDifficulty;
     }

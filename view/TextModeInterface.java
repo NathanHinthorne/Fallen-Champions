@@ -100,7 +100,7 @@ public class TextModeInterface {
         System.out.println();
     }
 
-    public void printDungeonMap(Dungeon theDungeon) {
+    public void displayDungeonMap(Dungeon theDungeon) {
         System.out.println(theDungeon.toString());
         System.out.println();
     }
@@ -211,7 +211,7 @@ public class TextModeInterface {
         System.out.println("-----------------------------------------------------");
     }
 
-    public void displayBattleLoseMsg() {
+    public void displayDeathMsg() {
         System.out.println("You have been defeated. GIT GUD SCRUB!");
     }
 
