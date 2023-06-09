@@ -12,8 +12,8 @@ public class HealthPotion extends Potion implements Healable {
     private int myHealingAmount;
 
     public HealthPotion() {
-        myMinHeal = 25;
-        myMaxHeal = 35;
+        myMinHeal = 150;
+        myMaxHeal = 250;
         myHealChance = 70.0;
         myHealingAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
     }

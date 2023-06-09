@@ -154,12 +154,12 @@ public class Room implements java.io.Serializable {
     public void placePit() {
         myPit = new Pit();
     }
+    public void placeHero() {
+        myHero = true;
+    }
 
     public void removeWall() {
         myWall = null;
-    }
-    public void placeHero() {
-        myHero = true;
     }
     public void removeHero() {
         myHero = false;
@@ -167,6 +167,13 @@ public class Room implements java.io.Serializable {
     public void removeMonster() {
         myMonster = null;
     }
+    public void removePotion() {
+        myPotion = null;
+    }
+    public void removePillar() {
+        myPillar = null;
+    }
+
 
     public void getContents() {
         System.out.print("Room contents: ");

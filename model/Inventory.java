@@ -84,9 +84,9 @@ public class Inventory implements java.io.Serializable {
      * it is removed from the inventory.
      * @param theIndex The index of the item to be removed.
      */
-    public void consumeItem(final Hero thePlayer, int theIndex) {
+    public Potion consumeItem(final Hero thePlayer, int theIndex) {
         myInventory.get(theIndex).effect(thePlayer);
-        myInventory.remove(theIndex);
+        return myInventory.remove(theIndex);
     }
 
     /**
