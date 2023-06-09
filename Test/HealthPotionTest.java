@@ -1,5 +1,3 @@
-package model.unittest;
-
 import model.HealthPotion;
 import model.Hero;
 import model.Hero_Warrior;
@@ -7,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 class HealthPotionTest {
+
 
     @Test
     public void testHealingAmount() {

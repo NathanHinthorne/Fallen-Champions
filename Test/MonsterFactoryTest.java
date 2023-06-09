@@ -1,5 +1,3 @@
-package model.unittest;
-
 import model.*;
 import org.junit.Test;
 import static org.junit.Assert.*;

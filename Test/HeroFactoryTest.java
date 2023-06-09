@@ -1,5 +1,3 @@
-package model.unittest;
-
 import model.HeroFactory;
 import model.Hero;
 import model.HeroTypes;

@@ -1,5 +1,3 @@
-package model.unittest;
-
 import model.Dungeon;
 import model.DungeonBuilder;
 import org.junit.Test;
