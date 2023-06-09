@@ -62,4 +62,8 @@ public class HealthPotion extends Potion implements Healable {
         return "Health Potion";
     }
 
+    public int getHealingAmount() {
+        return myHealingAmount;
+    }
+
 }
