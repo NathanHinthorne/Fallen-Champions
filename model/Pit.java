@@ -10,9 +10,6 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
     private boolean myIsVisible;
 
 
-    public Pit(final boolean theIsVisible) { // for testing purposes, make all pits visible
-        myIsVisible = theIsVisible;
-    }
 
     public Pit() {
         myIsVisible = false;
@@ -31,12 +28,12 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
     /**
      * Makes the hero lose health by falling into a hole
      */
-    public void fall(final Hero theHero) {
+    public int fall(final Hero theHero) {
 
         myIsVisible = true;
 
-        int theLowHealth = 20;
-        int theHighHealth = 80;
+        int theLowHealth = 10;
+        int theHighHealth = 40;
 
         int fallHealth = generateNewHealth(theLowHealth, theHighHealth); // don't know if this works
         theHero.setHitPoints(getHitPoints() - fallHealth);
@@ -48,5 +45,6 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
         } else {
             return Room.EMPTY;
         }
+//        return "X";
     }
 }

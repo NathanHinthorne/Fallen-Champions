@@ -97,7 +97,9 @@ public class Dungeon implements java.io.Serializable {
         return myMaze[myHeroY][myHeroX].getMonster();
     }
 
-
+    public void removeMonster() {
+        myMaze[myHeroY][myHeroX].removeMonster();
+    }
 
 
 
@@ -120,10 +122,6 @@ public class Dungeon implements java.io.Serializable {
             myHeroY++;
         } else if (dir == Direction.WEST && !myMaze[myHeroY][myHeroX-1].hasWall()) {
             myHeroX--;
-        } else {
-            System.out.println();
-            System.out.println("Invalid direction was given to playerMove()");
-            System.out.println();
         }
         Room newRoom = myMaze[myHeroY][myHeroX];
 

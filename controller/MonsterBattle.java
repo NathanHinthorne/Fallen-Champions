@@ -1,6 +1,5 @@
 package controller;
 import model.*;
-import org.w3c.dom.Text;
 import view.*;
 import java.util.Random;
 
@@ -103,6 +102,9 @@ public class MonsterBattle {
                 myHero.getMyInventory().consumeItem(myHero, slot-1);
             }
 
+        } else if (choice == 6) {
+            myGame.displayInstaKill();
+            myMonster.setHitPoints(0);
         }
 
         // Checks if the attack killed the enemy

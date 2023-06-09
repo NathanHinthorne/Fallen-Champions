@@ -68,7 +68,7 @@ public class TextModeInterface {
         if (ret < 1 && ret > 5) {
             ret = openBag(myBag);
         }
-        if (ret == 5) {
+        else if (ret == 5) {
             return ret;
         } else if (ret > myBag.getSize()) {
             System.out.println("That Slot is empty!");
@@ -204,7 +204,9 @@ public class TextModeInterface {
     }
 
     public void displayBattleWinMsg() {
-        System.out.println("You completely obliterated that guy! GET REKT");
+        System.out.print("ENEMY DEFEATED! GET REKT!!");
+        System.out.println();
+        System.out.println("-----------------------------------------------------");
     }
 
     public void displayBattleLoseMsg() {
@@ -223,5 +225,21 @@ public class TextModeInterface {
 
     public void displayStartMsg() {
         System.out.println("Welcome to the Dungeon!");
+    }
+
+    public void displayInstaKill() {
+        System.out.println("Woooow, you must be so powerful... cheater");
+    }
+
+    public void displayMonsterEncounterMsg(final Monster theMonster) {
+        System.out.println("You have encountered a " + theMonster.getType().toString());
+    }
+
+    public void exitLocked() {
+        System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
+    }
+
+    public void displayPitMsg(final int theFallDamage) {
+        System.out.println("You fell into a pit! You took " + theFallDamage + " damage!");
     }
 }

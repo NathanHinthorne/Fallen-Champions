@@ -152,6 +152,9 @@ public class Room implements java.io.Serializable {
     public void removeHero() {
         myHero = false;
     }
+    public void removeMonster() {
+        myMonster = null;
+    }
 
 
     @Override

@@ -178,7 +178,10 @@ public class DungeonGame {
                 if (dungeon.heroIsTouchingPit()) {
                     // play pit sound
 
-                    dungeon.getPit().fall(hero);
+                    Pit pit = dungeon.getPit();
+
+                    int fallDamage = pit.fall(hero);
+                    game.displayPitMsg(fallDamage);
 
                     if (hero.getHitPoints() <= 0) {
                         gameOver = true;
@@ -201,6 +204,7 @@ public class DungeonGame {
                         // play victory sound
                         // win cutscene
                         game.displayBattleWinMsg();
+                        dungeon.removeMonster();
                         // earn rewards
                     } else {
                         // play defeat sound
