@@ -19,8 +19,6 @@ public class DungeonGame {
     private static TextModeInterface game; // from view
 
     private static Hero hero; // move to main and make non static?
-    private static int heroSteps = 0;
-    private static int stepCountWhereVisionPotionWasUsed;
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
     private static boolean exitIsOpen = false; // set to true when player collects all pillars
@@ -143,184 +141,206 @@ public class DungeonGame {
     }
 
     private static void gameLoop() {
-            while (!gameOver) { // while the hero is still alive
 
-                if (dungeon.heroIsTouchingPillar()) {
-                    // play ding sound
+        int heroSteps = 0;
+        int stepsWithActiveVisionPotion = 0;
 
-                    Pillars pillar = dungeon.getPillar();
-                    hero.getMyInventory().addPillar(pillar);
-                    switch (pillar) {
-                        case ABSTRACTION:
-                            game.displayAbstractionPillarMsg();
-                            break;
-                        case ENCAPSULATION:
-                            game.displayEncapsulationPillarMsg();
-                            break;
-                        case INHERITANCE:
-                            game.displayInheritancePillarMsg();
-                            break;
-                        case POLYMORPHISM:
-                            game.displayPolymorphismPillarMsg();
-                            break;
-                    }
+        while (!gameOver) { // while the hero is still alive
 
-                    if (hero.getMyInventory().hasAllPillars()) {
-                        exitIsOpen = true;
-                    }
-                }
+            if (dungeon.heroIsTouchingPillar()) {
+                // play ding sound
 
-                if (dungeon.heroIsTouchingPotion()) {
-                    // play ding sound
-                    Potion potion = dungeon.getPotion();
-                    hero.getMyInventory().addToInventory(potion);
-                    game.displayPotionInfo(potion);
-                }
-
-                if (dungeon.heroIsTouchingPit()) {
-                    // play pit sound
-
-                    Pit pit = dungeon.getPit();
-
-                    int fallDamage = pit.fall(hero);
-                    game.displayPitMsg(fallDamage);
-
-                    if (hero.getHitPoints() <= 0) {
-                        gameOver = true;
-                    }
-                }
-
-                if (dungeon.heroIsTouchingMonster()) {
-                    Monster monster = dungeon.getMonster();
-
-                    // play monster encounter sound
-                    game.displayMonsterEncounterMsg(monster);
-
-                    DelayMachine.delay(1); // delay for 0.5 seconds
-                    // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
-
-                    MonsterBattle battle = new MonsterBattle(hero,monster,game);
-                    boolean winnerWinnerChickenDinner = battle.newBattle();
-
-                    if (winnerWinnerChickenDinner) {
-                        // play victory sound
-                        // win cutscene
-                        game.displayBattleWinMsg();
-                        dungeon.removeMonster();
-                        // earn rewards
-                    } else {
-                        // play defeat sound
-                        // defeat cutscene
-                        game.displayBattleLoseMsg();
-                        gameOver = true;
+                Pillars pillar = dungeon.getPillar();
+                hero.getMyInventory().addPillar(pillar);
+                switch (pillar) {
+                    case ABSTRACTION:
+                        game.displayAbstractionPillarMsg();
                         break;
-                    }
-                }
-
-                if (dungeon.heroIsTouchingExit()) {
-                    if (exitIsOpen) {
-                        // play victory sound
-                        // play cutscene
-                        game.displayVictoryMsg();
-                        gameOver = true;
+                    case ENCAPSULATION:
+                        game.displayEncapsulationPillarMsg();
                         break;
-                    } else {
-                        game.exitLocked();
-                    }
+                    case INHERITANCE:
+                        game.displayInheritancePillarMsg();
+                        break;
+                    case POLYMORPHISM:
+                        game.displayPolymorphismPillarMsg();
+                        break;
                 }
 
-                if (dungeon.heroIsTouchingWall()) {
-                    System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
+                if (hero.getMyInventory().hasAllPillars()) {
+                    exitIsOpen = true;
                 }
+
+                dungeon.removePillar();
+            }
+
+            if (dungeon.heroIsTouchingPotion()) {
+                // play ding sound
+                Potion potion = dungeon.getPotion();
+                hero.getMyInventory().addToInventory(potion);
+                game.displayPotionInfo(potion);
+
+                dungeon.removePotion();
+            }
+
+            if (dungeon.heroIsTouchingPit()) {
+                // play pit sound
+
+                Pit pit = dungeon.getPit();
+
+                int fallDamage = pit.fall(hero);
+                game.displayPitMsg(fallDamage);
+
+                if (hero.getHitPoints() <= 0) {
+                    // play death sound
+                    game.displayDeathMsg();
+                    gameOver = true;
+                }
+            }
+
+            if (dungeon.heroIsTouchingMonster()) {
+                Monster monster = dungeon.getMonster();
+
+                // play monster encounter sound
+                game.displayMonsterEncounterMsg(monster);
+
+                DelayMachine.delay(1); // delay for 0.5 seconds
+                // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
+
+                MonsterBattle battle = new MonsterBattle(hero,monster,game);
+                boolean winnerWinnerChickenDinner = battle.newBattle();
+
+                if (winnerWinnerChickenDinner) {
+                    // play victory sound
+                    // win cutscene
+                    game.displayBattleWinMsg();
+                    dungeon.removeMonster();
+                    // earn rewards
+                } else {
+                    // play defeat sound
+                    // defeat cutscene
+                    game.displayDeathMsg();
+                    gameOver = true;
+                    break;
+                }
+            }
+
+            if (dungeon.heroIsTouchingExit()) {
+                if (exitIsOpen) {
+                    // play victory sound
+                    // play cutscene
+                    game.displayVictoryMsg();
+                    gameOver = true;
+                    break;
+                } else {
+                    game.exitLocked();
+                }
+            }
+
+            if (dungeon.heroIsTouchingWall()) {
+                System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
+            }
 
 //                DelayMachine.delay(1); // delay for 1 second
 
-//                if ()
+            // check if vision potion is still active
+            if (stepsWithActiveVisionPotion >= 7) {
+                hero.setUsingVisionPotion(false);
+                dungeon.makeRoomsInvisible();
+                stepsWithActiveVisionPotion = 0;
+            }
 
-                if (hero.usingVisionPotion()) {
-                    dungeon.makeRoomsVisible();
-                } else {
-                    dungeon.makeRoomsInvisible(); // only call when the vision potion wears off?
-                }
+//            if (hero.usingVisionPotion()) {
+//                dungeon.makeRoomsVisible();
+//            }
 
-                game.displayPlayerView(dungeon);
+            if (CHEAT_MODE) {
+                dungeon.makeRoomsVisible();
+            }
+            game.displayDungeonMap(dungeon);
 
-                game.displayHeroHealth(hero);
+            game.displayHeroHealth(hero);
 
-                //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
-                // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game
-                int gameMenuSelection = game.gameplayMenu();
-                switch(gameMenuSelection) {
-                    case 's':
-                        dungeon.playerMove(Direction.SOUTH);
-                        heroSteps++;
-                        break;
+            //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
+            // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game
+            int gameMenuSelection = game.gameplayMenu();
+            switch(gameMenuSelection) {
+                case 's':
+                    dungeon.playerMove(Direction.SOUTH);
+                    heroSteps++;
+                    break;
 
-                    case 'a':
-                        dungeon.playerMove(Direction.WEST);
-                        heroSteps++;
-                        break;
+                case 'a':
+                    dungeon.playerMove(Direction.WEST);
+                    heroSteps++;
+                    break;
 
-                    case 'd':
-                        dungeon.playerMove(Direction.EAST);
-                        heroSteps++;
-                        break;
+                case 'd':
+                    dungeon.playerMove(Direction.EAST);
+                    heroSteps++;
+                    break;
 
-                    case 'w':
-                        dungeon.playerMove(Direction.NORTH);
-                        heroSteps++;
-                        break;
+                case 'w':
+                    dungeon.playerMove(Direction.NORTH);
+                    heroSteps++;
+                    break;
 
-                    case '1': // hero info
-                        game.displayHeroInfo(hero);
-                        break;
+                case '1': // hero info
+                    game.displayHeroInfo(hero);
+                    break;
 
-                    case '2': // display map
-//                        game.printDungeonMap(dungeon);
-                        break;
+                case '2': // display map
+                    game.displayDungeonMap(dungeon);
+                    break;
 
-                    case 'e': // open bag
-                        boolean choosing = true;
-                        int itemSlot = game.openBag(hero.getMyInventory());
-                        if (itemSlot < 5 || itemSlot > 0) {
-                            hero.getMyInventory().consumeItem(hero, itemSlot);
+                case 'e': // open bag
+                    boolean choosing = true;
+                    int itemSlot = game.openBag(hero.getMyInventory());
+
+                    if (itemSlot < 5 || itemSlot > 0) {
+                        Potion potion = hero.getMyInventory().consumeItem(hero, itemSlot);
+
+                        if (potion.type().equals("Vision Potion"))  {
+                            hero.setUsingVisionPotion(true);
+                            dungeon.makeRoomsVisible();
                         }
-                        break;
+                    }
+                    break;
 
-                    case '4': // quit
-                        int quit = game.quitProcess();
-                        if (quit == 1) {
-                            gameOver = true;
-                        }
-                        break;
+                case '4': // quit
+                    int quit = game.quitProcess();
+                    if (quit == 1) {
+                        gameOver = true;
+                    }
+                    break;
 
-                    case '5': // save
-                        saveGame();
-                        break;
+                case '5': // save
+                    saveGame();
+                    break;
 
-                    case 'i':
-                        System.out.println("Room has:");
-                        dungeon.roomAbove();
-                        break;
+                case 'i':
+                    System.out.println("Room has:");
+                    dungeon.roomAbove();
+                    break;
 
-                    case 'l':
-                        System.out.println("Room has:");
-                        dungeon.roomRight();
-                        break;
+                case 'l':
+                    System.out.println("Room has:");
+                    dungeon.roomRight();
+                    break;
 
-                    case 'k':
-                        System.out.println("Room has:");
-                        dungeon.roomBelow();
-                        break;
+                case 'k':
+                    System.out.println("Room has:");
+                    dungeon.roomBelow();
+                    break;
 
-                    case 'j':
-                        System.out.println("Room has:");
-                        dungeon.roomLeft();
-                        break;
+                case 'j':
+                    System.out.println("Room has:");
+                    dungeon.roomLeft();
+                    break;
 
-                    default:
-                        System.out.println("Please make a proper selection:");
-                }
+                default:
+                    System.out.println("Please make a proper selection:");
+            }
         }
     }
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk

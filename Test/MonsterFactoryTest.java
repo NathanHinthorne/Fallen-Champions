@@ -1,6 +1,6 @@
 import model.*;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MonsterFactoryTest {
     private static MonsterFactory factory = new MonsterFactory();
