@@ -120,23 +120,23 @@ public class Room implements java.io.Serializable {
         //determine if the pillar we're about to place is inside a set of placed pillars.
 
         if (!thePlacedPillars.contains(Pillars.ABSTRACTION)) {
-            System.out.println("DEBUG: Placing abstraction pillar");
+//            System.out.println("DEBUG: Placing abstraction pillar");
             thePlacedPillars.add(Pillars.ABSTRACTION);
             myPillar = Pillars.ABSTRACTION;
         } else if (!thePlacedPillars.contains(Pillars.ENCAPSULATION)) {
-            System.out.println("DEBUG: Placing encapsulation pillar");
+//            System.out.println("DEBUG: Placing encapsulation pillar");
             thePlacedPillars.add(Pillars.ENCAPSULATION);
             myPillar = Pillars.ENCAPSULATION;
         } else if (!thePlacedPillars.contains(Pillars.INHERITANCE)) {
-            System.out.println("DEBUG: Placing inheritance pillar");
+//            System.out.println("DEBUG: Placing inheritance pillar");
             thePlacedPillars.add(Pillars.INHERITANCE);
             myPillar = Pillars.INHERITANCE;
         } else if (!thePlacedPillars.contains(Pillars.POLYMORPHISM)) {
-            System.out.println("DEBUG: Placing polymorphism pillar");
+//            System.out.println("DEBUG: Placing polymorphism pillar");
             thePlacedPillars.add(Pillars.POLYMORPHISM);
             myPillar = Pillars.POLYMORPHISM;
         } else {
-            System.out.println("DEBUG: Tried to place a new pillar, but 4 are already in the dungeon!");
+//            System.out.println("DEBUG: Tried to place a new pillar, but 4 are already in the dungeon!");
         }
     }
     public void placePit() {

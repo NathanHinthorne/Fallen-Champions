@@ -36,22 +36,22 @@ public class MonsterBattle {
             while (!myGameOver) {
                 if (myHero.getHitPoints() > 0) {
                     playerTurn();
-                    DelayMachine.delay(3);
+                    DelayMachine.delay(2);
                 }
                 if (myMonster.getHitPoints() > 0) {
                     monsterTurn();
-                    DelayMachine.delay(3);
+                    DelayMachine.delay(2);
                 }
             }
         } else {
             while (!myGameOver) {
                 if (myMonster.getHitPoints() > 0) {
                     monsterTurn();
-                    DelayMachine.delay(3);
+                    DelayMachine.delay(2);
                 }
                 if (myHero.getHitPoints() > 0) {
                     playerTurn();
-                    DelayMachine.delay(3);
+                    DelayMachine.delay(2);
                 }
             }
         }

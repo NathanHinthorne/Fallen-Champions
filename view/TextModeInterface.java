@@ -29,11 +29,12 @@ public class TextModeInterface {
 
     public int gameplayMenu() {
         System.out.println();
-        System.out.println("[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]");
+        System.out.println("-----------------------------------------------------");
         System.out.println("You are currently in the dungeon");
         System.out.println("Please make a selection");
         System.out.println("'w' to move up, 'a' to move left, 's' to move down, 'd' to move right\n" +
                             "'1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game");
+        System.out.println("-----------------------------------------------------");
         return THE_SCANNER.next().charAt(0);
     }
 
@@ -95,13 +96,11 @@ public class TextModeInterface {
     }
 
     public void printPlayerView(Dungeon theDungeon) {
-        System.out.println("Map:");
         System.out.println(theDungeon.getView());
         System.out.println();
     }
 
     public void printDungeonMap(Dungeon theDungeon) {
-        System.out.println("Map:");
         System.out.println(theDungeon.toString());
         System.out.println();
     }
@@ -216,7 +215,7 @@ public class TextModeInterface {
         System.out.println("YOU CHEATER! I SEE WHAT YOU'RE DOING THERE! ಠ_ಠ");
     }
 
-    public void displayHeroHealth(Hero hero) {
-        System.out.println("Health: " + hero.getHitPoints() + "/" + hero.getMaxHitPoints());
+    public void displayHeroHealth(final Hero theHero) {
+        System.out.println("Health: " + theHero.getHitPoints() + "/" + theHero.getMaxHitPoints());
     }
 }

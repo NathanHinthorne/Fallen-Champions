@@ -138,15 +138,6 @@ public class DungeonGame {
 
             while (!gameOver) { // while the hero is still alive
 
-                // display a view of the dungeon immediately
-                if (CHEAT_MODE) {
-                    game.printDungeonMap(dungeon);
-                } else {
-                    game.printPlayerView(dungeon); // display the 3x3 player's view
-                }
-
-                game.displayHeroHealth(hero);
-
                 if (dungeon.heroIsTouchingPillar()) {
                     // play ding sound
 
@@ -195,7 +186,7 @@ public class DungeonGame {
                     // play monster encounter sound
                     System.out.println("You have encountered a monster!");
 
-                    DelayMachine.delay(2); // delay for 1 second
+                    DelayMachine.delay(1); // delay for 0.5 seconds
                     // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
 
                     MonsterBattle battle = new MonsterBattle(hero,monster,game);
@@ -232,6 +223,15 @@ public class DungeonGame {
                 }
 
 //                DelayMachine.delay(1); // delay for 1 second
+
+                // display a view of the dungeon immediately
+                if (CHEAT_MODE) {
+                    game.printDungeonMap(dungeon);
+                } else {
+                    game.printPlayerView(dungeon); // display the 3x3 player's view
+                }
+
+                game.displayHeroHealth(hero);
 
                 //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
                 // '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game

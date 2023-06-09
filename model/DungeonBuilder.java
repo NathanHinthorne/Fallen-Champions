@@ -81,10 +81,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     }
 
     private void restartRoomFilling() {
-        System.out.println();
-        System.out.println("DEBUG: previous bad dungeon:");
-        debugPrintObjects();
-        System.out.println();
+//        System.out.println();
+//        System.out.println("DEBUG: previous bad dungeon:");
+//        debugPrintObjects();
+//        System.out.println();
 
         myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
@@ -100,10 +100,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     }
 
     private void restartObjectPlacing() {
-        System.out.println();
-        System.out.println("DEBUG: previous bad dungeon:");
-        debugPrintObjects();
-        System.out.println();
+//        System.out.println();
+//        System.out.println("DEBUG: previous bad dungeon:");
+//        debugPrintObjects();
+//        System.out.println();
 
         myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
@@ -318,7 +318,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
                         room.placePotion();
                     }
                     if (Math.random() < myPillarChance) {
-                        System.out.println("DEBUG: Placed a pillar at " + x + ", " + y);
+//                        System.out.println("DEBUG: Placed a pillar at " + x + ", " + y);
                         room.placePillar(myPlacedPillars);
                     }
                     if (Math.random() < myPitChance) {

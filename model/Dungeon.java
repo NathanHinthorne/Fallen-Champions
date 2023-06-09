@@ -17,7 +17,7 @@ public class Dungeon implements java.io.Serializable {
         private static final String DIFFICULTY = "Easy";
         private static final int MAZE_WIDTH = 7;
         private static final int MAZE_HEIGHT = 7;
-        private static final double MAX_BRANCH_OFF_CHANCE = 0.50; // with decreasing branch chance: 0.50
+        private static final double MAX_BRANCH_OFF_CHANCE = 0.53; // with decreasing branch chance: 0.50
         private static final double PILLAR_CHANCE = 0.20;
         public static final double ENEMY_CHANCE = 0.35;
         public static final double POTION_CHANCE = 0.25;
