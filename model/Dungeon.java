@@ -7,11 +7,11 @@ public class Dungeon implements java.io.Serializable {
     private int myMazeHeight;
     private int myHeroX;
     private int myHeroY;
+    private String myDifficulty;
 
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
     protected Dungeon() { }
-
 
     public static class SmallDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Easy";
@@ -101,6 +101,27 @@ public class Dungeon implements java.io.Serializable {
         myMaze[myHeroY][myHeroX].removeMonster();
     }
 
+    public String getDifficulty() {
+        return myDifficulty;
+    }
+
+    public void makeRoomsVisible() {
+        for (int i = 0; i < myMazeHeight; i++) {
+            for (int j = 0; j < myMazeWidth; j++) {
+                myMaze[i][j].setVisible(true);
+            }
+        }
+    }
+
+    public void makeRoomsInvisible() {
+        for (int y = 0; y < myMazeHeight; y++) {
+            for (int x = 0; x < myMazeWidth; x++) {
+                if (!myMaze[y][x].wasVisited()) {
+                    myMaze[y][x].setVisible(false);
+                }
+            }
+        }
+    }
 
 
 
@@ -126,7 +147,9 @@ public class Dungeon implements java.io.Serializable {
         Room newRoom = myMaze[myHeroY][myHeroX];
 
         oldRoom.removeHero();
+        oldRoom.setVisited(true);
         newRoom.placeHero();
+        newRoom.setVisible(true);
     }
 
     /**
@@ -206,7 +229,13 @@ public class Dungeon implements java.io.Serializable {
     public void setHeroY(int theY) {
         myHeroY = theY;
     }
+    public void setDifficulty(final String theDifficulty) {
+        myDifficulty = theDifficulty;
+    }
 
+    public Room[][] getMyMaze() {
+        return myMaze;
+    }
 
     public void roomAbove() {
         myMaze[myHeroY-1][myHeroX].getContents();

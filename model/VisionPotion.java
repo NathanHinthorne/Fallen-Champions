@@ -2,20 +2,12 @@ package model;
 
 public class VisionPotion extends Potion implements java.io.Serializable {
 
-    public VisionPotion() {
 
-    }
-
-    @Override
-    public String inventoryTextDisplay() {
-        return "Vision Potion";
-    }
+    public VisionPotion() { }
 
     @Override
-    public int effect(final Hero thePlayer) {
-        // TODO normally, the controller would call getView() when getting the 3x3 area for the View package
-        // TODO make the controller call the getExpandedView() method from Dungeon instead
-        return 0;
+    public void effect(final Hero thePlayer) {
+        thePlayer.setUsingVisionPotion(true);
     }
 
     @Override

@@ -145,7 +145,7 @@ public class Inventory implements java.io.Serializable {
             if (i >= myInventory.size()) {
                 sb.append("[" + (i+1) + " - Empty]\n");
             } else {
-                sb.append("[" + (i + 1) + " - " + myInventory.get(i).inventoryTextDisplay() + "]\n");
+                sb.append("[" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
             }
         }
 

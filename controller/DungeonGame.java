@@ -19,6 +19,8 @@ public class DungeonGame {
     private static TextModeInterface game; // from view
 
     private static Hero hero; // move to main and make non static?
+    private static int heroSteps = 0;
+    private static int stepCountWhereVisionPotionWasUsed;
 
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
     private static boolean exitIsOpen = false; // set to true when player collects all pillars
@@ -233,12 +235,15 @@ public class DungeonGame {
 
 //                DelayMachine.delay(1); // delay for 1 second
 
-                // display a view of the dungeon immediately
-                if (CHEAT_MODE) {
-                    game.printDungeonMap(dungeon);
+                if ()
+
+                if (hero.usingVisionPotion()) {
+                    dungeon.makeRoomsVisible();
                 } else {
-                    game.printPlayerView(dungeon); // display the 3x3 player's view
+                    dungeon.makeRoomsInvisible(); // only call when the vision potion wears off?
                 }
+
+                game.displayPlayerView(dungeon);
 
                 game.displayHeroHealth(hero);
 
@@ -248,18 +253,22 @@ public class DungeonGame {
                 switch(gameMenuSelection) {
                     case 's':
                         dungeon.playerMove(Direction.SOUTH);
+                        heroSteps++;
                         break;
 
                     case 'a':
                         dungeon.playerMove(Direction.WEST);
+                        heroSteps++;
                         break;
 
                     case 'd':
                         dungeon.playerMove(Direction.EAST);
+                        heroSteps++;
                         break;
 
                     case 'w':
                         dungeon.playerMove(Direction.NORTH);
+                        heroSteps++;
                         break;
 
                     case '1': // hero info

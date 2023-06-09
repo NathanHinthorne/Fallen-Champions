@@ -6,6 +6,7 @@ public abstract class Hero extends DungeonCharacter {
     // The hero type
     private HeroTypes myType;
     private final Inventory myInventory;
+    private boolean myPlayerUsingVisionPotion;
 
     protected Hero(int theHitPoints, int theAtkSpd,
                    float theLowHitChance,
@@ -34,6 +35,14 @@ public abstract class Hero extends DungeonCharacter {
 
     public Inventory getMyInventory() {
         return myInventory;
+    }
+
+    public void setUsingVisionPotion(boolean thePlayerUsingVisionPotion) {
+        myPlayerUsingVisionPotion = thePlayerUsingVisionPotion;
+    }
+
+    public boolean usingVisionPotion() {
+        return myPlayerUsingVisionPotion;
     }
 
 

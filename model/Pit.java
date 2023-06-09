@@ -6,14 +6,6 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
 
     final static Random MY_RANDOM = new Random();
 
-    // Checks if the pit is visible
-    private boolean myIsVisible;
-
-
-
-    public Pit() {
-        myIsVisible = false;
-    }
 
     /**
      * Gernerates new health
@@ -30,8 +22,6 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
      */
     public int fall(final Hero theHero) {
 
-        myIsVisible = true;
-
         int theLowHealth = 10;
         int theHighHealth = 40;
 
@@ -40,11 +30,6 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
     }
 
     public String toString() {
-        if (myIsVisible) {
-            return "X";
-        } else {
-            return Room.EMPTY;
-        }
-//        return "X";
+        return "X";
     }
 }

@@ -3,19 +3,12 @@ package model;
 public abstract class Potion implements java.io.Serializable {
 
 
-    public String inventoryTextDisplay() {
-        return "Debug Potion";
-    }
-
     public int getDetail(Hero thePlayer) {
         return 0;
     }
 
-    public int effect(Hero thePlayer) {
-        // For a health potion, it will return the healing amount.
-        // For a vision potion, it will return the visible radius.
-        return 0;
-    }
-
     public abstract String type();
+
+    public void effect(final Hero thePlayer) {
+    }
 }

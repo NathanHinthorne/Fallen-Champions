@@ -18,6 +18,11 @@ public class HealthPotion extends Potion implements Healable {
         myHealingAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
     }
 
+    @Override
+    public void effect(final Hero thePlayer) {
+        heal(thePlayer);
+
+    }
 
     public int heal(final DungeonCharacter thePlayer) {
 
@@ -48,23 +53,13 @@ public class HealthPotion extends Potion implements Healable {
     }
 
     @Override
-    public String inventoryTextDisplay() {
-        return "Health Potion";
-    }
-
-    @Override
-    public int effect(final Hero thePlayer) {
-       return heal(thePlayer);
-    }
-
-    @Override
     public String toString() {
         return "p";
     }
 
     @Override
     public String type() {
-        return "Vision Potion";
+        return "Health Potion";
     }
 
 }

@@ -18,7 +18,8 @@ public class Room implements java.io.Serializable {
     // vision potion chance is 0.35
 
 
-    // fields
+    private boolean myVisible;
+    private boolean myVisited;
     private int myY;
     private int myX;
     private Wall myWall;
@@ -28,6 +29,7 @@ public class Room implements java.io.Serializable {
     private Pillars myPillar;
     private Pit myPit;
     private boolean myHero; // just a boolean since we don't have access to a hero object
+
 
 
     public Room(final int theY, final int theX) {
@@ -87,8 +89,18 @@ public class Room implements java.io.Serializable {
     }
 
     public boolean isEmpty() {
-        return !hasWall() && !hasExit() &&
-                !hasMonster() && !hasPotion() && !hasPillar() && !hasPit();
+        return !hasWall() && !hasExit() && !hasMonster() &&
+                !hasPotion() && !hasPillar() && !hasPit();
+    }
+
+    public void setVisible(final boolean theVisible) {
+        myVisible = theVisible;
+    }
+    public void setVisited(final boolean theVisited) {
+        myVisited = theVisited;
+    }
+    public boolean wasVisited() {
+        return myVisited;
     }
 
 
@@ -156,44 +168,6 @@ public class Room implements java.io.Serializable {
         myMonster = null;
     }
 
-
-    @Override
-    public String toString() { //! add monster, multiple items (pits)?
-
-        // first determine how many items are in the room
-        int numItems = 0;
-        if (hasPotion()) { numItems++; }
-        if (hasPillar()) { numItems++; }
-        if (hasPit()) { numItems++; }
-        if (hasMonster()) { numItems++; }
-
-        // now determine what string to return
-        String result = "";
-        if (hasWall()) {
-            result = myWall.toString();
-        }  else if (hasHero()) {
-            result = HERO;
-        } else if (numItems > 1) {
-            result = MULTIPLE;
-        } else if (hasPotion()) {
-            result = myPotion.toString();
-        } else if (hasPillar()) {
-            result = myPillar.toString();
-        } else if (hasPit()) {
-            result = myPit.toString();
-        } else if (hasExit()) {
-            result = EXIT;
-        } else if (hasMonster()) {
-            result = myMonster.toString();
-        } else if (hasExit()) {
-            result = myExit.toString();
-        } else {
-            result = EMPTY;
-        }
-
-        return result;
-    }
-
     public void getContents() {
         System.out.print("Room contents: ");
 
@@ -210,5 +184,52 @@ public class Room implements java.io.Serializable {
         }
 
         System.out.println();
+    }
+
+
+    @Override
+    public String toString() { //! add monster, multiple items (pits)?
+
+        // first determine how many items are in the room
+        int numItems = 0;
+        if (hasPotion()) { numItems++; }
+        if (hasPillar()) { numItems++; }
+        if (hasPit()) { numItems++; }
+        if (hasMonster()) { numItems++; }
+
+        // now determine what string to return
+        String result = "";
+
+        if (hasWall()) {
+            result = myWall.toString();
+        }  else if (hasHero()) {
+            result = HERO;
+        }
+
+        else if (myVisible) {
+            if (numItems > 1) {
+                result = MULTIPLE;
+            } else if (hasPotion()) {
+                result = myPotion.toString();
+            } else if (hasPillar()) {
+                result = myPillar.toString();
+            } else if (hasPit()) {
+                result = myPit.toString();
+            } else if (hasExit()) {
+                result = EXIT;
+            } else if (hasMonster()) {
+                result = myMonster.toString();
+            } else if (hasExit()) {
+                result = myExit.toString();
+            } else {
+                result = EMPTY;
+            }
+
+        } else if (!myVisible) {
+            result = EMPTY;
+        }
+
+
+        return result;
     }
 }

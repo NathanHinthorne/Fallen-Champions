@@ -76,6 +76,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         dungeon.setMazeHeight(myMazeHeight);
         dungeon.setHeroX(myHeroX);
         dungeon.setHeroY(myHeroY);
+        dungeon.setDifficulty(myDifficulty);
 
         return dungeon;
     }

@@ -78,10 +78,10 @@ public class TextModeInterface {
     }
 
     public void usePotion(int theVal, Hero thePlayer) {
-        if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay().equals("Health Potion")) {
+        if (thePlayer.getMyInventory().getArray().get(theVal).type().equals("Health Potion")) {
             System.out.println("Used a Health Potion and restored "
                     + thePlayer.getMyInventory().getArray().get(theVal).getDetail(thePlayer) + " HP!");
-        } else if (thePlayer.getMyInventory().getArray().get(theVal).inventoryTextDisplay().equals("Vision Potion")) {
+        } else if (thePlayer.getMyInventory().getArray().get(theVal).type().equals("Vision Potion")) {
             System.out.println("Used a vision potion!");
         } else {
             System.out.println("Used a Debug Potion");
@@ -95,7 +95,7 @@ public class TextModeInterface {
 
     }
 
-    public void printPlayerView(Dungeon theDungeon) {
+    public void displayPlayerView(Dungeon theDungeon) {
         System.out.println(theDungeon.getView());
         System.out.println();
     }
