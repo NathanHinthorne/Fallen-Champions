@@ -244,4 +244,11 @@ public class TextModeInterface {
     public void displayPitMsg(final int theFallDamage) {
         System.out.println("You fell into a pit! You took " + theFallDamage + " damage!");
     }
+
+    public void displayBattleLoseMsg() {
+        System.out.println("You lost the battle! As the monster defeats you, you are trapped in the dungeon");
+        System.out.println("FOREVER EVER EVER EVER EVER EVER");
+        System.out.println("You have fallen into the abyss of becoming a Fallen Champion, becoming your own worst enemy!");
+        System.out.println("GAME OVER!");
+    }
 }
