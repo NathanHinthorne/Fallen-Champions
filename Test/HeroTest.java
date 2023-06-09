@@ -1,9 +1,7 @@
 import model.*;
-import controller.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import model.test.TestHero;
-import model.test.TestMonster;
 import org.junit.jupiter.api.Test;
 
 public class HeroTest {
