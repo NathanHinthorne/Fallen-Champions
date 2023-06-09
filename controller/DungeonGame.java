@@ -38,32 +38,43 @@ public class DungeonGame {
         switch(menuSelection) {
             case 1:
 
-                System.out.println(); // empty line
+                System.out.println();
 
                 // continue or new game (1 for new game, 2 for continue game)
                 int loadSelection = game.continueOrNewGameMenu();
-                if (loadSelection == 2) {
-                    loadGame();
-                    gameLoop();
-                } else if (loadSelection == 1) {
-                    System.out.println(); // empty line
+
+                if (loadSelection == 1) { // new game
+                    System.out.println();
 
                     // setup dungeon (1 for easy, 2 for medium, 3 for hard)
                     int difficultySelection = game.chooseDifficulty();
                     setupDungeon(difficultySelection);
-                    System.out.println(); // empty line
+                    System.out.println();
 
                     // print introduction
                     game.Introduction();
-                    System.out.println(); // empty line
+                    System.out.println();
 
                     // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
                     int heroSelection = game.chooseHero();
                     hero = setupHero(heroSelection);
-                    System.out.println(); // empty line
+                    System.out.println();
 
-                    // enter the main game loop ('w' to move up, 'a' to move left, 's' to move down, 'd' to move right
-                    //                           '1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game)
+                    // are you cheating...?
+                    if (CHEAT_MODE) {
+                        game.displayCheatModeMsg();
+                        cheatModeStuff();
+                    }
+
+                    // start msg
+                    game.displayStartMsg();
+
+                    // enter the main game loop
+                    gameLoop();
+
+
+                } else if (loadSelection == 2) { // continue game
+                    loadGame();
                     gameLoop();
                 } else {
                     System.out.println("Please make a proper selection!");
@@ -130,12 +141,6 @@ public class DungeonGame {
     }
 
     private static void gameLoop() {
-            // setup work before game starts looping
-            if (CHEAT_MODE) {
-                game.displayCheatModeMsg();
-                cheatModeStuff();
-            }
-
             while (!gameOver) { // while the hero is still alive
 
                 if (dungeon.heroIsTouchingPillar()) {

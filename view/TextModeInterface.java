@@ -212,10 +212,16 @@ public class TextModeInterface {
     }
 
     public void displayCheatModeMsg() {
+        System.out.println("*****************************************************");
         System.out.println("YOU CHEATER! I SEE WHAT YOU'RE DOING THERE! ಠ_ಠ");
+        System.out.println("*****************************************************");
     }
 
     public void displayHeroHealth(final Hero theHero) {
         System.out.println("Health: " + theHero.getHitPoints() + "/" + theHero.getMaxHitPoints());
+    }
+
+    public void displayStartMsg() {
+        System.out.println("Welcome to the Dungeon!");
     }
 }
