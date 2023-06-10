@@ -1,7 +1,9 @@
 package model;
 
 public class MonsterFactory {
-
+    /**
+     * My monster
+     */
     private Monster myMonster;
 
     /**

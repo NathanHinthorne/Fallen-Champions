@@ -2,7 +2,9 @@ package model;
 
 public class Monster_Warlock extends Monster implements java.io.Serializable {
 
-
+    /**
+     * Super constructor for monster warlock
+     */
     public Monster_Warlock() {
 
         super(300,

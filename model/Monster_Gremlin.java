@@ -2,7 +2,9 @@ package model;
 
 public class Monster_Gremlin extends Monster implements java.io.Serializable {
 
-
+    /**
+     * Super constructor for monster gremlin
+     */
     public Monster_Gremlin() {
 
         super(140,

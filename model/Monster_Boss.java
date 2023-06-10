@@ -2,7 +2,9 @@ package model;
 
 public class Monster_Boss extends Monster implements java.io.Serializable {
 
-
+    /**
+     * Super constructor for monster boss
+     */
     public Monster_Boss() {
         super(1500,
                 1,
