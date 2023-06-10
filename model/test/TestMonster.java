@@ -3,13 +3,24 @@ package model.test;
 import model.DungeonCharacter;
 import model.Monster;
 import model.MonsterTypes;
-
+/**
+ * Test Monster Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class TestMonster extends Monster {
-
+    /**
+     * Min special
+     */
     private int myMinSpecial;
-
+    /**
+     * Max special
+     */
     private int myMaxSpecial;
-
+    /**
+     * Super constructor for test monster
+     */
     public TestMonster() {
         /* For Reference */
         //super(theHitPoints,theAtkSpd,theHitChance,theMinDmg,theMaxDmg,theCooldown,theMinHeal,theMaxHeal,theHealChance);
@@ -29,6 +40,11 @@ public class TestMonster extends Monster {
         setMyMaxSpecial(100);
     }
 
+    /**
+     * The special attach
+     * @param theOther the other character
+     * @return the damage
+     */
     @Override
     public int specialAtk(DungeonCharacter theOther) {
 
@@ -50,10 +66,18 @@ public class TestMonster extends Monster {
         }
     }
 
+    /**
+     * Set the min special
+     * @param minSpecial the min special
+     */
     public void setMyMinSpecial(int minSpecial) {
         minSpecial = myMinSpecial;
     }
 
+    /**
+     * Set the max special
+     * @param maxSpecial the max special
+     */
     public void setMyMaxSpecial(int maxSpecial) {
         maxSpecial = myMaxSpecial;
     }

@@ -43,6 +43,7 @@ public class MonsterBattle {
         if (myHero.getSpd() > myMonster.getSpd()) {
             while (!myGameOver) {
                 if (myHero.getHitPoints() > 0) {
+                    Audio.play(Audio.menuOne);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
@@ -58,6 +59,7 @@ public class MonsterBattle {
                     DelayMachine.delay(2);
                 }
                 if (myHero.getHitPoints() > 0) {
+                    Audio.play(Audio.menuOne);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
