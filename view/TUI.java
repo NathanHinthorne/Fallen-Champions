@@ -292,6 +292,8 @@ public class TUI {
      * The game victory message
      */
     public void displayVictoryMsg() {
+
+        Audio.play(Audio.menuTwo);
         System.out.println("You have escaped the dungeon!. Congratulations!!");
     }
 

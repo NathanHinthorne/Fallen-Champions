@@ -54,12 +54,6 @@ public class DungeonGame_GUI {
 
     public static void main(String[] theArgs) {
         menu = new Window_MainMenu();
-        if (gameBegun) {
-            choose = new Window_ChooseHero();
-            game = new Window_Dungeon(dungeon, hero.getType());
-        } else {
-            System.exit(995);
-        }
     }
 
     /**
@@ -70,6 +64,8 @@ public class DungeonGame_GUI {
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
         // large dungeon = hard difficulty
+
+
 
         switch(theDifficulty) {
             case 1:
@@ -90,15 +86,9 @@ public class DungeonGame_GUI {
             default:
                 System.out.println("Please make a proper selection:");
         }
-    }
 
-    /**
-     * Method that begins the game
-     *
-     * @param theIn
-     */
-    public static void setGameBegun(boolean theIn) {
-        gameBegun = theIn;
+        System.out.println("Difficulty: " + theDifficulty);
+        System.out.println(dungeon.toString());
     }
 
     /**
@@ -106,7 +96,22 @@ public class DungeonGame_GUI {
      * @param theType the type of hero to set
      */
     public static void setHero(HeroTypes theType) {
-        hero.setType(theType);
+        if (theType == HeroTypes.WARRIOR) {
+            hero = new Hero_Warrior();
+        } else if (theType == HeroTypes.ENFORCER) {
+            hero = new Hero_Enforcer();
+        } else if (theType == HeroTypes.SCIENTIST) {
+            hero = new Hero_Scientist();
+        } else if (theType == HeroTypes.ROBOT) {
+            hero = new Hero_Robot();
+        } else if (theType == HeroTypes.SUPPORT) {
+            hero = new Hero_Support();
+        }
+        System.out.println("Hero: " + hero.getType().toString());
+    }
+
+    public static void startGame() {
+        game = new Window_Dungeon(dungeon, hero);
     }
 
 }

@@ -85,6 +85,8 @@ public class Window_ChooseHero {
         myGoButton.setBounds(170,280,60,50);
         myGoButton.setEnabled(false);
 
+        addListeners();
+
         mainFrame.add(myHeroLabel1);
         mainFrame.add(myHeroLabel2);
         mainFrame.add(myHeroLabel3);
@@ -118,10 +120,11 @@ public class Window_ChooseHero {
         return null;
     }
 
-    private void addListeners(Dungeon theDungeon) {
+    private void addListeners() {
         myHeroLabel1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("what");
                 Audio.play(Audio.menuOne);
                 myHeroChoice2.setText("Warrior");
                 chosenType = HeroTypes.WARRIOR;
@@ -174,8 +177,10 @@ public class Window_ChooseHero {
             public void actionPerformed(ActionEvent e) {
                 Audio.play(Audio.menuTwo);
                 DungeonGame_GUI.setHero(chosenType);
-                mainFrame.dispose();
                 DungeonGame_GUI.setupDungeon(myDiff);
+                mainFrame.dispose();
+
+                DungeonGame_GUI.startGame();
 
             }
         });

@@ -1,5 +1,6 @@
 package controller;
 
+import view.Audio;
 import view.TUI;
 import model.*;
 
@@ -66,12 +67,14 @@ public class DungeonGame {
      */
     public static void main(String[] theArgs) {
 
+        Audio.play(Audio.menuOne);
         game = new TUI();
 
         // get user input to start game (1 for start, 2 for exit)
         int menuSelection = game.menu();
         switch(menuSelection) {
             case 1:
+                Audio.play(Audio.menuOne);
 
                 System.out.println();
 
@@ -81,17 +84,24 @@ public class DungeonGame {
                 if (loadSelection == 1) { // new game
                     System.out.println();
 
+                    Audio.play(Audio.menuOne);
+
                     // setup dungeon (1 for easy, 2 for medium, 3 for hard)
                     int difficultySelection = game.chooseDifficulty();
+                    Audio.play(Audio.menuOne);
                     setupDungeon(difficultySelection);
                     System.out.println();
 
                     // print introduction
+
                     game.Introduction();
                     System.out.println();
 
+                    DelayMachine.delay(2);
+
                     // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
                     int heroSelection = game.chooseHero();
+                    Audio.play(Audio.menuOne);
                     hero = setupHero(heroSelection);
                     System.out.println();
 
@@ -104,6 +114,7 @@ public class DungeonGame {
                     // start msg
                     game.displayStartMsg();
 
+                    Audio.play(Audio.menuTwo);
                     // enter the main game loop
                     gameLoop();
 
@@ -185,10 +196,13 @@ public class DungeonGame {
      */
     private static void gameLoop() {
 
+        Audio.play(Audio.menuTwo);
         int heroSteps = 0;
         int stepsWithActiveVisionPotion = 0;
 
         while (!gameOver) { // while the hero is still alive
+
+            Audio.play(Audio.menuTwo);
 
             if (dungeon.heroIsTouchingPillar() && !CHEAT_MODE) {
                 // play ding sound
@@ -222,6 +236,8 @@ public class DungeonGame {
                 Potion potion = dungeon.getPotion();
                 hero.getMyInventory().addToInventory(potion);
                 game.displayPotionInfo(potion);
+
+                Audio.play(Audio.menuTwo);
 
                 dungeon.removePotion();
             }

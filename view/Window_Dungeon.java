@@ -1,8 +1,6 @@
 package view;
 
-import model.Dungeon;
-import model.HeroTypes;
-import model.Room;
+import model.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -79,16 +77,16 @@ public class Window_Dungeon implements ActionListener {
      * components their proper values.
      *
      * @param theDungeon What the player will navigate
-     * @param theType Used to know what character sprite
-     *                to use
+     * @param thePlayer Used to know what character sprite
+     *                  to use
      */
-    public Window_Dungeon(Dungeon theDungeon, HeroTypes theType) {
+    public Window_Dungeon(Dungeon theDungeon, Hero thePlayer) {
         Audio.playMusic(Audio.ambientSong, true);
         Audio.play(Audio.beginGame);
-        myPlayerInfo = new JLabel("Class: " + theType.toString());
-        setHeroSprite(theType);
+        myPlayerInfo = new JLabel("Class: " + thePlayer.getType().toString());
+        setHeroSprite(thePlayer.getType());
         setupFrame();
-        addListeners(theDungeon);
+        addListeners();
         ArrowActions();
         initializeTiles(theDungeon);
     }
@@ -219,10 +217,8 @@ public class Window_Dungeon implements ActionListener {
     /**
      * This will add the listeners to the controls
      * that are on screen
-     *
-     * @param theDungeon Used to cast the dungeon back to the main menu
      */
-    private void addListeners(Dungeon theDungeon) {
+    private void addListeners() {
 
         myBagButton.addActionListener(new ActionListener() {
             @Override
@@ -376,22 +372,16 @@ public class Window_Dungeon implements ActionListener {
         int x = 65;
         int y = 65;
 
-        if (theRooms.getDifficulty() == "Easy"){
-            myTiles = new JLabel[7][7];
-            mySize = 7;
-        } else if (theRooms.getDifficulty() == "Medium"){
-            myTiles = new JLabel[10][10];
-            mySize = 10;
-        } else if (theRooms.getDifficulty() == "Hard"){
-            myTiles = new JLabel[15][15];
-            mySize = 15;
-        }
+        System.out.println(theRooms.toString());
+
+        mySize = theRooms.getMaze().length;
+        myTiles = new JLabel[mySize][mySize];
 
         for (int i = 0; i < mySize; i ++) {
-            for (int j = 0; j < mySize; i ++) {
-                if ((theRooms.getMaze()[i][j]).toString() == "*") {
+            for (int j = 0; j < mySize; j ++) {
+                if (theRooms.getMaze()[i][j].hasWall()) {
                     myTiles[i][j] = new JLabel(myWall);
-                } else if ((theRooms.getMaze())[i][j].toString() == Room.EMPTY) {
+                } else if (theRooms.getMaze()[i][j].isEmpty()) {
                     myTiles[i][j] = new JLabel(myPath);
                 } else { // temporarily fills the rest with paths, ignoring items.
                     myTiles[i][j] = new JLabel(myPath);

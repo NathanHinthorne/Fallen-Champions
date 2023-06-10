@@ -17,26 +17,26 @@ public final class Audio {
     private static Clip currentSound;
     private static Clip currentSong;
 
-    protected static final File testSound = new File("view\\assets\\sound\\ui\\ui_testsound.wav");
+    public static final File testSound = new File("view\\assets\\sound\\ui\\ui_testsound.wav");
 
 
     // UI SOUNDS
-    protected static final File menuTwo = new File("view\\assets\\sound\\ui\\ui_menu_option_1.wav");
-    protected static final File menuOne = new File("view\\assets\\sound\\ui\\ui_menu_option_2.wav");
-    protected static final File beginGame = new File("view\\assets\\sound\\ui\\ui_spawn.wav");
-    protected static final File powerUp = new File("view\\assets\\sound\\ui\\ui_powerup.wav");
+    public static final File menuTwo = new File("view\\assets\\sound\\ui\\ui_menu_option_1.wav");
+    public static final File menuOne = new File("view\\assets\\sound\\ui\\ui_menu_option_2.wav");
+    public static final File beginGame = new File("view\\assets\\sound\\ui\\ui_spawn.wav");
+    public static final File powerUp = new File("view\\assets\\sound\\ui\\ui_powerup.wav");
 
     // MUSIC
     // Made by Nathan
-    protected static final File ambientSong = new File("view\\assets\\sound\\music\\music_ambient.wav");
+    public static final File ambientSong = new File("view\\assets\\sound\\music\\music_ambient.wav");
     // Made by Brendan
-    protected static final File testSong = new File("view\\assets\\sound\\music\\music_testtrack.wav");
+    public static final File testSong = new File("view\\assets\\sound\\music\\music_testtrack.wav");
 
     // FOOTSTEPS (assets from Valve's Team Fortress 2
-    protected static final File step1 = new File("view\\assets\\sound\\ui\\game_step1.wav");
-    protected static final File step2 = new File("view\\assets\\sound\\ui\\game_step2.wav");
-    protected static final File step3 = new File("view\\assets\\sound\\ui\\game_step3.wav");
-    protected static final File step4 = new File("view\\assets\\sound\\ui\\game_step4.wav");
+    public static final File step1 = new File("view\\assets\\sound\\ui\\game_step1.wav");
+    public static final File step2 = new File("view\\assets\\sound\\ui\\game_step2.wav");
+    public static final File step3 = new File("view\\assets\\sound\\ui\\game_step3.wav");
+    public static final File step4 = new File("view\\assets\\sound\\ui\\game_step4.wav");
 
     /**
      * Method used to play simplify playing sounds

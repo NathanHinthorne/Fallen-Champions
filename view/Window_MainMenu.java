@@ -2,6 +2,7 @@ package view;
 
 import controller.DungeonGame;
 import controller.DungeonGame_GUI;
+import model.Dungeon;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -39,7 +40,7 @@ public class Window_MainMenu implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Audio.play(Audio.menuTwo);
-                DungeonGame_GUI.setGameBegun(true);
+                Window_ChooseHero choose = new Window_ChooseHero();
                 mainFrame.dispose();
             }
         });
@@ -61,7 +62,7 @@ public class Window_MainMenu implements ActionListener {
 
 
                 if (val == JOptionPane.YES_OPTION) {
-                    System.exit(616);
+                    System.exit(995);
                 }
             }
         });
