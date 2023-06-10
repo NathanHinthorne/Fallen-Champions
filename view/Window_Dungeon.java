@@ -72,13 +72,22 @@ public class Window_Dungeon implements ActionListener {
         myPlayerInfo = new JLabel("Class: " + theType.toString());
         setHeroSprite(theType);
         setupFrame();
-        initializeTiles(theDungeon);
         addListeners(theDungeon);
         ArrowActions();
+        initializeTiles(theDungeon);
     }
 
 
     private void setupFrame() {
+
+        // Finalizing mainFrame settings
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        mainFrame.setSize(1600,900);
+        mainFrame.setLayout(null);
+        mainFrame.setVisible(true);
+        mainFrame.setResizable(false);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setResizable(false);
 
         myWall = loadImage("assets\\images\\game_dungeon_wall.png");
         myPath = loadImage("assets\\images\\game_dungeon_path.png");
@@ -146,15 +155,6 @@ public class Window_Dungeon implements ActionListener {
         mainFrame.add(myPlayerInfo);
         mainFrame.add(myDungeonBorder);
         mainFrame.add(myBackgroundField);
-
-        // Finalizing mainFrame settings
-        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mainFrame.setSize(1600,900);
-        mainFrame.setLayout(null);
-        mainFrame.setVisible(true);
-        mainFrame.setResizable(false);
-        mainFrame.setLocationRelativeTo(null);
-        mainFrame.setResizable(false);
 
 //        fetchTiles();
 
@@ -336,7 +336,7 @@ public class Window_Dungeon implements ActionListener {
 
         for (int i = 0; i < mySize; i ++) {
             for (int j = 0; j < mySize; i ++) {
-                if ((theRooms.getMyMaze())[i][j].toString() == "*") {
+                if ((theRooms.getMyMaze()[i][j]).toString() == "*") {
                     myTiles[i][j] = new JLabel(myWall);
                 } else if ((theRooms.getMyMaze())[i][j].toString() == Room.EMPTY) {
                     myTiles[i][j] = new JLabel(myPath);

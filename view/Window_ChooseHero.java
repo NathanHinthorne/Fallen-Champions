@@ -167,10 +167,10 @@ public class Window_ChooseHero {
             public void actionPerformed(ActionEvent e) {
                 Audio.play(Audio.menuTwo);
                 MonsterBattleTestDriver.setHero(chosenType);
+                mainFrame.dispose();
                 Window_Dungeon myGameWindow = new Window_Dungeon(theDungeon, chosenType);
                 myGameWindow.setHeroSprite(chosenType);
 
-                mainFrame.dispose();
             }
         });
         myEasy.addActionListener(new ActionListener() {
