@@ -3,14 +3,30 @@ package model;
 import java.util.Random;
 
 public class HealthPotion extends Potion implements Healable {
-
+    /**
+     * Randomizes the health potion amt
+     */
     private static Random random = new Random();
-
+    /**
+     * The Min Heal
+     */
     private int myMinHeal;
+    /**
+     * The max heal
+     */
     private int myMaxHeal;
+    /**
+     * The heal chance
+     */
     private double myHealChance;
+    /**
+     * The heal amt
+     */
     private int myHealingAmount;
 
+    /**
+     * Super constructor for health potion
+     */
     public HealthPotion() {
         myMinHeal = 150;
         myMaxHeal = 250;
@@ -18,12 +34,21 @@ public class HealthPotion extends Potion implements Healable {
         myHealingAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
     }
 
+    /**
+     * Heals the player using the health potion effect
+     * @param thePlayer the potion effect for the Hero to consume
+     */
     @Override
     public void effect(final Hero thePlayer) {
         heal(thePlayer);
 
     }
 
+    /**
+     * Heals the player
+     * @param thePlayer the player to heal
+     * @return the heal amt
+     */
     public int heal(final DungeonCharacter thePlayer) {
 
         /* generate a random int between 0 and the difference between
@@ -43,6 +68,11 @@ public class HealthPotion extends Potion implements Healable {
         }
     }
 
+    /**
+     * Gets the details of the potion and player
+     * @param thePlayer the player to give the potion
+     * @return the heal amt
+     */
     @Override
     public int getDetail(Hero thePlayer) {
         if ((thePlayer.getMaxHitPoints() - thePlayer.getHitPoints()) < myHealingAmount) {
@@ -57,11 +87,19 @@ public class HealthPotion extends Potion implements Healable {
         return "p";
     }
 
+    /**
+     * The potion type
+     * @return the potion type
+     */
     @Override
     public String type() {
         return "Health Potion";
     }
 
+    /**
+     * Gets the healing amount
+     * @return the healing amount
+     */
     public int getHealingAmount() {
         return myHealingAmount;
     }
