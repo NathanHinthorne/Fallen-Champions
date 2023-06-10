@@ -1,10 +1,31 @@
 package model;
 
+/**
+ * A dungeon is a collection of rooms that the player can navigate through.
+ *
+ * @author Nathan Hinthorne
+ * @version 1.0
+ */
 public class Dungeon implements java.io.Serializable {
 
+    /**
+     * the dungeon's rooms
+     */
     private Room[][] myMaze;
+
+    /**
+     * the dungeon's width
+     */
     private int myMazeWidth;
+
+    /**
+     * the dungeon's height
+     */
     private int myMazeHeight;
+
+    /**
+     * the dungeon's difficulty
+     */
     private int myHeroX;
     private int myHeroY;
     private String myDifficulty;
@@ -250,7 +271,6 @@ public class Dungeon implements java.io.Serializable {
     public void setHeroY(int theY) {
         myHeroY = theY;
     }
-
 
     public int getMyHeroY() {
         return myHeroY;

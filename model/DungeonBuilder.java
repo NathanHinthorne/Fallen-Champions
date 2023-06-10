@@ -8,31 +8,113 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
+/**
+ * A dungeon builder is responsible for building a dungeon.
+ *
+ * @author Nathan Hinthorne
+ * @version 1.0
+ */
 public abstract class DungeonBuilder implements java.io.Serializable {
 
-    // include as parameters to buildDungeon if we want these to change with difficulty levels
+    /**
+     * The chance that a room will choose the left branch off direction when generating the maze.
+     */
     public static final double ROOM_LEFT_OR_RIGHT_CHANCE = 0.50;
+
+    /**
+     * a random number generator for the dungeon builder
+     */
     public static final Random rand = new Random();
 
+    /**
+     * The set of pillars that have been placed in the dungeon.
+     */
     private Set<Pillars> myPlacedPillars;
+
+    /**
+     * The list of monsters that have not been placed in the dungeon.
+     */
     private List<Monster> myUnplacedMonsters;
+
+    /**
+     * The chance that a pillar will be placed in a room.
+     */
     protected double myPillarChance;
+
+    /**
+     * The chance that a monster will be placed in a room.
+     */
     protected double myMonsterChance;
+
+    /**
+     * The chance that a potion will be placed in a room.
+     */
     protected double myPotionChance;
+
+    /**
+     * The chance that a pit will be placed in a room.
+     */
     protected double myPitChance;
+
+    /**
+     * The rooms within the dungeon
+     */
     private Room[][] myMaze;
+
+    /**
+     * the width of the dungeon
+     */
     private int myMazeWidth;
+
+    /**
+     * the height of the dungeon
+     */
     private int myMazeHeight;
+
+    /**
+     * the x coordinate of the hero's starting position
+     */
     private int myHeroX;
+
+    /**
+     * the y coordinate of the hero's starting position
+     */
     private int myHeroY;
+
+    /**
+     * the maximum chance that a room will branch off
+     */
     protected double myMaxRoomBranchOffChance;
+
+    /**
+     * the number of empty rooms in the dungeon
+     */
     protected int myNumberOfEmptyRooms;
+
+    /**
+     * the difficulty of the dungeon (easy, medium, or hard)
+     */
     private String myDifficulty;
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
+    /**
+     * Constructs a new dungeon builder.
+     */
     protected DungeonBuilder() { }
 
 
+    /**
+     * does everything necessary to build the dungeon
+     * @param theDifficulty the difficulty of the dungeon
+     * @param theMazeWidth the width of the dungeon
+     * @param theMazeHeight the height of the dungeon
+     * @param theMaxBranchOffChance the maximum chance that a room will branch off
+     * @param thePillarChance the chance that a pillar will be placed in a room
+     * @param theMonsterChance the chance that a monster will be placed in a room
+     * @param thePotionChance the chance that a potion will be placed in a room
+     * @param thePitChance the chance that a pit will be placed in a room
+     * @return the dungeon that was built
+     */
     public Dungeon buildDungeon(final String theDifficulty, final int theMazeWidth, final int theMazeHeight,
                                    final double theMaxBranchOffChance, final double thePillarChance,
                                    final double theMonsterChance, final double thePotionChance, final double thePitChance) {
@@ -81,6 +163,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         return dungeon;
     }
 
+
+    /**
+     * restarts the dungeon room filling process
+     */
     private void restartRoomFilling() {
 //        System.out.println();
 //        System.out.println("DEBUG: previous bad dungeon:");
@@ -100,6 +186,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         fillWithEmptyRooms();
     }
 
+    /**
+     * restarts the dungeon object placing process
+     */
     private void restartObjectPlacing() {
 //        System.out.println();
 //        System.out.println("DEBUG: previous bad dungeon:");
@@ -122,6 +211,10 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         fillWithObjects();
     }
 
+    /**
+     * read the monsters from the database
+     * @param difficulty the difficulty of the dungeon
+     */
     private void readMonsters(final String difficulty) {
 
         SQLiteDataSource ds = null;
@@ -174,6 +267,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         Collections.shuffle(myUnplacedMonsters); // shuffle the monsters so they are placed randomly, regardless of type
     }
 
+    /**
+     * fill the dungeon completely with walls
+     */
     private void fillWithWalls() {
         myNumberOfEmptyRooms = 0;
         for (int y = 0; y < myMazeHeight; y++) {
@@ -184,7 +280,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         }
     }
 
-
+    /**
+     * carves out a path of empty rooms from the center of the dungeon to form walkways
+     */
     private void fillWithEmptyRooms() {
         myNumberOfEmptyRooms = 0; // reset the number of empty rooms
 
@@ -200,6 +298,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 //        debugPrintRooms(); // DEBUG METHOD
     }
 
+    /**
+     * debug method to print the dungeon
+     */
     private void debugPrintRooms() { // DEBUG METHOD
         System.out.println("---------------------------------------------------------------------");
         System.out.println("Number of empty rooms: " + myNumberOfEmptyRooms + " out of " + ((myMazeWidth -2) * (myMazeHeight -2)));
@@ -220,6 +321,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
      *
      * @param theY the y coordinate of the current room
      * @param theX the x coordinate of the current room
+     * @param roomBranchOffChance the chance for a path of empty rooms to branch off
      */
     private void fillWithEmptyRooms(final int theY, final int theX, double roomBranchOffChance) {
 
@@ -278,6 +380,12 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         }
     }
 
+    /**
+     * helper method to find the direction the path of empty rooms is being generated in
+     * @param theY
+     * @param theX
+     * @return
+     */
     private Direction findTraversalDirection(final int theY, final int theX) {
         Direction traversalDirection;
 
@@ -294,6 +402,12 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         return traversalDirection;
     }
 
+    /**
+     * helper method to check if the coordinates are within the maze
+     * @param theY the y coordinate of the room being checked
+     * @param theX the x coordinate of the room being checked
+     * @return true if the coordinates are within the maze, false otherwise
+     */
     private boolean withinBounds(final int theY, final int theX) {
 
         //inside maze and non visited room
@@ -301,8 +415,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
                 && theX >= 1 && theX < myMazeWidth - 1;
     }
 
-
-
+    /**
+     * fills the maze with objects
+     */
     private void fillWithObjects() {
 
         for (int y = 1; y < myMazeHeight - 1; y++) { // skip over the edges of the dungeon
@@ -338,7 +453,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     }
 
 
-
+    /**
+     * debug method to print the maze to the console
+     */
     public void debugPrintObjects() {
 
         for (int i = 0; i < myMazeHeight; i++) {
@@ -351,7 +468,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
 
     /**
-     * Adds an entrance to the dungeon.
+     * Adds starting coordinates for the hero
      */
     private void addEntrance() {
         int x;
@@ -371,7 +488,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     }
 
     /**
-     * Adds an exit to the dungeon.
+     * Adds an exit to the dungeon
      */
     private void addExit() {
         int x;
@@ -386,95 +503,5 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
         myMaze[y][x].placeExit();
     }
-
-
-//    /**
-//     * Checks if the dungeon is traversable.
-//     *
-//     * @return true if the dungeon is traversable, false otherwise.
-//     */
-//    private boolean isTraversable() {
-//        //before this method, make sure there are all 4 pillars present within the dungeon
-//
-//        boolean isTraversable = traverse(myHeroY, myHeroX);
-//        return isTraversable;
-//    }
-
-//    /**
-//     * Recursive method to check if the dungeon is traversable.
-//     *
-//     * @param theY the y coordinate of the room to check
-//     * @param theX the x coordinate of the room to check
-//     * @return true if the dungeon is traversable, false otherwise.
-//     */
-//    private boolean traverse(final int theY, final int theX) {
-//
-//        Room room = myMaze[theY][theX];
-//
-//        boolean success = false;
-//
-////        System.out.println("DEBUG_ISTRAVERSABLE - tried to move to " + theX + ", " + theY);
-//        if (validMove(theY, theX)) {
-//
-//            // base case
-//            if (room.hasExit())
-//                return true;
-//
-//            // not at exit so need to try other directions
-//            success = traverse(theY+1, theX); //down
-//            if (!success)
-//                success = traverse(theY, theX+1); //right
-//            if (!success)
-//                success = traverse(theY-1, theX); //up
-//            if (!success)
-//                success = traverse(theY, theX-1); //left
-//        }
-//
-//        return success;
-//    }
-
-//    private boolean validMove(final int theY, final int theX) {
-//        Room room = myMaze[theY][theX];
-//
-//        //inside maze and non visited room
-//        return theY >= 1 && theY < myMazeHeight -1
-//                && theX >= 1 && theX < myMazeWidth -1
-//                && !room.hasWall();
-//    }
-
-
-//    /**
-//     * Determines the number of empty rooms adjacent (left/right/up/down) to the given room.
-//     *
-//     * @param theX the x coordinate of the room
-//     * @param theY the y coordinate of the room
-//     * @return the number of empty rooms adjacent to the given room
-//     */
-//    private int numberOfEmptyRooms(final int theX, final int theY) {
-//
-//        int count = 0;
-//
-//        // check top
-//        if (myMaze[theY - 1][theX].isEmpty()) {
-//            count++;
-//        }
-//
-//        // check left
-//        if (myMaze[theY][theX - 1].isEmpty()) {
-//            count++;
-//        }
-//
-//        // check right
-//        if (myMaze[theY][theX + 1].isEmpty()) {
-//            count++;
-//        }
-//
-//        // check bottom
-//        if (myMaze[theY + 1][theX].isEmpty()) {
-//            count++;
-//        }
-//
-//        return count;
-//    }
 
 }

@@ -3,6 +3,28 @@ package model;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents a room in the dungeon.
+ * A room can have a wall, an exit, a monster, a potion, a pillar, a pit, and a hero.
+ * A room's contents can also be visible or invisible.
+ *
+ * CHEAT SHEET for dungeon symbols:
+ *     ' ' = empty room
+ *     '*' = wall
+ *     '◉' = hero
+ *     'M' = monster
+ *     'X' = pit
+ *     '▮' = exit
+ *     'p' = potion
+ *     'A' = abstraction pillar
+ *     'I' = inheritance pillar
+ *     'P' = polymorphism pillar
+ *     'E' = encapsulation pillar
+ *     '&' = multiple items in the same room
+ *
+ * @author Nathan Hinthorne
+ * @version 1.0
+ */
 public class Room implements java.io.Serializable {
 
     // static fields for toString
@@ -21,11 +43,6 @@ public class Room implements java.io.Serializable {
      * Hero symbol
      */
     public static final String HERO = "◉";
-
-    /**
-     * Exit symbol
-     */
-    public static final String EXIT = "▮";
 
     /**
      * chance for the potion to be a health potion
@@ -417,7 +434,7 @@ public class Room implements java.io.Serializable {
             } else if (hasPit()) {
                 result = myPit.toString();
             } else if (hasExit()) {
-                result = EXIT;
+                result = myExit.toString();
             } else if (hasMonster()) {
                 result = myMonster.toString();
             } else if (hasExit()) {
