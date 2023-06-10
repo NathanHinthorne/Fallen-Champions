@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 /**
  * The Inventory class holds items that the player
- * is able to use at any time such as potions or different
- * weapons.
+ * is able to use at any time such as potions.
+ *
  * @author Brendan Smith
  * @version 1.0 - 5/15/23
  */

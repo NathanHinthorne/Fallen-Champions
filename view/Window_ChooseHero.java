@@ -10,6 +10,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * This class will prompt the user to choose one of 5 given
+ * hero types: Warrior, Enforcer, Scientist, Robot, or Support,
+ * as well as a difficulty: Easy, Medium, or Hard.
+ *
+ * @author Brendan Smith
+ * @version 1.0 - 5/30/23
+ */
 public class Window_ChooseHero {
 
     JFrame mainFrame = new JFrame("Fallen Champions V0.1");
@@ -199,6 +207,10 @@ public class Window_ChooseHero {
         });
     }
 
+    /**
+     * returns the chosen hero type.
+     * @return Hero Type
+     */
     public HeroTypes getChosenType() {
         return chosenType;
     }

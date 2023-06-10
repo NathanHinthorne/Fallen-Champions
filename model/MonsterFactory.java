@@ -2,7 +2,11 @@ package model;
 
 public class MonsterFactory {
     /**
-     * My monster
+     * Class responsible for constructing monsters
+     * when they are needed in the game.
+     *
+     * @author Brendan Smith
+     * @version 1.0 - 5/15/23
      */
     private Monster myMonster;
 

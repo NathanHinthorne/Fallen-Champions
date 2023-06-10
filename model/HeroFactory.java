@@ -2,7 +2,11 @@ package model;
 
 public class HeroFactory {
     /**
-     * Your hero
+     * Class responsible for building a hero at
+     * the beginning of the game.
+     *
+     * @author Brendan Smith
+     * @version 1.0 - 5/15/23
      */
     private static Hero myHero;
 

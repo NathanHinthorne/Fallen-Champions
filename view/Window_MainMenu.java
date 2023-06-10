@@ -7,6 +7,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * This will display the Main Menu to the user, so that they can
+ * choose to start a new game, load a previous one, or exit.
+ *
+ * @author Brendan Smith
+ * @version 1.0 - 5/31/23
+ */
 public class Window_MainMenu implements ActionListener {
 
     Window_ChooseHero myChooseHeroWindow;
@@ -22,6 +29,10 @@ public class Window_MainMenu implements ActionListener {
     JLabel myBackgroundField;
     JOptionPane myExitConfirm = new JOptionPane("Are you sure?");
 
+    /**
+     * Constructor for the Main Menu.
+     * @param theDungeon the input dungeon.
+     */
     public Window_MainMenu(Dungeon theDungeon) {
 
         setupFrame();
@@ -58,6 +69,10 @@ public class Window_MainMenu implements ActionListener {
 
     }
 
+    /**
+     * Sets up the necessary components and adds them to
+     * the frame.
+     */
     private void setupFrame() {
         try {
             myLogo = new ImageIcon(getClass().getResource("assets\\images\\game_logo.png"));
@@ -104,6 +119,10 @@ public class Window_MainMenu implements ActionListener {
         mainFrame.setResizable(false);
     }
 
+    /**
+     * Returns the next window.
+     * @return Choose Hero Window.
+     */
     public Window_ChooseHero getMyChooseHeroWindow() {
         return myChooseHeroWindow;
     }

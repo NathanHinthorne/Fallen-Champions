@@ -11,6 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
+/**
+ * This class will display the dungeon that the player
+ * has been placed in, controls to navigate it, and
+ * other actions the player can take, such as saving,
+ * opening their inventory, returning to menu, or
+ * lowering the music volume.
+ *
+ * @author Brendan Smith
+ * @version 1.0 - 5/30/23
+ */
 public class Window_Dungeon implements ActionListener {
 
     private int myHp = 100;
@@ -63,6 +73,15 @@ public class Window_Dungeon implements ActionListener {
     ImageIcon myBackground;
     JLabel myBackgroundField;
 
+    /**
+     * This will perform necessary operations
+     * to build the game window and assign the
+     * components their proper values.
+     *
+     * @param theDungeon What the player will navigate
+     * @param theType Used to know what character sprite
+     *                to use
+     */
     public Window_Dungeon(Dungeon theDungeon, HeroTypes theType) {
         Audio.playMusic(Audio.ambientSong, true);
         Audio.play(Audio.beginGame);
@@ -75,6 +94,11 @@ public class Window_Dungeon implements ActionListener {
     }
 
 
+    /**
+     * This will set up every component that is going
+     * to be added to the window, and then adds them
+     * in order.
+     */
     private void setupFrame() {
 
         // Finalizing mainFrame settings
@@ -192,6 +216,12 @@ public class Window_Dungeon implements ActionListener {
 //        myTile22 = new JLabel(myWall);
 //    }
 
+    /**
+     * This will add the listeners to the controls
+     * that are on screen
+     *
+     * @param theDungeon Used to cast the dungeon back to the main menu
+     */
     private void addListeners(Dungeon theDungeon) {
 
         myBagButton.addActionListener(new ActionListener() {
@@ -238,6 +268,11 @@ public class Window_Dungeon implements ActionListener {
 
     }
 
+    /**
+     * Method to make loading images more concise.
+     * @param theFileName Path to the image
+     * @return The new ImageIcon
+     */
     private ImageIcon loadImage(String theFileName) {
         ImageIcon ret;
         try {
@@ -249,6 +284,11 @@ public class Window_Dungeon implements ActionListener {
         return null;
     }
 
+    /**
+     * Method to  assign the proper character sprite
+     * for the player
+     * @param theType The type of hero
+     */
     public void setHeroSprite(HeroTypes theType) {
 
         if (theType == HeroTypes.ENFORCER) {
@@ -266,6 +306,10 @@ public class Window_Dungeon implements ActionListener {
         }
     }
 
+    /**
+     * Adds action listeners to the arrows and
+     * controls the character as needed.
+     */
     private void ArrowActions() {
         myUp.addActionListener(new ActionListener() {
             @Override
@@ -297,6 +341,10 @@ public class Window_Dungeon implements ActionListener {
 
     }
 
+    /**
+     * chooses a random step sound effect to play
+     * when the arrow is pressed.
+     */
     private void playStep() {
         Random rand = new Random();
         int choice = rand.nextInt(4);
@@ -311,10 +359,18 @@ public class Window_Dungeon implements ActionListener {
         }
     }
 
+    /**
+     * updates the HP on the player.
+     * @param theIn HP value
+     */
     public void setHpGameMenu(int theIn) {
         myHp = theIn;
     }
 
+    /**
+     * Adds tiles of dungeon to view.
+     * @param theRooms - the dungeon input.
+     */
     public void initializeTiles(final Dungeon theRooms) {
 
         int x = 65;
