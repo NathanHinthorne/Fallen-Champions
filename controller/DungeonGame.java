@@ -114,7 +114,10 @@ public class DungeonGame {
         }
     }
 
-
+    /**
+     * Sets up the dungeon
+     * @param theDifficulty the game difficulty
+     */
     public static void setupDungeon(final int theDifficulty) {
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
