@@ -6,6 +6,9 @@ public class Hero_Enforcer extends Hero implements java.io.Serializable {
 
     private int special3Cooldown;
 
+    /**
+     * Super constructor for hero enforcer
+     */
     public Hero_Enforcer() {
         super(350, 4, 45, 120, 160, 20, 90, 0, HeroTypes.ENFORCER);
 //        setSpecial2Cooldown(50);

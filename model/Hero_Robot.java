@@ -10,7 +10,9 @@ public class Hero_Robot extends Hero implements java.io.Serializable {
 
     private int special5Cooldown;
 
-
+    /**
+     * Super constructor for hero robot
+     */
     public Hero_Robot() {
         super(500, 2, 35, 75, 55, 105, 165, 0, HeroTypes.ROBOT);
 //        setSpecial2Cooldown(35);

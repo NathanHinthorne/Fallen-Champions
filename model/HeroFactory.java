@@ -1,7 +1,9 @@
 package model;
 
 public class HeroFactory {
-
+    /**
+     * Your hero
+     */
     private static Hero myHero;
 
     /**

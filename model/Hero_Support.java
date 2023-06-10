@@ -11,7 +11,9 @@ public class Hero_Support extends Hero implements Healable,java.io.Serializable 
     private int special2Cooldown;
 
 
-
+    /**
+     * Super constructor for hero support
+     */
     public Hero_Support() {
         super(85,4,35,75,55,35, 85, 0, HeroTypes.SUPPORT);
 //        setSpecial2Cooldown(15);

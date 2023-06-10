@@ -3,11 +3,31 @@ package model;
 public abstract class Hero extends DungeonCharacter {
 
 
-    // The hero type
+    /**
+     * The hero type
+     */
     private HeroTypes myType;
+    /**
+     * The inventory
+     */
     private final Inventory myInventory;
+    /**
+     * The player using vision potion
+     */
     private boolean myPlayerUsingVisionPotion;
 
+    /**
+     * Super constructor for hero
+     * @param theHitPoints the hit points
+     * @param theAtkSpd the attack speed
+     * @param theLowHitChance the low hit chance
+     * @param theHighHitChance the high hit chance
+     * @param theHitChance the hit chance
+     * @param theMinDmg the min damage
+     * @param theMaxDmg the max damage
+     * @param theCooldown the cooldown
+     * @param theType the type
+     */
     protected Hero(int theHitPoints, int theAtkSpd,
                    float theLowHitChance,
                    float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown, HeroTypes theType) {
@@ -33,14 +53,26 @@ public abstract class Hero extends DungeonCharacter {
         return myType;
     }
 
+    /**
+     * Gets the inventory
+     * @return the inventory
+     */
     public Inventory getMyInventory() {
         return myInventory;
     }
 
+    /**
+     * Sets the player using vision potion
+     * @param thePlayerUsingVisionPotion the player using vision potion
+     */
     public void setUsingVisionPotion(boolean thePlayerUsingVisionPotion) {
         myPlayerUsingVisionPotion = thePlayerUsingVisionPotion;
     }
 
+    /**
+     * Gets the player using vision potion
+     * @return the player using vision potion
+     */
     public boolean usingVisionPotion() {
         return myPlayerUsingVisionPotion;
     }

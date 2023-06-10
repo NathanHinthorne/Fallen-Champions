@@ -10,7 +10,21 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     // The Monster type
     private MonsterTypes myType;
 
-    // super() is best suited for initializing the fields of the super class. You might want to use that instead. - Nathan
+    /**
+     * Super constructor for Monster
+     * @param theHitPoints the hit points
+     * @param theAtkSpd the attack speed
+     * @param theLowHitChance the low hit chance
+     * @param theHighHitChance the high hit chance
+     * @param theHitChance the hit chance
+     * @param theMinDmg the minimum damage
+     * @param theMaxDmg the maximum damage
+     * @param theCooldown the cooldown
+     * @param theMinHeal the minimum heal
+     * @param theMaxHeal the maximum heal
+     * @param theHealChance the heal chance
+     * @param theType the monster type
+     */
     protected Monster(int theHitPoints, int theAtkSpd,
                         float theLowHitChance, float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown,
                         int theMinHeal, int theMaxHeal, float theHealChance, MonsterTypes theType) {

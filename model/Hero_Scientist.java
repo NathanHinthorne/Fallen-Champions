@@ -5,7 +5,9 @@ public class Hero_Scientist extends Hero implements java.io.Serializable {
     private int special2Cooldown;
     // The third cooldown
     private int special3Cooldown;
-
+    /**
+     * Super constructor for hero scientist
+     */
     public Hero_Scientist() {
         super(100, 5, 75, 80, 78.5f, 35, 95, 0, HeroTypes.SCIENTIST);
 //        setSpecial2Cooldown(40);
