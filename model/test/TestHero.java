@@ -3,13 +3,25 @@ package model.test;
 import model.DungeonCharacter;
 import model.Hero;
 import model.HeroTypes;
-
+/**
+ * Test Hero Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class TestHero extends Hero {
-
+    /**
+     * Min special
+     */
     private int myMinSpecial;
-
+    /**
+     * Max special
+     */
     private int myMaxSpecial;
 
+    /**
+     * Super constructor for test hero
+     */
     public TestHero() {
         /* For Reference */
         //super(theHitPoints, theAtkSpd, theHitChance, theMinDmg, theMaxDmg, theCooldown);
