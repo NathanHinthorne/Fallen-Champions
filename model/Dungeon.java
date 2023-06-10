@@ -13,6 +13,7 @@ public class Dungeon implements java.io.Serializable {
     // enforce the usage of the builder for object construction and discourage direct instantiation
     public Dungeon() { }
 
+
     public static class SmallDungeonBuilder extends DungeonBuilder {
         private static final String DIFFICULTY = "Easy";
         private static final int MAZE_WIDTH = 7;
@@ -229,26 +230,27 @@ public class Dungeon implements java.io.Serializable {
         myMazeWidth = theWidth;
     }
 
-    public int getMyMazeWidth() {
+    public int getMazeWidth() {
         return myMazeWidth;
     }
     public void setMazeHeight(int theHeight) {
         myMazeHeight = theHeight;
     }
 
-    public int getMyMazeHeight() {
+    public int getMazeHeight() {
         return myMazeHeight;
     }
     public void setHeroX(int theX) {
         myHeroX = theX;
     }
 
-    public int getMyHeroX() {
+    public int getHeroX() {
         return myHeroX;
     }
     public void setHeroY(int theY) {
         myHeroY = theY;
     }
+
 
     public int getMyHeroY() {
         return myHeroY;

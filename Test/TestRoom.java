@@ -72,8 +72,6 @@ public class TestRoom {
     public void testPillarPlacement() {
         room = new Room(0,0);
 
-
-
         room.placePillar(thePillars);
         assertTrue(room.hasPillar());
     }

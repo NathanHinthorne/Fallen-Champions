@@ -17,19 +17,19 @@ class DungeonTest {
     @Test
     public void testMazeWidth() {
        theDungeon.setMazeWidth(5);
-       assertEquals(5, theDungeon.getMyMazeWidth());
+       assertEquals(5, theDungeon.getMazeWidth());
     }
 
     @Test
     public void testMazeHeight() {
         theDungeon.setMazeHeight(5);
-        assertEquals(5, theDungeon.getMyMazeHeight());
+        assertEquals(5, theDungeon.getMazeHeight());
     }
 
     @Test
     public void testHeroX() {
         theDungeon.setHeroX(3);
-        assertEquals(3, theDungeon.getMyHeroX());
+        assertEquals(3, theDungeon.getHeroX());
     }
 
 
