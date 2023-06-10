@@ -2,16 +2,24 @@ package controller;
 import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
-import view.TUI;
+import view.TextModeInterface;
+import view.Window_Dungeon;
+import view.Window_MainMenu;
 
 
 public class MonsterBattleDemoDriver {
-
+    /**
+     * Create new hero for testing
+     */
     private static Hero theHero = new TestHero();
+    /**
+     * Create new monster for testing
+     */
     private static Monster theMonster = new TestMonster();
-
-    private static TUI myGame = new TUI();
-
+    /**
+     * Create new text mode interface for testing
+     */
+    private static TextModeInterface myGame = new TextModeInterface();
 
     public static void main(String[] theArgs) {
 

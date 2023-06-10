@@ -117,7 +117,10 @@ public class MonsterBattle {
         }
 
     }
-
+    /**
+     * Prompts the monster for their choice
+     * current Player and Monster HP and other info
+     */
     private void monsterTurn() {
         // Bound to how many things the monster can do
 
