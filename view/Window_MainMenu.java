@@ -1,7 +1,7 @@
 package view;
 
 import controller.DungeonGame;
-import model.Dungeon;
+import controller.DungeonGame_GUI;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -31,16 +31,15 @@ public class Window_MainMenu implements ActionListener {
 
     /**
      * Constructor for the Main Menu.
-     * @param theDungeon the input dungeon.
      */
-    public Window_MainMenu(Dungeon theDungeon) {
+    public Window_MainMenu() {
 
         setupFrame();
         myStartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Audio.play(Audio.menuTwo);
-                myChooseHeroWindow = new Window_ChooseHero(theDungeon);
+                DungeonGame_GUI.setGameBegun(true);
                 mainFrame.dispose();
             }
         });

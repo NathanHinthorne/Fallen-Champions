@@ -34,7 +34,7 @@ public class MonsterBattleTestDriver {
         setupDungeon(2);
         DungeonGame newGame = new DungeonGame();
 
-        Window_MainMenu mainMenu = new Window_MainMenu(dungeon);
+        Window_MainMenu mainMenu = new Window_MainMenu();
     }
 
 

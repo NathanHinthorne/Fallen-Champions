@@ -350,14 +350,24 @@ public class TUI {
         System.out.println("You have encountered a " + theMonster.getType().toString());
     }
 
+    /**
+     * Locked Exit message
+     */
     public void exitLocked() {
         System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
     }
 
+    /**
+     * Fell into pit message
+     * @param theFallDamage the pit you fell in
+     */
     public void displayPitMsg(final int theFallDamage) {
         System.out.println("You fell into a pit! You took " + theFallDamage + " damage!");
     }
 
+    /**
+     * The battle lose message
+     */
     public void displayBattleLoseMsg() {
         System.out.println("You lost the battle! As the monster defeats you, you are trapped in the dungeon");
         System.out.println("FOREVER EVER EVER EVER EVER EVER");
@@ -365,6 +375,11 @@ public class TUI {
         System.out.println("GAME OVER!");
     }
 
+    /**
+     * The use potion message
+     * @param thePotion the potion you used
+     * @param theIndex the slot of the potion
+     */
     public void displayUsePotionMsg(final Potion thePotion, int theIndex) {
 //        System.out.println("You used a " + thePotion.type() + "!");
         System.out.println("You used a " + thePotion.type() + " from the slot #" + theIndex+1);
@@ -376,6 +391,9 @@ public class TUI {
         }
     }
 
+    /**
+     * The invalid input message
+     */
     public void displayWrongInput() {
         System.out.println("Invalid input. Please try again.");
     }

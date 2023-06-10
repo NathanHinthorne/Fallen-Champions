@@ -249,7 +249,7 @@ public class Window_Dungeon implements ActionListener {
 
                 if (val == JOptionPane.YES_OPTION) {
                     Audio.stopAll();
-                    Window_MainMenu menu = new Window_MainMenu(theDungeon);
+                    Window_MainMenu menu = new Window_MainMenu();
                     mainFrame.dispose();
                 }
             }

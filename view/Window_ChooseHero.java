@@ -1,6 +1,7 @@
 package view;
 
 import controller.DungeonGame;
+import controller.DungeonGame_GUI;
 import controller.MonsterBattleTestDriver;
 import model.Difficulty;
 import model.Dungeon;
@@ -26,7 +27,7 @@ public class Window_ChooseHero {
     HeroTypes chosenType = null;
     boolean myHeroChosen = false;
     boolean myDiffChosen = false;
-    Difficulty myDiff;
+    int myDiff;
 
     ImageIcon myBackground;
     ImageIcon myHero1;
@@ -50,7 +51,7 @@ public class Window_ChooseHero {
 
     JButton myGoButton = new JButton("Go!");
 
-    public Window_ChooseHero(Dungeon theDungeon) {
+    public Window_ChooseHero() {
 
         myBackground = loadImage("assets\\images\\game_background.png");
         myHero1 = loadImage("assets\\images\\game_sprite_hero_warrior.png");
@@ -96,8 +97,6 @@ public class Window_ChooseHero {
         mainFrame.add(myHard);
         mainFrame.add(myGoButton);
         mainFrame.add(myBackgroundField);
-
-        addListeners(theDungeon);
 
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainFrame.setSize(400,420);
@@ -174,10 +173,9 @@ public class Window_ChooseHero {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Audio.play(Audio.menuTwo);
-                MonsterBattleTestDriver.setHero(chosenType);
+                DungeonGame_GUI.setHero(chosenType);
                 mainFrame.dispose();
-                Window_Dungeon myGameWindow = new Window_Dungeon(theDungeon, chosenType);
-                myGameWindow.setHeroSprite(chosenType);
+                DungeonGame_GUI.setupDungeon(myDiff);
 
             }
         });
@@ -185,7 +183,7 @@ public class Window_ChooseHero {
             @Override
             public void actionPerformed(ActionEvent e) {
                 myDiffChosen = true;
-                myDiff = Difficulty.EASY;
+                myDiff = 1;
                 checkBoth();
             }
         });
@@ -193,7 +191,7 @@ public class Window_ChooseHero {
             @Override
             public void actionPerformed(ActionEvent e) {
                 myDiffChosen = true;
-                myDiff = Difficulty.MEDIUM;
+                myDiff = 2;
                 checkBoth();
             }
         });
@@ -201,7 +199,7 @@ public class Window_ChooseHero {
             @Override
             public void actionPerformed(ActionEvent e) {
                 myDiffChosen = true;
-                myDiff = Difficulty.HARD;
+                myDiff = 3;
                 checkBoth();
             }
         });
