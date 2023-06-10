@@ -2,8 +2,18 @@ package model;
 
 import java.util.Random;
 
+/**
+ * Represent a pit in the dungeon.
+ * The hero can fall into a pit and lose health.
+ *
+ * @author Nathan Hinthorne
+ * @version 1.0
+ */
 public class Pit extends DungeonCharacter implements java.io.Serializable {
 
+    /**
+     * The random number generator
+     */
     final static Random MY_RANDOM = new Random();
 
 
@@ -31,6 +41,7 @@ public class Pit extends DungeonCharacter implements java.io.Serializable {
         return fallDamage;
     }
 
+    @Override
     public String toString() {
         return "X";
     }

@@ -1,6 +1,6 @@
 package controller;
 
-import view.TextModeInterface;
+import view.TUI;
 import model.*;
 
 import java.io.FileInputStream;
@@ -8,31 +8,65 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+
+/**
+ * This class is the main controller for the game.
+ *
+ * @author Nathan Hinthorne
+ * @author Brendan Smith
+ */
 public class DungeonGame {
+
+    /**
+     * The game's cheat mode. If true, the player will be given extra items and abilities.
+     */
     private final static boolean CHEAT_MODE = true;
+
+    /**
+     * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
+     */
     private final static boolean DEBUG_MODE = false;
 
-
-    private final static HeroFactory HERO_FACTORY = new HeroFactory();
-    private final static MonsterFactory MONSTER_FACTORY = new MonsterFactory();
-
+    /**
+     * the dungeon to be used in the game
+     */
     private static Dungeon dungeon; // from model
-    private static TextModeInterface game; // from view
 
+    /**
+     * the view to be used in the game. Swap with GUI later.
+     */
+    private static TUI game; // from view
+
+    /**
+     * the hero to be used in the game
+     */
     private static Hero hero; // move to main and make non static?
 
+    /**
+     * whether the game is over
+     */
     private static boolean gameOver = false; // set to true when player dies or exits dungeon
+
+    /**
+     * whether the exit is open
+     */
     private static boolean exitIsOpen = false; // set to true when player collects all pillars
 
+    /**
+     * empty constructor
+     */
     public DungeonGame() {
         // does anything need to be here?
     }
 
 
-
+    /**
+     * The main method
+     * @param theArgs Command line arguments
+     */
     public static void main(String[] theArgs) {
 
-        game = new TextModeInterface();
+        game = new TUI();
 
         // get user input to start game (1 for start, 2 for exit)
         int menuSelection = game.menu();
@@ -99,22 +133,25 @@ public class DungeonGame {
     private static Hero setupHero(int theChoice) {
         switch(theChoice) {
             case 1:
-                return HERO_FACTORY.buildHero(HeroTypes.ENFORCER); // use this instead? HeroFactory.buildHero(HeroTypes.ENFORCER);
+                return HeroFactory.buildHero(HeroTypes.ENFORCER); // use this instead? HeroFactory.buildHero(HeroTypes.ENFORCER);
             case 2:
-                return HERO_FACTORY.buildHero(HeroTypes.ROBOT);
+                return HeroFactory.buildHero(HeroTypes.ROBOT);
             case 3:
-                return HERO_FACTORY.buildHero(HeroTypes.SUPPORT);
+                return HeroFactory.buildHero(HeroTypes.SUPPORT);
             case 4:
-                return HERO_FACTORY.buildHero(HeroTypes.SCIENTIST);
+                return HeroFactory.buildHero(HeroTypes.SCIENTIST);
             case 5:
-                return HERO_FACTORY.buildHero(HeroTypes.WARRIOR);
+                return HeroFactory.buildHero(HeroTypes.WARRIOR);
             default:
                 System.out.println("Please choose a hero!");
                 return null;
         }
     }
 
-
+    /**
+     * Setup the dungeon based on the difficulty
+     * @param theDifficulty the difficulty of the dungeon
+     */
     public static void setupDungeon(final int theDifficulty) {
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
@@ -141,6 +178,9 @@ public class DungeonGame {
         }
     }
 
+    /**
+     * The main game loop
+     */
     private static void gameLoop() {
 
         int heroSteps = 0;
@@ -343,7 +383,12 @@ public class DungeonGame {
             }
         }
     }
+
+
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
+    /**
+     * Saves the game to a file called jvs.sav
+     */
     private static void saveGame() {
         try {
             FileOutputStream fos = new FileOutputStream("jvs.sav");
@@ -358,7 +403,12 @@ public class DungeonGame {
             System.out.println(e.getClass() + ": " + e.getMessage());
         }
     }
+
+
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
+    /**
+     * Loads the game from a file called jvs.sav
+     */
     private static void loadGame() {
         try {
             FileInputStream fos = new FileInputStream("jvs.sav");
@@ -373,6 +423,9 @@ public class DungeonGame {
 
     }
 
+    /**
+     * cheat mode stuff
+     */
     private static void cheatModeStuff() {
         hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
         hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
@@ -384,21 +437,4 @@ public class DungeonGame {
         hero.getMyInventory().addToInventory(new VisionPotion());
         hero.getMyInventory().addToInventory(new VisionPotion());
     }
-
-
-
-
-    // CHEAT SHEET for dungeon symbols:
-        //   = empty room
-        // * = wall
-        // ◉ = hero
-        // M = monster
-        // X = pit
-        // ▮ = exit
-        // p = potion
-        // A = abstraction pillar
-        // I = inheritance pillar
-        // P = polymorphism pillar
-        // E = encapsulation pillar
-        // & = multiple items in the same room
 }

@@ -6,7 +6,7 @@ import java.util.Random;
 public class MonsterBattle {
 
     private static final Random RANDOMIZER = new Random();
-    private final TextModeInterface myGame;
+    private final TUI myGame;
 
     private final Hero myHero;
     private final Monster myMonster;
@@ -14,7 +14,7 @@ public class MonsterBattle {
     private boolean myVictory;
     private boolean myCheatMode;
 
-    public MonsterBattle(Hero theHero, Monster theMonster, final TextModeInterface theView, final boolean theCheatMode) {
+    public MonsterBattle(Hero theHero, Monster theMonster, final TUI theView, final boolean theCheatMode) {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;

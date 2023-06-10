@@ -4,7 +4,7 @@ import model.*;
 
 import java.util.Scanner;
 
-public class TextModeInterface {
+public class TUI {
 
     private static final Scanner THE_SCANNER = new Scanner(System.in);
 

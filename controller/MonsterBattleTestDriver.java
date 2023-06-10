@@ -2,13 +2,12 @@ package controller;
 import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
-import view.TextModeInterface;
-import view.Window_Dungeon;
+import view.TUI;
 import view.Window_MainMenu;
 
 public class MonsterBattleTestDriver {
 
-    private static TextModeInterface myGame = new TextModeInterface();
+    private static TUI myGame = new TUI();
     private static Dungeon dungeon;
     private static Hero theHero = new TestHero();
     private static Monster theMonster = new TestMonster();
