@@ -293,9 +293,9 @@ public class DungeonGame {
 
                 case 'e': // open bag
                     boolean choosing = true;
-                    int itemSlot = game.openBag(hero.getMyInventory()) - 1;
+                    int itemSlot = game.openBag(hero.getMyInventory());
 
-                    if (itemSlot > 0 && itemSlot < 5) {
+                    if (itemSlot < 5 && itemSlot > 0) {
                         Potion potion = hero.getMyInventory().consumeItem(hero, itemSlot);
 
                         if (potion.type().equals("Vision Potion"))  {
