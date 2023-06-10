@@ -3,7 +3,9 @@ package model;
 import java.util.Random;
 
 public class Pit extends DungeonCharacter implements java.io.Serializable {
-
+    /**
+     * Randomizes the pit damage
+     */
     final static Random MY_RANDOM = new Random();
 
 

@@ -114,7 +114,10 @@ public class DungeonGame {
         }
     }
 
-
+    /**
+     * Sets up the dungeon
+     * @param theDifficulty the game difficulty
+     */
     public static void setupDungeon(final int theDifficulty) {
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty
@@ -141,6 +144,9 @@ public class DungeonGame {
         }
     }
 
+    /**
+     * Plays the game
+     */
     private static void gameLoop() {
 
         int heroSteps = 0;
@@ -343,6 +349,10 @@ public class DungeonGame {
             }
         }
     }
+
+    /**
+     * Saves the game
+     */
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
     private static void saveGame() {
         try {
@@ -358,6 +368,10 @@ public class DungeonGame {
             System.out.println(e.getClass() + ": " + e.getMessage());
         }
     }
+
+    /**
+     * Loads the game
+     */
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
     private static void loadGame() {
         try {
@@ -373,6 +387,9 @@ public class DungeonGame {
 
     }
 
+    /**
+     * For cheat mode only
+     */
     private static void cheatModeStuff() {
         hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
         hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
