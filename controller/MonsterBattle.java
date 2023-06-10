@@ -40,6 +40,9 @@ public class MonsterBattle {
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
          */
+
+        Audio.playMusic(Audio.battleSong, true);
+
         if (myHero.getSpd() > myMonster.getSpd()) {
             while (!myGameOver) {
                 if (myHero.getHitPoints() > 0) {
@@ -66,6 +69,7 @@ public class MonsterBattle {
             }
         }
 
+        Audio.stopAll();
         if (myVictory) {
             return true;
         }

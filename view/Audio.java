@@ -29,6 +29,7 @@ public final class Audio {
     // MUSIC
     // Made by Nathan
     public static final File ambientSong = new File("view\\assets\\sound\\music\\music_ambient.wav");
+    public static final File battleSong = new File("view\\assets\\sound\\music\\music_battle.wav");
     // Made by Brendan
     public static final File testSong = new File("view\\assets\\sound\\music\\music_testtrack.wav");
 
