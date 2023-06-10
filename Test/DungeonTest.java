@@ -1,18 +1,17 @@
 import model.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class DungeonTest {
-
-
-    // How should I test this?
 
     Dungeon theDungeon = new Dungeon();
 
     @Test
     public void testDifficulty() {
-        theDungeon.setDifficulty("HARD");
-        assertEquals("HARD", theDungeon.getDifficulty());
+        theDungeon.setDifficulty("Hard");
+        assertEquals("Hard", theDungeon.getDifficulty());
     }
 
     @Test

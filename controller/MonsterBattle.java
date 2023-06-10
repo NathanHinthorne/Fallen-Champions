@@ -12,13 +12,15 @@ public class MonsterBattle {
     private final Monster myMonster;
     private boolean myGameOver;
     private boolean myVictory;
+    private boolean myCheatMode;
 
-    public MonsterBattle(Hero theHero, Monster theMonster, final TextModeInterface theView) {
+    public MonsterBattle(Hero theHero, Monster theMonster, final TextModeInterface theView, final boolean theCheatMode) {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;
         myGame = theView;
         myVictory = false;
+        myCheatMode = theCheatMode;
     }
 
     /**
@@ -95,16 +97,19 @@ public class MonsterBattle {
         } else if (choice == 3) {
             boolean itemused = false;
             int slot = myGame.openBag(myHero.getMyInventory());
-            if (slot > 4 || slot < 0) {
+            if (slot > 3 || slot < 1) {
                 playerTurn();
             } else {
-                myGame.usePotion(slot-1, myHero);
-                myHero.getMyInventory().consumeItem(myHero, slot-1);
+                myGame.usePotion(slot, myHero);
+                myHero.getMyInventory().consumeItem(myHero, slot); //
             }
 
-        } else if (choice == 6) {
+        } else if (choice == 6 && myCheatMode) {
             myGame.displayInstaKill();
             myMonster.setHitPoints(0);
+        } else {
+            myGame.displayWrongInput();
+            playerTurn();
         }
 
         // Checks if the attack killed the enemy
@@ -156,43 +161,5 @@ public class MonsterBattle {
         }
 
     }
-
-
-
-
-
-
-//    public static boolean has_won(int win) {
-//        if(win == 1) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public static boolean has_lost(int lose) {
-//        if(lose == 1) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public static boolean is_ongoing(int ongoing) {
-//        if(ongoing == 0) {
-//            return false;
-//        } else if(has_won(1) || has_lost(1)) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-//    public static boolean is__monsterbattle_ongoing(int ongoing) {
-//        if(ongoing == 0) {
-//            return false;
-//        } else if(has_won(1) || has_lost(1) ) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
 
 }

@@ -9,19 +9,18 @@ import java.util.List;
 
 public class TestRoom {
 
-    Dungeon.SmallDungeonBuilder theSmallDugeon = new Dungeon.SmallDungeonBuilder();
+    Room room;
 
-    Room theRoom;
-
-    Monster monster;
-
-    List<Monster> monsters = new LinkedList<>();
+    List<Monster> monsterList = new LinkedList<>();
 
     @Test
     public void testMonsterPlacement() {
-        theSmallDugeon.buildDungeon();
-        theRoom = new Room(5,5);
-        theRoom.placeMonster(monsters);
-        assertTrue(theRoom.hasMonster());
+        room = new Room(0,0);
+
+        MonsterFactory monsterFactory = new MonsterFactory();
+        monsterList.add(monsterFactory.buildMonster(MonsterTypes.SKELETON));
+
+        room.placeMonster(monsterList);
+        assertTrue(room.hasMonster());
     }
 }

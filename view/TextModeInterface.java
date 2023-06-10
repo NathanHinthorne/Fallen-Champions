@@ -63,28 +63,28 @@ public class TextModeInterface {
         System.out.println("Items:   " + myBag.getSize() + "/" + myBag.getMaxSize());
         System.out.println("Pillars: " + myBag.getMyPillarCount() + "/4");
         System.out.print("Choose an item (1-4) (5 - Back) --> ");
-        int ret = THE_SCANNER.nextInt();
+        int index = THE_SCANNER.nextInt();
         System.out.println("-------------------");
-        if (ret < 1 && ret > 5) {
-            ret = openBag(myBag);
+        if (index < 1 && index > 5) {
+            index = openBag(myBag);
         }
-        else if (ret == 5) {
-            return ret;
-        } else if (ret > myBag.getSize()) {
+        else if (index == 5) {
+            return index;
+        } else if (index > myBag.getSize()) {
             System.out.println("That Slot is empty!");
-            ret = openBag(myBag);
+            index = openBag(myBag);
         }
-        return ret;
+        return index;
     }
 
     public void usePotion(int theVal, Hero thePlayer) {
-        if (thePlayer.getMyInventory().getArray().get(theVal).type().equals("Health Potion")) {
-            System.out.println("Used a Health Potion and restored "
-                    + thePlayer.getMyInventory().getArray().get(theVal).getDetail(thePlayer) + " HP!");
-        } else if (thePlayer.getMyInventory().getArray().get(theVal).type().equals("Vision Potion")) {
+        Potion potion = thePlayer.getMyInventory().getPotionInventory().get(theVal);
+
+        if (potion.type().equals("Health Potion")) {
+            System.out.println("Used a Health Potion and restored " + potion.getDetail(thePlayer) + " HP!");
+
+        } else if (potion.type().equals("Vision Potion")) {
             System.out.println("Used a vision potion!");
-        } else {
-            System.out.println("Used a Debug Potion");
         }
     }
 
@@ -250,5 +250,20 @@ public class TextModeInterface {
         System.out.println("FOREVER EVER EVER EVER EVER EVER");
         System.out.println("You have fallen into the abyss of becoming a Fallen Champion, becoming your own worst enemy!");
         System.out.println("GAME OVER!");
+    }
+
+    public void displayUsePotionMsg(final Potion thePotion, int theIndex) {
+//        System.out.println("You used a " + thePotion.type() + "!");
+        System.out.println("You used a " + thePotion.type() + " from the slot #" + theIndex+1);
+
+        if (thePotion.type().equals("Health Potion")) {
+            System.out.println("You gained some health points!");
+        } else if (thePotion.type().equals("Vision Potion")) {
+            System.out.println("You can now see the entire dungeon for 3 turns! I hope you have a good memory ;)");
+        }
+    }
+
+    public void displayWrongInput() {
+        System.out.println("Invalid input. Please try again.");
     }
 }
