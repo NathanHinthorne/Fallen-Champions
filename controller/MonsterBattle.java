@@ -69,9 +69,7 @@ public class MonsterBattle {
      * current Player and Monster HP and other info
      */
     private void playerTurn() {
-        /**
-         * Read input from user to determine what to do
-         */
+
         myHero.takeTurn();
 
         int choice = myGame.battleMenu(myHero, myMonster);
