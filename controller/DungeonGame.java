@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 
 public class DungeonGame {
     private final static boolean CHEAT_MODE = true;
+    private final static boolean DEBUG_MODE = false;
 
 
     private final static HeroFactory HERO_FACTORY = new HeroFactory();
@@ -136,7 +137,7 @@ public class DungeonGame {
                 dungeon = theLargeDungeonBuilder.buildDungeon();
                 break;
             default:
-                System.out.println("Please make a proper selection:");
+                game.displayWrongInput();
         }
     }
 
@@ -147,7 +148,7 @@ public class DungeonGame {
 
         while (!gameOver) { // while the hero is still alive
 
-            if (dungeon.heroIsTouchingPillar()) {
+            if (dungeon.heroIsTouchingPillar() && !CHEAT_MODE) {
                 // play ding sound
 
                 Pillars pillar = dungeon.getPillar();
@@ -183,7 +184,7 @@ public class DungeonGame {
                 dungeon.removePotion();
             }
 
-            if (dungeon.heroIsTouchingPit()) {
+            if (dungeon.heroIsTouchingPit() && !DEBUG_MODE) {
                 // play pit sound
 
                 Pit pit = dungeon.getPit();
@@ -198,7 +199,7 @@ public class DungeonGame {
                 }
             }
 
-            if (dungeon.heroIsTouchingMonster()) {
+            if (dungeon.heroIsTouchingMonster() && !DEBUG_MODE) {
                 Monster monster = dungeon.getMonster();
 
                 // play monster encounter sound
@@ -207,7 +208,7 @@ public class DungeonGame {
                 DelayMachine.delay(1); // delay for 0.5 seconds
                 // play monster encounter cutscene (screen closes in with a circle around the player and the monster, then the battle begins (FORGET THIS FOR TUI))
 
-                MonsterBattle battle = new MonsterBattle(hero,monster,game);
+                MonsterBattle battle = new MonsterBattle(hero, monster, game, CHEAT_MODE);
                 boolean winnerWinnerChickenDinner = battle.newBattle();
 
                 if (winnerWinnerChickenDinner) {
@@ -244,19 +245,16 @@ public class DungeonGame {
 //                DelayMachine.delay(1); // delay for 1 second
 
             // check if vision potion is still active
-            if (stepsWithActiveVisionPotion >= 7) {
+            if (stepsWithActiveVisionPotion > 3) {
                 hero.setUsingVisionPotion(false);
                 dungeon.makeRoomsInvisible();
                 stepsWithActiveVisionPotion = 0;
             }
 
-//            if (hero.usingVisionPotion()) {
-//                dungeon.makeRoomsVisible();
-//            }
-
-            if (CHEAT_MODE) {
+            if (hero.usingVisionPotion() || DEBUG_MODE) {
                 dungeon.makeRoomsVisible();
             }
+
             game.displayDungeonMap(dungeon);
 
             game.displayHeroHealth(hero);
@@ -297,13 +295,15 @@ public class DungeonGame {
                     boolean choosing = true;
                     int itemSlot = game.openBag(hero.getMyInventory());
 
-                    if (itemSlot < 5 || itemSlot > 0) {
+                    if (itemSlot < 5 && itemSlot > 0) {
                         Potion potion = hero.getMyInventory().consumeItem(hero, itemSlot);
 
                         if (potion.type().equals("Vision Potion"))  {
                             hero.setUsingVisionPotion(true);
                             dungeon.makeRoomsVisible();
                         }
+
+                        game.displayUsePotionMsg(potion, itemSlot);
                     }
                     break;
 
@@ -339,7 +339,7 @@ public class DungeonGame {
                     break;
 
                 default:
-                    System.out.println("Please make a proper selection:");
+                    game.displayWrongInput();
             }
         }
     }
@@ -381,6 +381,8 @@ public class DungeonGame {
 
         hero.getMyInventory().addToInventory(new HealthPotion());
         hero.getMyInventory().addToInventory(new HealthPotion());
+        hero.getMyInventory().addToInventory(new VisionPotion());
+        hero.getMyInventory().addToInventory(new VisionPotion());
     }
 
 

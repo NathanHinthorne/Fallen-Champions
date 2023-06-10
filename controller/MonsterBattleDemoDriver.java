@@ -58,7 +58,7 @@ public class MonsterBattleDemoDriver {
         System.out.println("Item # - " + theHero.getMyInventory().getMyItemCount());
         System.out.println("size   - " + theHero.getMyInventory().getMaxSize());
 
-        MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame);
+        MonsterBattle battle = new MonsterBattle(theHero, theMonster, myGame, false);
         if (battle.newBattle()) {
             System.out.println("You Win!");
         } else {
