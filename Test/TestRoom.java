@@ -75,6 +75,6 @@ public class TestRoom {
 
 
         room.placePillar(thePillars);
-        assertTrue(room.hasMonster());
+        assertTrue(room.hasPillar());
     }
 }

@@ -7,31 +7,95 @@ public class Room implements java.io.Serializable {
 
     // static fields for toString
 
+    /**
+     * Empty room
+     */
     public static final String EMPTY = " ";
+
+    /**
+     * Room with a wall
+     */
     public static final String MULTIPLE = "&"; // multiple objects in one room
+
+    /**
+     * Hero symbol
+     */
     public static final String HERO = "◉";
+
+    /**
+     * Exit symbol
+     */
     public static final String EXIT = "▮";
 
-
-    // make non-static if we add difficulty levels
+    /**
+     * chance for the potion to be a health potion
+     */
     public static final double HEALTH_POTION_CHANCE = 0.65;
     // vision potion chance is 0.35
 
 
+    /**
+     * that the contents of the room are visible
+     */
     private boolean myVisible;
+
+    /**
+     * that the room has been visited
+     */
     private boolean myVisited;
+
+    /**
+     * Y coordinate of the room
+     */
     private int myY;
+
+    /**
+     * X coordinate of the room
+     */
     private int myX;
+
+    /**
+     * The room's wall
+     */
     private Wall myWall;
+
+    /**
+     * The room's exit
+     */
     private Exit myExit;
+
+    /**
+     * The room's monster
+     */
     private Monster myMonster;
+
+    /**
+     * The room's potion
+     */
     private Potion myPotion;
+
+    /**
+     * The room's pillar
+     */
     private Pillars myPillar;
+
+    /**
+     * The room's pit
+     */
     private Pit myPit;
+
+    /**
+     * The room's hero
+     */
     private boolean myHero; // just a boolean since we don't have access to a hero object
 
 
 
+    /**
+     * Constructs a room with the given coordinates
+     * @param theY the y coordinate
+     * @param theX the x coordinate
+     */
     public Room(final int theY, final int theX) {
         myY = theY;
         myX = theX;
@@ -44,61 +108,139 @@ public class Room implements java.io.Serializable {
         myHero = false;
     }
 
+    /**
+     * gets the x coordinate of the room
+     * @return the x coordinate
+     */
     public int getX() {
         return myX;
     }
 
+    /**
+     * gets the y coordinate of the room
+     * @return the y coordinate
+     */
     public int getY() {
         return myY;
     }
 
-
+    /**
+     * checks if the room has a wall
+     * @return true if the room has a wall, false otherwise
+     */
     public boolean hasWall() {
         return myWall != null;
     }
+
+    /**
+     * checks if the room has an exit
+     * @return true if the room has an exit, false otherwise
+     */
     public boolean hasExit() {
         return myExit != null;
     }
+
+    /**
+     * checks if the room has a potion
+     * @return true if the room has a potion, false otherwise
+     */
     public boolean hasPotion() {
         return myPotion != null;
     }
+
+    /**
+     * checks if the room has a pillar
+     * @return true if the room has a pillar, false otherwise
+     */
     public boolean hasPillar() {
         return myPillar != null;
     }
+
+    /**
+     * checks if the room has a pit
+     * @return true if the room has a pit, false otherwise
+     */
     public boolean hasPit() {
         return myPit != null;
     }
+
+    /**
+     * checks if the room has a monster
+     * @return true if the room has a monster, false otherwise
+     */
     public boolean hasMonster() {
         return myMonster != null;
     }
+
+    /**
+     * checks if the room has a hero
+     * @return true if the room has a hero, false otherwise
+     */
     public boolean hasHero() {
         return myHero;
     }
 
+    /**
+     * gets the room's potion if it has one
+     * @return the room's potion
+     */
     public Potion getPotion() {
         return myPotion;
     }
+
+    /**
+     * gets the room's pillar if it has one
+     * @return the room's pillar
+     */
     public Pillars getPillar() {
         return myPillar;
     }
+
+    /**
+     * gets the room's pit if it has one
+     * @return the room's pit
+     */
     public Pit getPit() {
         return myPit;
     }
+
+    /**
+     * gets the room's monster if it has one
+     * @return the room's monster
+     */
     public Monster getMonster() {
         return myMonster;
     }
 
+    /**
+     * checks if the room is empty
+     * @return true if the room is empty, false otherwise
+     */
     public boolean isEmpty() {
         return !hasWall() && !hasExit() && !hasMonster() &&
                 !hasPotion() && !hasPillar() && !hasPit();
     }
 
+    /**
+     * sets if the room's contents are visible
+     * @param theVisible true if the room is visible, false otherwise
+     */
     public void setVisible(final boolean theVisible) {
         myVisible = theVisible;
     }
+
+    /**
+     * sets if the room has been visited
+     * @param theVisited true if the room has been visited, false otherwise
+     */
     public void setVisited(final boolean theVisited) {
         myVisited = theVisited;
     }
+
+    /**
+     * checks if the room was visited
+     * @return true if the room was visited, false otherwise
+     */
     public boolean wasVisited() {
         return myVisited;
     }
@@ -106,16 +248,33 @@ public class Room implements java.io.Serializable {
 
     // 'place' methods have factors determining *which* type of object to place
     // the logic for *when* to place the object is found in the Dungeon class
+
+    /**
+     * places a wall in the room
+     */
     public void placeWall() {
         myWall = new Wall();
     }
+
+    /**
+     * places an exit in the room
+     */
     public void placeExit() {
         myExit = new Exit();
-    } //TODO make exit a singleton
+    }
+
+    /**
+     * places a monster in the room
+     * @param theUnplacedMonsters the list of unplaced monsters
+     */
     public void placeMonster(List<Monster> theUnplacedMonsters) {
         //read from myMonsters to determine which monster to place
         myMonster = theUnplacedMonsters.remove(0); // remove the first monster from the list
     }
+
+    /**
+     * places a potion in the room
+     */
     public void placePotion() {
 
         // randomly choose between placing a health potion and a vision potion
@@ -125,6 +284,11 @@ public class Room implements java.io.Serializable {
             myPotion = new VisionPotion();
         }
     }
+
+    /**
+     * places a pillar in the room
+     * @param thePlacedPillars the set of placed pillars
+     */
     public void placePillar(Set<Pillars> thePlacedPillars) {
         //TODO (maybe) randomize what type of pillar to place.
         //TODO for example, instead of ALWAYS placing the abstraction pillar first, randomly choose one of the 4.
@@ -151,30 +315,60 @@ public class Room implements java.io.Serializable {
 //            System.out.println("DEBUG: Tried to place a new pillar, but 4 are already in the dungeon!");
         }
     }
+
+    /**
+     * places a pit in the room
+     */
     public void placePit() {
         myPit = new Pit();
     }
+
+    /**
+     * places a hero in the room
+     */
     public void placeHero() {
         myHero = true;
     }
 
+    /**
+     * removes a wall from the room
+     */
     public void removeWall() {
         myWall = null;
     }
+
+    /**
+     * removes the hero from the room
+     */
     public void removeHero() {
         myHero = false;
     }
+
+    /**
+     * removes the monster from the room
+     */
     public void removeMonster() {
         myMonster = null;
     }
+
+    /**
+     * removes the potion from the room
+     */
     public void removePotion() {
         myPotion = null;
     }
+
+    /**
+     * removes the pillar from the room
+     */
     public void removePillar() {
         myPillar = null;
     }
 
 
+    /**
+     * prints the contents of the room
+     */
     public void getContents() {
         System.out.print("Room contents: ");
 

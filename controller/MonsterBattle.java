@@ -157,7 +157,5 @@ public class MonsterBattle {
             myGameOver = true;
             myVictory = false;
         }
-
     }
-
 }
