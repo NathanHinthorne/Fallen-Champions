@@ -5,6 +5,12 @@ import model.test.TestMonster;
 import view.TUI;
 import view.Window_MainMenu;
 
+/**
+ * Driver for testing monster battles
+ *
+ * @author Brendan
+ * @version 1.0 - 5/15/23
+ */
 public class MonsterBattleTestDriver {
     /**
      * Create new text mode interface for testing

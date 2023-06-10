@@ -4,7 +4,12 @@ import model.test.TestHero;
 import model.test.TestMonster;
 import view.TUI;
 
-
+/**
+ * Driver for testing monster battles
+ *
+ * @author Brendan
+ * @version 1.0 - 5/15/23
+ */
 public class MonsterBattleDemoDriver {
     /**
      * Create new hero for testing

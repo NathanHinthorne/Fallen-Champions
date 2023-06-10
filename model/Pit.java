@@ -9,7 +9,7 @@ import java.util.Random;
  * @author Nathan Hinthorne
  * @version 1.0
  */
-public class Pit extends DungeonCharacter implements java.io.Serializable {
+public class Pit implements java.io.Serializable {
 
     /**
      * The random number generator

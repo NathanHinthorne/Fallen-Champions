@@ -2,6 +2,11 @@ package model;
 
 import java.util.Random;
 
+/**
+ * A health potion that heals the player
+ * @author Nathan Hinthorne
+ * @author Brendan Smith
+ */
 public class HealthPotion extends Potion implements Healable {
     /**
      * Randomizes the health potion amt

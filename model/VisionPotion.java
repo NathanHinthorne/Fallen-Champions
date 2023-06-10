@@ -1,5 +1,13 @@
 package model;
 
+
+/**
+ * A potion that gives the player the ability to see the entire map.
+ *
+ * @author Nathan Hinthorne
+ * @author Brendan Smith
+ * @version 1.0
+ */
 public class VisionPotion extends Potion implements java.io.Serializable {
 
 

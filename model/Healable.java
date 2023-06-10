@@ -1,5 +1,12 @@
 package model;
 
+/**
+ * An interface for healing characters
+ *
+ * @author Nathan Hinthorne
+ * @author Brendan Smith
+ * @version 1.0
+ */
 public interface Healable {
     /**
      * The min heal

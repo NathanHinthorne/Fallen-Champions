@@ -1,5 +1,12 @@
 package model;
 
+/**
+ * A potion is an item that the player can consume to gain a special ability.
+ *
+ * @author Nathan Hinthorne
+ * @author Brendan Smith
+ * @author Austin Roaf
+ */
 public abstract class Potion implements java.io.Serializable {
 
     /**

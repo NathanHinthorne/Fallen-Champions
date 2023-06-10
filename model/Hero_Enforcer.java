@@ -1,5 +1,9 @@
 package model;
 
+
+/**
+ *
+ */
 public class Hero_Enforcer extends Hero implements java.io.Serializable {
 
     private int special2Cooldown;
