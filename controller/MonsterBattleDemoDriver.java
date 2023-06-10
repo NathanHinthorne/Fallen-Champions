@@ -2,9 +2,7 @@ package controller;
 import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
-import view.TextModeInterface;
-import view.Window_Dungeon;
-import view.Window_MainMenu;
+import view.TUI;
 
 
 public class MonsterBattleDemoDriver {
@@ -19,7 +17,7 @@ public class MonsterBattleDemoDriver {
     /**
      * Create new text mode interface for testing
      */
-    private static TextModeInterface myGame = new TextModeInterface();
+    private static TUI myGame = new TUI();
 
     public static void main(String[] theArgs) {
 
