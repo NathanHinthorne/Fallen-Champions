@@ -2,22 +2,65 @@ package model;
 
 import java.util.*;
 
+/**
+ * Main Dungeon Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public abstract class DungeonCharacter implements java.io.Serializable {
-
+    /**
+     * Randomizer for anything
+     */
     protected final static Random MY_RANDOM = new Random();
+    /**
+     * Max special cooldown
+     */
     public final int MAX_SPECIAL_COOLDOWN = 3;
-
+    /**
+     * The hit points
+     */
     private int myHitPoints;
+    /**
+     * The max hit points
+     */
     private int myMaxHitPoints;
+    /**
+     * The attack speed
+     */
     private int mySpd;
+    /**
+     * The low hit chance
+     */
     private float myLowHitChance;
+    /**
+     * The high hit chance
+     */
     private float myHighHitChance;
+    /**
+     * The min damage
+     */
     private int myMinDmg;
+    /**
+     * The max damage
+     */
     private int myMaxDmg;
+    /**
+     * The special cooldown
+     */
     private int mySpecialCooldown;
+    /**
+     * The special cooldown
+     */
     private float myHitChance;
+    /**
+     * The median hit chance
+     */
     private float myHitChanceMedian;
 
+    /**
+     * super() constructor for dungeon character
+     */
     public DungeonCharacter() {
         setHitPoints(myHitPoints);
         myMaxHitPoints = myHitPoints;
@@ -34,6 +77,17 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myHitChance = generateHitChance(getLowHitChance(), getHighHitChance());
     }
 
+    /**
+     * second super() constructor for dungeon character
+     * @param theHitPoints the hit points
+     * @param theAtkSpd the attack speed
+     * @param theLowHitChance the low hit chance
+     * @param theHighHitChance the high hit chance
+     * @param theHitChance the hit chance
+     * @param theMinDmg the minimum damage
+     * @param theMaxDmg the maximum damage
+     * @param theCooldown the cooldown
+     */
     public DungeonCharacter(int theHitPoints, int theAtkSpd, float theLowHitChance,
                             float theHighHitChance, float theHitChance, int theMinDmg, int theMaxDmg, int theCooldown) {
         setHitPoints(theHitPoints);
@@ -116,7 +170,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     }
 
     /**
-     * The Min Damage
+     * Sets the Min Damage
      * @param theDmg the damage to set
      */
     public void setMinDmg(int theDmg) {
@@ -262,10 +316,18 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         return myMaxHitPoints;
     }
 
+    /**
+     * Sets the hit chance median
+     * @param theChance the median hit chance
+     */
     public void setHitChanceMedian(float theChance) {
         myHitChanceMedian = theChance;
     }
 
+    /**
+     * Gets the hit chance median
+     * @return the hit chance median
+     */
     public float getHitChanceMedian() {
         return myHitChanceMedian;
     }

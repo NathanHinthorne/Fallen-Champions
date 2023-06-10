@@ -1,13 +1,27 @@
 package model;
 
+/**
+ * Hero Warrior Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public abstract class Monster extends DungeonCharacter implements Healable {
-    // The minimum heal amount
+    /**
+     * The minimum heal amount
+     */
     private int minHeal;
-    // The maximum heal amount
+    /**
+     * The maximum heal amount
+     */
     private int maxHeal;
-    // The Heal Chance
+    /**
+     * The Heal Chance
+     */
     double healChance;
-    // The Monster type
+    /**
+     * The Monster type
+     */
     private MonsterTypes myType;
 
     /**
@@ -83,6 +97,12 @@ public abstract class Monster extends DungeonCharacter implements Healable {
         healChance = theChance;
     }
 
+    /**
+     * Generates the heal chance
+     * @param theLowChance the low heal chance
+     * @param theHighChance the high heal chance
+     * @return the heal chance
+     */
     public static int generateHealChance(int theLowChance, int theHighChance) {
         return theLowChance + MY_RANDOM.nextInt(theHighChance - theLowChance + 1);
     }

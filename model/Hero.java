@@ -1,5 +1,12 @@
 package model;
 
+
+/**
+ * Hero Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public abstract class Hero extends DungeonCharacter {
 
 

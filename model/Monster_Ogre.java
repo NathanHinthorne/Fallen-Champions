@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Monster Ogre Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class Monster_Ogre extends Monster implements java.io.Serializable {
 
     /**

@@ -1,5 +1,10 @@
 package model;
-
+/**
+ * Monster Boss Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class Monster_Boss extends Monster implements java.io.Serializable {
 
     /**

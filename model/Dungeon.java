@@ -237,6 +237,11 @@ public class Dungeon implements java.io.Serializable {
     public boolean heroIsTouchingPotion() {
         return myMaze[myHeroY][myHeroX].hasPotion();
     }
+
+    /**
+     * checks if the hero is touching a pillar
+     * @return true if the hero is touching a pillar, false otherwise
+     */
     public boolean heroIsTouchingPillar() {
         return myMaze[myHeroY][myHeroX].hasPillar();
     }

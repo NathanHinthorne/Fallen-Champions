@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Monster Skeleton Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class Monster_Skeleton extends Monster implements java.io.Serializable {
     /**
      * Super constructor for monster skeleton

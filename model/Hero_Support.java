@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Hero support Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class Hero_Support extends Hero implements Healable,java.io.Serializable {
     // The minimum heal
     private int minHeal;

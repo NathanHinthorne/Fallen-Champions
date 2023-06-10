@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Hero Warrior Character Class.
+ *
+ * @author Austin Roaf
+ * @version 1.0
+ */
 public class Hero_Warrior extends Hero implements java.io.Serializable{
 
     private int special2Cooldown;
