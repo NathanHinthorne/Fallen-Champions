@@ -2,6 +2,7 @@ package view;
 import controller.DelayMachine;
 import model.*;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class TextModeInterface {
@@ -48,7 +49,16 @@ public class TextModeInterface {
 
         System.out.println("\nMake your move!");
         System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --> ");
-        return THE_SCANNER.nextInt();
+        String ret = THE_SCANNER.next();
+        int intret = 0;
+        try {
+            intret = Integer.parseInt(ret);
+        } catch(NumberFormatException e) {
+            System.out.println("Invalid input! Please try again.");
+            DelayMachine.delay(2);
+            intret = battleMenu(theHero, theMonster);
+        }
+        return intret;
     }
 
     public int chooseDifficulty() {
@@ -70,8 +80,11 @@ public class TextModeInterface {
         }
         else if (index == 5) {
             return index;
-        } else if (index > myBag.getSize()) {
+        } else if (index > myBag.getSize() && index < 5) {
             System.out.println("That Slot is empty!");
+            index = openBag(myBag);
+        } else {
+            System.out.println("Invalid input! please try again.");
             index = openBag(myBag);
         }
         return index;
