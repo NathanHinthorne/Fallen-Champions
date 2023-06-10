@@ -127,6 +127,7 @@ public class DungeonGame {
 
     /**
      * Set up the hero so the player can make a choice
+     *
      * @param theChoice the hero to choose
      * @return the hero choice
      */
@@ -150,6 +151,7 @@ public class DungeonGame {
 
     /**
      * Setup the dungeon based on the difficulty
+     *
      * @param theDifficulty the difficulty of the dungeon
      */
     public static void setupDungeon(final int theDifficulty) {

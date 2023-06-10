@@ -108,11 +108,6 @@ public class TUI {
 
     }
 
-    public void displayPlayerView(Dungeon theDungeon) {
-        System.out.println(theDungeon.getView());
-        System.out.println();
-    }
-
     public void displayDungeonMap(Dungeon theDungeon) {
         System.out.println(theDungeon.toString());
         System.out.println();
@@ -129,14 +124,6 @@ public class TUI {
 //        System.out.println("Level: " + theHero.getLevel());  //TODO add level-up functionality to hero (maybe)
         System.out.println("-----------------------------------------------------");
 
-    }
-
-    public void displayMonsterInfo(final Monster theMonster) {
-
-        System.out.println("Monster Stats");
-        System.out.println("-----------------------------------------------------");
-        System.out.println(theMonster.getType());
-        System.out.println("Health: " + theMonster.getHitPoints() + "/" + theMonster.getMaxHitPoints());
     }
 
     public void displayPotionInfo(final Potion thePotion) {

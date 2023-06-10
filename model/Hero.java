@@ -77,7 +77,7 @@ public abstract class Hero extends DungeonCharacter {
         return myPlayerUsingVisionPotion;
     }
 
-
+    @Override
     public String toString() {
         return "H";
     }

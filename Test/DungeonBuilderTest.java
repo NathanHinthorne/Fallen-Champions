@@ -44,5 +44,18 @@ class DungeonBuilderTest {
         assertEquals(15, largeDungeon.getMazeHeight());
     }
 
+    @Test
+    public void testHeroX() {
+        smallDungeon.setHeroX(3);
+        assertEquals(3, smallDungeon.getHeroX());
+    }
+
+
+    @Test
+    public void testHeroY() {
+        smallDungeon.setHeroY(3);
+        assertEquals(3, smallDungeon.getHeroY());
+    }
+
 
 }

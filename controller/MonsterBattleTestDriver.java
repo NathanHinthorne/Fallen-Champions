@@ -2,15 +2,14 @@ package controller;
 import model.*;
 import model.test.TestHero;
 import model.test.TestMonster;
-import view.TextModeInterface;
-import view.Window_Dungeon;
+import view.TUI;
 import view.Window_MainMenu;
 
 public class MonsterBattleTestDriver {
     /**
      * Create new text mode interface for testing
      */
-    private static TextModeInterface myGame = new TextModeInterface();
+    private static final TUI game = new TUI();
     /**
      * Create new dungeon for testing
      */
@@ -18,11 +17,11 @@ public class MonsterBattleTestDriver {
     /**
      * Create new hero for testing
      */
-    private static Hero theHero = new TestHero();
+    private static final Hero hero = new TestHero();
     /**
      * Create new monster for testing
      */
-    private static Monster theMonster = new TestMonster();
+    private static final Monster monster = new TestMonster();
 
     // Unfortunately, we were not able to finish the GUI in time, but it's left here for reference and testing
     public static void main(String[] theArgs) {
@@ -82,10 +81,18 @@ public class MonsterBattleTestDriver {
 //
 //    }
 
+    /**
+     * Sets the hero type for testing
+     * @param theType the type of hero to set
+     */
     public static void setHero(HeroTypes theType) {
-        theHero.setType(theType);
+        hero.setType(theType);
     }
 
+    /**
+     * sets up the dungeon for testing
+     * @param theDifficulty the difficulty of the dungeon
+     */
     public static void setupDungeon(final int theDifficulty) {
         // small dungeon = easy difficulty
         // medium dungeon = medium difficulty

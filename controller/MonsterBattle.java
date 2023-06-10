@@ -3,6 +3,13 @@ import model.*;
 import view.*;
 import java.util.Random;
 
+
+/**
+ * The Monster Battle function in the game.
+ *
+ * @author Brendan Smith
+ * @version 1.0 - 5/20/23
+ */
 public class MonsterBattle {
 
     private static final Random RANDOMIZER = new Random();

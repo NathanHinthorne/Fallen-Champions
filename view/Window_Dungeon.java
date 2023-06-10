@@ -1,6 +1,5 @@
 package view;
 
-import controller.DungeonGame;
 import model.Dungeon;
 import model.HeroTypes;
 import model.Room;
@@ -8,10 +7,8 @@ import model.Room;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Window_Dungeon implements ActionListener {
@@ -336,9 +333,9 @@ public class Window_Dungeon implements ActionListener {
 
         for (int i = 0; i < mySize; i ++) {
             for (int j = 0; j < mySize; i ++) {
-                if ((theRooms.getMyMaze()[i][j]).toString() == "*") {
+                if ((theRooms.getMaze()[i][j]).toString() == "*") {
                     myTiles[i][j] = new JLabel(myWall);
-                } else if ((theRooms.getMyMaze())[i][j].toString() == Room.EMPTY) {
+                } else if ((theRooms.getMaze())[i][j].toString() == Room.EMPTY) {
                     myTiles[i][j] = new JLabel(myPath);
                 } else { // temporarily fills the rest with paths, ignoring items.
                     myTiles[i][j] = new JLabel(myPath);
