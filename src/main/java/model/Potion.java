@@ -14,9 +14,7 @@ public abstract class Potion implements java.io.Serializable {
      * @param thePlayer the player to give the potion
      * @return 0
      */
-    public int getDetail(Hero thePlayer) {
-        return 0;
-    }
+    public abstract int getDetail(Hero thePlayer);
 
     /**
      * The potion type
