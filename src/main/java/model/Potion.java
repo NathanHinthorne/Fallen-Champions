@@ -28,6 +28,5 @@ public abstract class Potion implements java.io.Serializable {
      * The potion effect
      * @param thePlayer the potion effect for the Hero to consume
      */
-    public void effect(final Hero thePlayer) {
-    }
+    public abstract void effect(final Hero thePlayer);
 }
