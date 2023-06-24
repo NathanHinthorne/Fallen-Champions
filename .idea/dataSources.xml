@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\Users\natha\OneDrive\Desktop\UWT\software_development\Fallen-Champions\Monster_Database.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="Monster_Database [2]" uuid="dc9a5f58-fe23-4da3-bb64-d5e0d32a5eca">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\natha\OneDrive\Desktop\UWT\software_development\Fallen-Champions\src\main\resources\Monster_Database.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
