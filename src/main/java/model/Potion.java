@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * A potion is an item that the player can consume to gain a special ability.
  *
@@ -7,24 +9,29 @@ package model;
  * @author Brendan Smith
  * @author Austin Roaf
  */
-public abstract class Potion implements java.io.Serializable {
+public interface Potion extends Serializable { // prev: implements java.io.Serializable
 
     /**
      * Gets the details of the potion
-     * @param thePlayer the player to give the potion
-     * @return 0
+     * @return the details of the potion
      */
-    public abstract int getDetail(Hero thePlayer);
+    String useMsg();
 
     /**
      * The potion type
      * @return the potion type
      */
-    public abstract String type();
+    String type();
 
     /**
-     * The potion effect
-     * @param thePlayer the potion effect for the Hero to consume
+     * indicates whether the potion can be used during battle
+     * @return true if the potion can be used during battle
      */
-    public abstract void effect(final Hero thePlayer);
+    boolean canUseDuringBattle();
+
+    /**
+     * indicates whether the potion can be used outside of battle
+     * @return true if the potion can be used outside of battle
+     */
+    boolean canUseOutsideBattle();
 }

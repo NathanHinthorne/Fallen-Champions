@@ -25,8 +25,7 @@ public class HeroMage extends Hero {
         super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
                 MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG);
 
-        File slice = locateSFX("hero_special_slice.wav");
-        setSpecialSFX(slice);
+        setSpecialSFX("hero_special_slice.wav");
 
     }
 

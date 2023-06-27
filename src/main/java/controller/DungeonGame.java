@@ -27,13 +27,17 @@ public class DungeonGame {
     /**
      * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
      */
-    private final static boolean DEBUG_MODE = false;
+    private final static boolean DEBUG_MODE = true;
 
     /**
      * The game's funny dialogue mode. If true, the player will be given funny dialogue throughout the game.
      */
     private final static boolean FUNNY_DIALOGUE = false;
 
+    /**
+     * shows the play is not in battle
+     */
+    private final static boolean IN_BATTLE = false;
 
 
     /**
@@ -89,6 +93,7 @@ public class DungeonGame {
 
         // get user input to start game (1 for start, 2 for exit)
         int menuSelection = game.menu();
+        audio.playSFX(audio.menuOne);
         setupMenu(menuSelection);
     }
 
@@ -98,8 +103,6 @@ public class DungeonGame {
     private static void setupMenu(int theMenuSelection) {
         switch(theMenuSelection) {
             case 1:
-                audio.playSFX(audio.menuOne);
-
                 System.out.println();
 
                 // continue or new game (1 for new game, 2 for continue game)
@@ -130,11 +133,20 @@ public class DungeonGame {
                     System.out.println();
 
                     // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
+                    audio.playMusic(audio.startingAnewSong, false);
                     int heroSelection = game.chooseHero();
-                    hero = setupHero(heroSelection);
+                    hero = chooseHero(heroSelection);
                     audio.playSFX(audio.menuTwo);
                     hero.setName(name);
                     System.out.println();
+
+                    if (introSelection == 2) {
+                        game.heroIntroduction(hero);
+                    }
+
+                    DelayMachine.delay(4);
+
+
 //                    audio.playSFX(audio.startingAnewSong); play somewhere else
 
                     // are you cheating...?
@@ -144,6 +156,9 @@ public class DungeonGame {
                     }
                     if (DEBUG_MODE) {
                         game.displayDebugModeMsg();
+                    }
+                    if (FUNNY_DIALOGUE) {
+                        game.displayFunnyDialogueModeMsg();
                     }
 
                     // start msg
@@ -176,7 +191,7 @@ public class DungeonGame {
             names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky" };
         } else {
             names = new String[]{"Gideon the Greedy", "Cedric the Sensible", "Arthur the Aggravating",
-                    "Lancelot the Lethargic", "Percival the Peculiar", "Galahad the Gullible" };
+                    "Lancelot the Lethargic", "Patrick the Peculiar", "Galahad the Gullible" };
         }
 
         int randomIndex = (int) (Math.random() * names.length);
@@ -189,7 +204,8 @@ public class DungeonGame {
      * @param theChoice the hero to choose
      * @return the hero choice
      */
-    private static Hero setupHero(int theChoice) {
+    private static Hero chooseHero(int theChoice) {
+
         switch(theChoice) {
             case 1:
                 return HeroFactory.buildHero(HeroTypes.SWORDSMAN);
@@ -208,7 +224,7 @@ public class DungeonGame {
             default:
                 game.displayWrongInput();
                 int heroSelection = game.chooseHero();
-                return setupHero(heroSelection);
+                return chooseHero(heroSelection);
         }
     }
 
@@ -264,7 +280,7 @@ public class DungeonGame {
                 // play ding sound
 
                 Pillars pillar = dungeon.getPillar();
-                hero.getMyInventory().addPillar(pillar);
+                hero.getInventory().addPillar(pillar);
                 switch (pillar) {
                     case ABSTRACTION:
                         game.displayAbstractionPillarMsg();
@@ -280,7 +296,7 @@ public class DungeonGame {
                         break;
                 }
 
-                if (hero.getMyInventory().hasAllPillars()) {
+                if (hero.getInventory().hasAllPillars()) {
                     exitIsOpen = true;
                 }
 
@@ -290,7 +306,7 @@ public class DungeonGame {
             if (dungeon.heroIsTouchingPotion()) {
                 // play ding sound
                 Potion potion = dungeon.getPotion();
-                hero.getMyInventory().addToInventory(potion);
+                hero.getInventory().addToInventory(potion);
                 game.displayPotionInfo(potion);
 
                 audio.playSFX(audio.menuTwo);
@@ -420,10 +436,15 @@ public class DungeonGame {
                     break;
 
                 case 'e': // open bag
-                    int itemSlot = game.openBag(hero.getMyInventory());
+                    int itemSlot = game.openBag(hero.getInventory(), false);
 
                     if (itemSlot < 5 && itemSlot > 0) {
-                        Potion potion = hero.getMyInventory().consumeItem(hero, itemSlot);
+                        Potion potion = hero.getInventory().getItem(itemSlot);
+                        if (potion.canUseOutsideBattle()) {
+                            hero.getInventory().removeItem(itemSlot);
+
+                        }
+
                         audio.playSFX(audio.heroDrinkPotion);
                         if (potion.type().equals("Vision Potion"))  {
                             hero.setUsingVisionPotion(true);
@@ -514,14 +535,14 @@ public class DungeonGame {
      * cheat mode stuff
      */
     private static void cheatModeStuff() {
-        hero.getMyInventory().addPillar(Pillars.ABSTRACTION);
-        hero.getMyInventory().addPillar(Pillars.ENCAPSULATION);
-        hero.getMyInventory().addPillar(Pillars.INHERITANCE);
-        hero.getMyInventory().addPillar(Pillars.POLYMORPHISM);
+        hero.getInventory().addPillar(Pillars.ABSTRACTION);
+        hero.getInventory().addPillar(Pillars.ENCAPSULATION);
+        hero.getInventory().addPillar(Pillars.INHERITANCE);
+        hero.getInventory().addPillar(Pillars.POLYMORPHISM);
 
-        hero.getMyInventory().addToInventory(new HealthPotion());
-        hero.getMyInventory().addToInventory(new HealthPotion());
-        hero.getMyInventory().addToInventory(new VisionPotion());
-        hero.getMyInventory().addToInventory(new VisionPotion());
+        hero.getInventory().addToInventory(new HealthPotion());
+        hero.getInventory().addToInventory(new HealthPotion());
+        hero.getInventory().addToInventory(new VisionPotion());
+        hero.getInventory().addToInventory(new VisionPotion());
     }
 }

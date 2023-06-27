@@ -30,6 +30,11 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     private MonsterTypes myType;
 
     /**
+     * The amount of health the monster healed this turn
+     */
+    private int myHealAmount;
+
+    /**
      * constructor for monster
      *
      * @param theHealth the health
@@ -78,13 +83,30 @@ public abstract class Monster extends DungeonCharacter implements Healable {
 
     /**
      * Heal the monster
+     *
+     * @param theCharacter the character to heal
      */
-    public int heal(final DungeonCharacter theCharacter) {
+    public void heal(final DungeonCharacter theCharacter) {
 
-        int healAmount = RANDOM.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
-        setHealth(getHealth() + healAmount);
-        return healAmount;
+        myHealAmount = RANDOM.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
+        setHealth(getHealth() + myHealAmount);
     }
+
+    public int getHealAmount() {
+        return myHealAmount;
+    }
+
+//    public String healMsg() {
+//        return "The " + myType + " healed for " + myHealAmount + " health.";
+//    }
+//
+//    public String healFailMsg() {
+//        return "The " + myType + " tried to heal, but failed.";
+//    }
+
+
+
+
 
     /**
      * Gets the monster type

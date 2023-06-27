@@ -56,9 +56,9 @@ public final class Audio {
     public final File heroOof;
     public final File heroBasic;
     public final File heroSpecialBonk;
-//    public final File heroSpecialSlice;
-//    public final File heroSpecialSmash;
-//    public final File heroSpecialStab;
+//    public final File heroSpecialSlice; // swordsman
+//    public final File heroSpecialSmash; // juggernaut
+//    public final File heroSpecialStab; // thief
 
 
     // FUNNY SFX

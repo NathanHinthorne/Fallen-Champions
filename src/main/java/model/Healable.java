@@ -14,5 +14,5 @@ public interface Healable {
      * @param theCharacter the character to heal
      * @return a healed character
      */
-    int heal(final DungeonCharacter theCharacter);
+    void heal(final DungeonCharacter theCharacter);
 }

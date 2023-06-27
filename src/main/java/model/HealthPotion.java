@@ -7,7 +7,7 @@ import java.util.Random;
  * @author Nathan Hinthorne
  * @author Brendan Smith
  */
-public class HealthPotion extends Potion implements Healable {
+public class HealthPotion extends PotionDefensive implements Healable {
     /**
      * Randomizes the health potion amt
      */
@@ -25,18 +25,18 @@ public class HealthPotion extends Potion implements Healable {
      */
     private double myHealChance;
     /**
-     * The heal amt
+     * The amount of health healed from the potion
      */
-    private int myHealingAmount;
+    private int myHealAmount;
 
     /**
-     * Super constructor for health potion
+     * constructor for health potion
      */
     public HealthPotion() {
         myMinHeal = 150;
         myMaxHeal = 250;
         myHealChance = 70.0;
-        myHealingAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
+        myHealAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
     }
 
     /**
@@ -49,12 +49,23 @@ public class HealthPotion extends Potion implements Healable {
 
     }
 
+    @Override
+    public boolean canUseDuringBattle() {
+        return true;
+    }
+
+    @Override
+    public boolean canUseOutsideBattle() {
+        return true;
+    }
+
+
     /**
      * Heals the player
      * @param theCharacter the player to heal
      * @return the heal amt
      */
-    public int heal(final DungeonCharacter theCharacter) {
+    public void heal(final DungeonCharacter theCharacter) {
 
         /* generate a random int between 0 and the difference between
          * max and min, since you can't have a lower and upper bound,
@@ -63,28 +74,21 @@ public class HealthPotion extends Potion implements Healable {
 //        int healAmt = random.nextInt(myMaxHeal - myMinHeal);
 //        healAmt += myMinHeal;
 
-        if ((theCharacter.getMaxHealth() - theCharacter.getHealth()) < myHealingAmount) {
+        if ((theCharacter.getMaxHealth() - theCharacter.getHealth()) < myHealAmount) {
             theCharacter.setHealth(theCharacter.getMaxHealth());
-            myHealingAmount = theCharacter.getMaxHealth() - theCharacter.getHealth();
-            return myHealingAmount;
+            myHealAmount = theCharacter.getMaxHealth() - theCharacter.getHealth();
         } else {
-            theCharacter.setHealth(theCharacter.getHealth() + myHealingAmount);
-            return myHealingAmount;
+            theCharacter.setHealth(theCharacter.getHealth() + myHealAmount);
         }
     }
 
     /**
      * Gets the details of the potion and player
-     * @param thePlayer the player to give the potion
-     * @return the heal amt
+     * @return the details of the potion and player
      */
     @Override
-    public int getDetail(Hero thePlayer) {
-        if ((thePlayer.getMaxHealth() - thePlayer.getHealth()) < myHealingAmount) {
-            myHealingAmount = thePlayer.getMaxHealth() - thePlayer.getHealth();
-            return myHealingAmount;
-        }
-        return myHealingAmount;
+    public String useMsg() {
+        return "Used a Health Potion and restored " + myHealAmount + " HP!";
     }
 
     @Override
@@ -106,7 +110,7 @@ public class HealthPotion extends Potion implements Healable {
      * @return the healing amount
      */
     public int getHealingAmount() {
-        return myHealingAmount;
+        return myHealAmount;
     }
 
 }

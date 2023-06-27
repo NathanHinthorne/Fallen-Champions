@@ -1,8 +1,6 @@
 package model;
 
 
-import java.io.File;
-
 /**
  * Hero Character Class.
  *
@@ -79,7 +77,7 @@ public abstract class Hero extends DungeonCharacter {
      * Gets the inventory
      * @return the inventory
      */
-    public Inventory getMyInventory() {
+    public Inventory getInventory() {
         return myInventory;
     }
 

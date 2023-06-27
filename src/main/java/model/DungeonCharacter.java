@@ -66,6 +66,11 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      */
     protected File mySpecialSFX;
 
+    /**
+     * The basic ability sfx
+     */
+    protected File myBasicSFX;
+
 
     /**
      * constructor for dungeon character
@@ -135,10 +140,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         if(myCooldown > 0) {
             myCooldown--;
         }
-    }
-
-    public File getSpecialSFX() {
-        return mySpecialSFX;
     }
 
     /**
@@ -223,17 +224,31 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         return myMaxHealth;
     }
 
-    public File locateSFX(String theSFXName) {
+    public void setSpecialSFX(String theSFXName) {
         File sfx = null;
         try {
             sfx =  new File(getClass().getResource("src/main/resources/sfx/" + theSFXName).toURI());
         } catch (Exception e) {
             System.out.println("Error locating a character's special ability SFX file." + e);
         }
-        return sfx;
+        mySpecialSFX = sfx;
     }
 
-    public void setSpecialSFX(File theSFX) {
-        mySpecialSFX = theSFX;
+    public File getSpecialSFX() {
+        return mySpecialSFX;
+    }
+
+    public void setBasicSFX(String theSFXName) {
+        File sfx = null;
+        try {
+            sfx =  new File(getClass().getResource("src/main/resources/sfx/" + theSFXName).toURI());
+        } catch (Exception e) {
+            System.out.println("Error locating a character's basic ability SFX file." + e);
+        }
+        myBasicSFX = sfx;
+    }
+
+    public File getBasicSFX() {
+        return myBasicSFX;
     }
 }

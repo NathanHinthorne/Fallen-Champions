@@ -25,13 +25,24 @@ public class HeroSwordsman extends Hero {
         super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
                 MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG);
 
-        File slice = locateSFX("hero_special_slice.wav");
-        setSpecialSFX(slice);
+        setSpecialSFX("hero_special_slice.wav");
+    }
 
+    @Override
+    public int basicAtk(DungeonCharacter theOther) {
+        int dmg = 0;
+
+        return dmg;
     }
 
     @Override
     public int specialAtk(DungeonCharacter theOther) {
+//        int dmg = 0;
+//        if (specialHit()) {
+//            dmg = (int) (RANDOM.nextDouble() * (getMyMaxDmg() - getMyMinDmg() + 1)) + getMyMinDmg();
+//            theOther.subtractHealth(dmg);
+//        }
+//        return dmg;
         return 0;
     }
 }

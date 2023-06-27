@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * is able to use at any time such as potions.
  *
  * @author Brendan Smith
+ * @author Nathan Hinthorne
  * @version 1.0 - 5/15/23
  */
 public class Inventory implements java.io.Serializable {
@@ -25,7 +26,9 @@ public class Inventory implements java.io.Serializable {
 
     private int myPillarCount;
     private int myItemCount;
-    private int myMaxCapacity;
+    public static final int MAX_ITEM_CAPACITY = 4;
+    public static final int MAX_PILLAR_CAPACITY = 4;
+
     private boolean isFull;
 
     /**
@@ -36,7 +39,6 @@ public class Inventory implements java.io.Serializable {
         myInventory = new ArrayList<Potion>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
-        myMaxCapacity = 4;
         isFull = false;
     }
 
@@ -47,7 +49,7 @@ public class Inventory implements java.io.Serializable {
      */
     public void addToInventory(Potion theItem) {
 
-        if (myItemCount == myMaxCapacity) {
+        if (myItemCount == MAX_ITEM_CAPACITY) {
             // Inventory full!
         } else {
             myInventory.add(theItem);
@@ -82,11 +84,21 @@ public class Inventory implements java.io.Serializable {
     /**
      * For when the player uses (consumes) an item in the game,
      * it is removed from the inventory.
-     * @param theIndex The index of the item to be removed.
+     * @param theSlotIndex The index of the item to be removed.
      */
-    public Potion consumeItem(final Hero thePlayer, int theIndex) {
-        myInventory.get(theIndex-1).effect(thePlayer);
-        return myInventory.remove(theIndex-1);
+    public void removeItem(final int theSlotIndex) {
+        myInventory.remove(theSlotIndex-1);
+    }
+
+
+    /**
+     * Gets the item at the specified index.
+     *
+     * @param theSlotIndex The index of the item to be retrieved.
+     * @return The item at the specified index.
+     */
+    public Potion getItem(final int theSlotIndex) {
+        return myInventory.get(theSlotIndex-1);
     }
 
     /**
@@ -109,7 +121,7 @@ public class Inventory implements java.io.Serializable {
     }
 
     public int getMaxSize() {
-        return myMaxCapacity;
+        return MAX_ITEM_CAPACITY;
     }
 
     public int getMyPillarCount() {
@@ -121,6 +133,22 @@ public class Inventory implements java.io.Serializable {
     }
 
     public ArrayList<Potion> getPotionInventory() { return myInventory; }
+
+    public String getItemInventory() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\nPlayer Inventory:\n");
+        for (int i = 0; i < getMaxSize(); i++) {
+            if (i >= myInventory.size()) {
+                sb.append("[" + (i+1) + " - Empty]\n");
+            } else {
+                sb.append("[" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
+            }
+        }
+        sb.append("\n");
+
+        return sb.toString();
+    }
 
     /**
      * Represents the current player inventory in
@@ -148,6 +176,9 @@ public class Inventory implements java.io.Serializable {
                 sb.append("[" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
             }
         }
+        sb.append("\n");
+        sb.append("Items:   " + myItemCount + "/" + MAX_ITEM_CAPACITY + "\n");
+        sb.append("Pillars: " + myPillarCount + "/" + MAX_PILLAR_CAPACITY + "\n");
 
         return sb.toString();
     }

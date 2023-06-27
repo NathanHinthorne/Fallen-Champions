@@ -35,7 +35,7 @@ public class TUI {
         System.out.println("Choose your hero!");
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println("1 for Swordsman, 2 for Thief, 3 for Juggernaut, 4 for Archer,");
-        System.out.println("5 for Scientist, 6 for Doctor, 7 for Mage.");
+        System.out.println("5 for Scientist, 6 Ninja, 7 for Doctor, 8 for Mage.");
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
         System.out.print("Make your selection: ");
@@ -52,7 +52,7 @@ public class TUI {
         DelayMachine.printDelayedText("The dungeon you see looming before you is one of many perils.");
         DelayMachine.printDelayedText("In it lies hordes of monsters, deadly traps, and countless treasures.");
 //        DelayMachine.printDelayedText("To succeed, you must use your wits and cunning to overcome the challenges that await you.");
-        DelayMachine.printDelayedText("Find the 4 pillars of OO, and you will be granted access to the final chamber.");
+        DelayMachine.printDelayedText("Find the 4 pillars of OO, and you shall be granted access to the final chamber.");
         DelayMachine.printDelayedText("Not even I, the keeper of the dungeon, know what awaits you there.");
         System.out.println();
         DelayMachine.printDelayedText("Now then, what is your name?");
@@ -67,8 +67,7 @@ public class TUI {
         DelayMachine.printDelayedText("I'm going to call you " + theRealName + " instead.");
 
         if (theFunnyDialogue) {
-            DelayMachine.printDelayedText("hehehe");
-            DelayMachine.printDelayedText("Bet you didn't expect that one.");
+            DelayMachine.printDelayedText("hehehe bet you didn't expect that one.");
         } else {
             DelayMachine.printDelayedText("It suits you much better.");
         }
@@ -79,45 +78,55 @@ public class TUI {
         DelayMachine.printDelayedText("Do you think you have what it takes to overcome this dungeon?");
         DelayMachine.delay(2);
         DelayMachine.printDelayedText("Or will you become yet another FALLEN CHAMPION?");
-
-        if (theFunnyDialogue) {
-
-            theAudio.playSFX(theAudio.rimshot);
-            DelayMachine.delay(2);
-        }
-
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(4);
         System.out.println();
 
-        System.out.println("Well, do you have what it takes??");
+        if (theFunnyDialogue) {
+            DelayMachine.delay(2);
+            theAudio.playSFX(theAudio.rimshot);
+            DelayMachine.delay(4);
+            DelayMachine.printDelayedTextFast("By the way, that was a rhetorical question, you don't actually get to answer.");
+        } else {
+            DelayMachine.delay(2);
+            theAudio.playSFX(theAudio.dunDunDun);
+            DelayMachine.delay(4);
+        }
+
+        DelayMachine.printDelayedText("So " + theRealName + ", what kind of adventurer are you anyway?");
+
+
+/*        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(4);
+//        System.out.println();
+//
+//        System.out.println("Well, do you have what it takes??");
 //        if (theFunnyDialogue) {
 //        } else {
 //            DelayMachine.printDelayedText("A quiet one ay?");
 //        }
 
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(4);
-        System.out.println();
-
-        if (theFunnyDialogue) {
-            System.out.println("Bruh");
-            DelayMachine.delay(2);
-            System.out.println("*boots you into the dungeon without a second thought*");
-        } else {
-            DelayMachine.printDelayedText("A quiet one ay?");
-            DelayMachine.printDelayedText("I guess we'll find out soon enough.");
+//        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(2);
+//        System.out.print(". ");
+//        DelayMachine.delay(4);
+//        System.out.println();
+//
+//        if (theFunnyDialogue) {
+//            System.out.println("Bruh");
+//            DelayMachine.delay(2);
+//            System.out.println("*boots you into the dungeon without a second thought*");
+//        } else {
+//            DelayMachine.printDelayedText("A quiet one ay?");
+//            DelayMachine.printDelayedText("I guess we'll find out soon enough.");
         }
+        */
     }
 
     /**
@@ -176,47 +185,44 @@ public class TUI {
 
     /**
      * Menu for inventory choice
-     * @param myBag your inventory bag
+     * @param theBag your inventory bag
+     * @param inBattle whether you're in battle
      * @return the inventory choice
      */
-    public int openBag(final Inventory myBag) {
+    public int openBag(final Inventory theBag, final boolean inBattle) {
         System.out.println("Opening bag...");
+
         DelayMachine.delay(3);
-        System.out.println(myBag.toString());
-        System.out.println("Items:   " + myBag.getSize() + "/" + myBag.getMaxSize());
-        System.out.println("Pillars: " + myBag.getMyPillarCount() + "/4");
-        System.out.print("Choose an item (1-4) (5 - Back) --> ");
-        int index = SCANNER.nextInt();
-        System.out.println("-------------------");
-        if (index < 1 && index > 5) {
-            index = openBag(myBag);
-        }
-        else if (index == 5) {
-            return index;
-        } else if (index > myBag.getSize() && index < 5) {
-            System.out.println("That Slot is empty!");
-            index = openBag(myBag);
+        if (inBattle) {
+            System.out.println(theBag.getItemInventory());
         } else {
-            System.out.println("Invalid input! please try again.");
-            index = openBag(myBag);
+            System.out.println(theBag.toString());
         }
-        return index;
+
+        System.out.print("Choose an item (1-4) (5 - Back) --> ");
+        int slotIndex = SCANNER.nextInt();
+        System.out.println("-------------------");
+
+        if (slotIndex <= 0 || slotIndex >= 6) { // out of bounds
+            System.out.println("Invalid input! please try again.");
+            slotIndex = openBag(theBag, inBattle);
+        }
+        else if (slotIndex > theBag.getSize()-1) { // empty slot
+            System.out.println("That slot is empty!");
+            slotIndex = openBag(theBag, inBattle);
+        }
+        return slotIndex;
     }
+
 
     /**
      * Potion selection
-     * @param theVal the potion you selected
-     * @param thePlayer you
+     * @param theSlotIndex the potion you selected
+     * @param thePlayer the player (you)
      */
-    public void usePotion(int theVal, Hero thePlayer) {
-        Potion potion = thePlayer.getMyInventory().getPotionInventory().get(theVal);
-
-        if (potion.type().equals("Health Potion")) {
-            System.out.println("Used a Health Potion and restored " + potion.getDetail(thePlayer) + " HP!");
-
-        } else if (potion.type().equals("Vision Potion")) {
-            System.out.println("Used a vision potion!");
-        }
+    public void usePotionMsg(int theSlotIndex, Hero thePlayer) {
+        Potion potion = thePlayer.getInventory().getPotionInventory().get(theSlotIndex);
+        System.out.println(potion.useMsg());
     }
 
     /**
@@ -228,7 +234,6 @@ public class TUI {
         System.out.println("1 for yes, 2 for no");
         System.out.print("Make your selection: ");
         return SCANNER.nextInt();
-
     }
 
     /**
@@ -318,7 +323,7 @@ public class TUI {
     public void monsterMoves(int theVal, int theHpAmt) {
         if (theVal == 0) {
             if (theHpAmt == 0) {
-                System.out.println("Their attack failed!");
+                System.out.println("Their basic attack failed!");
             } else {
                 System.out.println("The enemy performs an attack for " + theHpAmt + " damage!");
             }
@@ -408,7 +413,16 @@ public class TUI {
      */
     public void displayCheatModeMsg() {
         System.out.println("*****************************************************");
-        System.out.println("YOU CHEATER! I SEE WHAT YOU'RE DOING THERE! ಠ_ಠ");
+        System.out.println("You have entered cheat mode ಠ_ಠ");
+        System.out.println("*****************************************************");
+    }
+
+    /**
+     * The funny mode message
+     */
+    public void displayFunnyDialogueModeMsg() {
+        System.out.println("*****************************************************");
+        System.out.println("You have entered funny dialogue mode ( ͡° ͜ʖ ͡°)");
         System.out.println("*****************************************************");
     }
 
@@ -488,11 +502,24 @@ public class TUI {
 
     public void displayDebugModeMsg() {
         System.out.println("*****************************************************");
-        System.out.println("You have entered debug mode");
+        System.out.println("You have entered debug mode ❐‿❑");
         System.out.println("*****************************************************");
     }
 
     public void displayWallMsg() {
         System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
+    }
+
+    public void heroIntroduction(Hero hero) {
+        DelayMachine.printDelayedText("Ah, a " + hero.getType() + "!");
+        DelayMachine.printDelayedText("I'm sure that ability will serve you well.");
+        DelayMachine.printDelayedText("Good luck!");
+        DelayMachine.printDelayedText("*cranks gate open*");
+        System.out.println();
+
+    }
+
+    public void displayCantUseItemDuringBattle(Potion thePotion) {
+        System.out.println("You can't use a " + thePotion.type() + " during a battle!");
     }
 }

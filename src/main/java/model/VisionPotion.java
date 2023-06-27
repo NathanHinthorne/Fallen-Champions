@@ -8,7 +8,7 @@ package model;
  * @author Brendan Smith
  * @version 1.0
  */
-public class VisionPotion extends Potion implements java.io.Serializable {
+public class VisionPotion extends PotionDefensive implements java.io.Serializable {
 
 
     public VisionPotion() { }
@@ -23,8 +23,18 @@ public class VisionPotion extends Potion implements java.io.Serializable {
     }
 
     @Override
-    public String toString() {
-        return "p";
+    public boolean canUseDuringBattle() {
+        return false;
+    }
+
+    @Override
+    public boolean canUseOutsideBattle() {
+        return true;
+    }
+
+    @Override
+    public String useMsg() {
+        return "You have used a vision potion!";
     }
 
     /**
@@ -34,5 +44,10 @@ public class VisionPotion extends Potion implements java.io.Serializable {
     @Override
     public String type() {
         return "Vision Potion";
+    }
+
+    @Override
+    public String toString() {
+        return "p";
     }
 }

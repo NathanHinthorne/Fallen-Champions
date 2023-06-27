@@ -19,6 +19,11 @@ public class MonsterBattle {
     private static final Random RANDOMIZER = new Random();
 
     /**
+     * Shows the player is in battle
+     */
+    private static final boolean IN_BATTLE = true;
+
+    /**
      * The text user interface
      */
     private final TUI myGame;
@@ -142,14 +147,7 @@ public class MonsterBattle {
 
         // Open inventory
         } else if (choice == 3) {
-            boolean itemused = false;
-            int slot = myGame.openBag(myHero.getMyInventory());
-            if (slot > 3 || slot < 1) {
-                playerTurn();
-            } else {
-                myGame.usePotion(slot, myHero);
-                myHero.getMyInventory().consumeItem(myHero, slot); //
-            }
+            inventorySelectionProcess();
 
         } else if (choice == 6 && myCheatMode) {
             myGame.displayInstaKill();
@@ -193,7 +191,8 @@ public class MonsterBattle {
 
         // Heal
         } else if (choice == 2 && myMonster.getHealth() < (myMonster.getMaxHealth() - myMonster.getMaxHeal())) {
-            int amt = myMonster.heal(myMonster);
+            myMonster.heal(myMonster);
+            int amt = myMonster.getHealAmount();
             myGame.monsterMoves(choice, amt);
             DelayMachine.delay(2);
 
@@ -208,6 +207,34 @@ public class MonsterBattle {
         if (myHero.getHealth() <= 0) {
             myGameOver = true;
             myVictory = false;
+        }
+    }
+
+    public void inventorySelectionProcess() {
+        Inventory bag = myHero.getInventory();
+        int slotIndex = myGame.openBag(bag, true); // slotIndex is guaranteed to be 1-5
+
+        if (slotIndex == 5) { // back button was pressed
+            playerTurn();
+
+        } else {
+            Potion potion = myHero.getInventory().getItem(slotIndex);
+            myGame.usePotionMsg(slotIndex, myHero);
+            if (potion.canUseDuringBattle()) {
+                myHero.getInventory().removeItem(slotIndex);
+
+                if (potion instanceof PotionDefensive) {
+                    
+
+                } else if (potion instanceof PotionOffensive) {
+
+                }
+
+
+            } else {
+                myGame.displayCantUseItemDuringBattle(potion);
+                inventorySelectionProcess();
+            }
         }
     }
 }

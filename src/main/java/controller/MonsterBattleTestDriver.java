@@ -63,14 +63,14 @@ public class MonsterBattleTestDriver {
 
         Potion potion1 = new HealthPotion();
 
-        hero.getMyInventory().addToInventory(potion1);
-        hero.getMyInventory().addToInventory(new HealthPotion());
-        hero.getMyInventory().addToInventory(new VisionPotion());
-        hero.getMyInventory().addPillar(Pillars.INHERITANCE);
+        hero.getInventory().addToInventory(potion1);
+        hero.getInventory().addToInventory(new HealthPotion());
+        hero.getInventory().addToInventory(new VisionPotion());
+        hero.getInventory().addPillar(Pillars.INHERITANCE);
 
-        System.out.println(hero.getMyInventory().toString());
-        System.out.println("Item # - " + hero.getMyInventory().getMyItemCount());
-        System.out.println("size   - " + hero.getMyInventory().getMaxSize());
+        System.out.println(hero.getInventory().toString());
+        System.out.println("Item # - " + hero.getInventory().getMyItemCount());
+        System.out.println("size   - " + hero.getInventory().getMaxSize());
 
         MonsterBattle battle = new MonsterBattle(hero, monster, game, false, Audio.getInstance());
         if (battle.newBattle()) {
