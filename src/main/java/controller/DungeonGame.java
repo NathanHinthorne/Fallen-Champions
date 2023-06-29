@@ -27,7 +27,7 @@ public class DungeonGame {
     /**
      * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
      */
-    private final static boolean DEBUG_MODE = true;
+    private final static boolean DEBUG_MODE = false;
 
     /**
      * The game's funny dialogue mode. If true, the player will be given funny dialogue throughout the game.
@@ -267,10 +267,12 @@ public class DungeonGame {
      */
     private static void gameLoop() {
 
+        if (audio.isPlayingMusic()) {
+            DelayMachine.delay(8);
+        }
         audio.playMusic(audio.ambientSong, true);
         int heroSteps = 0;
         int stepsWithActiveVisionPotion = 0;
-
 
         while (!gameOver) { // while the hero is still alive
 

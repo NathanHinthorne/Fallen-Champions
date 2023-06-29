@@ -474,11 +474,11 @@ public class TUI {
     /**
      * The use potion message
      * @param thePotion the potion you used
-     * @param theIndex the slot of the potion
+     * @param theSlotIndex the slot of the potion
      */
-    public void displayUsePotionMsg(final Potion thePotion, int theIndex) {
+    public void displayUsePotionMsg(final Potion thePotion, int theSlotIndex) {
 //        System.out.println("You used a " + thePotion.type() + "!");
-        System.out.println("You used a " + thePotion.type() + " from the slot #" + theIndex+1);
+        System.out.println("You used a " + thePotion.type() + " from the slot #" + theSlotIndex);
 
         if (thePotion.type().equals("Health Potion")) {
             System.out.println("You gained some health points!");
@@ -512,7 +512,7 @@ public class TUI {
 
     public void heroIntroduction(Hero hero) {
         DelayMachine.printDelayedText("Ah, a " + hero.getType() + "!");
-        DelayMachine.printDelayedText("I'm sure that ability will serve you well.");
+        DelayMachine.printDelayedText("I'm sure that skill will serve you well.");
         DelayMachine.printDelayedText("Good luck!");
         DelayMachine.printDelayedText("*cranks gate open*");
         System.out.println();
