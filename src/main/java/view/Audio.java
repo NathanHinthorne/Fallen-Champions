@@ -54,16 +54,17 @@ public final class Audio {
 //    public final File heroVictory;
     public final File heroDefeat;
     public final File heroOof;
-    public final File heroBasic;
-    public final File heroSpecialBonk;
 //    public final File heroSpecialSlice; // swordsman
 //    public final File heroSpecialSmash; // juggernaut
 //    public final File heroSpecialStab; // thief
 
 
+//    public final File sfx;
+
     // FUNNY SFX
     public final File dunDunDun;
     public final File rimshot;
+//    public final File bonk;
 
     private Audio() throws URISyntaxException { // prevent outside instantiation
 
@@ -83,26 +84,23 @@ public final class Audio {
         step4 = new File(getClass().getResource("/sound/sfx/hero_step4.wav").toURI());
         encounter = new File(getClass().getResource("/sound/sfx/monster_encounter.wav").toURI());
 
-//        monsterBasicAttack = new File(getClass().getResource("/sound/sfx/monster_basic_attack.wav").toURI());
-//        monsterSpecialAttack = new File(getClass().getResource("/sound/sfx/monster_special_attack.wav").toURI());
 //        monsterHeal = new File(getClass().getResource("/sound/sfx/monster_heal.wav").toURI());
-//        heroBasicAttack = new File(getClass().getResource("/sound/sfx/hero_basic_attack.wav").toURI());
-//        heroSpecialAttack = new File(getClass().getResource("/sound/sfx/hero_special_attack.wav").toURI());
 //        heroHeal = new File(getClass().getResource("/sound/sfx/hero_heal.wav").toURI());
         heroDrinkPotion = new File(getClass().getResource("/sound/sfx/hero_drink_potion.wav").toURI());
 //        heroLevelUp = new File(getClass().getResource("/sound/sfx/hero_level_up.wav").toURI());
 //        heroVictory = new File(getClass().getResource("/sound/sfx/hero_victory.wav").toURI());
         heroDefeat = new File(getClass().getResource("/sound/sfx/hero_defeat.wav").toURI());
         heroOof = new File(getClass().getResource("/sound/sfx/hero_oof.wav").toURI());
-        heroBasic = new File(getClass().getResource("/sound/sfx/hero_basic_attack.wav").toURI());
 
-        heroSpecialBonk = new File(getClass().getResource("/sound/sfx/hero_special_bonk.wav").toURI());
+//        bonk = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
 //        heroSpecialSlice = new File(getClass().getResource("/sound/sfx/hero_special_slice.wav").toURI());
 //        heroSpecialSmash = new File(getClass().getResource("/sound/sfx/hero_special_smash.wav").toURI());
 //        heroSpecialStab = new File(getClass().getResource("/sound/sfx/hero_special_stab.wav").toURI());
 
         dunDunDun = new File(getClass().getResource("/sound/sfx/funny_dun_dun_dun.wav").toURI());
         rimshot = new File(getClass().getResource("/sound/sfx/funny_rimshot.wav").toURI());
+
+//        sfx = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
     }
 
     public static Audio getInstance() throws URISyntaxException { // to be used in singleton design pattern
@@ -119,13 +117,13 @@ public final class Audio {
      *
      * @param theFile The sound to play (from this class' public fields)
      */
-    public static void playSFX(final File theFile) {
+    public static void playSFX(final File theFile, final int theVolume) {
 
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
             currentSFX = AudioSystem.getClip();
             currentSFX.open(audioStream);
-            setSFXVolume(-10);
+            setSFXVolume(theVolume);
             currentSFX.start();
         } catch (Exception e) {
             System.out.println("Could not open sound " + theFile.getName());
@@ -142,13 +140,13 @@ public final class Audio {
      *
      * @param theFile The sound to play (from this class' public fields)
      */
-    public static void playMusic(final File theFile, boolean theLoop) {
+    public static void playMusic(final File theFile, boolean theLoop, int theVolume) {
 
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
             currentMusic = AudioSystem.getClip();
             currentMusic.open(audioStream);
-            setMusicVolume(-10);
+            setMusicVolume(theVolume);
             currentMusic.start();
             if (theLoop) {
                 currentMusic.loop(Clip.LOOP_CONTINUOUSLY);

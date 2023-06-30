@@ -82,12 +82,12 @@ public class TUI {
 
         if (theFunnyDialogue) {
             DelayMachine.delay(2);
-            theAudio.playSFX(theAudio.rimshot);
+            theAudio.playSFX(theAudio.rimshot, -10);
             DelayMachine.delay(4);
             DelayMachine.printDelayedTextFast("By the way, that was a rhetorical question, you don't actually get to answer.");
         } else {
             DelayMachine.delay(2);
-            theAudio.playSFX(theAudio.dunDunDun);
+            theAudio.playSFX(theAudio.dunDunDun, -10);
             DelayMachine.delay(4);
         }
 
@@ -159,7 +159,11 @@ public class TUI {
         System.out.println("Monster HP: " + theMonster.getHealth());
 
         System.out.println("\nMake your move!");
-        System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --> ");
+        if (theHero.onCooldown()) {
+            System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --> ");
+        } else {
+            System.out.print("[ 1 - Attack ] *[ 2 - Special ]* [ 3 - Bag ] --> ");
+        }
         String ret = SCANNER.next();
         int intret = 0;
         try {
@@ -220,10 +224,11 @@ public class TUI {
      * @param theSlotIndex the potion you selected
      * @param thePlayer the player (you)
      */
-    public void usePotionMsg(int theSlotIndex, Hero thePlayer) {
+    public void usePotionMsg(final int theSlotIndex, final Hero thePlayer) {
         Potion potion = thePlayer.getInventory().getPotionInventory().get(theSlotIndex);
         System.out.println(potion.useMsg());
     }
+
 
     /**
      * Brings you a menu for whether you want to quit the game or not

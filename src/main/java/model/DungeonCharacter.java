@@ -112,7 +112,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
         if (chanceToHit <= myBasicChance) {
             // Attack succeeded
-            theOther.setHealth(damage);
+            theOther.setHealth(theOther.getHealth() - damage);
             return damage;
         } else {
             // Attack failed
@@ -227,12 +227,14 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public void setSpecialSFX(String theSFXName) {
         File sfx = null;
         try {
-            sfx =  new File(getClass().getResource("src/main/resources/sfx/" + theSFXName).toURI());
+            sfx =  new File(getClass().getResource("/sound/sfx/" + theSFXName).toURI());
         } catch (Exception e) {
             System.out.println("Error locating a character's special ability SFX file." + e);
         }
         mySpecialSFX = sfx;
     }
+
+
 
     public File getSpecialSFX() {
         return mySpecialSFX;
@@ -241,7 +243,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public void setBasicSFX(String theSFXName) {
         File sfx = null;
         try {
-            sfx =  new File(getClass().getResource("src/main/resources/sfx/" + theSFXName).toURI());
+            sfx = new File(getClass().getResource("/sound/sfx/" + theSFXName).toURI());
         } catch (Exception e) {
             System.out.println("Error locating a character's basic ability SFX file." + e);
         }
@@ -250,5 +252,11 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
     public File getBasicSFX() {
         return myBasicSFX;
+    }
+
+    public abstract String getName();
+
+    public boolean onCooldown() {
+        return myCooldown > 0;
     }
 }

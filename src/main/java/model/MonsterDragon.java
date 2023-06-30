@@ -25,5 +25,10 @@ public class MonsterDragon extends Monster {
         return 0;
     }
 
+    @Override
+    public String getName() {
+        return "DRAGON";
+    }
+
 
 }

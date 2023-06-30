@@ -25,6 +25,7 @@ public class HeroSwordsman extends Hero {
         super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
                 MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG);
 
+        setBasicSFX("hero_swordsman_basic.wav");
         setSpecialSFX("hero_swordsman_special.wav");
     }
 

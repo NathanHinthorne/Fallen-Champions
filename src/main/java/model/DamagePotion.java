@@ -2,22 +2,24 @@ package model;
 
 import java.util.Random;
 
-/**
- * A poison potion that does damage to monsters over time
- * @author Nathan Hinthorne
- */
-public class PoisonPotion extends PotionOffensive {
+public class DamagePotion extends PotionOffensive {
+
     /**
      * Randomizes the health potion amt
      */
-    private static Random random = new Random();
+    private static final Random RANDOM = new Random();
+
+    /**
+     * The damage amount
+     */
+    private int myDamageAmount;
 
 
     /**
-     * constructor for health potion
+     * constructor for damage potion
      */
-    public PoisonPotion() {
-
+    public DamagePotion() {
+        myDamageAmount = RANDOM.nextInt(10) + 30;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class PoisonPotion extends PotionOffensive {
      */
     @Override
     public String useMsg() {
-        return "You threw a poison potion at the monster! It will now take damage over time.";
+        return "You threw a damage potion at the monster! It inflicted " + myDamageAmount + " damage.";
     }
 
     @Override
@@ -56,7 +58,6 @@ public class PoisonPotion extends PotionOffensive {
      */
     @Override
     public String type() {
-        return "Poison Potion";
+        return "Damage Potion";
     }
-
 }

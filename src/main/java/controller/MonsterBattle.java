@@ -80,12 +80,12 @@ public class MonsterBattle {
          * player's or the monster's HP hits 0.
          */
 
-        audio.playMusic(audio.battleSong, true);
+        audio.playMusic(audio.battleSong, true, -5);
 
         if (myHero.getSpeed() > myMonster.getSpeed()) {
             while (!myGameOver) {
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne);
+                    audio.playSFX(audio.menuOne, -10);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
@@ -101,7 +101,7 @@ public class MonsterBattle {
                     DelayMachine.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne);
+                    audio.playSFX(audio.menuOne, -10);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
@@ -131,7 +131,7 @@ public class MonsterBattle {
         if (choice == 1) {
             int amt = myHero.basicAtk(myMonster);
             myGame.playerMoves(choice, amt, myHero);
-            audio.playSFX(audio.heroBasic);
+            audio.playSFX(myHero.getBasicSFX(), -10);
             DelayMachine.delay(2);
 
         // Special Attack
@@ -139,7 +139,7 @@ public class MonsterBattle {
             int cooldown = myHero.getCooldown();
             int amt = myHero.specialAtk(myMonster);
             myGame.playerMoves(choice, amt, myHero);
-            audio.playSFX(myHero.getSpecialSFX());
+            audio.playSFX(myHero.getSpecialSFX(), -10);
             DelayMachine.delay(2);
             if (cooldown > 0) {
                 playerTurn();
@@ -176,6 +176,10 @@ public class MonsterBattle {
 
         int choice = RANDOMIZER.nextInt(3);
         myMonster.decreaseCooldown();
+
+
+        //TODO make monster always choose special attack first. make sure monster initial cooldown is set to 1 or 2
+
 
         // Basic Attack
         if (choice == 0) {
@@ -219,17 +223,19 @@ public class MonsterBattle {
 
         } else {
             Potion potion = myHero.getInventory().getItem(slotIndex);
-            myGame.usePotionMsg(slotIndex, myHero);
             if (potion.canUseDuringBattle()) {
                 myHero.getInventory().removeItem(slotIndex);
 
                 if (potion instanceof PotionDefensive) {
-                    
+                    PotionDefensive defPotion = (PotionDefensive) potion;
+                    defPotion.effect(myHero);
+                    myGame.usePotionMsg(slotIndex, myHero);
 
                 } else if (potion instanceof PotionOffensive) {
-
+                    PotionOffensive offPotion = (PotionOffensive) potion;
+                    offPotion.effect(myMonster);
+                    myGame.usePotionMsg(slotIndex, myHero);
                 }
-
 
             } else {
                 myGame.displayCantUseItemDuringBattle(potion);

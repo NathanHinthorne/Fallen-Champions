@@ -8,5 +8,24 @@ package model;
  * @version 1.0 - 6/9/23
  */
 public enum Difficulty {
-    EASY, MEDIUM, HARD
+    EASY {
+        @Override
+        public String toString() {
+            return "Easy";
+        }
+    },
+
+    MEDIUM {
+        @Override
+        public String toString() {
+            return "Medium";
+        }
+    },
+
+    HARD {
+        @Override
+        public String toString() {
+            return "Hard";
+        }
+    }
 }

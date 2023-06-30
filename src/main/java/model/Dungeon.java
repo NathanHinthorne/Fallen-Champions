@@ -1,5 +1,8 @@
 package model;
 
+import java.util.List;
+import java.util.Random;
+
 /**
  * A dungeon is a collection of rooms that the player can navigate through.
  *
@@ -23,12 +26,18 @@ public class Dungeon implements java.io.Serializable {
      */
     private int myMazeHeight;
 
+    private int myHeroX;
+    private int myHeroY;
+
     /**
      * the dungeon's difficulty
      */
-    private int myHeroX;
-    private int myHeroY;
-    private String myDifficulty;
+    private Difficulty myDifficulty;
+
+    /**
+     * The list of monsters that have not been placed in the dungeon.
+     */
+    private List<Monster> myUnplacedMonsters;
 
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
@@ -37,12 +46,10 @@ public class Dungeon implements java.io.Serializable {
 
     /**
      * Builds a small dungeon with the given parameters.
+     *
+     *
      */
     public static class SmallDungeonBuilder extends DungeonBuilder {
-        /**
-         * the dungeon's difficulty
-         */
-        private static final String DIFFICULTY = "Easy";
 
         /**
          * the dungeon's width
@@ -86,8 +93,9 @@ public class Dungeon implements java.io.Serializable {
          */
         public Dungeon buildDungeon() {
 
-            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
-                                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
+            return super.buildDungeon(Difficulty.EASY, MAZE_WIDTH, MAZE_HEIGHT,
+                                    MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE,
+                                    POTION_CHANCE, PIT_CHANCE);
         }
     }
 
@@ -95,10 +103,6 @@ public class Dungeon implements java.io.Serializable {
      * Builds a medium dungeon with the given parameters
      */
     public static class MediumDungeonBuilder extends DungeonBuilder {
-        /**
-         * the dungeon's difficulty
-         */
-        private static final String DIFFICULTY = "Medium";
 
         /**
          * the dungeon's width
@@ -141,7 +145,7 @@ public class Dungeon implements java.io.Serializable {
          */
         public Dungeon buildDungeon() {
 
-            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
+            return super.buildDungeon(Difficulty.MEDIUM, MAZE_WIDTH, MAZE_HEIGHT,
                     MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
         }
     }
@@ -193,7 +197,7 @@ public class Dungeon implements java.io.Serializable {
          */
         public Dungeon buildDungeon() {
 
-            return super.buildDungeon(DIFFICULTY, MAZE_WIDTH, MAZE_HEIGHT,
+            return super.buildDungeon(Difficulty.HARD, MAZE_WIDTH, MAZE_HEIGHT,
                     MAX_BRANCH_OFF_CHANCE, PILLAR_CHANCE, ENEMY_CHANCE, POTION_CHANCE, PIT_CHANCE);
         }
     }
@@ -303,7 +307,7 @@ public class Dungeon implements java.io.Serializable {
      * gets the current difficulty of the dungeon
      * @return the current difficulty of the dungeon
      */
-    public String getDifficulty() {
+    public Difficulty getDifficulty() {
         return myDifficulty;
     }
 
@@ -355,6 +359,24 @@ public class Dungeon implements java.io.Serializable {
         oldRoom.setVisited(true);
         newRoom.placeHero();
         newRoom.setVisible(true);
+    }
+
+    /**
+     * spawns a monster somewhere in the dungeon
+     */
+    public void spawnMonster() {
+        Random rand = new Random();
+        int x = rand.nextInt(myMazeWidth);
+        int y = rand.nextInt(myMazeHeight);
+
+        while (myMaze[y][x].hasWall() || myMaze[y][x].hasPit() || myMaze[y][x].hasExit()
+                || myMaze[y][x].hasPotion() || myMaze[y][x].hasPillar()) {
+
+            x = rand.nextInt(myMazeWidth);
+            y = rand.nextInt(myMazeHeight);
+        }
+
+        myMaze[y][x].placeMonster(myDifficulty);
     }
 
     /**
@@ -454,7 +476,7 @@ public class Dungeon implements java.io.Serializable {
      * sets the difficulty of the dungeon (easy, medium, or hard)
      * @param theDifficulty the difficulty of the dungeon (easy, medium, or hard)
      */
-    public void setDifficulty(final String theDifficulty) {
+    public void setDifficulty(final Difficulty theDifficulty) {
         myDifficulty = theDifficulty;
     }
 

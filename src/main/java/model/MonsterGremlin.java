@@ -2,7 +2,7 @@ package model;
 
 public class MonsterGremlin extends Monster {
 
-    public static final int HEALTH = 500;
+    public static final int HEALTH = 100;
     public static final int SPEED = 1;
     public static final double BASIC_CHANCE = 0.8;
     public static final double SPECIAL_CHANCE = 0.6;
@@ -23,6 +23,11 @@ public class MonsterGremlin extends Monster {
     public int specialAtk(DungeonCharacter theOther) {
 
         return 0;
+    }
+
+    @Override
+    public String getName() {
+        return "GREMLIN";
     }
 
 

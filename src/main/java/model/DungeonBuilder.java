@@ -94,7 +94,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
     /**
      * the difficulty of the dungeon (easy, medium, or hard)
      */
-    private String myDifficulty;
+    private Difficulty myDifficulty;
 
     // enforce the usage of the builder for object construction and discourage direct instantiation
     /**
@@ -115,7 +115,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
      * @param thePitChance the chance that a pit will be placed in a room
      * @return the dungeon that was built
      */
-    public Dungeon buildDungeon(final String theDifficulty, final int theMazeWidth, final int theMazeHeight,
+    public Dungeon buildDungeon(final Difficulty theDifficulty, final int theMazeWidth, final int theMazeHeight,
                                    final double theMaxBranchOffChance, final double thePillarChance,
                                    final double theMonsterChance, final double thePotionChance, final double thePitChance) {
 
@@ -213,9 +213,9 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
     /**
      * read the monsters from the database
-     * @param difficulty the difficulty of the dungeon
+     * @param theDifficulty the difficulty of the dungeon
      */
-    private void readMonsters(final String difficulty) {
+    private void readMonsters(final Difficulty theDifficulty) {
 
         SQLiteDataSource ds = null;
 
@@ -228,7 +228,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
             System.exit(0);
         }
 
-        String query = "SELECT * FROM " + difficulty;
+        String query = "SELECT * FROM " + theDifficulty.toString();
 
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -297,24 +297,6 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         }
 
 //        debugPrintRooms(); // DEBUG METHOD
-    }
-
-    /**
-     * debug method to print the dungeon
-     */
-    private void debugPrintRooms() { // DEBUG METHOD
-        System.out.println("---------------------------------------------------------------------");
-        System.out.println("Number of empty rooms: " + myNumberOfEmptyRooms + " out of " + ((myMazeWidth -2) * (myMazeHeight -2)));
-
-        for (int y = 0; y < myMazeHeight; y++) {
-            System.out.println();
-            for (int x = 0; x < myMazeWidth; x++) {
-                System.out.print(myMaze[y][x] + "  ");
-            }
-        }
-        System.out.println();
-        System.out.println("---------------------------------------------------------------------");
-        System.out.println();
     }
 
     /**
@@ -448,22 +430,6 @@ public abstract class DungeonBuilder implements java.io.Serializable {
         // confirm the maze contains all 4 pillars
         if (myPlacedPillars.size() != 4) {
             restartObjectPlacing();
-        }
-
-//        debugPrintObjects(); // debug
-    }
-
-
-    /**
-     * debug method to print the maze to the console
-     */
-    public void debugPrintObjects() {
-
-        for (int i = 0; i < myMazeHeight; i++) {
-            System.out.println();
-            for (int j = 0; j < myMazeWidth; j++) {
-                System.out.print(myMaze[i][j].toString() + "  ");
-            }
         }
     }
 

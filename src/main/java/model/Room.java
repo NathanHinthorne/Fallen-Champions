@@ -291,7 +291,63 @@ public class Room implements java.io.Serializable {
      */
     public void placeMonster(List<Monster> theUnplacedMonsters) {
         //read from myMonsters to determine which monster to place
+        if (theUnplacedMonsters.isEmpty()) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.OGRE); // default to ogre when list is empty (should never happen)
+        }
         myMonster = theUnplacedMonsters.remove(0); // remove the first monster from the list
+    }
+
+    /**
+     * places a monster in the room
+     * @param theDifficulty the difficulty of dungeon
+     */
+    public void placeMonster(Difficulty theDifficulty) {
+
+        double skeletonChance = 0.0;
+        double gremlinChance = 0.0;
+        double spiderChance = 0.0;
+        double ogreChance = 0.0;
+        double warlockChance = 0.0;
+
+        if (theDifficulty == Difficulty.EASY) {
+            skeletonChance = 0.30; // 30%
+            gremlinChance = 0.60;  // 30%
+            spiderChance = 0.80;   // 20%
+            ogreChance = 0.100;    // 20%
+            warlockChance = 0.0;   // 0%
+
+        } else if (theDifficulty == Difficulty.MEDIUM) {
+            skeletonChance = 0.20; // 20%
+            gremlinChance = 0.45;  // 25%
+            spiderChance = 0.65;   // 20%
+            ogreChance = 0.85;     // 20%
+            warlockChance = 0.100; // 15%
+
+        } else if (theDifficulty == Difficulty.HARD) {
+            skeletonChance = 0.3;
+            gremlinChance = 0.5;
+            spiderChance = 0.0;
+            ogreChance = 0.2;
+            warlockChance = 0.100;
+        }
+
+        double theChance = Math.random();
+
+        if (theChance <= skeletonChance) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.SKELETON);
+
+        } else if (theChance > skeletonChance && theChance <= gremlinChance) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.GREMLIN);
+
+        } else if (theChance > gremlinChance && theChance <= spiderChance) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.SPIDER);
+
+        } else if (theChance > spiderChance && theChance <= ogreChance) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.OGRE);
+
+        } else if (theChance > ogreChance && theChance <= warlockChance) {
+            myMonster = MonsterFactory.buildMonster(MonsterTypes.WARLOCK);
+        }
     }
 
     /**
