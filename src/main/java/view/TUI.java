@@ -193,7 +193,7 @@ public class TUI {
      * @param inBattle whether you're in battle
      * @return the inventory choice
      */
-    public int openBag(final Inventory theBag, final boolean inBattle) {
+    public int openBag(final Inventory theBag, final boolean inBattle, final Audio theAudio) {
         System.out.println("Opening bag...");
 
         DelayMachine.delay(3);
@@ -208,12 +208,14 @@ public class TUI {
         System.out.println("-------------------");
 
         if (slotIndex <= 0 || slotIndex >= 6) { // out of bounds
+            theAudio.playSFX(theAudio.error, -10);
             System.out.println("Invalid input! please try again.");
-            slotIndex = openBag(theBag, inBattle);
+            slotIndex = openBag(theBag, inBattle, theAudio);
         }
-        else if (slotIndex > theBag.getSize()-1) { // empty slot
+        else if (slotIndex > theBag.getSize()-1 && slotIndex <= 4) { // empty slot
+            theAudio.playSFX(theAudio.error, -10);
             System.out.println("That slot is empty!");
-            slotIndex = openBag(theBag, inBattle);
+            slotIndex = openBag(theBag, inBattle, theAudio);
         }
         return slotIndex;
     }
@@ -221,12 +223,10 @@ public class TUI {
 
     /**
      * Potion selection
-     * @param theSlotIndex the potion you selected
-     * @param thePlayer the player (you)
+     * @param thePotion the potion you're using
      */
-    public void usePotionMsg(final int theSlotIndex, final Hero thePlayer) {
-        Potion potion = thePlayer.getInventory().getPotionInventory().get(theSlotIndex);
-        System.out.println(potion.useMsg());
+    public void usePotionMsg(final Potion thePotion) {
+        System.out.println(thePotion.useMsg());
     }
 
 
@@ -271,7 +271,7 @@ public class TUI {
      * Displays the potion info
      * @param thePotion the potion info
      */
-    public void displayPotionInfo(final Potion thePotion) {
+    public void collectPotionMsg(final Potion thePotion) {
         System.out.println("You collected a " + thePotion.type() + "!");
     }
 
@@ -344,35 +344,36 @@ public class TUI {
         }
     }
 
-    /**
-     * The player move
-     * @param theVal the player choice value
-     * @param theHpAmt the hp amt
-     * @param thePlayer you
-     */
-    public void playerMoves(int theVal, int theHpAmt, Hero thePlayer) {
-        System.out.println("-------------------");
-        if (theVal == 1) {
-            if (theHpAmt == 0) {
-                System.out.println("Your attack failed!");
-            } else {
-                System.out.println("You perform an attack for " + theHpAmt + " damage!");
-            }
-        } else if (theVal == 2) {
-            if (theHpAmt == -1) {
-                System.out.println("You cannot use your special for another "
-                        + thePlayer.getCooldown() + " moves!");
-            } else if (theHpAmt == 0) {
-                System.out.println("Your special attack failed!");
-            } else {
-                System.out.println("You perform a special attack for " + theHpAmt + " damage!");
-            }
-        } else if (theVal == 3) {
-            System.out.println("Opening bag...");
+
+    public void playerSelectsBasicMsg(final Hero thePlayer, final Monster theMonster) {
+        System.out.println(thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName());
+    }
+    public void playerSelectsSpecialMsg(final Hero thePlayer, final Monster theMonster) {
+        System.out.println(thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName());
+    }
+    public void playerHitsBasicMsg(final int theDamageDealt) {
+        System.out.println("Success!");
+        System.out.println("The enemy took " + theDamageDealt + " damage!");
+    }
+    public void playerHitsSpecialMsg(final int theDamageDealt) {
+        System.out.println("Success!");
+        System.out.println("The enemy took " + theDamageDealt + " damage"); // special doesn't always do damage. find way to deal with this
+    }
+
+    public void playerMissesMsg() {
+        System.out.println("The attack failed!");
+    }
+
+
+    public void displayCooldown(final int theCooldown) {
+        if (theCooldown == 1) {
+            System.out.println("You can't use that ability for " + theCooldown + " more turn!");
         } else {
-            playerMoves(theVal, theHpAmt, thePlayer);
+            System.out.println("You can't use that ability for " + theCooldown + " more turns!");
         }
     }
+
+
 
     /**
      * The game victory message
@@ -526,5 +527,21 @@ public class TUI {
 
     public void displayCantUseItemDuringBattle(Potion thePotion) {
         System.out.println("You can't use a " + thePotion.type() + " during a battle!");
+    }
+
+    public void levelUpMsg(final int theLevel) {
+        System.out.println("You leveled up!");
+        System.out.println("Gained +1 damage, +10 max health");
+        if (theLevel == 5) {
+            System.out.println("You have reached the max level");
+        }
+    }
+
+    public void displayInventoryFullMsg() {
+        System.out.println("You found a potion, but your inventory is full.");
+    }
+
+    public void playerCritMsg() {
+        System.out.println("It was a critical hit!");
     }
 }

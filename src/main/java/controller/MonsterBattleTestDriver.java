@@ -44,8 +44,8 @@ public class MonsterBattleTestDriver {
         System.out.println("Max HP:  " + hero.getMaxHealth());
         System.out.println("Speed:   " + hero.getSpeed());
         System.out.println("HC:      " + hero.getBasicChance());
-        System.out.println("Min DMG: " + hero.getMinDamage());
-        System.out.println("Max DMG: " + hero.getMaxDamage());
+        System.out.println("Min DMG: " + hero.getMinDmg());
+        System.out.println("Max DMG: " + hero.getMaxDmg());
         System.out.println("Sp CD:   " + hero.getCooldown());
 
         System.out.println();
@@ -55,8 +55,8 @@ public class MonsterBattleTestDriver {
         System.out.println("Max HP:  " + monster.getMaxHealth());
         System.out.println("Speed:   " + monster.getSpeed());
         System.out.println("HC:      " + monster.getBasicChance());
-        System.out.println("Min DMG: " + monster.getMinDamage());
-        System.out.println("Max DMG: " + monster.getMaxDamage());
+        System.out.println("Min DMG: " + monster.getMinDmg());
+        System.out.println("Max DMG: " + monster.getMaxDmg());
         System.out.println("Sp CD:   " + monster.getCooldown());
 
         System.out.println();

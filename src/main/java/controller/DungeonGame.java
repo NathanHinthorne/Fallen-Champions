@@ -105,6 +105,8 @@ public class DungeonGame {
             case 1:
                 System.out.println();
 
+                displayActiveModes();
+
                 // continue or new game (1 for new game, 2 for continue game)
                 int loadSelection = game.continueOrNewGameMenu();
 
@@ -124,6 +126,7 @@ public class DungeonGame {
 
                     // print introduction
                     int introSelection = game.playIntroOrNot();
+                    audio.playSFX(audio.menuOne, -10);
                     if (introSelection == 2) {
                         // play intro music
 
@@ -133,10 +136,9 @@ public class DungeonGame {
                     System.out.println();
 
                     // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
-                    audio.playMusic(audio.startingAnewSong, false, -10);
                     int heroSelection = game.chooseHero();
                     hero = chooseHero(heroSelection);
-                    audio.playSFX(audio.menuTwo, -10);
+                    audio.playSFX(audio.menuTwo, 0);
                     hero.setName(name);
                     System.out.println();
 
@@ -144,24 +146,18 @@ public class DungeonGame {
                         game.heroIntroduction(hero);
                     }
 
-                    DelayMachine.delay(4);
-
-//                    audio.playSFX(audio.sfx);
-
-                    // are you cheating...?
                     if (CHEAT_MODE) {
-                        game.displayCheatModeMsg();
                         cheatModeStuff();
                     }
-                    if (DEBUG_MODE) {
-                        game.displayDebugModeMsg();
-                    }
-                    if (FUNNY_DIALOGUE) {
-                        game.displayFunnyDialogueModeMsg();
-                    }
+
+                    DelayMachine.delay(1);
 
                     // start msg
                     game.displayStartMsg();
+
+                    // start music
+                    audio.playMusic(audio.startingAnewSong, false, -10);
+                    DelayMachine.delay(5);
 
                     // enter the main game loop
                     gameLoop();
@@ -177,6 +173,7 @@ public class DungeonGame {
                 System.exit(0);
 
             default:
+                audio.playSFX(audio.error, -10);
                 game.displayWrongInput();
                 int newMenuSelection = game.menu();
                 setupMenu(newMenuSelection);
@@ -187,12 +184,13 @@ public class DungeonGame {
         String[] names;
 
         if (FUNNY_DIALOGUE) {
-            names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky" };
+            names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky"};
         } else {
             names = new String[]{"Gideon the Greedy", "Cedric the Sensible", "Arthur the Aggravating",
-                    "Lancelot the Lethargic", "Patrick the Peculiar", "Galahad the Gullible" };
-        }
+                    "Lancelot the Lethargic", "Patrick the Peculiar", "Galahad the Gullible", "Oswald the Oddball",
+                    "Benedict the Boring", "Archibald the Absurd", "Wilbur the Whimsical", "Horace the Hilarious"};
 
+        }
         int randomIndex = (int) (Math.random() * names.length);
         return names[randomIndex];
     }
@@ -221,6 +219,7 @@ public class DungeonGame {
             case 7:
                 return HeroFactory.buildHero(HeroTypes.MAGE);
             default:
+                audio.playSFX(audio.error, -10);
                 game.displayWrongInput();
                 int heroSelection = game.chooseHero();
                 return chooseHero(heroSelection);
@@ -252,6 +251,7 @@ public class DungeonGame {
                 dungeon = theLargeDungeonBuilder.buildDungeon();
                 break;
             default:
+                audio.playSFX(audio.error, -10);
                 game.displayWrongInput();
 
                 int difficultySelection = game.chooseDifficulty();
@@ -274,8 +274,6 @@ public class DungeonGame {
         int stepsWithActiveVisionPotion = 0;
 
         while (!gameOver) { // while the hero is still alive
-
-            audio.playSFX(audio.menuTwo, -10);
 
             if (dungeon.heroIsTouchingPillar() && !CHEAT_MODE) {
                 // play ding sound
@@ -307,12 +305,15 @@ public class DungeonGame {
             if (dungeon.heroIsTouchingPotion()) {
                 // play ding sound
                 Potion potion = dungeon.getPotion();
-                hero.getInventory().addToInventory(potion);
-                game.displayPotionInfo(potion);
 
-                audio.playSFX(audio.menuTwo, -10);
-
-                dungeon.removePotion();
+                if (hero.getInventory().isFull()) {
+                    game.displayInventoryFullMsg();
+                } else {
+                    game.collectPotionMsg(potion);
+                    hero.getInventory().addToInventory(potion);
+                    audio.playSFX(audio.menuTwo, -10);
+                    dungeon.removePotion();
+                }
             }
 
             if (dungeon.heroIsTouchingPit() && !DEBUG_MODE) {
@@ -364,7 +365,7 @@ public class DungeonGame {
                     gameOver = true;
                     break;
                 }
-
+                DelayMachine.delay(4); // delay for 2 second
                 audio.playMusic(audio.ambientSong, true, -5);
             }
 
@@ -441,7 +442,7 @@ public class DungeonGame {
                     break;
 
                 case 'e': // open bag
-                    int itemSlot = game.openBag(hero.getInventory(), false);
+                    int itemSlot = game.openBag(hero.getInventory(), false, audio);
 
                     if (itemSlot < 5 && itemSlot > 0) {
                         Potion potion = hero.getInventory().getItem(itemSlot);
@@ -489,6 +490,7 @@ public class DungeonGame {
                     break;
 
                 default:
+                    audio.playSFX(audio.error, -10);
                     game.displayWrongInput();
             }
         }
@@ -546,5 +548,17 @@ public class DungeonGame {
         hero.getInventory().addToInventory(new HealthPotion());
         hero.getInventory().addToInventory(new VisionPotion());
         hero.getInventory().addToInventory(new VisionPotion());
+    }
+
+    private static void displayActiveModes() {
+        if (CHEAT_MODE) {
+            game.displayCheatModeMsg();
+        }
+        if (DEBUG_MODE) {
+            game.displayDebugModeMsg();
+        }
+        if (FUNNY_DIALOGUE) {
+            game.displayFunnyDialogueModeMsg();
+        }
     }
 }

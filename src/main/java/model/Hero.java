@@ -10,20 +10,21 @@ package model;
  */
 public abstract class Hero extends DungeonCharacter {
 
+    public static final int LEVEL_1_XP = 100;
+    public static final int LEVEL_2_XP = 200;
+    public static final int LEVEL_3_XP = 300;
+    public static final int LEVEL_4_XP = 400;
+    public static final int LEVEL_5_XP = 500;
+
     /**
      * The hero type
      */
-    private HeroTypes myType;
+    private final HeroTypes myType;
 
     /**
-     * The message for the hero it performs a basic attack
+     * Whether the given attack was a critical hit
      */
-    private String myBasicMsg;
-
-    /**
-     * The message for the hero it performs a special move
-     */
-    private String mySpecialMsg;
+    protected boolean critHit;
 
     /**
      * The inventory
@@ -41,6 +42,17 @@ public abstract class Hero extends DungeonCharacter {
     private String myName;
 
     /**
+     * The experience points
+     */
+    protected int myXP;
+
+    /**
+     * The level of the hero
+     */
+    protected int myLevel;
+
+
+    /**
      * constructor for hero
      *
      * @param theHealth the health
@@ -54,15 +66,17 @@ public abstract class Hero extends DungeonCharacter {
      */
     public Hero(HeroTypes theType, int theHealth, int theSpeed, double theBasicChance,
                 double theSpecialChance, int theMinDmg, int theMaxDmg, int theCooldown,
-                int theMaxCooldown, String theBasicMsg, String theSpecialMsg) {
+                int theMaxCooldown, String theBasicSelectMsg, String theSpecialSelectMsg) {
 
         super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg,
-                theCooldown, theMaxCooldown);
-        myBasicMsg = theBasicMsg;
-        mySpecialMsg = theSpecialMsg;
+                theCooldown, theMaxCooldown, theBasicSelectMsg, theSpecialSelectMsg);
+
         myType = theType;
         myInventory = new Inventory();
         myUsingVisionPotion = false;
+        myXP = 0;
+        myLevel = 0;
+        critHit = false;
     }
 
     /**
@@ -98,11 +112,11 @@ public abstract class Hero extends DungeonCharacter {
     }
 
     public String getBasicMsg() {
-        return myBasicMsg;
+        return myBasicSelectMsg;
     }
 
     public String getSpecialMsg() {
-        return mySpecialMsg;
+        return mySpecialSelectMsg;
     }
 
     public void setName(String theName) {
@@ -110,6 +124,36 @@ public abstract class Hero extends DungeonCharacter {
     }
     public String getName() {
         return myName;
+    }
+
+    public void gainXP(final int theXP) {
+        if (myLevel == 5) { // don't gain xp if max level
+            return;
+        }
+
+        myXP += theXP;
+    }
+
+    public boolean wasCritHit() {
+        return critHit;
+    }
+
+    public int getXP() {
+        return myXP;
+    }
+
+    public int getLevel() {
+        return myLevel;
+    }
+
+    public void levelUp() {
+        myXP = 0;
+        myLevel++;
+
+        myMaxHealth += 10;
+        myHealth = myMaxHealth;
+        myMinDmg += 1;
+        myMaxDmg += 1;
     }
 
     @Override

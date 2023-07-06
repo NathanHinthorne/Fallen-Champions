@@ -67,6 +67,8 @@ public class MonsterBattle {
         myVictory = false;
         myCheatMode = theCheatMode;
         audio = theAudio;
+
+        theHero.setCooldown(0);
     }
 
     /**
@@ -110,10 +112,35 @@ public class MonsterBattle {
 
         audio.stopAll();
         if (myVictory) {
+            checkIfLevelUp();
+
             return true;
         }
         return false;
+    }
 
+    private void checkIfLevelUp() {
+        if (myHero.getXP() >= Hero.LEVEL_1_XP && myHero.getLevel() == 0) {
+            myHero.levelUp();
+            myGame.levelUpMsg(myHero.getLevel());
+            audio.playSFX(audio.levelUp, -10);
+        } else if (myHero.getXP() >= Hero.LEVEL_2_XP && myHero.getLevel() == 1) {
+            myHero.levelUp();
+            myGame.levelUpMsg(myHero.getLevel());
+            audio.playSFX(audio.levelUp, -10);
+        } else if (myHero.getXP() >= Hero.LEVEL_3_XP && myHero.getLevel() == 2) {
+            myHero.levelUp();
+            myGame.levelUpMsg(myHero.getLevel());
+            audio.playSFX(audio.levelUp, -10);
+        } else if (myHero.getXP() >= Hero.LEVEL_4_XP && myHero.getLevel() == 3) {
+            myHero.levelUp();
+            myGame.levelUpMsg(myHero.getLevel());
+            audio.playSFX(audio.levelUp, -10);
+        } else if (myHero.getXP() >= Hero.LEVEL_5_XP && myHero.getLevel() == 4) {
+            myHero.levelUp();
+            myGame.levelUpMsg(myHero.getLevel());
+            audio.playSFX(audio.levelUp, -10);
+        }
     }
 
     /**
@@ -122,40 +149,34 @@ public class MonsterBattle {
      */
     private void playerTurn() {
 
-        myHero.decreaseCooldown();
-
         int choice = myGame.battleMenu(myHero, myMonster);
         System.out.println();
 
         // Basic Attack
         if (choice == 1) {
-            int amt = myHero.basicAtk(myMonster);
-            myGame.playerMoves(choice, amt, myHero);
-            audio.playSFX(myHero.getBasicSFX(), -10);
-            DelayMachine.delay(2);
+            performBasicAttack();
 
         // Special Attack
         } else if (choice == 2) {
-            int cooldown = myHero.getCooldown();
-            int amt = myHero.specialAtk(myMonster);
-            myGame.playerMoves(choice, amt, myHero);
-            audio.playSFX(myHero.getSpecialSFX(), -10);
-            DelayMachine.delay(2);
-            if (cooldown > 0) {
-                playerTurn();
-            }
+            performSpecialAttack();
 
         // Open inventory
         } else if (choice == 3) {
             inventorySelectionProcess();
 
+        // cheat mode instakill
         } else if (choice == 6 && myCheatMode) {
             myGame.displayInstaKill();
             myMonster.setHealth(0);
+
+        // wrong input must have been given
         } else {
+            audio.playSFX(audio.error, -10);
             myGame.displayWrongInput();
             playerTurn();
         }
+
+        myHero.decreaseCooldown();
 
         // Checks if the attack killed the enemy
         if (myMonster.getHealth() <= 0) {
@@ -164,6 +185,78 @@ public class MonsterBattle {
         }
 
     }
+
+    private void performBasicAttack() {
+        myGame.playerSelectsBasicMsg(myHero, myMonster);
+        audio.playSFX(myHero.getBasicSFX(), -10);
+        int damage = myHero.basicAtk(myMonster);
+        DelayMachine.delay(2);
+
+        if (myHero.attackWasSuccessful()) {
+            myGame.playerHitsBasicMsg(damage);
+        } else {
+            myGame.playerMissesMsg();
+        }
+    }
+
+    private void performSpecialAttack() {
+        // check cooldown
+        if (myHero.getCooldown() > 0) {
+            audio.playSFX(audio.error, -10);
+            myGame.displayCooldown(myHero.getCooldown());
+            playerTurn();
+            return;
+        }
+
+        // proceed with attack
+        myGame.playerSelectsSpecialMsg(myHero, myMonster);
+        audio.playSFX(myHero.getSpecialSFX(), -10);
+        int damage = myHero.specialAtk(myMonster);
+        DelayMachine.delay(2);
+
+        if (myHero.attackWasSuccessful()) {
+            myGame.playerHitsSpecialMsg(damage);
+            if (myHero.wasCritHit()) {
+                myGame.playerCritMsg();
+            }
+        } else {
+            myGame.playerMissesMsg();
+        }
+
+        myHero.resetCooldown();
+    }
+
+    public void inventorySelectionProcess() {
+        Inventory bag = myHero.getInventory();
+        int slotIndex = myGame.openBag(bag, true, audio); // slotIndex is guaranteed to be 1-5
+
+        if (slotIndex == 5) { // back button was pressed
+            playerTurn();
+
+        } else {
+            Potion potion = myHero.getInventory().getItem(slotIndex);
+            if (potion.canUseDuringBattle()) {
+                myHero.getInventory().removeItem(slotIndex);
+
+                if (potion instanceof PotionDefensive) {
+                    PotionDefensive defPotion = (PotionDefensive) potion;
+                    defPotion.effect(myHero);
+                    myGame.usePotionMsg(potion);
+
+                } else if (potion instanceof PotionOffensive) {
+                    PotionOffensive offPotion = (PotionOffensive) potion;
+                    offPotion.effect(myMonster);
+                    myGame.usePotionMsg(potion);
+                }
+
+            } else {
+                audio.playSFX(audio.error, -10);
+                myGame.displayCantUseItemDuringBattle(potion);
+                inventorySelectionProcess();
+            }
+        }
+    }
+
     /**
      * Prompts the monster for their choice
      * current Player and Monster HP and other info
@@ -214,33 +307,4 @@ public class MonsterBattle {
         }
     }
 
-    public void inventorySelectionProcess() {
-        Inventory bag = myHero.getInventory();
-        int slotIndex = myGame.openBag(bag, true); // slotIndex is guaranteed to be 1-5
-
-        if (slotIndex == 5) { // back button was pressed
-            playerTurn();
-
-        } else {
-            Potion potion = myHero.getInventory().getItem(slotIndex);
-            if (potion.canUseDuringBattle()) {
-                myHero.getInventory().removeItem(slotIndex);
-
-                if (potion instanceof PotionDefensive) {
-                    PotionDefensive defPotion = (PotionDefensive) potion;
-                    defPotion.effect(myHero);
-                    myGame.usePotionMsg(slotIndex, myHero);
-
-                } else if (potion instanceof PotionOffensive) {
-                    PotionOffensive offPotion = (PotionOffensive) potion;
-                    offPotion.effect(myMonster);
-                    myGame.usePotionMsg(slotIndex, myHero);
-                }
-
-            } else {
-                myGame.displayCantUseItemDuringBattle(potion);
-                inventorySelectionProcess();
-            }
-        }
-    }
 }

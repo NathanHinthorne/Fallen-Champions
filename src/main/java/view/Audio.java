@@ -23,6 +23,7 @@ public final class Audio {
     // BUTTON SOUNDS
     public final File menuOne;
     public final File menuTwo;
+    public final File error;
     public final File beginGame;
     public final File powerUp;
 
@@ -50,7 +51,7 @@ public final class Audio {
 //    public final File heroSpecialAttack;
 //    public final File heroHeal;
     public final File heroDrinkPotion;
-//    public final File heroLevelUp;
+    public final File levelUp;
 //    public final File heroVictory;
     public final File heroDefeat;
     public final File heroOof;
@@ -71,6 +72,7 @@ public final class Audio {
         // initialize music files
         menuOne = new File(getClass().getResource("/sound/sfx/button_menu_option_1.wav").toURI());
         menuTwo = new File(getClass().getResource("/sound/sfx/button_menu_option_2.wav").toURI());
+        error = new File(getClass().getResource("/sound/sfx/button_error.wav").toURI());
         beginGame = new File(getClass().getResource("/sound/sfx/button_spawn.wav").toURI());
         powerUp = new File(getClass().getResource("/sound/sfx/button_powerup.wav").toURI());
         ambientSong = new File(getClass().getResource("/sound/music/music_ambient.wav").toURI());
@@ -87,7 +89,7 @@ public final class Audio {
 //        monsterHeal = new File(getClass().getResource("/sound/sfx/monster_heal.wav").toURI());
 //        heroHeal = new File(getClass().getResource("/sound/sfx/hero_heal.wav").toURI());
         heroDrinkPotion = new File(getClass().getResource("/sound/sfx/hero_drink_potion.wav").toURI());
-//        heroLevelUp = new File(getClass().getResource("/sound/sfx/hero_level_up.wav").toURI());
+        levelUp = new File(getClass().getResource("/sound/sfx/level_up.wav").toURI());
 //        heroVictory = new File(getClass().getResource("/sound/sfx/hero_victory.wav").toURI());
         heroDefeat = new File(getClass().getResource("/sound/sfx/hero_defeat.wav").toURI());
         heroOof = new File(getClass().getResource("/sound/sfx/hero_oof.wav").toURI());

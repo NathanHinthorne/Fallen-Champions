@@ -16,60 +16,78 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      */
     public static final Random RANDOM = new Random();
 
+    public static final String BASIC_MISS_MSG = " misses";
+
     /**
      * The cooldown of the special ability
      */
-    private int myCooldown;
+    protected int myCooldown;
 
     /**
      * Max special cooldown
      */
-    public int myMaxCooldown;
+    protected int myMaxCooldown;
 
     /**
      * The health
      */
-    private int myHealth;
+    protected int myHealth;
 
     /**
      * The max hit points
      */
-    private int myMaxHealth;
+    protected int myMaxHealth;
 
     /**
      * The attack speed
      */
-    private int mySpeed;
+    protected int mySpeed;
 
     /**
      * The min damage
      */
-    private int myMinDmg;
+    protected int myMinDmg;
 
     /**
      * The max damage
      */
-    private int myMaxDmg;
+    protected int myMaxDmg;
 
     /**
      * The chance for the basic ability to succeed
      */
-    private double myBasicChance;
+    protected double myBasicChance;
 
     /**
      * The chance for the special ability to succeed
      */
-    private double mySpecialChance;
+    protected double mySpecialChance;
+
+    /**
+     * Whether the attack missed
+     */
+    protected boolean myAttackWasSuccess;
+
+    /**
+     * The message for the character when it performs a basic attack
+     */
+    protected String myBasicSelectMsg;
+
+    /**
+     * The message for the character when it performs a special move
+     */
+    protected String mySpecialSelectMsg;
 
     /**
      * The special ability sfx
      */
-    protected File mySpecialSFX;
+    private File mySpecialSFX;
 
     /**
      * The basic ability sfx
      */
-    protected File myBasicSFX;
+    private File myBasicSFX;
+
 
 
     /**
@@ -84,7 +102,8 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * @param theMaxCooldown the max cooldown
      */
     public DungeonCharacter(int theHealth, int theSpeed, double theBasicChance, double theSpecialChance,
-                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown) {
+                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown,
+                            String theBasicSelectMsg, String theSpecialSelectMsg) {
 
         myHealth = theHealth;
         mySpeed = theSpeed;
@@ -95,6 +114,8 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myMaxDmg = theMaxDmg;
         myCooldown = theCooldown;
         myMaxCooldown = theMaxCooldown;
+        myBasicSelectMsg = theBasicSelectMsg;
+        mySpecialSelectMsg = theSpecialSelectMsg;
     }
 
     /**
@@ -112,10 +133,12 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
         if (chanceToHit <= myBasicChance) {
             // Attack succeeded
+            setAttackSuccess(true);
             theOther.setHealth(theOther.getHealth() - damage);
             return damage;
         } else {
             // Attack failed
+            setAttackSuccess(false);
             return 0;
         }
     }
@@ -129,7 +152,14 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * Resets the special ability cooldown
      */
     public void resetCooldown() {
-        myCooldown = myMaxCooldown;
+        myCooldown = myMaxCooldown+1; // +1 to account for the decreaseCooldown() call
+    }
+
+    /**
+     * Sets the cooldown
+     */
+    public void setCooldown(final int theCooldown) {
+        myCooldown = theCooldown;
     }
 
     /**
@@ -146,7 +176,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * Gets the minimum hit damage
      * @return the hit damage
      */
-    public int getMinDamage() {
+    public int getMinDmg() {
 
         return myMinDmg;
     }
@@ -155,7 +185,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * Gets the maximum damage
      * @return the maximum damage
      */
-    public int getMaxDamage() {
+    public int getMaxDmg() {
 
         return myMaxDmg;
     }
@@ -224,6 +254,11 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         return myMaxHealth;
     }
 
+
+    public String getBasicMissMsg() {
+        return BASIC_MISS_MSG;
+    }
+
     public void setSpecialSFX(String theSFXName) {
         File sfx = null;
         try {
@@ -233,8 +268,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         }
         mySpecialSFX = sfx;
     }
-
-
 
     public File getSpecialSFX() {
         return mySpecialSFX;
@@ -259,4 +292,25 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public boolean onCooldown() {
         return myCooldown > 0;
     }
+
+    public void setMaxHealth(final int theMaxHealth) {
+        myMaxHealth = theMaxHealth;
+    }
+    public void setSpeed(final int theSpeed) {
+        mySpeed = theSpeed;
+    }
+    public void setMinDmg(final int theMinDmg) {
+        myMinDmg = theMinDmg;
+    }
+    public void setMaxDmg(final int theMaxDmg) {
+        myMaxDmg = theMaxDmg;
+    }
+    public boolean attackWasSuccessful() {
+        return myAttackWasSuccess;
+    }
+    public void setAttackSuccess(final boolean theAttackWasSuccess) {
+        myAttackWasSuccess = theAttackWasSuccess;
+    }
+
+
 }

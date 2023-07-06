@@ -29,7 +29,6 @@ public class Inventory implements java.io.Serializable {
     public static final int MAX_ITEM_CAPACITY = 4;
     public static final int MAX_PILLAR_CAPACITY = 4;
 
-    private boolean isFull;
 
     /**
      * Constructs the default size of the Inventory, which
@@ -39,7 +38,6 @@ public class Inventory implements java.io.Serializable {
         myInventory = new ArrayList<Potion>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
-        isFull = false;
     }
 
     /**
@@ -110,6 +108,10 @@ public class Inventory implements java.io.Serializable {
             return true;
         }
         return false;
+    }
+
+    public boolean isFull() {
+        return getSize() == MAX_ITEM_CAPACITY;
     }
 
     /**
