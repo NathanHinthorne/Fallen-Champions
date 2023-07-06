@@ -1,5 +1,7 @@
 package view;
 
+import controller.DelayMachine;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import javax.sound.sampled.*;
@@ -19,10 +21,12 @@ public final class Audio {
     // Separate clips so that they can both be stopped when need be
     private static Clip currentSFX;
     private static Clip currentMusic;
+    private static int currentMusicVolume;
 
     // BUTTON SOUNDS
     public final File menuOne;
     public final File menuTwo;
+    public final File menuThree;
     public final File error;
     public final File beginGame;
     public final File powerUp;
@@ -72,6 +76,7 @@ public final class Audio {
         // initialize music files
         menuOne = new File(getClass().getResource("/sound/sfx/button_menu_option_1.wav").toURI());
         menuTwo = new File(getClass().getResource("/sound/sfx/button_menu_option_2.wav").toURI());
+        menuThree = new File(getClass().getResource("/sound/sfx/button_menu_option_3.wav").toURI());
         error = new File(getClass().getResource("/sound/sfx/button_error.wav").toURI());
         beginGame = new File(getClass().getResource("/sound/sfx/button_spawn.wav").toURI());
         powerUp = new File(getClass().getResource("/sound/sfx/button_powerup.wav").toURI());
@@ -89,7 +94,7 @@ public final class Audio {
 //        monsterHeal = new File(getClass().getResource("/sound/sfx/monster_heal.wav").toURI());
 //        heroHeal = new File(getClass().getResource("/sound/sfx/hero_heal.wav").toURI());
         heroDrinkPotion = new File(getClass().getResource("/sound/sfx/hero_drink_potion.wav").toURI());
-        levelUp = new File(getClass().getResource("/sound/sfx/level_up.wav").toURI());
+        levelUp = new File(getClass().getResource("/sound/sfx/hero_level_up.wav").toURI());
 //        heroVictory = new File(getClass().getResource("/sound/sfx/hero_victory.wav").toURI());
         heroDefeat = new File(getClass().getResource("/sound/sfx/hero_defeat.wav").toURI());
         heroOof = new File(getClass().getResource("/sound/sfx/hero_oof.wav").toURI());
@@ -126,7 +131,33 @@ public final class Audio {
             currentSFX = AudioSystem.getClip();
             currentSFX.open(audioStream);
             setSFXVolume(theVolume);
+
             currentSFX.start();
+
+        } catch (Exception e) {
+            System.out.println("Could not open sound " + theFile.getName());
+        }
+    }
+
+    public static void playSFX(final File theFile, final int theVolume, boolean deafenMusic) {
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
+            currentSFX = AudioSystem.getClip();
+            currentSFX.open(audioStream);
+            setSFXVolume(theVolume);
+
+            if (deafenMusic) {
+                setMusicVolume(currentMusicVolume-10);
+            }
+
+            currentSFX.start();
+
+            waitUntilSFXStops(); //?
+
+            if (deafenMusic) {
+                setMusicVolume(currentMusicVolume+10);
+            }
         } catch (Exception e) {
             System.out.println("Could not open sound " + theFile.getName());
         }
@@ -167,6 +198,7 @@ public final class Audio {
      * @param theVolume The input volume
      */
     private static void setMusicVolume(int theVolume) {
+        currentMusicVolume = theVolume;
         FloatControl gain = (FloatControl) currentMusic.getControl(FloatControl.Type.MASTER_GAIN);
         gain.setValue(theVolume);
     }
@@ -209,4 +241,9 @@ public final class Audio {
         return currentMusic.isActive();
     }
 
+    public static void waitUntilSFXStops() {
+        while (isPlayingSFX()) {
+            DelayMachine.delay(1);
+        }
+    }
 }

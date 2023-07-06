@@ -15,21 +15,18 @@ public class MonsterGremlin extends Monster {
     public static final int MIN_HEAL = 20;
     public static final int MAX_HEAL = 40;
     public static final double HEAL_CHANCE = 0.5;
+    public static final int XP_WORTH = 100;
+
 
     public MonsterGremlin() {
         super(MonsterTypes.GREMLIN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
-                MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG, MIN_HEAL, MAX_HEAL, HEAL_CHANCE);
+                MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG, MIN_HEAL, MAX_HEAL, HEAL_CHANCE, XP_WORTH);
     }
 
     @Override
     public int specialAtk(DungeonCharacter theOther) {
 
         return 0;
-    }
-
-    @Override
-    public String getName() {
-        return "GREMLIN";
     }
 
 

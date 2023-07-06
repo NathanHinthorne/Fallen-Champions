@@ -136,10 +136,11 @@ public class TUI {
     public int gameplayMenu() {
         System.out.println();
         System.out.println("-----------------------------------------------------");
-        System.out.println("You are currently in the dungeon");
-        System.out.println("Please make a selection");
-        System.out.println("'w' to move up, 'a' to move left, 's' to move down, 'd' to move right\n" +
-                            "'1' to display hero info, '2' to display map, 'e' open bag, '4' to quit, '5' to save game");
+        System.out.println("Please make a selection:");
+        System.out.println("╔═══════════════════════════════════════════════════════════════════════╗");
+        System.out.println("╠ 'w' to move up, 'a' to move left, 's' to move down, 'd' to move right ╣");
+        System.out.println("╠ '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game ╣");
+        System.out.println("╚═══════════════════════════════════════════════════════════════════════╝");
         System.out.println("-----------------------------------------------------");
         return SCANNER.next().charAt(0);
     }
@@ -151,29 +152,26 @@ public class TUI {
      * @return battle menu input
      */
     public int battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
-        double playerPerc = (theHero.getHealth() / theHero.getMaxHealth()) * 20.0;
-        System.out.println("-------------------");
         System.out.println("\nPlayer HP:  " + theHero.getHealth());
-
-        double monsterPerc = (theMonster.getHealth() / theMonster.getMaxHealth()) * 20.0;
         System.out.println("Monster HP: " + theMonster.getHealth());
 
         System.out.println("\nMake your move!");
         if (theHero.onCooldown()) {
-            System.out.print("[ 1 - Attack ] [ 2 - Special ] [ 3 - Bag ] --> ");
+            System.out.print("[1 - Attack] ║2 - Special║ [3 - Bag] --> ");
         } else {
-            System.out.print("[ 1 - Attack ] *[ 2 - Special ]* [ 3 - Bag ] --> ");
+            System.out.print("[1 - Attack] [2 - Special] [3 - Bag] --> ");
         }
-        String ret = SCANNER.next();
-        int intret = 0;
+        String choice = SCANNER.next();
+        int choiceInt;
         try {
-            intret = Integer.parseInt(ret);
+            choiceInt = Integer.parseInt(choice);
         } catch(NumberFormatException e) {
             System.out.println("Invalid input! Please try again.");
             DelayMachine.delay(2);
-            intret = battleMenu(theHero, theMonster);
+            choiceInt = battleMenu(theHero, theMonster);
         }
-        return intret;
+        System.out.println("-----------------------------------------------------");
+        return choiceInt;
     }
 
     /**
@@ -204,29 +202,25 @@ public class TUI {
         }
 
         System.out.print("Choose an item (1-4) (5 - Back) --> ");
-        int slotIndex = SCANNER.nextInt();
-        System.out.println("-------------------");
+        char slotIndexChar = SCANNER.next().charAt(0);
+        int slotIndex = Character.getNumericValue(slotIndexChar);
+
+        System.out.println("-----------------------------------------------------");
 
         if (slotIndex <= 0 || slotIndex >= 6) { // out of bounds
             theAudio.playSFX(theAudio.error, -10);
             System.out.println("Invalid input! please try again.");
-            slotIndex = openBag(theBag, inBattle, theAudio);
+            openBag(theBag, inBattle, theAudio);
         }
-        else if (slotIndex > theBag.getSize()-1 && slotIndex <= 4) { // empty slot
+        else if (slotIndex > theBag.getSize()-1 && slotIndex <= theBag.getMaxSize()-1) { // empty slot
             theAudio.playSFX(theAudio.error, -10);
             System.out.println("That slot is empty!");
-            slotIndex = openBag(theBag, inBattle, theAudio);
+            openBag(theBag, inBattle, theAudio);
         }
+
+        System.out.println("-----------------------------------------------------");
+
         return slotIndex;
-    }
-
-
-    /**
-     * Potion selection
-     * @param thePotion the potion you're using
-     */
-    public void usePotionMsg(final Potion thePotion) {
-        System.out.println(thePotion.useMsg());
     }
 
 
@@ -255,16 +249,16 @@ public class TUI {
      * @param theHero you
      */
     public void displayHeroInfo(final Hero theHero) {
-
-        System.out.println("Stats");
-        System.out.println("-----------------------------------------------------");
-        System.out.println(theHero.getType());
-        System.out.println("Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
-//        System.out.println("Attack: " + theHero.);  //TODO what get method to call for attack power?
-        System.out.println("Speed: " + theHero.getSpeed());
-//        System.out.println("Level: " + theHero.getLevel());  //TODO add level-up functionality to hero (maybe)
-        System.out.println("-----------------------------------------------------");
-
+        System.out.println(" ╔═══════════════════════");
+        System.out.println(" ║ " + theHero.getName());
+        System.out.println(" ║ <" + theHero.getType() + ">");
+        System.out.println(" ║ ");
+        System.out.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
+        System.out.println(" ╠ Attack: " + (theHero.getMinDmg() + theHero.getMaxDmg())/2);
+        System.out.println(" ╠ Speed: " + theHero.getSpeed());
+        System.out.println(" ╠ Level: " + theHero.getLevel());
+        System.out.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
+        System.out.println(" ╚═══════════════════════");
     }
 
     /**
@@ -316,7 +310,7 @@ public class TUI {
      * The monster turn text
      */
     public void monsterTurnText() {
-        System.out.println("-------------------");
+        System.out.println("-----------------------------------------------------");
         System.out.println("The Enemy is making their move...");
     }
 
@@ -344,62 +338,91 @@ public class TUI {
         }
     }
 
+    public void monsterHealMsg(final int theHealAmt) {
+        System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
+    }
+
+    public void monsterSelectsBasicMsg(final Monster theMonster, final Hero thePlayer) {
+        System.out.print(" -" + theMonster.getName() + theMonster.getBasicMsg() + thePlayer.getName());
+    }
+    public void monsterSelectsSpecialMsg(final Monster theMonster, final Hero thePlayer) {
+        System.out.print(" -" + theMonster.getName() + theMonster.getSpecialMsg() + thePlayer.getName());
+    }
+    public void monsterHitsBasicMsg(final int theDamageDealt, final Hero thePlayer) {
+        System.out.println(" for " + theDamageDealt + " damage!");
+
+//        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!");
+    }
+    public void monsterHitsSpecialMsg(final int theDamageDealt, final Hero thePlayer) {
+        System.out.println(" for " + theDamageDealt + " damage!");
+//        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!"); // special doesn't always do damage. find way to deal with this
+    }
+    public void monsterAttackMissMsg() {
+        System.out.println(", but fails in its attempt!");
+    }
+
+
 
     public void playerSelectsBasicMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName());
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName());
     }
     public void playerSelectsSpecialMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName());
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName());
     }
     public void playerHitsBasicMsg(final int theDamageDealt) {
-        System.out.println("Success!");
-        System.out.println("The enemy took " + theDamageDealt + " damage!");
+        System.out.println("  Success!");
+        System.out.println("  The enemy took " + theDamageDealt + " damage!");
     }
     public void playerHitsSpecialMsg(final int theDamageDealt) {
-        System.out.println("Success!");
-        System.out.println("The enemy took " + theDamageDealt + " damage"); // special doesn't always do damage. find way to deal with this
+        System.out.println("  Success!");
+        System.out.println("  The enemy took " + theDamageDealt + " damage"); // special doesn't always do damage. find way to deal with this
     }
-
-    public void playerMissesMsg() {
+    public void playerAttackMissesMsg() {
         System.out.println("The attack failed!");
     }
 
 
+
+
     public void displayCooldown(final int theCooldown) {
         if (theCooldown == 1) {
-            System.out.println("You can't use that ability for " + theCooldown + " more turn!");
+            System.out.println(" -You can't use that ability for " + theCooldown + " more turn!");
         } else {
-            System.out.println("You can't use that ability for " + theCooldown + " more turns!");
+            System.out.println(" -You can't use that ability for " + theCooldown + " more turns!");
         }
     }
-
 
 
     /**
      * The game victory message
      */
     public void displayVictoryMsg(final int theHeroSteps) {
-        System.out.println("You have escaped the dungeon!. Congratulations!!");
-        System.out.println("You took " + theHeroSteps + " steps to escape the dungeon.");
+        System.out.println(" -You have escaped the dungeon!. Congratulations!!");
+        System.out.println("  You took " + theHeroSteps + " steps to escape the dungeon.");
     }
 
     /**
      * The battle win message
      */
-    public void displayBattleWinMsg() {
-        System.out.print("ENEMY DEFEATED! GET REKT!!");
+    public void displayBattleWinMsg(final Monster theMonster) {
         System.out.println();
-        System.out.println("-----------------------------------------------------");
+        System.out.println("  [][][][][][][][][][]");
+        System.out.println("  [] ENEMY DEFEATED []");
+        System.out.println("  [][][][][][][][][][]");
+        System.out.println();
+        System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
+        System.out.println();
     }
 
     /**
      * The death message
      */
     public void displayDeathMsg(final boolean theFunnyDialogue) {
-        System.out.println("You have been defeated.");
+        System.out.println(" -You have been defeated.");
         if (theFunnyDialogue) {
-            System.out.println("GIT GUD SCRUB!");
+            System.out.println("  GIT GUD SCRUB!");
         }
+        DelayMachine.delay(4);
         System.out.println("\n" +
                 " $$$$$$\\                                           $$$$$$\\                                 \n" +
                 "$$  __$$\\                                         $$  __$$\\                                \n" +
@@ -433,6 +456,16 @@ public class TUI {
     }
 
     /**
+     * The debug mode message
+     */
+    public void displayDebugModeMsg() {
+        System.out.println("*****************************************************");
+        System.out.println("You have entered debug mode ❐‿❑");
+        System.out.println("*****************************************************");
+    }
+
+
+    /**
      * The hero health
      * @param theHero you
      */
@@ -441,10 +474,20 @@ public class TUI {
     }
 
     /**
+     * Display the steps left with the vision potion
+     * @param theSteps the steps the hero has taken while the vision potion is active
+     */
+    public void displayStepsWithVisionPotion(final int theSteps) {
+        System.out.println("Steps left with vision potion: " + (4-theSteps));
+    }
+
+    /**
      * The game start message
      */
     public void displayStartMsg() {
-        System.out.println("Welcome to the Dungeon!");
+        System.out.println("╔═════════════════════════╗");
+        System.out.println("║ Welcome to the Dungeon! ║");
+        System.out.println("╚═════════════════════════╝");
     }
 
     /**
@@ -459,14 +502,23 @@ public class TUI {
      * @param theMonster the monster you're encountering
      */
     public void displayMonsterEncounterMsg(final Monster theMonster) {
-        System.out.println("You have encountered a " + theMonster.getType().toString());
+        String monsterName = theMonster.getType().toString();
+        String article = isVowel(monsterName.charAt(0)) ? " an " : " a ";
+        System.out.println(" -You have encountered" + article + monsterName);
+        DelayMachine.delay(2);
+        System.out.println();
+        System.out.println("+---------------------------------------------------+");
+        System.out.println("|                  BATTLE START                     |");
+        System.out.println("+---------------------------------------------------+");
+        DelayMachine.delay(1);
+
     }
 
     /**
      * Locked Exit message
      */
     public void exitLocked() {
-        System.out.println("The exit is locked! You need to collect all 4 pillars to open it!");
+        System.out.println(" -The exit is locked! You need to collect all 4 pillars to open it!");
     }
 
     /**
@@ -474,7 +526,7 @@ public class TUI {
      * @param theFallDamage the pit you fell in
      */
     public void displayPitMsg(final int theFallDamage) {
-        System.out.println("You fell into a pit! You took " + theFallDamage + " damage!");
+        System.out.println(" -You fell into a pit! You took " + theFallDamage + " damage!");
     }
 
     /**
@@ -482,15 +534,9 @@ public class TUI {
      * @param thePotion the potion you used
      * @param theSlotIndex the slot of the potion
      */
-    public void displayUsePotionMsg(final Potion thePotion, int theSlotIndex) {
-//        System.out.println("You used a " + thePotion.type() + "!");
-        System.out.println("You used a " + thePotion.type() + " from the slot #" + theSlotIndex);
-
-        if (thePotion.type().equals("Health Potion")) {
-            System.out.println("You gained some health points!");
-        } else if (thePotion.type().equals("Vision Potion")) {
-            System.out.println("You can now see the entire dungeon for 3 turns! I hope you have a good memory ;)");
-        }
+    public void usePotionMsg(final Potion thePotion, int theSlotIndex) {
+        System.out.println(" -You used a " + thePotion.type() + " from the slot #" + theSlotIndex);
+        System.out.println(thePotion.useMsg());
     }
 
     /**
@@ -504,12 +550,6 @@ public class TUI {
         System.out.println("Would you like to play the intro?");
         System.out.println("1 for no, 2 for yes");
         return SCANNER.nextInt();
-    }
-
-    public void displayDebugModeMsg() {
-        System.out.println("*****************************************************");
-        System.out.println("You have entered debug mode ❐‿❑");
-        System.out.println("*****************************************************");
     }
 
     public void displayWallMsg() {
@@ -526,22 +566,38 @@ public class TUI {
     }
 
     public void displayCantUseItemDuringBattle(Potion thePotion) {
-        System.out.println("You can't use a " + thePotion.type() + " during a battle!");
+        System.out.println(" -You can't use a " + thePotion.type() + " during a battle!");
+    }
+
+    public void displayCantUseItemOutsideBattle(Potion thePotion) {
+        System.out.println(" -You can't use a " + thePotion.type() + " outside of a battle!");
     }
 
     public void levelUpMsg(final int theLevel) {
-        System.out.println("You leveled up!");
-        System.out.println("Gained +1 damage, +10 max health");
+        System.out.println(" -You leveled up!");
+        System.out.println("  Gained +1 damage, +10 max health");
         if (theLevel == 5) {
-            System.out.println("You have reached the max level");
+            System.out.println("  You have reached the max level");
         }
     }
 
     public void displayInventoryFullMsg() {
-        System.out.println("You found a potion, but your inventory is full.");
+        System.out.println(" -You found a potion, but your inventory is full.");
     }
 
     public void playerCritMsg() {
-        System.out.println("It was a critical hit!");
+        System.out.println("  It was a critical hit!");
+    }
+
+    public void displayBattleEnd() {
+        System.out.println();
+        System.out.println("+---------------------------------------------------+");
+        System.out.println("|                    BATTLE END                     |");
+        System.out.println("+---------------------------------------------------+");
+    }
+
+    private boolean isVowel(char ch) {
+        ch = Character.toLowerCase(ch);
+        return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
     }
 }

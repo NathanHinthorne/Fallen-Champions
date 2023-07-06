@@ -16,8 +16,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      */
     public static final Random RANDOM = new Random();
 
-    public static final String BASIC_MISS_MSG = " misses";
-
     /**
      * The cooldown of the special ability
      */
@@ -132,13 +130,18 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         double chanceToHit = Math.random();
 
         if (chanceToHit <= myBasicChance) {
-            // Attack succeeded
-            setAttackSuccess(true);
-            theOther.setHealth(theOther.getHealth() - damage);
+            myAttackWasSuccess = true;
+
+            // set the other character's health
+            if (theOther.getHealth() - damage < 0) {
+                theOther.setHealth(0);
+            } else {
+                theOther.setHealth(theOther.getHealth() - damage);
+            }
             return damage;
+
         } else {
-            // Attack failed
-            setAttackSuccess(false);
+            myAttackWasSuccess = false;
             return 0;
         }
     }
@@ -152,7 +155,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * Resets the special ability cooldown
      */
     public void resetCooldown() {
-        myCooldown = myMaxCooldown+1; // +1 to account for the decreaseCooldown() call
+        myCooldown = myMaxCooldown;
     }
 
     /**
@@ -255,10 +258,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     }
 
 
-    public String getBasicMissMsg() {
-        return BASIC_MISS_MSG;
-    }
-
     public void setSpecialSFX(String theSFXName) {
         File sfx = null;
         try {
@@ -292,7 +291,12 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public boolean onCooldown() {
         return myCooldown > 0;
     }
-
+    public String getBasicMsg() {
+        return myBasicSelectMsg;
+    }
+    public String getSpecialMsg() {
+        return mySpecialSelectMsg;
+    }
     public void setMaxHealth(final int theMaxHealth) {
         myMaxHealth = theMaxHealth;
     }

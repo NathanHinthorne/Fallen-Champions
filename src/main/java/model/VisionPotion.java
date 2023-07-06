@@ -34,7 +34,7 @@ public class VisionPotion extends PotionDefensive implements java.io.Serializabl
 
     @Override
     public String useMsg() {
-        return "You have used a vision potion!";
+        return " The entire dungeon is now visible for 3 turns. I hope you have a good memory ;)";
     }
 
     /**

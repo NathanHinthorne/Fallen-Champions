@@ -35,6 +35,11 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     private int myHealAmount;
 
     /**
+     * The amount of XP the monster is worth
+     */
+    private int XPWorth;
+
+    /**
      * constructor for monster
      *
      * @param theHealth the health
@@ -49,7 +54,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     public Monster(final MonsterTypes theType, final int theHealth, final int theSpeed, final double theBasicChance,
                    final double theSpecialChance, final int theMinDmg, final int theMaxDmg, final int theCooldown,
                    final int theMaxCooldown, String theBasicSelectMsg, String theSpecialSelectMsg,
-                   final int theMinHeal, final int theMaxHeal, final double theHealChance) {
+                   final int theMinHeal, final int theMaxHeal, final double theHealChance, final int theXP) {
 
         super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg, theCooldown,
                 theMaxCooldown, theBasicSelectMsg, theSpecialSelectMsg);
@@ -58,6 +63,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
         myMinHeal = theMinHeal;
         myMaxHeal = theMaxHeal;
         myHealChance = theHealChance;
+        XPWorth = theXP;
     }
 
     /**
@@ -99,17 +105,6 @@ public abstract class Monster extends DungeonCharacter implements Healable {
         return myHealAmount;
     }
 
-//    public String healMsg() {
-//        return "The " + myType + " healed for " + myHealAmount + " health.";
-//    }
-//
-//    public String healFailMsg() {
-//        return "The " + myType + " tried to heal, but failed.";
-//    }
-
-
-
-
 
     /**
      * Gets the monster type
@@ -119,8 +114,15 @@ public abstract class Monster extends DungeonCharacter implements Healable {
         return myType;
     }
 
+    public String getName() {
+        return myType.toString();
+    }
+
     public String toString() {
         return "M";
     }
 
+    public int getXPWorth() {
+        return XPWorth;
+    }
 }

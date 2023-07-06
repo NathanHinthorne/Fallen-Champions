@@ -87,7 +87,7 @@ public class MonsterBattle {
         if (myHero.getSpeed() > myMonster.getSpeed()) {
             while (!myGameOver) {
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne, -10);
+                    audio.playSFX(audio.menuOne, -10, true);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
@@ -103,7 +103,7 @@ public class MonsterBattle {
                     DelayMachine.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne, -10);
+                    audio.playSFX(audio.menuOne, -10, true);
                     playerTurn();
                     DelayMachine.delay(2);
                 }
@@ -112,35 +112,9 @@ public class MonsterBattle {
 
         audio.stopAll();
         if (myVictory) {
-            checkIfLevelUp();
-
             return true;
         }
         return false;
-    }
-
-    private void checkIfLevelUp() {
-        if (myHero.getXP() >= Hero.LEVEL_1_XP && myHero.getLevel() == 0) {
-            myHero.levelUp();
-            myGame.levelUpMsg(myHero.getLevel());
-            audio.playSFX(audio.levelUp, -10);
-        } else if (myHero.getXP() >= Hero.LEVEL_2_XP && myHero.getLevel() == 1) {
-            myHero.levelUp();
-            myGame.levelUpMsg(myHero.getLevel());
-            audio.playSFX(audio.levelUp, -10);
-        } else if (myHero.getXP() >= Hero.LEVEL_3_XP && myHero.getLevel() == 2) {
-            myHero.levelUp();
-            myGame.levelUpMsg(myHero.getLevel());
-            audio.playSFX(audio.levelUp, -10);
-        } else if (myHero.getXP() >= Hero.LEVEL_4_XP && myHero.getLevel() == 3) {
-            myHero.levelUp();
-            myGame.levelUpMsg(myHero.getLevel());
-            audio.playSFX(audio.levelUp, -10);
-        } else if (myHero.getXP() >= Hero.LEVEL_5_XP && myHero.getLevel() == 4) {
-            myHero.levelUp();
-            myGame.levelUpMsg(myHero.getLevel());
-            audio.playSFX(audio.levelUp, -10);
-        }
     }
 
     /**
@@ -162,7 +136,7 @@ public class MonsterBattle {
 
         // Open inventory
         } else if (choice == 3) {
-            inventorySelectionProcess();
+            inventoryMenu();
 
         // cheat mode instakill
         } else if (choice == 6 && myCheatMode) {
@@ -171,12 +145,10 @@ public class MonsterBattle {
 
         // wrong input must have been given
         } else {
-            audio.playSFX(audio.error, -10);
+            audio.playSFX(audio.error, -10, true);
             myGame.displayWrongInput();
             playerTurn();
         }
-
-        myHero.decreaseCooldown();
 
         // Checks if the attack killed the enemy
         if (myMonster.getHealth() <= 0) {
@@ -188,21 +160,23 @@ public class MonsterBattle {
 
     private void performBasicAttack() {
         myGame.playerSelectsBasicMsg(myHero, myMonster);
-        audio.playSFX(myHero.getBasicSFX(), -10);
+        audio.playSFX(myHero.getBasicSFX(), -10, true);
         int damage = myHero.basicAtk(myMonster);
         DelayMachine.delay(2);
 
         if (myHero.attackWasSuccessful()) {
             myGame.playerHitsBasicMsg(damage);
         } else {
-            myGame.playerMissesMsg();
+            myGame.playerAttackMissesMsg();
         }
+
+        myHero.decreaseCooldown();
     }
 
     private void performSpecialAttack() {
         // check cooldown
         if (myHero.getCooldown() > 0) {
-            audio.playSFX(audio.error, -10);
+            audio.playSFX(audio.error, -10, true);
             myGame.displayCooldown(myHero.getCooldown());
             playerTurn();
             return;
@@ -210,7 +184,7 @@ public class MonsterBattle {
 
         // proceed with attack
         myGame.playerSelectsSpecialMsg(myHero, myMonster);
-        audio.playSFX(myHero.getSpecialSFX(), -10);
+        audio.playSFX(myHero.getSpecialSFX(), -10, true);
         int damage = myHero.specialAtk(myMonster);
         DelayMachine.delay(2);
 
@@ -220,13 +194,13 @@ public class MonsterBattle {
                 myGame.playerCritMsg();
             }
         } else {
-            myGame.playerMissesMsg();
+            myGame.playerAttackMissesMsg();
         }
 
         myHero.resetCooldown();
     }
 
-    public void inventorySelectionProcess() {
+    public void inventoryMenu() {
         Inventory bag = myHero.getInventory();
         int slotIndex = myGame.openBag(bag, true, audio); // slotIndex is guaranteed to be 1-5
 
@@ -234,25 +208,27 @@ public class MonsterBattle {
             playerTurn();
 
         } else {
-            Potion potion = myHero.getInventory().getItem(slotIndex);
+            Potion potion = bag.getItem(slotIndex);
             if (potion.canUseDuringBattle()) {
-                myHero.getInventory().removeItem(slotIndex);
+                bag.removeItem(slotIndex);
 
                 if (potion instanceof PotionDefensive) {
                     PotionDefensive defPotion = (PotionDefensive) potion;
                     defPotion.effect(myHero);
-                    myGame.usePotionMsg(potion);
 
                 } else if (potion instanceof PotionOffensive) {
                     PotionOffensive offPotion = (PotionOffensive) potion;
                     offPotion.effect(myMonster);
-                    myGame.usePotionMsg(potion);
                 }
 
+                myGame.usePotionMsg(potion, slotIndex);
+
+                myHero.decreaseCooldown();
+
             } else {
-                audio.playSFX(audio.error, -10);
+                audio.playSFX(audio.error, -10, true);
                 myGame.displayCantUseItemDuringBattle(potion);
-                inventorySelectionProcess();
+                inventoryMenu();
             }
         }
     }
@@ -271,26 +247,40 @@ public class MonsterBattle {
         myMonster.decreaseCooldown();
 
 
-        //TODO make monster always choose special attack first. make sure monster initial cooldown is set to 1 or 2
 
+        //TODO make sure monster initial cooldown is set to 1 or 2?
+
+        //TODO make monster always choose special attack first.
 
         // Basic Attack
         if (choice == 0) {
-            int amt = myMonster.basicAtk(myHero);
-            myGame.monsterMoves(choice, amt);
+            myGame.monsterSelectsBasicMsg(myMonster, myHero);
+
+            int damage = myMonster.basicAtk(myHero);
+            if (myMonster.attackWasSuccessful()) {
+                myGame.monsterHitsBasicMsg(damage, myHero);
+            } else {
+                myGame.monsterAttackMissMsg();
+            }
             DelayMachine.delay(2);
 
         // Special Attack
         } else if (choice == 1 && myMonster.getCooldown() <= 0) {
-            int amt = myMonster.specialAtk(myHero);
-            myGame.monsterMoves(choice, amt);
+            myGame.monsterSelectsSpecialMsg(myMonster, myHero);
+
+            int damage = myMonster.basicAtk(myHero);
+            if (myMonster.attackWasSuccessful()) {
+                myGame.monsterHitsSpecialMsg(damage, myHero);
+            } else {
+                myGame.monsterAttackMissMsg();
+            }
             DelayMachine.delay(2);
 
         // Heal
         } else if (choice == 2 && myMonster.getHealth() < (myMonster.getMaxHealth() - myMonster.getMaxHeal())) {
             myMonster.heal(myMonster);
-            int amt = myMonster.getHealAmount();
-            myGame.monsterMoves(choice, amt);
+            int healAmount = myMonster.getHealAmount();
+            myGame.monsterHealMsg(healAmount);
             DelayMachine.delay(2);
 
         // Basic attack failsafe

@@ -88,7 +88,7 @@ public class HealthPotion extends PotionDefensive implements Healable {
      */
     @Override
     public String useMsg() {
-        return "Used a Health Potion and restored " + myHealAmount + " HP!";
+        return "Restored " + myHealAmount + " HP!";
     }
 
     @Override

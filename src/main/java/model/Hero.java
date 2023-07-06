@@ -111,14 +111,6 @@ public abstract class Hero extends DungeonCharacter {
         return myUsingVisionPotion;
     }
 
-    public String getBasicMsg() {
-        return myBasicSelectMsg;
-    }
-
-    public String getSpecialMsg() {
-        return mySpecialSelectMsg;
-    }
-
     public void setName(String theName) {
         myName = theName;
     }
@@ -161,4 +153,19 @@ public abstract class Hero extends DungeonCharacter {
         return "□";
     }
 
+    public int getXPToLevel() {
+        if (myLevel == 0) {
+            return LEVEL_1_XP;
+        } else if (myLevel == 1) {
+            return LEVEL_2_XP;
+        } else if (myLevel == 2) {
+            return LEVEL_3_XP;
+        } else if (myLevel == 3) {
+            return LEVEL_4_XP;
+        } else if (myLevel == 4) {
+            return LEVEL_5_XP;
+        } else {
+            return 0;
+        }
+    }
 }
