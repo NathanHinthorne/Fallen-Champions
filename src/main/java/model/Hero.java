@@ -144,8 +144,8 @@ public abstract class Hero extends DungeonCharacter {
 
         myMaxHealth += 10;
         myHealth = myMaxHealth;
-        myMinDmg += 1;
-        myMaxDmg += 1;
+        myMinDmg += 5;
+        myMaxDmg += 5;
     }
 
     @Override

@@ -151,27 +151,27 @@ public class TUI {
      * @param theMonster the monster you're battling
      * @return battle menu input
      */
-    public int battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
+    public char battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
         System.out.println("\nPlayer HP:  " + theHero.getHealth());
         System.out.println("Monster HP: " + theMonster.getHealth());
 
         System.out.println("\nMake your move!");
         if (theHero.onCooldown()) {
-            System.out.print("[1 - Attack] ║2 - Special║ [3 - Bag] --> ");
+            System.out.print("[1 - Attack] ║2 - Special║ [e - Bag] --> ");
         } else {
-            System.out.print("[1 - Attack] [2 - Special] [3 - Bag] --> ");
+            System.out.print("[1 - Attack] [2 - Special] [e - Bag] --> ");
         }
-        String choice = SCANNER.next();
-        int choiceInt;
-        try {
-            choiceInt = Integer.parseInt(choice);
-        } catch(NumberFormatException e) {
-            System.out.println("Invalid input! Please try again.");
-            DelayMachine.delay(2);
-            choiceInt = battleMenu(theHero, theMonster);
-        }
+        char choice = SCANNER.next().charAt(0);
+//        int choiceInt;
+//        try {
+//            choiceInt = Integer.parseInt(choice);
+//        } catch(NumberFormatException e) {
+//            System.out.println("Invalid input! Please try again.");
+//            DelayMachine.delay(2);
+//            choiceInt = battleMenu(theHero, theMonster);
+//        }
         System.out.println("-----------------------------------------------------");
-        return choiceInt;
+        return choice;
     }
 
     /**
@@ -191,7 +191,8 @@ public class TUI {
      * @param inBattle whether you're in battle
      * @return the inventory choice
      */
-    public int openBag(final Inventory theBag, final boolean inBattle, final Audio theAudio) {
+    public char openBag(final Inventory theBag, final boolean inBattle, final Audio theAudio) {
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println("Opening bag...");
 
         DelayMachine.delay(3);
@@ -201,26 +202,34 @@ public class TUI {
             System.out.println(theBag.toString());
         }
 
-        System.out.print("Choose an item (1-4) (5 - Back) --> ");
-        char slotIndexChar = SCANNER.next().charAt(0);
-        int slotIndex = Character.getNumericValue(slotIndexChar);
+        System.out.print("Choose an item (1-4) (e - Back) --> ");
+        char input = SCANNER.next().charAt(0);
+        System.out.println();
 
-        System.out.println("-----------------------------------------------------");
+        if (input == 'e') { // back
+            return 'e';
+        }
 
-        if (slotIndex <= 0 || slotIndex >= 6) { // out of bounds
+        int slotIndex = Character.getNumericValue(input); // convert input to int
+
+        if (slotIndex <= 0 || slotIndex >= 5) { // out of bounds
             theAudio.playSFX(theAudio.error, -10);
             System.out.println("Invalid input! please try again.");
-            openBag(theBag, inBattle, theAudio);
-        }
-        else if (slotIndex > theBag.getSize()-1 && slotIndex <= theBag.getMaxSize()-1) { // empty slot
+            return openBag(theBag, inBattle, theAudio);
+
+        } else if (slotIndex > theBag.getSize()-1 && slotIndex <= theBag.getMaxSize()) { // empty slot
             theAudio.playSFX(theAudio.error, -10);
             System.out.println("That slot is empty!");
-            openBag(theBag, inBattle, theAudio);
+            return openBag(theBag, inBattle, theAudio);
         }
 
-        System.out.println("-----------------------------------------------------");
+        return input;
+    }
 
-        return slotIndex;
+    public void closeBag() {
+        System.out.println("Closing bag...");
+        DelayMachine.delay(2);
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
 
@@ -266,32 +275,32 @@ public class TUI {
      * @param thePotion the potion info
      */
     public void collectPotionMsg(final Potion thePotion) {
-        System.out.println("You collected a " + thePotion.type() + "!");
+        System.out.println(" -You collected a " + thePotion.type() + "!");
     }
 
     /**
      * Displays Abstraction Pillar Message
      */
     public void displayAbstractionPillarMsg() {
-        System.out.println("You collected an Abstraction Pillar!");
+        System.out.println(" -You collected an ABSTRACTION PILLAR!");
     }
     /**
      * Displays Encapsulation Pillar Message
      */
     public void displayEncapsulationPillarMsg() {
-        System.out.println("You collected an Encapsulation Pillar!");
+        System.out.println(" -You collected an ENCAPSULATION PILLAR!");
     }
     /**
      * Displays Inheritance Pillar Message
      */
     public void displayInheritancePillarMsg() {
-        System.out.println("You collected an Inheritance Pillar!");
+        System.out.println(" -You collected an INHERITANCE PILLAR!");
     }
     /**
      * Displays Polymorphism Pillar Message
      */
     public void displayPolymorphismPillarMsg() {
-        System.out.println("You collected a Polymorphism Pillar!");
+        System.out.println(" -You collected a POLYMORPHISM PILLAR!");
     }
 
 
@@ -314,30 +323,6 @@ public class TUI {
         System.out.println("The Enemy is making their move...");
     }
 
-    /**
-     * The monster move text
-     * @param theVal the value
-     * @param theHpAmt the monster hp amt
-     */
-    public void monsterMoves(int theVal, int theHpAmt) {
-        if (theVal == 0) {
-            if (theHpAmt == 0) {
-                System.out.println("Their basic attack failed!");
-            } else {
-                System.out.println("The enemy performs an attack for " + theHpAmt + " damage!");
-            }
-        } else if (theVal == 1) {
-            if (theHpAmt == 0) {
-                System.out.println("Their special attack failed!");
-            } else {
-                System.out.println("The enemy performs a special attack for " + theHpAmt + " damage!");
-            }
-        } else if (theVal == 2) {
-
-            System.out.println("The enemy heals themselves for " + theHpAmt + " Health Points!");
-        }
-    }
-
     public void monsterHealMsg(final int theHealAmt) {
         System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
     }
@@ -348,12 +333,12 @@ public class TUI {
     public void monsterSelectsSpecialMsg(final Monster theMonster, final Hero thePlayer) {
         System.out.print(" -" + theMonster.getName() + theMonster.getSpecialMsg() + thePlayer.getName());
     }
-    public void monsterHitsBasicMsg(final int theDamageDealt, final Hero thePlayer) {
+    public void monsterHitsBasicMsg(final int theDamageDealt) {
         System.out.println(" for " + theDamageDealt + " damage!");
 
 //        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!");
     }
-    public void monsterHitsSpecialMsg(final int theDamageDealt, final Hero thePlayer) {
+    public void monsterHitsSpecialMsg(final int theDamageDealt) {
         System.out.println(" for " + theDamageDealt + " damage!");
 //        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!"); // special doesn't always do damage. find way to deal with this
     }
@@ -364,21 +349,27 @@ public class TUI {
 
 
     public void playerSelectsBasicMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName());
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName() + "...");
     }
     public void playerSelectsSpecialMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName());
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName() + "...");
     }
-    public void playerHitsBasicMsg(final int theDamageDealt) {
+    public void playerHitsBasicMsg(final int theDamageDealt, final boolean funnyMode) {
+        DelayMachine.delay(1);
         System.out.println("  Success!");
-        System.out.println("  The enemy took " + theDamageDealt + " damage!");
+        if (funnyMode) {
+            System.out.println("  It really hurt");
+        } else {
+            System.out.println("  The enemy took " + theDamageDealt + " damage!");
+        }
     }
     public void playerHitsSpecialMsg(final int theDamageDealt) {
+        DelayMachine.delay(1);
         System.out.println("  Success!");
         System.out.println("  The enemy took " + theDamageDealt + " damage"); // special doesn't always do damage. find way to deal with this
     }
     public void playerAttackMissesMsg() {
-        System.out.println("The attack failed!");
+        System.out.println("  The attack failed!");
     }
 
 
@@ -392,13 +383,30 @@ public class TUI {
         }
     }
 
+// YOU WIN
 
     /**
      * The game victory message
      */
-    public void displayVictoryMsg(final int theHeroSteps) {
-        System.out.println(" -You have escaped the dungeon!. Congratulations!!");
-        System.out.println("  You took " + theHeroSteps + " steps to escape the dungeon.");
+    public void displayVictoryMsg(final int theHeroSteps, final int theMonstersDefeated, final int theLevel,
+                                  final boolean funnyMode) {
+
+        System.out.println("-----------------------------------------------------");
+        System.out.println(" -You escaped the dungeon!");
+        System.out.println();
+        System.out.println("██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
+                           "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║\n" +
+                           " ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║\n" +
+                           "  ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝\n" +
+                           "   ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║██╗\n" +
+                           "   ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝");
+        System.out.println();
+        DelayMachine.delay(2);
+        DelayMachine.printDelayedText("RESULTS:");
+        DelayMachine.printDelayedText("  You took " + theHeroSteps + " steps to escape the dungeon.");
+        DelayMachine.printDelayedText("  You reached level " + theLevel + ".");
+        DelayMachine.printDelayedText("  You defeated " + theMonstersDefeated + " monsters.");
+//        DelayMachine.printDelayedText("  You beat the game in " + theTimeTaken + " seconds.");
     }
 
     /**
@@ -410,6 +418,7 @@ public class TUI {
         System.out.println("  [] ENEMY DEFEATED []");
         System.out.println("  [][][][][][][][][][]");
         System.out.println();
+        System.out.println("RESULTS:");
         System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
         System.out.println();
     }
@@ -470,7 +479,7 @@ public class TUI {
      * @param theHero you
      */
     public void displayHeroHealth(final Hero theHero) {
-        System.out.println("Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
+        System.out.print("Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
     }
 
     /**
@@ -478,16 +487,16 @@ public class TUI {
      * @param theSteps the steps the hero has taken while the vision potion is active
      */
     public void displayStepsWithVisionPotion(final int theSteps) {
-        System.out.println("Steps left with vision potion: " + (4-theSteps));
+        System.out.print("         Steps left with vision potion: " + (4-theSteps));
     }
 
     /**
      * The game start message
      */
     public void displayStartMsg() {
-        System.out.println("╔═════════════════════════╗");
-        System.out.println("║ Welcome to the Dungeon! ║");
-        System.out.println("╚═════════════════════════╝");
+        System.out.println("                ╔═════════════════════════╗                ");
+        System.out.println("----------------║ Welcome to the Dungeon! ║----------------");
+        System.out.println("                ╚═════════════════════════╝                ");
     }
 
     /**
@@ -575,7 +584,7 @@ public class TUI {
 
     public void levelUpMsg(final int theLevel) {
         System.out.println(" -You leveled up!");
-        System.out.println("  Gained +1 damage, +10 max health");
+        System.out.println("  Gained +5 damage, +10 max health");
         if (theLevel == 5) {
             System.out.println("  You have reached the max level");
         }
@@ -599,5 +608,9 @@ public class TUI {
     private boolean isVowel(char ch) {
         ch = Character.toLowerCase(ch);
         return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+    }
+
+    public void exitIsOpenMsg() {
+        System.out.println(" -You hear a door creak open in the distance...");
     }
 }

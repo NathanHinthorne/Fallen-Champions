@@ -139,14 +139,16 @@ public class Inventory implements java.io.Serializable {
     public String getItemInventory() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("\nPlayer Inventory:\n");
+        sb.append("\n╔═════════════════════════════════");
+        sb.append("\n║  Player Inventory:\n");
         for (int i = 0; i < getMaxSize(); i++) {
             if (i >= myInventory.size()) {
-                sb.append("[" + (i+1) + " - Empty]\n");
+                sb.append("╠  [" + (i+1) + " - Empty]\n");
             } else {
-                sb.append("[" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
+                sb.append("╠  [" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
             }
         }
+        sb.append("╚═════════════════════════════════");
         sb.append("\n");
 
         return sb.toString();
@@ -161,7 +163,8 @@ public class Inventory implements java.io.Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("\nCurrent Pillars: ");
+        sb.append("\n╔═════════════════════════════════");
+        sb.append("\n║  Current Pillars: ");
         for (int i = 0; i < 4; i++) {
             if (i >= myPillars.size()) {
                 sb.append("[ ]");
@@ -169,19 +172,21 @@ public class Inventory implements java.io.Serializable {
                 sb.append("[" + myPillars.get(i).toString() + "]");
             }
         }
+        sb.append("\n║");
 
-        sb.append("\nPlayer Inventory:\n");
+        sb.append("\n║  Player Inventory:\n");
         for (int i = 0; i < getMaxSize(); i++) {
             if (i >= myInventory.size()) {
-                sb.append("[" + (i+1) + " - Empty]\n");
+                sb.append("╠  [" + (i+1) + " - Empty]\n");
             } else {
-                sb.append("[" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
+                sb.append("╠  [" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
             }
         }
+        sb.append("║\n");
+        sb.append("║  Items:   " + myItemCount + "/" + MAX_ITEM_CAPACITY + "\n");
+        sb.append("║  Pillars: " + myPillarCount + "/" + MAX_PILLAR_CAPACITY + "\n");
+        sb.append("╚═════════════════════════════════");
         sb.append("\n");
-        sb.append("Items:   " + myItemCount + "/" + MAX_ITEM_CAPACITY + "\n");
-        sb.append("Pillars: " + myPillarCount + "/" + MAX_PILLAR_CAPACITY + "\n");
-
         return sb.toString();
     }
 

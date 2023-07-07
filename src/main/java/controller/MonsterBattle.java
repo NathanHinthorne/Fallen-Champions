@@ -19,9 +19,9 @@ public class MonsterBattle {
     private static final Random RANDOMIZER = new Random();
 
     /**
-     * Shows the player is in battle
+     * Funny mode
      */
-    private static final boolean IN_BATTLE = true;
+    private final boolean myFunnyMode;
 
     /**
      * The text user interface
@@ -59,14 +59,16 @@ public class MonsterBattle {
     private static Audio audio;
 
 
-    public MonsterBattle(Hero theHero, Monster theMonster, final TUI theView, final boolean theCheatMode, Audio theAudio) {
+    public MonsterBattle(Hero theHero, Monster theMonster, final TUI theView, final boolean theCheatMode, Audio theAudio, boolean theFunnyMode) {
         myHero = theHero;
         myMonster = theMonster;
         myGameOver = false;
         myGame = theView;
         myVictory = false;
         myCheatMode = theCheatMode;
+        myFunnyMode = theFunnyMode;
         audio = theAudio;
+
 
         theHero.setCooldown(0);
     }
@@ -123,23 +125,23 @@ public class MonsterBattle {
      */
     private void playerTurn() {
 
-        int choice = myGame.battleMenu(myHero, myMonster);
+        char choice = myGame.battleMenu(myHero, myMonster);
         System.out.println();
 
         // Basic Attack
-        if (choice == 1) {
+        if (choice == '1') {
             performBasicAttack();
 
         // Special Attack
-        } else if (choice == 2) {
+        } else if (choice == '2') {
             performSpecialAttack();
 
         // Open inventory
-        } else if (choice == 3) {
+        } else if (choice == 'e') {
             inventoryMenu();
 
         // cheat mode instakill
-        } else if (choice == 6 && myCheatMode) {
+        } else if (choice == '6' && myCheatMode) {
             myGame.displayInstaKill();
             myMonster.setHealth(0);
 
@@ -165,7 +167,7 @@ public class MonsterBattle {
         DelayMachine.delay(2);
 
         if (myHero.attackWasSuccessful()) {
-            myGame.playerHitsBasicMsg(damage);
+            myGame.playerHitsBasicMsg(damage, myFunnyMode);
         } else {
             myGame.playerAttackMissesMsg();
         }
@@ -189,10 +191,10 @@ public class MonsterBattle {
         DelayMachine.delay(2);
 
         if (myHero.attackWasSuccessful()) {
-            myGame.playerHitsSpecialMsg(damage);
             if (myHero.wasCritHit()) {
                 myGame.playerCritMsg();
             }
+            myGame.playerHitsSpecialMsg(damage);
         } else {
             myGame.playerAttackMissesMsg();
         }
@@ -202,12 +204,12 @@ public class MonsterBattle {
 
     public void inventoryMenu() {
         Inventory bag = myHero.getInventory();
-        int slotIndex = myGame.openBag(bag, true, audio); // slotIndex is guaranteed to be 1-5
 
-        if (slotIndex == 5) { // back button was pressed
-            playerTurn();
+        char input = myGame.openBag(bag, true, audio); // input is guaranteed to be 1-4 or e
 
-        } else {
+        if (input != 'e') { // back button was pressed
+            int slotIndex = Character.getNumericValue(input); // convert input to int
+
             Potion potion = bag.getItem(slotIndex);
             if (potion.canUseDuringBattle()) {
                 bag.removeItem(slotIndex);
@@ -230,6 +232,10 @@ public class MonsterBattle {
                 myGame.displayCantUseItemDuringBattle(potion);
                 inventoryMenu();
             }
+
+        } else { // back button was pressed
+            myGame.closeBag();
+            playerTurn();
         }
     }
 
@@ -254,40 +260,19 @@ public class MonsterBattle {
 
         // Basic Attack
         if (choice == 0) {
-            myGame.monsterSelectsBasicMsg(myMonster, myHero);
-
-            int damage = myMonster.basicAtk(myHero);
-            if (myMonster.attackWasSuccessful()) {
-                myGame.monsterHitsBasicMsg(damage, myHero);
-            } else {
-                myGame.monsterAttackMissMsg();
-            }
-            DelayMachine.delay(2);
+            monsterBasic();
 
         // Special Attack
         } else if (choice == 1 && myMonster.getCooldown() <= 0) {
-            myGame.monsterSelectsSpecialMsg(myMonster, myHero);
-
-            int damage = myMonster.basicAtk(myHero);
-            if (myMonster.attackWasSuccessful()) {
-                myGame.monsterHitsSpecialMsg(damage, myHero);
-            } else {
-                myGame.monsterAttackMissMsg();
-            }
-            DelayMachine.delay(2);
+            monsterSpecial();
 
         // Heal
         } else if (choice == 2 && myMonster.getHealth() < (myMonster.getMaxHealth() - myMonster.getMaxHeal())) {
-            myMonster.heal(myMonster);
-            int healAmount = myMonster.getHealAmount();
-            myGame.monsterHealMsg(healAmount);
-            DelayMachine.delay(2);
+            monsterHeal();
 
-        // Basic attack failsafe
+            // Basic attack failsafe
         } else {
-            int amt = myMonster.basicAtk(myHero);
-            myGame.monsterMoves(0, amt);
-            DelayMachine.delay(2);
+            monsterBasic();
         }
 
         // checks if the attack killed the player
@@ -296,5 +281,37 @@ public class MonsterBattle {
             myVictory = false;
         }
     }
+
+    private void monsterHeal() {
+        myMonster.heal(myMonster);
+        int healAmount = myMonster.getHealAmount();
+        myGame.monsterHealMsg(healAmount);
+        DelayMachine.delay(2);
+    }
+
+    private void monsterSpecial() {
+        myGame.monsterSelectsSpecialMsg(myMonster, myHero);
+
+        int damage = myMonster.basicAtk(myHero);
+        if (myMonster.attackWasSuccessful()) {
+            myGame.monsterHitsSpecialMsg(damage);
+        } else {
+            myGame.monsterAttackMissMsg();
+        }
+        DelayMachine.delay(2);
+    }
+
+    private void monsterBasic() {
+        myGame.monsterSelectsBasicMsg(myMonster, myHero);
+
+        int damage = myMonster.basicAtk(myHero);
+        if (myMonster.attackWasSuccessful()) {
+            myGame.monsterHitsBasicMsg(damage);
+        } else {
+            myGame.monsterAttackMissMsg();
+        }
+        DelayMachine.delay(2);
+    }
+
 
 }

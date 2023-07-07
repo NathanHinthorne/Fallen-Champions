@@ -27,17 +27,12 @@ public class DungeonGame {
     /**
      * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
      */
-    private final static boolean DEBUG_MODE = false;
+    private final static boolean DEBUG_MODE = true;
 
     /**
      * The game's funny dialogue mode. If true, the player will be given funny dialogue throughout the game.
      */
-    private final static boolean FUNNY_DIALOGUE = false;
-
-    /**
-     * shows the play is not in battle
-     */
-    private final static boolean IN_BATTLE = false;
+    private final static boolean FUNNY_MODE = false;
 
 
     /**
@@ -64,6 +59,26 @@ public class DungeonGame {
      * whether the exit is open
      */
     private static boolean exitIsOpen = false; // set to true when player collects all pillars
+
+    /**
+     * the amount of steps the player has taken since starting the game
+     */
+    private static int heroSteps = 0;
+
+    /**
+     * the amount of steps remaining until the player's vision potion wears off
+     */
+    private static int stepsWithActiveVisionPotion = 0;
+
+    /**
+     * the amount of time taken to complete the game
+     */
+    private static int timeTaken = 0;
+
+    /**
+     * the amount of monsters beaten
+     */
+    private static int monstersDefeated = 0;
 
     /**
      * The audio object
@@ -130,7 +145,7 @@ public class DungeonGame {
                     if (introSelection == 2) {
                         // play intro music
 
-                        game.Introduction(FUNNY_DIALOGUE, audio, name);
+                        game.Introduction(FUNNY_MODE, audio, name);
                         DelayMachine.delay(4);
                     }
                     System.out.println();
@@ -152,12 +167,18 @@ public class DungeonGame {
 
                     DelayMachine.delay(1);
 
-                    // start msg
-                    game.displayStartMsg();
+                    if (!DEBUG_MODE) {
+                        // start msg
+                        game.displayStartMsg();
 
-                    // start music
-                    audio.playMusic(audio.startingAnewSong, false, -10);
-                    DelayMachine.delay(5);
+                        // start music
+                        audio.playMusic(audio.startingAnewSong, false, -10);
+                        DelayMachine.delay(15);
+                    }
+
+                    audio.playMusic(audio.ambientSong, true, -5);
+
+                    // start ticking time (call a method for this)
 
                     // enter the main game loop
                     gameLoop();
@@ -183,7 +204,7 @@ public class DungeonGame {
     private static String giveRandomName() {
         String[] names;
 
-        if (FUNNY_DIALOGUE) {
+        if (FUNNY_MODE) {
             names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky"};
         } else {
             names = new String[]{"Gideon the Greedy", "Cedric the Sensible", "Arthur the Aggravating",
@@ -266,17 +287,34 @@ public class DungeonGame {
      */
     private static void gameLoop() {
 
-        if (audio.isPlayingMusic()) {
-            DelayMachine.delay(8);
-        }
-        audio.playMusic(audio.ambientSong, true, -5);
-        int heroSteps = 0;
-        int stepsWithActiveVisionPotion = 0;
-
         while (!gameOver) { // while the hero is still alive
+
+            // check if vision potion is still active
+            if (stepsWithActiveVisionPotion > 3) {
+                hero.setUsingVisionPotion(false);
+                dungeon.makeRoomsInvisible();
+                stepsWithActiveVisionPotion = 0;
+            }
+
+            // uncover rooms if vision potion is active
+            if (hero.usingVisionPotion()) {
+                dungeon.makeRoomsVisible();
+                stepsWithActiveVisionPotion++;
+            }
+
+            game.displayDungeonMap(dungeon);
+
+            game.displayHeroHealth(hero);
+
+            if (hero.usingVisionPotion()) {
+                game.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
+            }
+
+            System.out.println();
 
             if (dungeon.heroIsTouchingPillar() && !CHEAT_MODE) {
                 // play ding sound
+                audio.playSFX(audio.heroCollectPillar, -10);
 
                 Pillars pillar = dungeon.getPillar();
                 hero.getInventory().addPillar(pillar);
@@ -297,13 +335,20 @@ public class DungeonGame {
 
                 if (hero.getInventory().hasAllPillars()) {
                     exitIsOpen = true;
+                    game.exitIsOpenMsg();
                 }
 
                 dungeon.removePillar();
             }
 
             if (dungeon.heroIsTouchingPotion()) {
+
                 // play ding sound
+//                if (audio.isPlayingSFX()) {
+//                    DelayMachine.delay(4);
+//                }
+                audio.playSFX(audio.heroCollectPotion, -8);
+
                 Potion potion = dungeon.getPotion();
 
                 if (hero.getInventory().isFull()) {
@@ -326,21 +371,24 @@ public class DungeonGame {
 
                 if (hero.getHealth() <= 0) {
                     // play death sound
-                    if (FUNNY_DIALOGUE) {
+                    if (FUNNY_MODE) {
                         audio.playSFX(audio.heroOof, -10);
                     } else {
                         audio.playSFX(audio.heroDefeat, -10);
                     }
 
-                    game.displayDeathMsg(FUNNY_DIALOGUE);
+                    game.displayDeathMsg(FUNNY_MODE);
                     gameOver = true;
                 }
             }
 
-            if (dungeon.heroIsTouchingMonster() && !DEBUG_MODE) {
+            if (dungeon.heroIsTouchingMonster()) {
                 Monster monster = dungeon.getMonster();
 
                 // play monster encounter sound
+//                if (audio.isPlayingSFX()) {
+//                    DelayMachine.delay(4);
+//                }
                 audio.stopMusic();
                 audio.playSFX(audio.encounter, -10);
 
@@ -349,7 +397,7 @@ public class DungeonGame {
 
                 DelayMachine.delay(1); // delay for 0.5 seconds
 
-                MonsterBattle battle = new MonsterBattle(hero, monster, game, CHEAT_MODE, audio);
+                MonsterBattle battle = new MonsterBattle(hero, monster, game, CHEAT_MODE, audio, FUNNY_MODE);
                 boolean winnerWinnerChickenDinner = battle.newBattle();
 
                 if (winnerWinnerChickenDinner) {
@@ -362,27 +410,38 @@ public class DungeonGame {
                     // win cutscene
                     game.displayBattleWinMsg(monster);
                     checkIfLevelUp(); // display level-up message if applicable
-                    game.displayBattleEnd(); //TODO remove and put in other method
-
+                    game.displayBattleEnd();
                     dungeon.removeMonster();
+                    monstersDefeated++;
+
                 } else {
                     // play defeat sound
                     // defeat cutscene
-                    game.displayDeathMsg(FUNNY_DIALOGUE);
+                    game.displayDeathMsg(FUNNY_MODE);
                     gameOver = true;
                     break;
                 }
                 DelayMachine.delay(8); // delay for 4 seconds
+                displayDungeonScreen(); // only redisplay the dungeon screen, don't go back to the start of the loop
                 audio.playMusic(audio.ambientSong, true, -5);
+
             }
 
             if (dungeon.heroIsTouchingExit()) {
                 if (exitIsOpen) {
                     // play victory sound
-                    audio.playSFX(audio.menuTwo, -10);
+                    audio.stopAll();
+                    DelayMachine.delay(1);
+//                    audio.playMusic(audio.triumpantFinishSong, false, -5);
+                    audio.playMusic(audio.triumpantFinishSong, true, -5);
 
                     // play cutscene
-                    game.displayVictoryMsg(heroSteps);
+                    game.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), FUNNY_MODE);
+
+                    // make a meny popup for choosing to exit or play again on different difficulty
+                    // make a popup showing characters that were unlocked
+
+                    DelayMachine.delay(130);
 
                     gameOver = true;
                     break;
@@ -400,30 +459,9 @@ public class DungeonGame {
                 dungeon.spawnMonster();
             }
 
-            // check if vision potion is still active
-            if (stepsWithActiveVisionPotion > 3) {
-                hero.setUsingVisionPotion(false);
-                dungeon.makeRoomsInvisible();
-                stepsWithActiveVisionPotion = 0;
-            }
-
-            // uncover rooms if vision potion is active
-            if (hero.usingVisionPotion()) {
-                dungeon.makeRoomsVisible();
-                stepsWithActiveVisionPotion++;
-            }
-
-            if (DEBUG_MODE) { //TODO move to start of gameLoop?
-                dungeon.makeRoomsVisible();
-            }
-
-            game.displayDungeonMap(dungeon);
-
-            game.displayHeroHealth(hero);
-
-            if (hero.usingVisionPotion()) {
-                game.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
-            }
+//            if (DEBUG_MODE) { //TODO move to start of gameLoop?
+//                dungeon.makeRoomsVisible();
+//            }
 
             //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
             // '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game
@@ -548,10 +586,9 @@ public class DungeonGame {
         hero.getInventory().addPillar(Pillars.ENCAPSULATION);
         hero.getInventory().addPillar(Pillars.INHERITANCE);
         hero.getInventory().addPillar(Pillars.POLYMORPHISM);
+        exitIsOpen = true;
 
         hero.getInventory().addToInventory(new HealthPotion());
-        hero.getInventory().addToInventory(new HealthPotion());
-        hero.getInventory().addToInventory(new VisionPotion());
         hero.getInventory().addToInventory(new VisionPotion());
     }
 
@@ -562,7 +599,7 @@ public class DungeonGame {
         if (DEBUG_MODE) {
             game.displayDebugModeMsg();
         }
-        if (FUNNY_DIALOGUE) {
+        if (FUNNY_MODE) {
             game.displayFunnyDialogueModeMsg();
         }
     }
@@ -577,35 +614,18 @@ public class DungeonGame {
             hero.levelUp();
             game.levelUpMsg(hero.getLevel());
             audio.playSFX(audio.levelUp, -15);
+            DelayMachine.delay(2);
         }
     }
 
     private static void inventoryMenu() {
-//                    int itemSlot = game.openBag(hero.getInventory(), false, audio);
-//
-//                    if (itemSlot < 5 && itemSlot > 0) {
-//                        Potion potion = hero.getInventory().getItem(itemSlot);
-//                        if (potion.canUseOutsideBattle()) {
-//                            PotionDefensive defPotion = (PotionDefensive) potion;
-//                            defPotion.effect(hero);
-//                            hero.getInventory().removeItem(itemSlot);
-//                        } else {
-//                            audio.playSFX(audio.error, -10);
-//                            game.displayCantUseItemOutsideBattle(potion);
-//                        }
-//
-//                        audio.playSFX(audio.heroDrinkPotion, -10);
-//
-//                        game.displayUsePotionMsg(potion, itemSlot);
-//                    }
-
         Inventory bag = hero.getInventory();
-        int slotIndex = game.openBag(bag, false, audio); // slotIndex is guaranteed to be 1-5
 
-        if (slotIndex == 5) { // back button was pressed
-            //TODO go back to gameLoop, but partway through it
+        char input = game.openBag(bag, false, audio); // input is guaranteed to be 1-4 or e
 
-        } else {
+        if (input != 'e') {
+            int slotIndex = Character.getNumericValue(input); // convert input to int
+
             Potion potion = bag.getItem(slotIndex);
             if (potion.canUseOutsideBattle()) {
                 PotionDefensive defPotion = (PotionDefensive) potion;
@@ -619,6 +639,17 @@ public class DungeonGame {
 
             audio.playSFX(audio.heroDrinkPotion, -10);
             game.usePotionMsg(potion, slotIndex);
+        }
+        game.closeBag();
+    }
+
+    private static void displayDungeonScreen() {
+        game.displayDungeonMap(dungeon);
+
+        game.displayHeroHealth(hero);
+
+        if (hero.usingVisionPotion()) {
+            game.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
         }
     }
 

@@ -8,7 +8,7 @@ package model;
  */
 public class HeroSwordsman extends Hero {
 
-    public static final int HEALTH = 50; //200
+    public static final int HEALTH = 200; //200
     public static final int SPEED = 3;
     public static final double BASIC_CHANCE = 0.8;
     public static final double SPECIAL_CHANCE = 0.9;
@@ -18,7 +18,7 @@ public class HeroSwordsman extends Hero {
     public static final int MAX_COOLDOWN = 2;
     public static final String BASIC_MSG = " swings their sword at the ";
     public static final String SPECIAL_MSG = " grips their sword and arcs a deadly slice towards the ";
-    private static final double CRIT_CHANCE = 0.4;
+    private static final double CRIT_CHANCE = 0.5;
 
     public HeroSwordsman() {
         super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
@@ -61,6 +61,7 @@ public class HeroSwordsman extends Hero {
             damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 20;
 
             if (Math.random() <= CRIT_CHANCE) {
+                critHit = true;
                 damage = damage * 2;
             }
 

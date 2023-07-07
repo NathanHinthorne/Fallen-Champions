@@ -12,9 +12,9 @@ public class MonsterOgre extends Monster {
     public static final int MAX_COOLDOWN = 3;
     public static final String BASIC_MSG = " bites ";
     public static final String SPECIAL_MSG = " shoots web at ";
-    public static final int MIN_HEAL = 20;
-    public static final int MAX_HEAL = 40;
-    public static final double HEAL_CHANCE = 0.5;
+    public static final int MIN_HEAL = 15;
+    public static final int MAX_HEAL = 30;
+    public static final double HEAL_CHANCE = 0.4;
     public static final int XP_WORTH = 100;
 
 

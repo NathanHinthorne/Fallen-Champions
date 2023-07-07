@@ -35,14 +35,13 @@ public final class Audio {
     public final File ambientSong;
     public final File battleSong;
     public final File startingAnewSong;
+    public final File triumpantFinishSong;
 
     // ENVIRONMENT (step1, step2, step3, step4 are from Valve's Team Fortress 2)
 
 
     // MONSTER
     public final File encounter; // source: Undertale
-//    public final File monsterBasicAttack;
-//    public final File monsterSpecialAttack;
 //    public final File monsterHeal;
 
 
@@ -51,17 +50,16 @@ public final class Audio {
     public final File step2; // source: Valve's Team Fortress 2
     public final File step3; // source: Valve's Team Fortress 2
     public final File step4; // source: Valve's Team Fortress 2
-//    public final File heroBasicAttack;
-//    public final File heroSpecialAttack;
 //    public final File heroHeal;
     public final File heroDrinkPotion;
     public final File levelUp;
 //    public final File heroVictory;
     public final File heroDefeat;
     public final File heroOof;
-//    public final File heroSpecialSlice; // swordsman
-//    public final File heroSpecialSmash; // juggernaut
-//    public final File heroSpecialStab; // thief
+    public final File heroCollectPotion;
+    public final File heroCollectPillar;
+//    public final File heroCollectWeapon;
+//    public final File heroCriticalHit;
 
 
 //    public final File sfx;
@@ -80,9 +78,11 @@ public final class Audio {
         error = new File(getClass().getResource("/sound/sfx/button_error.wav").toURI());
         beginGame = new File(getClass().getResource("/sound/sfx/button_spawn.wav").toURI());
         powerUp = new File(getClass().getResource("/sound/sfx/button_powerup.wav").toURI());
+
         ambientSong = new File(getClass().getResource("/sound/music/music_ambient.wav").toURI());
         battleSong = new File(getClass().getResource("/sound/music/music_battle.wav").toURI());
         startingAnewSong = new File(getClass().getResource("/sound/music/music_starting_anew.wav").toURI());
+        triumpantFinishSong = new File(getClass().getResource("/sound/music/music_triumphant_finish.wav").toURI());
 
         // initialize sfx files
         step1 = new File(getClass().getResource("/sound/sfx/hero_step1.wav").toURI());
@@ -98,6 +98,8 @@ public final class Audio {
 //        heroVictory = new File(getClass().getResource("/sound/sfx/hero_victory.wav").toURI());
         heroDefeat = new File(getClass().getResource("/sound/sfx/hero_defeat.wav").toURI());
         heroOof = new File(getClass().getResource("/sound/sfx/hero_oof.wav").toURI());
+        heroCollectPotion = new File(getClass().getResource("/sound/sfx/hero_collect_potion.wav").toURI());
+        heroCollectPillar = new File(getClass().getResource("/sound/sfx/hero_collect_pillar.wav").toURI());
 
 //        bonk = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
 //        heroSpecialSlice = new File(getClass().getResource("/sound/sfx/hero_special_slice.wav").toURI());
