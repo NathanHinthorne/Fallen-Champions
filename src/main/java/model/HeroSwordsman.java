@@ -8,7 +8,7 @@ package model;
  */
 public class HeroSwordsman extends Hero {
 
-    public static final int HEALTH = 200; //200
+    public static final int HEALTH = 200;
     public static final int SPEED = 3;
     public static final double BASIC_CHANCE = 0.8;
     public static final double SPECIAL_CHANCE = 0.9;
@@ -16,13 +16,11 @@ public class HeroSwordsman extends Hero {
     public static final int MAX_DMG = 40;
     public static final int COOLDOWN = 0;
     public static final int MAX_COOLDOWN = 2;
-    public static final String BASIC_MSG = " swings their sword at the ";
-    public static final String SPECIAL_MSG = " grips their sword and arcs a deadly slice towards the ";
+
     private static final double CRIT_CHANCE = 0.5;
 
     public HeroSwordsman() {
-        super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN,
-                MAX_COOLDOWN, BASIC_MSG, SPECIAL_MSG);
+        super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN, MAX_COOLDOWN);
 
         setBasicSFX("hero_swordsman_basic.wav");
         setSpecialSFX("hero_swordsman_special.wav");
@@ -79,4 +77,82 @@ public class HeroSwordsman extends Hero {
 
         return damage;
     }
+
+    @Override
+    public String getBasicName() {
+        return "\"Sword Strike\" - Perform a basic sword strike";
+    }
+    @Override
+    public String[] getSpecialName() {
+        return new String[] {
+            "\"Mighty Swing\" - Unleash a powerful, overhead",
+            "slice with pinpoint accuracy (can crit hit)"
+        };
+    }
+    @Override
+    public String[] getPassiveName() {
+        return new String[] {
+                "\"Resilient Defense\" - 50% chance to block half",
+                "the damage from an incoming attack"
+        };
+    }
+
+    @Override
+    public String getBasicSelectMsg() {
+        return " swings their sword at the ";
+    }
+    @Override
+    public String getExtendedBasicSelectMsg() {
+        return "";
+    }
+    @Override
+    public String getSpecialSelectMsg() {
+        return " grips their sword and arcs a deadly slice towards the ";
+    }
+    @Override
+    public String getExtendedSpecialSelectMsg() {
+        return "";
+    }
+
+    @Override
+    public String[] getBasicMissMsg() {
+        return new String[]
+                {"The sword misses the monster",
+                "The sword barely misses the monster",
+                "The sword flies out of your hand, completely missing the monster"};
+    }
+    @Override
+    public String[] getBasicHitMsg() {
+        return new String[]
+                {"The sword slices the monster",
+                "The sword cuts the monster's nose off",
+                "The sword slashes the monster's arm"};
+    }
+    @Override
+    public String[] getSpecialMissMsg() {
+        return new String[]
+                {"The sword misses the monster",
+                "The sword barely misses the monster",
+                "The sword flies out of your hand, completely missing the monster"};
+    }
+    @Override
+    public String[] getSpecialHitMsg() {
+        return new String[]
+                {"The sword slices through the monster",
+                "The sword cuts the monster",
+                "The sword slashes the monster"};
+    }
+
+    @Override
+    public int initialCooldown() {
+        return 0;
+    }
+
+    @Override
+    public boolean isUnlocked() {
+        return true; // Always unlocked
+    }
+    
+
+
 }

@@ -62,6 +62,7 @@ public class MonsterBattle {
     public MonsterBattle(Hero theHero, Monster theMonster, final TUI theView, final boolean theCheatMode, Audio theAudio, boolean theFunnyMode) {
         myHero = theHero;
         myMonster = theMonster;
+
         myGameOver = false;
         myGame = theView;
         myVictory = false;
@@ -69,8 +70,8 @@ public class MonsterBattle {
         myFunnyMode = theFunnyMode;
         audio = theAudio;
 
-
-        theHero.setCooldown(0);
+        myHero.setCooldown(myHero.initialCooldown());
+        myMonster.setCooldown(myMonster.initialCooldown());
     }
 
     /**
@@ -87,6 +88,7 @@ public class MonsterBattle {
         audio.playMusic(audio.battleSong, true, -5);
 
         if (myHero.getSpeed() > myMonster.getSpeed()) {
+            myGame.heroFasterThanMonsterMsg(myMonster);
             while (!myGameOver) {
                 if (myHero.getHealth() > 0) {
                     audio.playSFX(audio.menuOne, -10, true);
@@ -99,6 +101,7 @@ public class MonsterBattle {
                 }
             }
         } else {
+            myGame.monsterFasterThanHeroMsg(myMonster);
             while (!myGameOver) {
                 if (myMonster.getHealth() > 0) {
                     monsterTurn();
@@ -126,6 +129,7 @@ public class MonsterBattle {
     private void playerTurn() {
 
         char choice = myGame.battleMenu(myHero, myMonster);
+        myGame.displayNormalSpacer();
         System.out.println();
 
         // Basic Attack
@@ -138,7 +142,12 @@ public class MonsterBattle {
 
         // Open inventory
         } else if (choice == 'e') {
+            audio.playSFX(audio.heroBagOpen, -10);
             inventoryMenu();
+
+        // check monster stats
+        } else if (choice == 'r') {
+            checkMonsterStats();
 
         // cheat mode instakill
         } else if (choice == '6' && myCheatMode) {
@@ -160,16 +169,20 @@ public class MonsterBattle {
 
     }
 
+    private void checkMonsterStats() {
+        myGame.displayMonsterStats(myMonster);
+        playerTurn();
+    }
+
     private void performBasicAttack() {
-        myGame.playerSelectsBasicMsg(myHero, myMonster);
         audio.playSFX(myHero.getBasicSFX(), -10, true);
+        myGame.playerSelectsBasicMsg(myHero, myMonster);
         int damage = myHero.basicAtk(myMonster);
-        DelayMachine.delay(2);
 
         if (myHero.attackWasSuccessful()) {
-            myGame.playerHitsBasicMsg(damage, myFunnyMode);
+            myGame.playerHitsBasicMsg(myHero, damage, myFunnyMode);
         } else {
-            myGame.playerAttackMissesMsg();
+            myGame.playerBasicMissMsg(myHero);
         }
 
         myHero.decreaseCooldown();
@@ -185,18 +198,18 @@ public class MonsterBattle {
         }
 
         // proceed with attack
-        myGame.playerSelectsSpecialMsg(myHero, myMonster);
         audio.playSFX(myHero.getSpecialSFX(), -10, true);
+        myGame.playerSelectsSpecialMsg(myHero, myMonster);
         int damage = myHero.specialAtk(myMonster);
         DelayMachine.delay(2);
 
         if (myHero.attackWasSuccessful()) {
+            myGame.playerHitsSpecialMsg(myHero, damage);
             if (myHero.wasCritHit()) {
                 myGame.playerCritMsg();
             }
-            myGame.playerHitsSpecialMsg(damage);
         } else {
-            myGame.playerAttackMissesMsg();
+            myGame.playerSpecialMissMsg(myHero);
         }
 
         myHero.resetCooldown();
@@ -204,11 +217,10 @@ public class MonsterBattle {
 
     public void inventoryMenu() {
         Inventory bag = myHero.getInventory();
-
         char input = myGame.openBag(bag, true, audio); // input is guaranteed to be 1-4 or e
 
         if (input != 'e') { // back button was pressed
-            int slotIndex = Character.getNumericValue(input); // convert input to int
+            int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array indexing)
 
             Potion potion = bag.getItem(slotIndex);
             if (potion.canUseDuringBattle()) {
@@ -223,6 +235,7 @@ public class MonsterBattle {
                     offPotion.effect(myMonster);
                 }
 
+                audio.playSFX(audio.heroDrinkPotion, -10);
                 myGame.usePotionMsg(potion, slotIndex);
 
                 myHero.decreaseCooldown();
@@ -234,7 +247,7 @@ public class MonsterBattle {
             }
 
         } else { // back button was pressed
-            myGame.closeBag();
+            myGame.closeBag(audio);
             playerTurn();
         }
     }
@@ -282,11 +295,16 @@ public class MonsterBattle {
         }
     }
 
-    private void monsterHeal() {
-        myMonster.heal(myMonster);
-        int healAmount = myMonster.getHealAmount();
-        myGame.monsterHealMsg(healAmount);
-        DelayMachine.delay(2);
+
+    private void monsterBasic() {
+        myGame.monsterSelectsBasicMsg(myMonster, myHero);
+
+        int damage = myMonster.basicAtk(myHero);
+        if (myMonster.attackWasSuccessful()) {
+            myGame.monsterHitsBasicMsg(myMonster, myHero, damage);
+        } else {
+            myGame.monsterBasicMiss(myMonster);
+        }
     }
 
     private void monsterSpecial() {
@@ -294,22 +312,16 @@ public class MonsterBattle {
 
         int damage = myMonster.basicAtk(myHero);
         if (myMonster.attackWasSuccessful()) {
-            myGame.monsterHitsSpecialMsg(damage);
+            myGame.monsterHitsSpecialMsg(myMonster, myHero, damage);
         } else {
-            myGame.monsterAttackMissMsg();
+            myGame.monsterSpecialMiss(myMonster);
         }
-        DelayMachine.delay(2);
     }
 
-    private void monsterBasic() {
-        myGame.monsterSelectsBasicMsg(myMonster, myHero);
-
-        int damage = myMonster.basicAtk(myHero);
-        if (myMonster.attackWasSuccessful()) {
-            myGame.monsterHitsBasicMsg(damage);
-        } else {
-            myGame.monsterAttackMissMsg();
-        }
+    private void monsterHeal() {
+        myMonster.heal(myMonster);
+        int healAmount = myMonster.getHealAmount();
+        myGame.monsterHealMsg(healAmount);
         DelayMachine.delay(2);
     }
 

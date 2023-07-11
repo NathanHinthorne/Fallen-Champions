@@ -10,6 +10,7 @@ public enum HeroTypes {
     SWORDSMAN, // mid hp.
     // basic: sword swing
     // special: sword slice - will almost certainly hit, but also a small chance crit hit. max cooldown 2
+    // passive: "parry"  - chance to block monster's attack and deal damage back to it || "resilient defense " - chance to take half damageW
     THIEF, // low hp.
     // basic: stab (with obtained weapon)
     // special: steal - steal a potion/xp/weapon(increases dmg) from the monster
@@ -18,6 +19,7 @@ public enum HeroTypes {
     JUGGERNAUT, // high hp.
     // basic: punch - does much damage than other heroes' basics
     // special: charge - charge at the monster and pound it with fists. 50% chance to deal massive damage, 50% chance to miss
+    // passive: "rage" - every time you take damage, you deal more damage on your next turn
     ARCHER, // low hp.
     // basic: shoot - shoot an arrow at the monster, does more damage than other heroes basics, has little higher chance to miss
     // special: triple shot - shoot 3 arrows at the monster. chance for each of them to hit individually

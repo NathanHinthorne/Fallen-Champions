@@ -51,6 +51,21 @@ public abstract class Hero extends DungeonCharacter {
      */
     protected int myLevel;
 
+    /**
+     * The name of the basic ability
+     */
+    protected String myBasicName;
+
+    /**
+     * The name of the special ability
+     */
+    protected String mySpecialName;
+
+    /**
+     * The name of the passive ability
+     */
+    protected String myPassiveName;
+
 
     /**
      * constructor for hero
@@ -64,15 +79,15 @@ public abstract class Hero extends DungeonCharacter {
      * @param theMaxCooldown the max cooldown
      * @param theType the hero type
      */
-    public Hero(HeroTypes theType, int theHealth, int theSpeed, double theBasicChance,
-                double theSpecialChance, int theMinDmg, int theMaxDmg, int theCooldown,
-                int theMaxCooldown, String theBasicSelectMsg, String theSpecialSelectMsg) {
+    public Hero(final HeroTypes theType, final int theHealth, final int theSpeed, final double theBasicChance,
+                final double theSpecialChance, final int theMinDmg, final int theMaxDmg, final int theCooldown,
+                final int theMaxCooldown) {
 
         super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg,
-                theCooldown, theMaxCooldown, theBasicSelectMsg, theSpecialSelectMsg);
+                theCooldown, theMaxCooldown);
 
         myType = theType;
-        myInventory = new Inventory();
+        myInventory = new Inventory(); // change parameter for scientist who has larger inventory?
         myUsingVisionPotion = false;
         myXP = 0;
         myLevel = 0;
@@ -147,6 +162,8 @@ public abstract class Hero extends DungeonCharacter {
         myMinDmg += 5;
         myMaxDmg += 5;
     }
+
+    public abstract boolean isUnlocked();
 
     @Override
     public String toString() {

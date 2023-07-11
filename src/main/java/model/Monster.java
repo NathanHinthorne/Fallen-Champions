@@ -39,6 +39,9 @@ public abstract class Monster extends DungeonCharacter implements Healable {
      */
     private int XPWorth;
 
+
+//    protected String myDeathMsg;
+
     /**
      * constructor for monster
      *
@@ -53,11 +56,10 @@ public abstract class Monster extends DungeonCharacter implements Healable {
      */
     public Monster(final MonsterTypes theType, final int theHealth, final int theSpeed, final double theBasicChance,
                    final double theSpecialChance, final int theMinDmg, final int theMaxDmg, final int theCooldown,
-                   final int theMaxCooldown, String theBasicSelectMsg, String theSpecialSelectMsg,
-                   final int theMinHeal, final int theMaxHeal, final double theHealChance, final int theXP) {
+                   final int theMaxCooldown, final int theMinHeal, final int theMaxHeal, final double theHealChance,
+                   final int theXP) {
 
-        super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg, theCooldown,
-                theMaxCooldown, theBasicSelectMsg, theSpecialSelectMsg);
+        super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg, theCooldown, theMaxCooldown);
 
         myType = theType;
         myMinHeal = theMinHeal;
@@ -125,4 +127,10 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     public int getXPWorth() {
         return XPWorth;
     }
+
+
+    public abstract String[] getDescription();
+
+    public abstract String[] getDeathMsg();
+
 }

@@ -24,19 +24,20 @@ public class HeroFactory {
         
         if (theValue == HeroTypes.SWORDSMAN) {
             myHero = new HeroSwordsman();
-        } else if (theValue == HeroTypes.THIEF) {
-            myHero = new HeroThief();
-        } else if (theValue == HeroTypes.JUGGERNAUT) {
-            myHero = new HeroJuggernaut();
-        } else if (theValue == HeroTypes.ARCHER) {
-            myHero = new HeroArcher();
-        } else if (theValue == HeroTypes.SCIENTIST) {
-            myHero = new HeroScientist();
-        } else if (theValue == HeroTypes.DOCTOR) {
-            myHero = new HeroDoctor();
-        } else if (theValue == HeroTypes.MAGE) {
-            myHero = new HeroMage();
         }
+//        else if (theValue == HeroTypes.THIEF) {
+//            myHero = new HeroThief();
+//        } else if (theValue == HeroTypes.JUGGERNAUT) {
+//            myHero = new HeroJuggernaut();
+//        } else if (theValue == HeroTypes.ARCHER) {
+//            myHero = new HeroArcher();
+//        } else if (theValue == HeroTypes.SCIENTIST) {
+//            myHero = new HeroScientist();
+//        } else if (theValue == HeroTypes.DOCTOR) {
+//            myHero = new HeroDoctor();
+//        } else if (theValue == HeroTypes.MAGE) {
+//            myHero = new HeroMage();
+//        }
 //        } else if (theValue == HeroTypes.MICHAEL) {
 //
 //        } else if (theValue == HeroTypes.GARRET) {

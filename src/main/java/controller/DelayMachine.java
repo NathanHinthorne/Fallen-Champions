@@ -1,5 +1,7 @@
 package controller;
 
+import java.io.Console;
+
 /**
  * A class used to streamline time delays for battles and audio.
  *
@@ -16,7 +18,7 @@ public abstract class DelayMachine {
      * @param theTime - amount of time to delay.
      *               (int 2 is 1 second, 1 is half a second)
      */
-    public static void delay(int theTime) {
+    public static void delay(final int theTime) {
         try {
             Thread.sleep(theTime * 500);
         } catch (Exception e) {
@@ -24,7 +26,7 @@ public abstract class DelayMachine {
         }
     }
 
-    private static void shortDelay(int theTime) {
+    private static void shortDelay(final int theTime) {
         try {
             Thread.sleep(theTime * 10);
         } catch (Exception e) {
@@ -32,16 +34,16 @@ public abstract class DelayMachine {
         }
     }
 
-    public static void printDelayedText(String theText) {
+    public static void printDelayedText(final String theText) {
         for (int i = 0; i < theText.length(); i++) {
             System.out.print(theText.charAt(i));
             System.out.flush(); // Flush the output buffer to print the character immediately
-            shortDelay(5);
+            shortDelay(7);
         }
         System.out.println();
     }
 
-    public static void printDelayedTextFast(String theText) {
+    public static void printDelayedTextFast(final String theText) {
         for (int i = 0; i < theText.length(); i++) {
             System.out.print(theText.charAt(i));
             System.out.flush(); // Flush the output buffer to print the character immediately
@@ -49,4 +51,22 @@ public abstract class DelayMachine {
         }
         System.out.println();
     }
+
+//    public static void printDelayedText(final String theText, final Console theConsole) {
+//        for (int i = 0; i < theText.length(); i++) {
+//            theConsole.writer().print(theText.charAt(i));
+//            theConsole.flush(); // Flush the output buffer to print the character immediately
+//            shortDelay(5);
+//        }
+//        theConsole.writer().println();
+//    }
+//
+//    public static void printDelayedTextFast(final String theText, final Console theConsole) {
+//        for (int i = 0; i < theText.length(); i++) {
+//            theConsole.writer().print(theText.charAt(i));
+//            theConsole.flush(); // Flush the output buffer to print the character immediately
+//            shortDelay(3);
+//        }
+//        theConsole.writer().println();
+//    }
 }

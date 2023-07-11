@@ -85,7 +85,7 @@ public class Inventory implements java.io.Serializable {
      * @param theSlotIndex The index of the item to be removed.
      */
     public void removeItem(final int theSlotIndex) {
-        myInventory.remove(theSlotIndex-1);
+        myInventory.remove(theSlotIndex);
     }
 
 
@@ -96,7 +96,7 @@ public class Inventory implements java.io.Serializable {
      * @return The item at the specified index.
      */
     public Potion getItem(final int theSlotIndex) {
-        return myInventory.get(theSlotIndex-1);
+        return myInventory.get(theSlotIndex);
     }
 
     /**
@@ -111,14 +111,14 @@ public class Inventory implements java.io.Serializable {
     }
 
     public boolean isFull() {
-        return getSize() == MAX_ITEM_CAPACITY;
+        return getCurrentSize() == MAX_ITEM_CAPACITY;
     }
 
     /**
      * Returns the size of the Inventory the player has.
      * @return the ArrayList Size.
      */
-    public int getSize() {
+    public int getCurrentSize() {
         return myInventory.size();
     }
 

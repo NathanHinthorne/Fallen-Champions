@@ -2,7 +2,12 @@ package view;
 import controller.DelayMachine;
 import model.*;
 
+import java.io.Console;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * TUI mode of the game
@@ -14,7 +19,23 @@ import java.util.Scanner;
  */
 public class TUI {
 
-    private static final Scanner SCANNER = new Scanner(System.in);
+    /**
+     * The scanner object that will be used to read user input.
+     */
+    private final Scanner myScanner;
+
+    /**
+     * The console object that will pop up for the user.
+     */
+//    private final Consol;
+
+
+    public TUI(final Console theConsole) {
+//       = theConsole;
+//        myScanner = new Scanne.reader());
+        myScanner = new Scanner(System.in);
+    }
+
 
     /**
      * Main menu of the game
@@ -24,22 +45,31 @@ public class TUI {
         System.out.println("Welcome to Fallen Champions, TUI edition");
         System.out.println("1 to start game, 2 to exit game");
         System.out.print("Make your selection: ");
-        return SCANNER.nextInt();
+        return myScanner.nextInt();
     }
 
     /**
      * Chooses the hero
      * @return the hero choice
      */
-    public int chooseHero() {
+    public int chooseHero(final List<Hero> theHeroes) {
+
         System.out.println("Choose your hero!");
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println("1 for Swordsman, 2 for Thief, 3 for Juggernaut, 4 for Archer,");
-        System.out.println("5 for Scientist, 6 Ninja, 7 for Doctor, 8 for Mage.");
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-        System.out.print("Make your selection: ");
-        return SCANNER.nextInt();
+        int menuOption = 1;
+        for (Hero hero : theHeroes) {
+            if (hero.isUnlocked()) {
+                System.out.println(menuOption + " for " + hero.getType());
+            } else {
+                System.out.println(menuOption + "  --(LOCKED)--  ");
+            }
+            menuOption++;
+        }
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        System.out.println("Make your selection: ");
+        return myScanner.nextInt();
     }
 
     /**
@@ -51,14 +81,13 @@ public class TUI {
         DelayMachine.printDelayedText("Welcome hero,");
         DelayMachine.printDelayedText("The dungeon you see looming before you is one of many perils.");
         DelayMachine.printDelayedText("In it lies hordes of monsters, deadly traps, and countless treasures.");
-//        DelayMachine.printDelayedText("To succeed, you must use your wits and cunning to overcome the challenges that await you.");
         DelayMachine.printDelayedText("Find the 4 pillars of OO, and you shall be granted access to the final chamber.");
         DelayMachine.printDelayedText("Not even I, the keeper of the dungeon, know what awaits you there.");
         System.out.println();
         DelayMachine.printDelayedText("Now then, what is your name?");
         System.out.println();
         System.out.print("Name: ");
-        String fakeName = SCANNER.next();
+        String fakeName = myScanner.next();
         System.out.println();
         DelayMachine.printDelayedTextFast("Wait, are you serious? Your name is actually " + fakeName + "?");
         DelayMachine.delay(2);
@@ -137,12 +166,17 @@ public class TUI {
         System.out.println();
         System.out.println("-----------------------------------------------------");
         System.out.println("Please make a selection:");
-        System.out.println("╔═══════════════════════════════════════════════════════════════════════╗");
-        System.out.println("╠ 'w' to move up, 'a' to move left, 's' to move down, 'd' to move right ╣");
-        System.out.println("╠ '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game ╣");
-        System.out.println("╚═══════════════════════════════════════════════════════════════════════╝");
+        System.out.println("╔══════════════════════════════════════════════════════════════════════════╗");
+        System.out.println("╠ 'w' to move North, 'd' to move East, 's' to move South, 'a' to move West ╣");
+        System.out.println("╠ '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game    ╣");
+        System.out.println("╚══════════════════════════════════════════════════════════════════════════╝");
         System.out.println("-----------------------------------------------------");
-        return SCANNER.next().charAt(0);
+
+        return myScanner.next().charAt(0);
+    }
+
+    public void displayNormalSpacer() {
+        System.out.println("-----------------------------------------------------"); //TODO replace all spacers with this method in the controller
     }
 
     /**
@@ -156,21 +190,15 @@ public class TUI {
         System.out.println("Monster HP: " + theMonster.getHealth());
 
         System.out.println("\nMake your move!");
+
+        String specialButton = "[2 - Special]";
         if (theHero.onCooldown()) {
-            System.out.print("[1 - Attack] ║2 - Special║ [e - Bag] --> ");
-        } else {
-            System.out.print("[1 - Attack] [2 - Special] [e - Bag] --> ");
+            specialButton = "║2 - Special║";
         }
-        char choice = SCANNER.next().charAt(0);
-//        int choiceInt;
-//        try {
-//            choiceInt = Integer.parseInt(choice);
-//        } catch(NumberFormatException e) {
-//            System.out.println("Invalid input! Please try again.");
-//            DelayMachine.delay(2);
-//            choiceInt = battleMenu(theHero, theMonster);
-//        }
-        System.out.println("-----------------------------------------------------");
+
+        System.out.print("[1 - Basic] " + specialButton + " [e - Bag] --> ");
+
+        char choice = myScanner.next().charAt(0);
         return choice;
     }
 
@@ -178,11 +206,27 @@ public class TUI {
      * Menu for choosing the difficulty
      * @return the difficulty choice
      */
-    public int chooseDifficulty() {
+    public int chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked) {
         System.out.println("Choose your difficulty!");
-        System.out.println("1 for easy, 2 for medium, 3 for hard");
+        System.out.println("╔════════════════════════════════════════╗");
+        System.out.println("║ 1 for easy | 2 for medium | 3 for hard ║");
+        System.out.println("╚════════════════════════════════════════╝");
+
+        if (theHardUnlocked) {
+            System.out.println("     ▲              ▲             ▲       ");
+            System.out.println();
+        } else if (theMediumUnlocked) {
+            System.out.println("     ▲              ▲             ^       ");
+            System.out.println("                               (Locked)   ");
+            System.out.println();
+        } else {
+            System.out.println("     ▲              ^             ^       ");
+            System.out.println("                 (Locked)      (Locked)   ");
+            System.out.println();
+        }
+
         System.out.print("Make your selection: ");
-        return SCANNER.nextInt();
+        return myScanner.nextInt();
     }
 
     /**
@@ -194,8 +238,8 @@ public class TUI {
     public char openBag(final Inventory theBag, final boolean inBattle, final Audio theAudio) {
         System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println("Opening bag...");
+        DelayMachine.delay(2);
 
-        DelayMachine.delay(3);
         if (inBattle) {
             System.out.println(theBag.getItemInventory());
         } else {
@@ -203,21 +247,21 @@ public class TUI {
         }
 
         System.out.print("Choose an item (1-4) (e - Back) --> ");
-        char input = SCANNER.next().charAt(0);
+        char input = myScanner.next().charAt(0);
         System.out.println();
 
         if (input == 'e') { // back
             return 'e';
         }
 
-        int slotIndex = Character.getNumericValue(input); // convert input to int
+        int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array index)
 
-        if (slotIndex <= 0 || slotIndex >= 5) { // out of bounds
+        if (slotIndex < 0 || slotIndex > 3) { // out of bounds
             theAudio.playSFX(theAudio.error, -10);
-            System.out.println("Invalid input! please try again.");
+            displayWrongInput();
             return openBag(theBag, inBattle, theAudio);
 
-        } else if (slotIndex > theBag.getSize()-1 && slotIndex <= theBag.getMaxSize()) { // empty slot
+        } else if (slotIndex > theBag.getCurrentSize()-1 && slotIndex <= theBag.getMaxSize()) { // empty slot
             theAudio.playSFX(theAudio.error, -10);
             System.out.println("That slot is empty!");
             return openBag(theBag, inBattle, theAudio);
@@ -226,9 +270,10 @@ public class TUI {
         return input;
     }
 
-    public void closeBag() {
+    public void closeBag(final Audio theAudio) {
         System.out.println("Closing bag...");
-        DelayMachine.delay(2);
+        theAudio.playSFX(theAudio.heroBagClose, -10);
+        DelayMachine.delay(1);
         System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 
@@ -241,7 +286,7 @@ public class TUI {
         System.out.println("Are you sure you want to quit?");
         System.out.println("1 for yes, 2 for no");
         System.out.print("Make your selection: ");
-        return SCANNER.nextInt();
+        return myScanner.nextInt();
     }
 
     /**
@@ -257,17 +302,59 @@ public class TUI {
      * Displays the hero info
      * @param theHero you
      */
-    public void displayHeroInfo(final Hero theHero) {
-        System.out.println(" ╔═══════════════════════");
+    public void displayHeroStats(final Hero theHero) {
+
+        System.out.println(" ╔════════════════════════════════════════════════");
         System.out.println(" ║ " + theHero.getName());
-        System.out.println(" ║ <" + theHero.getType() + ">");
+        System.out.println(" ║ " + theHero.getType());
         System.out.println(" ║ ");
+        System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
+        System.out.println(" ╠ Basic: ");
+        System.out.println(" ║ " + theHero.getBasicName());
+        System.out.println(" ║ ");
+        System.out.println(" ╠ Special: ");
+        System.out.println(" ║ " + theHero.getSpecialName()[0]);
+        System.out.println(" ║ " + theHero.getSpecialName()[1]);
+        System.out.println(" ║ ");
+        System.out.println(" ╠ Passive: ");
+        System.out.println(" ║ " + theHero.getPassiveName()[0]);
+        System.out.println(" ║ " + theHero.getPassiveName()[1]);
+        System.out.println(" ║ ");
+        System.out.println(" ║ S̲T̲A̲T̲S̲");
         System.out.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
         System.out.println(" ╠ Attack: " + (theHero.getMinDmg() + theHero.getMaxDmg())/2);
         System.out.println(" ╠ Speed: " + theHero.getSpeed());
         System.out.println(" ╠ Level: " + theHero.getLevel());
         System.out.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
-        System.out.println(" ╚═══════════════════════");
+        System.out.println(" ╚════════════════════════════════════════════════");
+    }
+
+    /**
+     * Displays the monster info
+     * @param theMonster the monster
+     */
+    public void displayMonsterStats(final Monster theMonster) {
+        System.out.println(" ╔════════════════════════════════════════════════");
+        System.out.println(" ║ " + theMonster.getName());
+        System.out.println(" ║ ");
+        System.out.println(" ║ DESCRIPTION: ");
+        System.out.println(" ║ " + theMonster.getDescription()[0]);
+        System.out.println(" ║ " + theMonster.getDescription()[1]);
+        System.out.println(" ║ ");
+        System.out.println(" ║ ABILITIES:");
+        System.out.println(" ╠ Basic: " + theMonster.getBasicName());
+        System.out.println(" ║ ");
+        System.out.println(" ╠ Special: " + theMonster.getSpecialName()[0]);
+        System.out.println(" ║    "       + theMonster.getSpecialName()[1]);
+        System.out.println(" ║ ");
+        System.out.println(" ╠ Passive: " + theMonster.getPassiveName()[0]);
+        System.out.println(" ║    "       + theMonster.getPassiveName()[1]);
+        System.out.println(" ║ ");
+        System.out.println(" ║ STATS:");
+        System.out.println(" ╠ Health: " + theMonster.getHealth() + "/" + theMonster.getMaxHealth());
+        System.out.println(" ╠ Attack: " + (theMonster.getMinDmg() + theMonster.getMaxDmg())/2);
+        System.out.println(" ╠ Speed: " + theMonster.getSpeed());
+        System.out.println(" ╚════════════════════════════════════════════════");
     }
 
     /**
@@ -312,7 +399,7 @@ public class TUI {
         System.out.println("Would you like to start a new game or continue a previous game?");
         System.out.println("1 for new game, 2 for continue game");
         System.out.print("Make your selection: ");
-        return SCANNER.nextInt();
+        return myScanner.nextInt();
     }
 
     /**
@@ -320,59 +407,77 @@ public class TUI {
      */
     public void monsterTurnText() {
         System.out.println("-----------------------------------------------------");
-        System.out.println("The Enemy is making their move...");
+        System.out.println(" -The Enemy is making their move...");
     }
 
     public void monsterHealMsg(final int theHealAmt) {
         System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
+        DelayMachine.delay(1);
     }
 
     public void monsterSelectsBasicMsg(final Monster theMonster, final Hero thePlayer) {
-        System.out.print(" -" + theMonster.getName() + theMonster.getBasicMsg() + thePlayer.getName());
+        System.out.println(" -" + theMonster.getName() + theMonster.getBasicSelectMsg() +
+                thePlayer.getName() + theMonster.getExtendedBasicSelectMsg());
+        DelayMachine.delay(2);
     }
     public void monsterSelectsSpecialMsg(final Monster theMonster, final Hero thePlayer) {
-        System.out.print(" -" + theMonster.getName() + theMonster.getSpecialMsg() + thePlayer.getName());
+        System.out.println(" -" + theMonster.getName() + theMonster.getSpecialSelectMsg() +
+                thePlayer.getName() + theMonster.getExtendedSpecialSelectMsg());
+        DelayMachine.delay(2);
     }
-    public void monsterHitsBasicMsg(final int theDamageDealt) {
-        System.out.println(" for " + theDamageDealt + " damage!");
+    public void monsterHitsBasicMsg(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
+        System.out.println(" -" + theMonster.getBasicHitMsg()[0]);
+        System.out.println("  " + theHero.getName() + " took " + theDamageDealt + " damage!");
+        DelayMachine.delay(2);
+    }
+    public void monsterHitsSpecialMsg(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
+        System.out.println(" -" + theMonster.getSpecialHitMsg()[0]);
+        System.out.println("  " + theHero.getName() + " took " + theDamageDealt + " damage!");
+        DelayMachine.delay(2);
+    }
+    public void monsterBasicMiss(final Monster theMonster) {
+        System.out.println("  " + theMonster.getBasicMissMsg()[0]);
+        DelayMachine.delay(2);
+    }
 
-//        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!");
-    }
-    public void monsterHitsSpecialMsg(final int theDamageDealt) {
-        System.out.println(" for " + theDamageDealt + " damage!");
-//        System.out.println("  " + thePlayer.getName()  + " took " + theDamageDealt + " damage!"); // special doesn't always do damage. find way to deal with this
-    }
-    public void monsterAttackMissMsg() {
-        System.out.println(", but fails in its attempt!");
+    public void monsterSpecialMiss(final Monster theMonster) {
+        System.out.println("  " + theMonster.getSpecialMissMsg()[0]);
+        DelayMachine.delay(2);
     }
 
 
 
     public void playerSelectsBasicMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicMsg() + theMonster.getName() + "...");
+
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicSelectMsg() +
+                theMonster.getName() + thePlayer.getExtendedBasicSelectMsg() + "...");
+
+        DelayMachine.delay(2);
     }
     public void playerSelectsSpecialMsg(final Hero thePlayer, final Monster theMonster) {
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialMsg() + theMonster.getName() + "...");
+
+        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialSelectMsg() +
+                theMonster.getName() + thePlayer.getExtendedSpecialSelectMsg() + "...");
+
+        DelayMachine.delay(2);
     }
-    public void playerHitsBasicMsg(final int theDamageDealt, final boolean funnyMode) {
-        DelayMachine.delay(1);
-        System.out.println("  Success!");
-        if (funnyMode) {
-            System.out.println("  It really hurt");
-        } else {
-            System.out.println("  The enemy took " + theDamageDealt + " damage!");
-        }
+    public void playerHitsBasicMsg(final Hero thePlayer, final int theDamageDealt, final boolean funnyMode) {
+        System.out.println("  " + thePlayer.getBasicHitMsg()[0]);
+        System.out.println("  The enemy took " + theDamageDealt + " damage!");
+        DelayMachine.delay(2);
     }
-    public void playerHitsSpecialMsg(final int theDamageDealt) {
-        DelayMachine.delay(1);
-        System.out.println("  Success!");
-        System.out.println("  The enemy took " + theDamageDealt + " damage"); // special doesn't always do damage. find way to deal with this
+    public void playerHitsSpecialMsg(final Hero thePlayer, final int theDamageDealt) { // special doesn't always do damage. find way to deal with this
+        System.out.println("  " + thePlayer.getSpecialHitMsg()[0]);
+        System.out.println("  The enemy took " + theDamageDealt + " damage!");
+        DelayMachine.delay(2);
     }
-    public void playerAttackMissesMsg() {
-        System.out.println("  The attack failed!");
+    public void playerBasicMissMsg(final Hero thePlayer) {
+        System.out.println("  " + thePlayer.getBasicMissMsg()[0]);
     }
 
-
+    public void playerSpecialMissMsg(final Hero thePlayer) {
+        System.out.println("  " + thePlayer.getSpecialMissMsg()[0]);
+    }
 
 
     public void displayCooldown(final int theCooldown) {
@@ -389,7 +494,7 @@ public class TUI {
      * The game victory message
      */
     public void displayVictoryMsg(final int theHeroSteps, final int theMonstersDefeated, final int theLevel,
-                                  final boolean funnyMode) {
+                                  final Difficulty theDifficulty, boolean funnyMode) {
 
         System.out.println("-----------------------------------------------------");
         System.out.println(" -You escaped the dungeon!");
@@ -402,11 +507,11 @@ public class TUI {
                            "   ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝");
         System.out.println();
         DelayMachine.delay(2);
-        DelayMachine.printDelayedText("RESULTS:");
+        DelayMachine.printDelayedText("  RESULTS:");
+        DelayMachine.printDelayedText("  You beat the game on " + theDifficulty + " difficulty!");
         DelayMachine.printDelayedText("  You took " + theHeroSteps + " steps to escape the dungeon.");
         DelayMachine.printDelayedText("  You reached level " + theLevel + ".");
         DelayMachine.printDelayedText("  You defeated " + theMonstersDefeated + " monsters.");
-//        DelayMachine.printDelayedText("  You beat the game in " + theTimeTaken + " seconds.");
     }
 
     /**
@@ -414,10 +519,14 @@ public class TUI {
      */
     public void displayBattleWinMsg(final Monster theMonster) {
         System.out.println();
+        System.out.println(" -" + theMonster.getDeathMsg()[0]);
+        System.out.println();
+        DelayMachine.delay(2);
         System.out.println("  [][][][][][][][][][]");
         System.out.println("  [] ENEMY DEFEATED []");
         System.out.println("  [][][][][][][][][][]");
         System.out.println();
+        DelayMachine.delay(1);
         System.out.println("RESULTS:");
         System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
         System.out.println();
@@ -544,7 +653,7 @@ public class TUI {
      * @param theSlotIndex the slot of the potion
      */
     public void usePotionMsg(final Potion thePotion, int theSlotIndex) {
-        System.out.println(" -You used a " + thePotion.type() + " from the slot #" + theSlotIndex);
+        System.out.println(" -You used a " + thePotion.type() + " from the slot #" + (theSlotIndex+1));
         System.out.println(thePotion.useMsg());
     }
 
@@ -558,7 +667,7 @@ public class TUI {
     public int playIntroOrNot() {
         System.out.println("Would you like to play the intro?");
         System.out.println("1 for no, 2 for yes");
-        return SCANNER.nextInt();
+        return myScanner.nextInt();
     }
 
     public void displayWallMsg() {
@@ -612,5 +721,67 @@ public class TUI {
 
     public void exitIsOpenMsg() {
         System.out.println(" -You hear a door creak open in the distance...");
+    }
+
+    public void displayArrowSpacer() {
+        System.out.println("<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>");
+    }
+
+    public void printAudioError(URISyntaxException theError) {
+        System.out.println("Error: Audio source could not be parsed." + theError);
+    }
+
+    public void heroFasterThanMonsterMsg(final Monster theMonster) {
+        System.out.println(" -You have a higher speed than " + theMonster.getName() + ", so you get to attack first!");
+    }
+
+    public void monsterFasterThanHeroMsg(final Monster theMonster) {
+        System.out.println(" -The " + theMonster.getName() + " has a higher speed than you, so it attacks first!");
+    }
+
+    public char pressAnyKeyMsg() {
+        System.out.println("Press any key to continue...");
+        return myScanner.next().charAt(0);
+    }
+
+    public void displayUnlockedJuggernautAndThief() {
+        System.out.println();
+        System.out.println("╔══════════════════════ INFO ═══════════════════════╗");
+        System.out.println("║ You've unlocked the JUGGERNAUT and THIEF heroes!  ║");
+        System.out.println("║ They will now appear in the hero selection menu.  ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+    public void displayUnlockedDoctorAndNinja() {
+        System.out.println();
+        System.out.println("╔══════════════════════ INFO ═══════════════════════╗");
+        System.out.println("║   You've unlocked the DOCTOR and NINJA heroes!    ║");
+        System.out.println("║ They will now appear in the hero selection menu.  ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+    public void displayUnlockedScientist() {
+        System.out.println();
+        System.out.println("╔══════════════════════ INFO ═══════════════════════╗");
+        System.out.println("║         You've unlocked the SCIENTIST hero        ║");
+        System.out.println("║  He will now appear in the hero selection menu.   ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+    public void displayUnlockedMage() {
+        System.out.println();
+        System.out.println("╔══════════════════════ INFO ═══════════════════════╗");
+        System.out.println("║           You've unlocked the MAGE hero!          ║");
+        System.out.println("║  He will now appear in the hero selection menu.   ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+
+    public void displayUnlockedBeastmaster() {
+        System.out.println("╔══════════════════════ INFO ═══════════════════════╗");
+        System.out.println("║        You've unlocked the BEASTMASTER hero       ║");
+        System.out.println("║  He will now appear in the hero selection menu.   ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
     }
 }

@@ -67,16 +67,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     protected boolean myAttackWasSuccess;
 
     /**
-     * The message for the character when it performs a basic attack
-     */
-    protected String myBasicSelectMsg;
-
-    /**
-     * The message for the character when it performs a special move
-     */
-    protected String mySpecialSelectMsg;
-
-    /**
      * The special ability sfx
      */
     private File mySpecialSFX;
@@ -100,8 +90,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * @param theMaxCooldown the max cooldown
      */
     public DungeonCharacter(int theHealth, int theSpeed, double theBasicChance, double theSpecialChance,
-                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown,
-                            String theBasicSelectMsg, String theSpecialSelectMsg) {
+                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown) {
 
         myHealth = theHealth;
         mySpeed = theSpeed;
@@ -112,8 +101,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myMaxDmg = theMaxDmg;
         myCooldown = theCooldown;
         myMaxCooldown = theMaxCooldown;
-        myBasicSelectMsg = theBasicSelectMsg;
-        mySpecialSelectMsg = theSpecialSelectMsg;
     }
 
     /**
@@ -291,12 +278,6 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public boolean onCooldown() {
         return myCooldown > 0;
     }
-    public String getBasicMsg() {
-        return myBasicSelectMsg;
-    }
-    public String getSpecialMsg() {
-        return mySpecialSelectMsg;
-    }
     public void setMaxHealth(final int theMaxHealth) {
         myMaxHealth = theMaxHealth;
     }
@@ -316,5 +297,38 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myAttackWasSuccess = theAttackWasSuccess;
     }
 
+
+
+    public abstract String getBasicName();
+    public abstract String[] getSpecialName();
+    public abstract String[] getPassiveName();
+
+    public abstract String getBasicSelectMsg();
+    public abstract String getExtendedBasicSelectMsg();
+    public abstract String getSpecialSelectMsg();
+    public abstract String getExtendedSpecialSelectMsg();
+
+    public abstract String[] getBasicMissMsg();
+    public abstract String[] getSpecialMissMsg();
+    public abstract String[] getBasicHitMsg();
+    public abstract String[] getSpecialHitMsg();
+
+//    public String[] getRandomBasicMissMsg() {
+//        // shuffle array in some way. need to turn everything to arrayLists?
+//        return myBasicMissMsg;
+//    }
+//    public String[] getRandomSpecialMissMsg() {
+//        return mySpecialMissMsg;
+//    }
+//
+//    public String[] getRandomBasicHitMsg() {
+//        return myBasicHitMsg;
+//    }
+//
+//    public String[] getRandomSpecialHitMsg() {
+//        return mySpecialHitMsg;
+//    }
+
+    public abstract int initialCooldown();
 
 }
