@@ -147,7 +147,7 @@ public class DungeonGame {
         heroes.add(HeroFactory.buildHero(HeroTypes.MAGE));
 
         // get user input to start game (1 for start, 2 for exit)
-        int menuSelection = game.menu();
+        char menuSelection = game.menu();
         audio.playSFX(audio.menuOne, -10);
         setupMenu(menuSelection);
     }
@@ -157,7 +157,7 @@ public class DungeonGame {
      */
     private static void setupMenu(int theMenuSelection) {
         switch(theMenuSelection) {
-            case 1:
+            case '1':
                 System.out.println();
 
                 displayActiveModes();
@@ -178,6 +178,10 @@ public class DungeonGame {
 
                     // load a random name
                     String name = giveRandomName();
+                                                    // TODO make a list adjectives in alphabetical order.
+                                                    // Let the use type in the first word, then pick a random adjective
+                                                    // add "the" in between them. ex "Natan the noob"
+                                                    // this is funnier, and gives the chance for the easter egg name like "Hiccup"
 
                     // print introduction
                     int introSelection = game.playIntroOrNot();
@@ -230,7 +234,12 @@ public class DungeonGame {
                     game.displayWrongInput();
                 }
 
-            case 2:
+            case '2':
+                audio.playSFX(audio.menuTwo, 0);
+                DelayMachine.delay(2);
+                game.displayCyaNerd();
+                audio.playSFX(audio.heroOof, 0);
+                DelayMachine.delay(2);
                 System.exit(0);
 
             default:
@@ -484,7 +493,7 @@ public class DungeonGame {
                     // play victory sound
                     audio.stopAll();
                     DelayMachine.delay(1);
-//                    audio.playMusic(audio.triumpantFinishSong, false, -5);
+
                     audio.playMusic(audio.triumpantFinishSong, true, -10);
 
                     // play cutscene
@@ -495,6 +504,19 @@ public class DungeonGame {
                     }
 
                     game.pressAnyKeyMsg();
+                    audio.stopAll();
+
+                    // play credits if on hard mode
+                    if (difficulty == Difficulty.HARD || DEBUG_MODE) {
+                        DelayMachine.delay(4);
+                        audio.playMusic(audio.rickRollSong, false, -10);
+                        DelayMachine.delay(2);
+                        game.displayCredits();
+                        DelayMachine.delay(4);
+                        game.displayRecommendListening();
+                        DelayMachine.delay(4);
+                        game.pressAnyKeyMsg();
+                    }
 
                     // turn off music
                     audio.stopAll();
@@ -502,6 +524,8 @@ public class DungeonGame {
                     // update stats
                     totalHeroSteps += heroSteps;
                     heroSteps = 0;
+
+                    DelayMachine.delay(2);
 
                     // make a popup showing characters that were unlocked
                     if (difficulty == Difficulty.EASY && easyGamesWon == 0) {
@@ -539,7 +563,7 @@ public class DungeonGame {
                     }
 
                     // make a menu popup for choosing to exit or play again on different difficulty
-
+                    game.displayPlayAgainMenu();
 
 
                     DelayMachine.delay(130);

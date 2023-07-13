@@ -41,11 +41,11 @@ public class TUI {
      * Main menu of the game
      * @return main menu input
      */
-    public int menu() {
+    public char menu() {
         System.out.println("Welcome to Fallen Champions, TUI edition");
         System.out.println("1 to start game, 2 to exit game");
         System.out.print("Make your selection: ");
-        return myScanner.nextInt();
+        return myScanner.next().charAt(0);
     }
 
     /**
@@ -86,7 +86,7 @@ public class TUI {
         System.out.println();
         DelayMachine.printDelayedText("Now then, what is your name?");
         System.out.println();
-        System.out.print("Name: ");
+        System.out.print("Name (one word): ");
         String fakeName = myScanner.next();
         System.out.println();
         DelayMachine.printDelayedTextFast("Wait, are you serious? Your name is actually " + fakeName + "?");
@@ -559,27 +559,27 @@ public class TUI {
      * The cheat mode message
      */
     public void displayCheatModeMsg() {
-        System.out.println("*****************************************************");
-        System.out.println("You have entered cheat mode ಠ_ಠ");
-        System.out.println("*****************************************************");
+        System.out.println("***********************************");
+        System.out.println(" You have entered cheat mode ಠ_ಠ ");
+        System.out.println("***********************************");
     }
 
     /**
      * The funny mode message
      */
     public void displayFunnyDialogueModeMsg() {
-        System.out.println("*****************************************************");
-        System.out.println("You have entered funny dialogue mode ( ͡° ͜ʖ ͡°)");
-        System.out.println("*****************************************************");
+        System.out.println("****************************************");
+        System.out.println(" You have entered funny mode ( ͡° ͜ʖ ͡°) ");
+        System.out.println("****************************************");
     }
 
     /**
      * The debug mode message
      */
     public void displayDebugModeMsg() {
-        System.out.println("*****************************************************");
-        System.out.println("You have entered debug mode ❐‿❑");
-        System.out.println("*****************************************************");
+        System.out.println("************************************");
+        System.out.println(" You have entered debug mode ❐‿❑ ");
+        System.out.println("************************************");
     }
 
 
@@ -740,7 +740,8 @@ public class TUI {
     }
 
     public char pressAnyKeyMsg() {
-        System.out.println("Press any key to continue...");
+        System.out.println();
+        System.out.println("Press any key to continue... (except ENTER cuz that just makes a new line)");
         return myScanner.next().charAt(0);
     }
 
@@ -783,5 +784,153 @@ public class TUI {
         System.out.println("║  He will now appear in the hero selection menu.   ║");
         System.out.println("╚═══════════════════════════════════════════════════╝");
         System.out.println();
+    }
+
+    public void displayCredits() { // CREDITS
+        System.out.println();
+        System.out.println();
+        System.out.println("" +
+                "    ,o888888o.    8 888888888o.   8 8888888888   8 888888888o.       8 8888 8888888 8888888888    d888888o.   \n" +
+                "   8888     `88.  8 8888    `88.  8 8888         8 8888    `^888.    8 8888       8 8888        .`8888:' `88. \n" +
+                ",8 8888       `8. 8 8888     `88  8 8888         8 8888        `88.  8 8888       8 8888        8.`8888.   Y8 \n" +
+                "88 8888           8 8888     ,88  8 8888         8 8888         `88  8 8888       8 8888        `8.`8888.     \n" +
+                "88 8888           8 8888.   ,88'  8 888888888888 8 8888          88  8 8888       8 8888         `8.`8888.    \n" +
+                "88 8888           8 888888888P'   8 8888         8 8888          88  8 8888       8 8888          `8.`8888.   \n" +
+                "88 8888           8 8888`8b       8 8888         8 8888         ,88  8 8888       8 8888           `8.`8888.  \n" +
+                "`8 8888       .8' 8 8888 `8b.     8 8888         8 8888        ,88'  8 8888       8 8888       8b   `8.`8888. \n" +
+                "   8888     ,88'  8 8888   `8b.   8 8888         8 8888    ,o88P'    8 8888       8 8888       `8b.  ;8.`8888 \n" +
+                "    `8888888P'    8 8888     `88. 8 888888888888 8 888888888P'       8 8888       8 8888        `Y8888P ,88P' \n" +
+                "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ");
+
+
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("  _____                                               _             \n" +
+                " |  __ \\                                             (_)            \n" +
+                " | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _ \n" +
+                " |  ___/ '__/ _ \\ / _` | '__/ _` | '_ ` _ \\| '_ ` _ \\| | '_ \\ / _` |\n" +
+                " | |   | | | (_) | (_| | | | (_| | | | | | | | | | | | | | | | (_| |\n" +
+                " |_|   |_|  \\___/ \\__, |_|  \\__,_|_| |_| |_|_| |_| |_|_|_| |_|\\__, |\n" +
+                "                   __/ |                                       __/ |\n" +
+                "                  |___/                                       |___/ ");
+
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("  Nathan Hinthorne");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("  (with a little help from Brendan Smith and Austin Roaf)");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+
+        System.out.println("  __  __           _      \n" +
+                " |  \\/  |         (_)     \n" +
+                " | \\  / |_   _ ___ _  ___ \n" +
+                " | |\\/| | | | / __| |/ __|\n" +
+                " | |  | | |_| \\__ \\ | (__ \n" +
+                " |_|  |_|\\__,_|___/_|\\___|");
+
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println(" Starting Off Theme by: Nathan Hinthorne");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println(" Dungeon Theme by: Nathan Hinthorne");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println(" Battle Theme by: Nathan Hinthorne");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println(" Victory Theme by: Jon Presstone");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println(" Credits Theme by: 8 Bit Universe");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("   _____                 _       _   _______ _                 _        \n" +
+                "  / ____|               (_)     | | |__   __| |               | |       \n" +
+                " | (___  _ __   ___  ___ _  __ _| |    | |  | |__   __ _ _ __ | | _____ \n" +
+                "  \\___ \\| '_ \\ / _ \\/ __| |/ _` | |    | |  | '_ \\ / _` | '_ \\| |/ / __|\n" +
+                "  ____) | |_) |  __/ (__| | (_| | |    | |  | | | | (_| | | | |   <\\__ \\\n" +
+                " |_____/| .__/ \\___|\\___|_|\\__,_|_|    |_|  |_| |_|\\__,_|_| |_|_|\\_\\___/\n" +
+                "        | |                                                             \n" +
+                "        |_|                                                             ");
+
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("  My friends and family, for all their amazing ideas for characters and abilities.");
+        DelayMachine.delay(2);
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.println("  My professor, Tom Capaul, for giving me the assignment which started this whole game off.");
+
+        // make the rest of the text run off the screen with a bunch of blank lines
+        for (int i = 0; i < 30; i++) {
+            DelayMachine.delay(2);
+            System.out.println();
+        }
+    }
+
+    public int displayPlayAgainMenu() {
+        System.out.println("Would you like to play again?");
+        System.out.println("1 for yes, 2 for no.");
+        System.out.print("Make your selection: ");
+        return myScanner.nextInt();
+    }
+
+    public void displayCyaNerd() {
+//        System.out.println();
+//        DelayMachine.printDelayedText("Nah, you're trapped here forever now.");
+//        DelayMachine.delay(2);
+//        System.out.println();
+//        DelayMachine.printDelayedText("Don't you dare hit that X button...");
+//        System.out.println();
+//        DelayMachine.delay(3);
+//        System.out.println();
+//        DelayMachine.printDelayedTextFast("Alright, whatever. I'll let you leave.");
+        System.out.println();
+        System.out.println(" ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄            ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄  \n" +
+                "▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌          ▐░░▌      ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ \n" +
+                "▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌          ▐░▌░▌     ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌\n" +
+                "▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌          ▐░▌▐░▌    ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌\n" +
+                "▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌          ▐░▌ ▐░▌   ▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌\n" +
+                "▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌          ▐░▌  ▐░▌  ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌\n" +
+                "▐░▌           ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌          ▐░▌   ▐░▌ ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀█░█▀▀ ▐░▌       ▐░▌\n" +
+                "▐░▌               ▐░▌     ▐░▌       ▐░▌          ▐░▌    ▐░▌▐░▌▐░▌          ▐░▌     ▐░▌  ▐░▌       ▐░▌\n" +
+                "▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░▌       ▐░▌          ▐░▌     ▐░▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄█░▌\n" +
+                "▐░░░░░░░░░░░▌     ▐░▌     ▐░▌       ▐░▌          ▐░▌      ▐░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░▌ \n" +
+                " ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀         ▀            ▀        ▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀  ");
+        System.out.println();
+    }
+
+    public void displayRecommendListening() {
+        System.out.println("Personally, I'd recommend listening to the rest of the song. It's pretty good.");
+        System.out.println("But when you're ready.");
     }
 }
