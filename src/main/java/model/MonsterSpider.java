@@ -30,8 +30,11 @@ public class MonsterSpider extends Monster {
     }
 
     @Override
-    public String getBasicName() {
-        return "Bite -";
+    public String[] getBasicName() {
+        return new String[] {
+                "Bite -",
+                ""
+        };
     }
 
     @Override

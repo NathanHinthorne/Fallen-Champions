@@ -47,7 +47,6 @@ public class Dungeon implements java.io.Serializable {
     /**
      * Builds a small dungeon with the given parameters.
      *
-     *
      */
     public static class SmallDungeonBuilder extends DungeonBuilder {
 
@@ -340,9 +339,14 @@ public class Dungeon implements java.io.Serializable {
      * Moves the player in the given direction.
      *
      * @param dir the direction to move the player
+     * @return true if the player moved, false otherwise
      */
-    public void playerMove(final Direction dir) {
+    public boolean playerMove(final Direction dir) {
+        boolean hasMoved;
+
         Room oldRoom = myMaze[myHeroY][myHeroX];
+        int oldHeroX = myHeroX;
+        int oldHeroY = myHeroY;
 
         if (dir == Direction.NORTH && !myMaze[myHeroY-1][myHeroX].hasWall()) {
             myHeroY--;
@@ -353,12 +357,20 @@ public class Dungeon implements java.io.Serializable {
         } else if (dir == Direction.WEST && !myMaze[myHeroY][myHeroX-1].hasWall()) {
             myHeroX--;
         }
-        Room newRoom = myMaze[myHeroY][myHeroX];
 
-        oldRoom.removeHero();
-        oldRoom.setVisited(true);
-        newRoom.placeHero();
-        newRoom.setVisible(true);
+        if (oldHeroX == myHeroX && oldHeroY == myHeroY) {
+            hasMoved = false;
+        } else {
+            Room newRoom = myMaze[myHeroY][myHeroX];
+
+            oldRoom.removeHero();
+            oldRoom.setVisited(true);
+            newRoom.placeHero();
+            newRoom.setVisible(true);
+            hasMoved = true;
+        }
+
+        return hasMoved;
     }
 
     /**

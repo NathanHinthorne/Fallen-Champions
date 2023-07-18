@@ -221,7 +221,6 @@ public abstract class DungeonBuilder implements java.io.Serializable {
 
         try {
             ds = new SQLiteDataSource();
-//            ds.setUrl("jdbc:sqlite:Monster_Database.db");
             ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monster_Database.db").getPath());
         } catch (Exception e) {
             e.printStackTrace();

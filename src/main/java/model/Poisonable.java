@@ -10,4 +10,5 @@ public interface Poisonable {
      */
     void poison(DungeonCharacter theCharacter, int theDamage, int theDuration);
 
+    boolean isPoisoned();
 }

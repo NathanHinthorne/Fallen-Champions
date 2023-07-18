@@ -1,13 +1,17 @@
 package controller;
 
+import org.sqlite.SQLiteDataSource;
 import view.Audio;
 import view.TUI;
 import model.*;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
 
 /**
@@ -19,21 +23,35 @@ import java.util.List;
 public class DungeonGame {
 
     /**
+     * The code to type in to activate funny mode.
+     */
+    private final static String FUNNY_MODE_CODE = "idk yet"; //TODO ??
+
+    /**
+     * The code to type in to activate debug mode.
+     */
+    private final static String DEBUG_MODE_CODE = "Ethan is awesome";
+
+    /**
+     * The code to type in to activate cheat mode.
+     */
+    private final static String CHEAT_MODE_CODE = "idk yet"; //TODO ??
+
+
+    /**
      * The game's cheat mode. If true, the player will be given extra items and abilities.
      */
-    private final static boolean CHEAT_MODE = true;
+    private static boolean cheatMode = false;
 
     /**
      * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
      */
-    private final static boolean DEBUG_MODE = true;
+    private static boolean debugMode = false;
 
     /**
      * The game's funny dialogue mode. If true, the player will be given funny dialogue throughout the game.
      */
-    private final static boolean FUNNY_MODE = false;
-
-
+    private static boolean funnyMode = false;
 
     /**
      * The console object that will pop up for the user to interact with.
@@ -147,123 +165,156 @@ public class DungeonGame {
         heroes.add(HeroFactory.buildHero(HeroTypes.MAGE));
 
         // get user input to start game (1 for start, 2 for exit)
-        char menuSelection = game.menu();
-        audio.playSFX(audio.menuOne, -10);
-        setupMenu(menuSelection);
+        game.menu(debugMode, audio);
+        setupMenu();
     }
 
     /**
      * Set up the menu based on the user's choice
      */
-    private static void setupMenu(int theMenuSelection) {
-        switch(theMenuSelection) {
-            case '1':
-                System.out.println();
+    private static void setupMenu() {
+        System.out.println();
 
-                displayActiveModes();
+        displayActiveModes();
 
-                // continue or new game (1 for new game, 2 for continue game)
-                int loadSelection = game.continueOrNewGameMenu();
+        // continue or new game (1 for new game, 2 for continue game)
+        int loadSelection = game.continueOrNewGameMenu();
 
-                if (loadSelection == 1) { // new game
-                    System.out.println();
+        if (loadSelection == 1) { // new game
+            audio.playSFX(audio.menuOne, -10);
 
-                    audio.playSFX(audio.menuOne, -10);
+            // print introduction
+            System.out.println();
+            int introSelection = game.playIntroOrNot();
+            audio.playSFX(audio.menuOne, -10);
+            if (introSelection == 2) {
+                game.introductionP1(funnyMode, audio);
+            }
 
-                    // setup dungeon (1 for easy, 2 for medium, 3 for hard)
-                    int difficultySelection = game.chooseDifficulty(mediumUnlocked, hardUnlocked);
-                    audio.playSFX(audio.menuOne, -10);
-                    setupDungeon(difficultySelection);
-                    System.out.println();
+            System.out.println();
+            String firstName = game.findHeroName();
+            firstName = capitalize(firstName);
 
-                    // load a random name
-                    String name = giveRandomName();
-                                                    // TODO make a list adjectives in alphabetical order.
-                                                    // Let the use type in the first word, then pick a random adjective
-                                                    // add "the" in between them. ex "Natan the noob"
-                                                    // this is funnier, and gives the chance for the easter egg name like "Hiccup"
+            String fullName = giveRandomSuffix(firstName); //TODO easter egg name like "Hiccup"
 
-                    // print introduction
-                    int introSelection = game.playIntroOrNot();
-                    audio.playSFX(audio.menuOne, -10);
-                    if (introSelection == 2) {
-                        // play intro music
+            if (introSelection == 2) {
+                game.introductionP2(funnyMode, audio, firstName, fullName);
+                DelayMachine.delay(4);
+            }
 
-                        game.Introduction(FUNNY_MODE, audio, name);
-                        DelayMachine.delay(4);
-                    }
-                    System.out.println();
+            System.out.println(fullName);
+            System.out.println();
 
-                    // choose hero (1 for Enforcer, 2 for Robot, 3 for Support, 4 for Scientist, 5 for Warrior)
-                    int heroSelection = game.chooseHero(heroes);
-                    hero = chooseHero(heroSelection);
-                    audio.playSFX(audio.menuTwo, 0);
-                    hero.setName(name);
-                    System.out.println();
+            // choose hero
+            int heroSelection = game.chooseHero(heroes);
+            hero = chooseHero(heroSelection);
+            audio.playSFX(audio.menuTwo, 0);
+            hero.setName(fullName);
+            System.out.println();
 
-                    if (introSelection == 2) {
-                        game.heroIntroduction(hero);
-                    }
+            if (introSelection == 2) {
+                game.heroIntroduction(hero);
+            }
 
-                    if (CHEAT_MODE) {
-                        cheatModeStuff();
-                    }
+            if (cheatMode) {
+                cheatModeStuff();
+            }
 
-                    DelayMachine.delay(1);
+            // setup dungeon (1 for easy, 2 for medium, 3 for hard)
+            int difficultySelection = game.chooseDifficulty(mediumUnlocked, hardUnlocked);
+            audio.playSFX(audio.menuOne, -10);
+            setupDungeon(difficultySelection);
+            game.displayDifficultySelected(difficulty);
+            System.out.println();
 
-                    if (!DEBUG_MODE) {
-                        // start msg
-                        game.displayStartMsg();
+            DelayMachine.delay(1);
 
-                        // start music
-                        audio.playMusic(audio.startingAnewSong, false, -12);
-                        DelayMachine.delay(15);
-                    }
+            if (!debugMode) {
+                // start msg
+                game.displayStartMsg();
 
-                    audio.playMusic(audio.ambientSong, true, -10);
+                // start music
+                audio.playMusic(audio.startingAnewSong, false, -12);
+                DelayMachine.delay(15);
+            }
 
-                    // start ticking time (call a method for this)
+            audio.playMusic(audio.ambientSong, true, -10);
 
-                    // enter the main game loop
-                    gameLoop();
+            // enter the main game loop
+            gameLoop();
 
-                } else if (loadSelection == 2) { // continue game
-                    loadGame();
-                    gameLoop();
-                } else {
-                    game.displayWrongInput();
-                }
-
-            case '2':
-                audio.playSFX(audio.menuTwo, 0);
-                DelayMachine.delay(2);
-                game.displayCyaNerd();
-                audio.playSFX(audio.heroOof, 0);
-                DelayMachine.delay(2);
-                System.exit(0);
-
-            default:
-                audio.playSFX(audio.error, -10);
-                game.displayWrongInput();
-                int newMenuSelection = game.menu();
-                setupMenu(newMenuSelection);
-        }
-    }
-
-    private static String giveRandomName() {
-        String[] names;
-
-        if (FUNNY_MODE) {
-            names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky"};
+        } else if (loadSelection == 2) { // continue game
+            loadGame();
+            gameLoop();
         } else {
-            names = new String[]{"Gideon the Greedy", "Cedric the Sensible", "Arthur the Aggravating",
-                    "Lancelot the Lethargic", "Patrick the Peculiar", "Galahad the Gullible", "Oswald the Oddball",
-                    "Benedict the Boring", "Archibald the Absurd", "Wilbur the Whimsical", "Horace the Hilarious"};
-
+            game.displayWrongInput();
         }
-        int randomIndex = (int) (Math.random() * names.length);
-        return names[randomIndex];
     }
+
+    private static String capitalize(final String firstName) {
+        String firstLetter = firstName.substring(0, 1).toUpperCase();
+        String restOfName = firstName.substring(1);
+        return firstLetter + restOfName;
+    }
+
+    private static String giveRandomSuffix(final String theFirstName) {
+        List<String> names = makeNamesList(theFirstName);
+
+        // randomize the suffixes
+        Collections.shuffle(names);
+        int randomIndex = (int) (Math.random() * names.size());
+        String suffix = names.get(randomIndex);
+
+        // make the full name
+        String fullName = theFirstName + " the " + suffix;
+        return fullName;
+
+//        if (funnyMode) {
+//            names = new String[]{"Jimothy", "Hot Rod Todd", "Big Chungus", "Spooderman", "Chunky"};
+//        } else {
+//            names = new String[]{"Gideon the Greedy", "Cedric the Sensible", "Arthur the Aggravating",
+//                    "Lancelot the Lethargic", "Patrick the Peculiar", "Galahad the Gullible", "Oswald the Oddball",
+//                    "Benedict the Boring", "Archibald the Absurd", "Wilbur the Whimsical", "Horace the Hilarious"};
+//
+//        }
+    }
+
+    private static List<String> makeNamesList(final String theFirstName) {
+
+        // establish connection to database
+        SQLiteDataSource ds = new SQLiteDataSource();
+
+        // try to open the database
+        try {
+            ds = new SQLiteDataSource();
+//            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monster_Database.db").getPath()); // can't access instance stuff here?
+            ds.setUrl("jdbc:sqlite:" + DungeonGame.class.getResource("/Hero_Names.db").getPath()); // hopefully this works instead
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        String firstLetter = theFirstName.substring(0, 1).toUpperCase();
+        List<String> names = new ArrayList<>();
+        String query = "SELECT " + firstLetter + " FROM Names";
+
+        try (Connection conn = ds.getConnection();
+            Statement statement = conn.createStatement()) {
+            ResultSet rs = statement.executeQuery(query);
+
+            while ( rs.next() ) {
+                String word = rs.getString( firstLetter );
+                names.add(word);
+            }
+        } catch ( SQLException e ) {
+            System.out.println("Could not access database");
+            e.printStackTrace();
+            System.exit( 0 );
+        }
+
+        return names;
+    }
+
 
     /**
      * Set up the hero so the player can make a choice
@@ -366,7 +417,7 @@ public class DungeonGame {
 
             System.out.println();
 
-            if (dungeon.heroIsTouchingPillar() && !CHEAT_MODE) {
+            if (dungeon.heroIsTouchingPillar() && !cheatMode) {
                 // play ding sound
                 audio.playSFX(audio.heroCollectPillar, -10);
 
@@ -416,7 +467,7 @@ public class DungeonGame {
                 }
             }
 
-            if (dungeon.heroIsTouchingPit() && !DEBUG_MODE) {
+            if (dungeon.heroIsTouchingPit() && !debugMode) {
                 // play pit sound
 
                 Pit pit = dungeon.getPit();
@@ -426,13 +477,13 @@ public class DungeonGame {
 
                 if (hero.getHealth() <= 0) {
                     // play death sound
-                    if (FUNNY_MODE) {
+                    if (funnyMode) {
                         audio.playSFX(audio.heroOof, -10);
                     } else {
                         audio.playSFX(audio.heroDefeat, -10);
                     }
 
-                    game.displayDeathMsg(FUNNY_MODE);
+                    game.displayDeathMsg(funnyMode);
                     gameOver = true;
                 }
             }
@@ -452,7 +503,7 @@ public class DungeonGame {
 
                 DelayMachine.delay(1); // delay for 0.5 seconds
 
-                MonsterBattle battle = new MonsterBattle(hero, monster, game, CHEAT_MODE, audio, FUNNY_MODE);
+                MonsterBattle battle = new MonsterBattle(hero, monster, game, cheatMode, audio, funnyMode);
                 boolean winnerWinnerChickenDinner = battle.newBattle();
 
                 if (winnerWinnerChickenDinner) {
@@ -463,7 +514,7 @@ public class DungeonGame {
                     hero.gainXP(monster.getXPWorth());
 
                     // win cutscene
-                    if (!DEBUG_MODE) {
+                    if (!debugMode) {
                         game.displayBattleWinMsg(monster);
                         checkIfLevelUp(); // display level-up message if applicable
                         game.displayBattleEnd();
@@ -477,7 +528,7 @@ public class DungeonGame {
                     audio.playSFX(audio.heroDefeat, -10);
 
                     // defeat cutscene
-                    game.displayDeathMsg(FUNNY_MODE);
+                    game.displayDeathMsg(funnyMode);
 
                     gameOver = true;
                     break;
@@ -497,9 +548,9 @@ public class DungeonGame {
                     audio.playMusic(audio.triumpantFinishSong, true, -10);
 
                     // play cutscene
-                    game.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, FUNNY_MODE);
+                    game.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode);
 
-                    if (!DEBUG_MODE) {
+                    if (!debugMode) {
                         DelayMachine.delay(10);
                     }
 
@@ -507,7 +558,7 @@ public class DungeonGame {
                     audio.stopAll();
 
                     // play credits if on hard mode
-                    if (difficulty == Difficulty.HARD || DEBUG_MODE) {
+                    if (difficulty == Difficulty.HARD || debugMode) {
                         DelayMachine.delay(4);
                         audio.playMusic(audio.rickRollSong, false, -10);
                         DelayMachine.delay(2);
@@ -591,32 +642,44 @@ public class DungeonGame {
             //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
             // '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game
             int gameMenuSelection = game.gameplayMenu();
+            boolean hasMoved = false;
             switch(gameMenuSelection) {
                 case 's':
-                    dungeon.playerMove(Direction.SOUTH);
-                    heroSteps++;
+                    hasMoved = dungeon.playerMove(Direction.SOUTH);
+                    if (hasMoved) { heroSteps++; }
+                    else { game.displayHitWallMsg(); }
                     break;
 
                 case 'a':
-                    dungeon.playerMove(Direction.WEST);
-                    heroSteps++;
+                    hasMoved = dungeon.playerMove(Direction.WEST);
+                    if (hasMoved) { heroSteps++; }
+                    else { game.displayHitWallMsg(); }
                     break;
 
                 case 'd':
-                    dungeon.playerMove(Direction.EAST);
-                    heroSteps++;
+                    hasMoved = dungeon.playerMove(Direction.EAST);
+                    if (hasMoved) { heroSteps++; }
+                    else { game.displayHitWallMsg(); }
                     break;
 
                 case 'w':
-                    dungeon.playerMove(Direction.NORTH);
-                    heroSteps++;
+                    hasMoved = dungeon.playerMove(Direction.NORTH);
+                    if (hasMoved) { heroSteps++; }
+                    else { game.displayHitWallMsg(); }
                     break;
 
                 case '1': // hero info
-                    audio.playSFX(audio.heroStatsOn, -10);
+                    audio.playSFX(audio.swishOn, -10);
                     game.displayHeroStats(hero);
-                    game.pressAnyKeyMsg(); // we don't need user input, right?
-                    audio.playSFX(audio.heroStatsOff, -13);
+                    game.pressAnyKeyMsg();
+                    audio.playSFX(audio.swishOff, -13);
+                    break;
+
+                case '2':
+                    audio.playSFX(audio.swishOn, -10);
+                    game.displayInstructions();
+                    game.pressAnyKeyMsg();
+                    audio.playSFX(audio.swishOff, -13);
                     break;
 
                 case 'e': // open bag
@@ -624,8 +687,8 @@ public class DungeonGame {
 
                     break;
 
-                case '4': // quit
-                    int quit = game.quitProcess();
+                case '4': // main menu
+                    int quit = game.mainMenuProcess();
                     if (quit == 1) {
                         gameOver = true;
                     }
@@ -666,7 +729,6 @@ public class DungeonGame {
         }
     }
 
-
     // Code from https://www.youtube.com/watch?v=xudKOLX_DAk
     /**
      * Saves the game to a file called jvs.sav
@@ -705,6 +767,7 @@ public class DungeonGame {
 
     }
 
+
     /**
      * cheat mode stuff
      */
@@ -720,13 +783,13 @@ public class DungeonGame {
     }
 
     private static void displayActiveModes() {
-        if (CHEAT_MODE) {
+        if (cheatMode) {
             game.displayCheatModeMsg();
         }
-        if (DEBUG_MODE) {
+        if (debugMode) {
             game.displayDebugModeMsg();
         }
-        if (FUNNY_MODE) {
+        if (funnyMode) {
             game.displayFunnyDialogueModeMsg();
         }
     }
@@ -779,5 +842,16 @@ public class DungeonGame {
             game.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
         }
     }
+
+    private static void exitGame() {
+        audio.playSFX(audio.menuTwo, 0);
+        DelayMachine.delay(2);
+        game.displayCyaNerd();
+        audio.playSFX(audio.heroOof, 0);
+        DelayMachine.delay(2);
+        System.exit(0);
+    }
+
+
 
 }

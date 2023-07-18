@@ -10,7 +10,8 @@ import java.util.Random;
  * @author Nathan Hinthorne
  * @version 1.0
  */
-public abstract class DungeonCharacter implements java.io.Serializable {
+public abstract class DungeonCharacter implements java.io.Serializable, Poisonable, Blindable,
+                                                    Silencable, Stuckable, Vulnerable, Weakenable {
     /**
      * The random number generator
      */
@@ -299,7 +300,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
 
 
-    public abstract String getBasicName();
+    public abstract String[] getBasicName();
     public abstract String[] getSpecialName();
     public abstract String[] getPassiveName();
 
@@ -330,5 +331,75 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 //    }
 
     public abstract int initialCooldown();
+
+
+    private void setSpecialChance(final double theChance) {
+        mySpecialChance = theChance;
+    }
+
+    private void setBasicChance(final double theChance) {
+        myBasicChance = theChance;
+    }
+
+    @Override
+    public void poison(DungeonCharacter theOther, int theDamage, int theDuration) {
+        theOther.setHealth(theOther.getHealth() - theDamage);
+    }
+
+    @Override
+    public boolean isPoisoned() {
+        return false;
+    }
+
+    @Override
+    public void stuckify(DungeonCharacter theOther, int theDuration) {
+        theOther.setSpeed(theOther.getSpeed() - 1);
+    }
+
+    @Override
+    public boolean isStuck() {
+        return false;
+    }
+
+    @Override
+    public void blind(final DungeonCharacter theOther, final int theDuration) {
+        theOther.setBasicChance(theOther.getBasicChance() - 0.3);
+        theOther.setSpecialChance(theOther.getSpecialChance() - 0.3); // make sure to revert those values somewhere else
+    }
+
+    @Override
+    public boolean isBlind() {
+        return false;
+    }
+
+    @Override
+    public void silence(final DungeonCharacter theOther, final int theDuration) {
+        // block special ability
+    }
+
+    @Override
+    public boolean isSilenced() {
+        return false;
+    }
+
+    @Override
+    public void vulnerate(final DungeonCharacter theOther, final int theDuration) {
+        // increase damage taken by 3x next turn
+    }
+
+    @Override
+    public boolean isVulnerable() {
+        return false;
+    }
+
+    @Override
+    public void weaken(final DungeonCharacter theOther, final int theDuration) {
+        // decrease damage this characters deals by 50%
+    }
+
+    @Override
+    public boolean isWeakened() {
+        return false;
+    }
 
 }

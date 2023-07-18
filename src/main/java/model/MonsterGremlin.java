@@ -29,8 +29,11 @@ public class MonsterGremlin extends Monster {
     }
 
     @Override
-    public String getBasicName() {
-        return " Slap - ";
+    public String[] getBasicName() {
+        return new String[] {
+                " Slap - ",
+                ""
+        };
     }
 
     @Override
@@ -66,7 +69,7 @@ public class MonsterGremlin extends Monster {
 
     @Override
     public String getExtendedSpecialSelectMsg() {
-        return "with lots of \"your mom\" jokes!";
+        return " with lots of \"your mom\" jokes!";
     }
 
     @Override

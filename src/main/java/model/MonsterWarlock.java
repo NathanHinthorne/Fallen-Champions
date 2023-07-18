@@ -46,8 +46,11 @@ public class MonsterWarlock extends Monster {
     }
 
     @Override
-    public String getBasicName() {
-        return " Lightning Bolt - ";
+    public String[] getBasicName() {
+        return new String[] {
+                " Lightning Bolt - ",
+                ""
+        };
     }
 
     @Override

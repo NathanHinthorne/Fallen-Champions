@@ -31,8 +31,11 @@ public class MonsterSkeleton extends Monster {
     }
 
     @Override
-    public String getBasicName() {
-        return "Bone Throw - ";
+    public String[] getBasicName() {
+        return new String[] {
+                "Bone Throw - ",
+                ""
+        };
     }
 
     @Override

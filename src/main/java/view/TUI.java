@@ -5,9 +5,7 @@ import model.*;
 import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 /**
  * TUI mode of the game
@@ -41,11 +39,47 @@ public class TUI {
      * Main menu of the game
      * @return main menu input
      */
-    public char menu() {
-        System.out.println("Welcome to Fallen Champions, TUI edition");
-        System.out.println("1 to start game, 2 to exit game");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public void menu(final boolean theDebugMode, final Audio theAudio) {
+        if (!theDebugMode) {
+            System.out.println("Welcome to...");
+            System.out.println();
+            DelayMachine.delay(4);
+            theAudio.playSFX(theAudio.titleScreen, -5);
+            System.out.println("" +
+                    "                    ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
+                    "                   ███    ███   ███    ███ ███       ███         ███    ███ ███▀▀▀██▄ \n" +
+                    "                   ███    █▀    ███    ███ ███       ███         ███    █▀  ███   ███ \n" +
+                    "                  ▄███▄▄▄       ███    ███ ███       ███        ▄███▄▄▄     ███   ███ \n" +
+                    "                 ▀▀███▀▀▀     ▀███████████ ███       ███       ▀▀███▀▀▀     ███   ███ \n" +
+                    "                   ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
+                    "                   ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
+                    "                   ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
+                    "                                           ▀         ▀                                ");
+            System.out.println();
+            DelayMachine.delay(1);
+            System.out.println("" +
+                    " ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
+                    "███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
+                    "███    █▀    ███    ███     ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███    █▀  \n" +
+                    "███         ▄███▄▄▄▄███▄▄   ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███        \n" +
+                    "███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
+                    "███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
+                    "███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
+                    "████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
+            System.out.println();
+            System.out.println();
+            DelayMachine.delay(3);
+            System.out.println("I̲M̲P̲O̲R̲T̲A̲N̲T̲ ̲I̲N̲F̲O̲R̲M̲A̲T̲I̲O̲N̲");
+            System.out.println("--Since this game is console-based, you will be using the keyboard to play.");
+            System.out.println("--You'll notice that the screen \"updates\" by printing new information on top of old information.");
+            System.out.println("--Any input you give must be followed by the ENTER key.");
+            System.out.println();
+            System.out.println();
+        }
+
+//        System.out.println("1 to start game, 2 to exit game");
+//        System.out.print("Make your selection: ");
+//        return myScanner.next().charAt(0);
     }
 
     /**
@@ -55,7 +89,7 @@ public class TUI {
     public int chooseHero(final List<Hero> theHeroes) {
 
         System.out.println("Choose your hero!");
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        displayChainSpacer();
 
         int menuOption = 1;
         for (Hero hero : theHeroes) {
@@ -67,41 +101,47 @@ public class TUI {
             menuOption++;
         }
 
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println("Make your selection: ");
+        displayChainSpacer();
+        System.out.print("Make your selection: ");
         return myScanner.nextInt();
     }
 
     /**
      * Introduces you to the game
      */
-    public void Introduction(final boolean theFunnyDialogue, final Audio theAudio, final String theRealName) {
+    public void introductionP1(final boolean theFunnyDialogue, final Audio theAudio) {
         System.out.println("-------------------------INTRODUCTION-------------------------");
         System.out.println();
         DelayMachine.printDelayedText("Welcome hero,");
         DelayMachine.printDelayedText("The dungeon you see looming before you is one of many perils.");
         DelayMachine.printDelayedText("In it lies hordes of monsters, deadly traps, and countless treasures.");
-        DelayMachine.printDelayedText("Find the 4 pillars of OO, and you shall be granted access to the final chamber.");
+        DelayMachine.printDelayedText("Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
         DelayMachine.printDelayedText("Not even I, the keeper of the dungeon, know what awaits you there.");
         System.out.println();
         DelayMachine.printDelayedText("Now then, what is your name?");
-        System.out.println();
-        System.out.print("Name (one word): ");
-        String fakeName = myScanner.next();
-        System.out.println();
-        DelayMachine.printDelayedTextFast("Wait, are you serious? Your name is actually " + fakeName + "?");
-        DelayMachine.delay(2);
-        DelayMachine.printDelayedTextFast("There's no way I'm calling you that -_-");
-        DelayMachine.delay(2);
-        DelayMachine.printDelayedText("I'm going to call you " + theRealName + " instead.");
+    }
 
-        if (theFunnyDialogue) {
-            DelayMachine.printDelayedText("hehehe bet you didn't expect that one.");
-        } else {
-            DelayMachine.printDelayedText("It suits you much better.");
-        }
+    public String findHeroName() {
+        System.out.print("Name (one word): ");
+        return myScanner.next();
+    }
+
+    /**
+     * Introduces you to the game
+     */
+    public void introductionP2(final boolean theFunnyDialogue, final Audio theAudio,
+                               final String theFirstName, final String theFullName) {
         System.out.println();
-        DelayMachine.printDelayedText("Now then, " + theRealName + ", are you ready to begin your adventure?");
+        DelayMachine.printDelayedTextFast("Wait, are you serious? Your name is just " + theFirstName + "?");
+        DelayMachine.delay(2);
+        DelayMachine.printDelayedTextFast("That's far too ordinary -_-");
+        DelayMachine.delay(4);
+        DelayMachine.printDelayedText("I dub thee...");
+        System.out.println();
+        DelayMachine.delay(5);
+        DelayMachine.printDelayedText("【 Sir " + theFullName + "! 】");
+        System.out.println();
+        DelayMachine.printDelayedText("Now then, " + theFullName + ", are you ready to begin your adventure?");
         DelayMachine.printDelayedText("Don't think you're the first to explore this dungeon.");
         DelayMachine.printDelayedText("Many others have come before you... Not one has made it out alive.");
         DelayMachine.printDelayedText("Do you think you have what it takes to overcome this dungeon?");
@@ -114,49 +154,17 @@ public class TUI {
             theAudio.playSFX(theAudio.rimshot, -10);
             DelayMachine.delay(4);
             DelayMachine.printDelayedTextFast("By the way, that was a rhetorical question, you don't actually get to answer.");
+            DelayMachine.printDelayedTextFast("Anyway, choose one of these I guess");
+
         } else {
             DelayMachine.delay(2);
             theAudio.playSFX(theAudio.dunDunDun, -10);
             DelayMachine.delay(4);
         }
 
-        DelayMachine.printDelayedText("So " + theRealName + ", what kind of adventurer are you anyway?");
-
-
-/*        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(4);
-//        System.out.println();
-//
-//        System.out.println("Well, do you have what it takes??");
-//        if (theFunnyDialogue) {
-//        } else {
-//            DelayMachine.printDelayedText("A quiet one ay?");
-//        }
-
-//        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(2);
-//        System.out.print(". ");
-//        DelayMachine.delay(4);
-//        System.out.println();
-//
-//        if (theFunnyDialogue) {
-//            System.out.println("Bruh");
-//            DelayMachine.delay(2);
-//            System.out.println("*boots you into the dungeon without a second thought*");
-//        } else {
-//            DelayMachine.printDelayedText("A quiet one ay?");
-//            DelayMachine.printDelayedText("I guess we'll find out soon enough.");
-        }
-        */
+        DelayMachine.printDelayedText("So " + theFullName + ", what kind of adventurer are you anyway?");
     }
+
 
     /**
      * Gameplay menu
@@ -164,19 +172,24 @@ public class TUI {
      */
     public int gameplayMenu() {
         System.out.println();
-        System.out.println("-----------------------------------------------------");
+        displayChainSpacer();
         System.out.println("Please make a selection:");
-        System.out.println("╔══════════════════════════════════════════════════════════════════════════╗");
-        System.out.println("╠ 'w' to move North, 'd' to move East, 's' to move South, 'a' to move West ╣");
-        System.out.println("╠ '1' to display hero info, 'e' open bag, '4' to quit, '5' to save game    ╣");
-        System.out.println("╚══════════════════════════════════════════════════════════════════════════╝");
-        System.out.println("-----------------------------------------------------");
+        System.out.println("╔══════════════════════════════════════════════════════════════════╗");
+        System.out.println("╠ 'w' move North, 'd' move East, 's' move South, 'a' move West     ╣");
+        System.out.println("╠ 'e' bag, '1' hero info, '2' help, '4' main menu, '5' save game   ╣");
+        System.out.println("╚══════════════════════════════════════════════════════════════════╝");
+        displayChainSpacer();
 
         return myScanner.next().charAt(0);
     }
 
     public void displayNormalSpacer() {
         System.out.println("-----------------------------------------------------"); //TODO replace all spacers with this method in the controller
+    }
+
+    public void displayChainSpacer() {
+//        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++"); //TODO replace all spacers with this method in the controller
+        System.out.println("<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>");
     }
 
     /**
@@ -208,6 +221,7 @@ public class TUI {
      */
     public int chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked) {
         System.out.println("Choose your difficulty!");
+        displayChainSpacer();
         System.out.println("╔════════════════════════════════════════╗");
         System.out.println("║ 1 for easy | 2 for medium | 3 for hard ║");
         System.out.println("╚════════════════════════════════════════╝");
@@ -224,9 +238,13 @@ public class TUI {
             System.out.println("                 (Locked)      (Locked)   ");
             System.out.println();
         }
-
+        displayChainSpacer();
         System.out.print("Make your selection: ");
         return myScanner.nextInt();
+    }
+
+    public void displayDifficultySelected(Difficulty difficulty) {
+        System.out.println("You have selected " + difficulty.toString() + " difficulty.");
     }
 
     /**
@@ -290,6 +308,17 @@ public class TUI {
     }
 
     /**
+     * Brings you a menu for whether you want to quit the game or not
+     * @return the menu selection
+     */
+    public int mainMenuProcess() {
+        System.out.println("Are you sure you want to go to the main menu?");
+        System.out.println("1 for yes, 2 for no");
+        System.out.print("Make your selection: ");
+        return myScanner.nextInt();
+    }
+
+    /**
      * Displays the dungeon map
      * @param theDungeon the map
      */
@@ -310,7 +339,8 @@ public class TUI {
         System.out.println(" ║ ");
         System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
         System.out.println(" ╠ Basic: ");
-        System.out.println(" ║ " + theHero.getBasicName());
+        System.out.println(" ║ " + theHero.getBasicName()[0]);
+        System.out.println(" ║ " + theHero.getBasicName()[1]);
         System.out.println(" ║ ");
         System.out.println(" ╠ Special: ");
         System.out.println(" ║ " + theHero.getSpecialName()[0]);
@@ -337,20 +367,24 @@ public class TUI {
         System.out.println(" ╔════════════════════════════════════════════════");
         System.out.println(" ║ " + theMonster.getName());
         System.out.println(" ║ ");
-        System.out.println(" ║ DESCRIPTION: ");
+        System.out.println(" ║ D̲E̲S̲C̲R̲I̲P̲T̲I̲O̲N̲: ");
         System.out.println(" ║ " + theMonster.getDescription()[0]);
         System.out.println(" ║ " + theMonster.getDescription()[1]);
         System.out.println(" ║ ");
-        System.out.println(" ║ ABILITIES:");
-        System.out.println(" ╠ Basic: " + theMonster.getBasicName());
+        System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
+        System.out.println(" ╠ Basic: ");
+        System.out.println(" ║ " + theMonster.getBasicName()[0]);
+        System.out.println(" ║ " + theMonster.getBasicName()[1]);
         System.out.println(" ║ ");
-        System.out.println(" ╠ Special: " + theMonster.getSpecialName()[0]);
-        System.out.println(" ║    "       + theMonster.getSpecialName()[1]);
+        System.out.println(" ╠ Special: ");
+        System.out.println(" ║ " + theMonster.getSpecialName()[0]);
+        System.out.println(" ║ " + theMonster.getSpecialName()[1]);
         System.out.println(" ║ ");
-        System.out.println(" ╠ Passive: " + theMonster.getPassiveName()[0]);
-        System.out.println(" ║    "       + theMonster.getPassiveName()[1]);
+        System.out.println(" ╠ Passive: ");
+        System.out.println(" ║ " + theMonster.getPassiveName()[0]);
+        System.out.println(" ║ " + theMonster.getPassiveName()[1]);
         System.out.println(" ║ ");
-        System.out.println(" ║ STATS:");
+        System.out.println(" ║ S̲T̲A̲T̲S̲:");
         System.out.println(" ╠ Health: " + theMonster.getHealth() + "/" + theMonster.getMaxHealth());
         System.out.println(" ╠ Attack: " + (theMonster.getMinDmg() + theMonster.getMaxDmg())/2);
         System.out.println(" ╠ Speed: " + theMonster.getSpeed());
@@ -406,7 +440,7 @@ public class TUI {
      * The monster turn text
      */
     public void monsterTurnText() {
-        System.out.println("-----------------------------------------------------");
+        displayChainSpacer();
         System.out.println(" -The Enemy is making their move...");
     }
 
@@ -496,7 +530,7 @@ public class TUI {
     public void displayVictoryMsg(final int theHeroSteps, final int theMonstersDefeated, final int theLevel,
                                   final Difficulty theDifficulty, boolean funnyMode) {
 
-        System.out.println("-----------------------------------------------------");
+        displayChainSpacer();
         System.out.println(" -You escaped the dungeon!");
         System.out.println();
         System.out.println("██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
@@ -522,9 +556,9 @@ public class TUI {
         System.out.println(" -" + theMonster.getDeathMsg()[0]);
         System.out.println();
         DelayMachine.delay(2);
-        System.out.println("  [][][][][][][][][][]");
-        System.out.println("  [] ENEMY DEFEATED []");
-        System.out.println("  [][][][][][][][][][]");
+        System.out.println("╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
+        System.out.println("│ ENEMY DEFEATED │");
+        System.out.println("╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
         System.out.println();
         DelayMachine.delay(1);
         System.out.println("RESULTS:");
@@ -582,6 +616,11 @@ public class TUI {
         System.out.println("************************************");
     }
 
+    public void displayWrongCode() {
+        DelayMachine.printDelayedText("Uhhhhhh");
+        DelayMachine.printDelayedTextFast("that's not a valid code. Please try again.");
+    }
+
 
     /**
      * The hero health
@@ -625,9 +664,10 @@ public class TUI {
         System.out.println(" -You have encountered" + article + monsterName);
         DelayMachine.delay(2);
         System.out.println();
-        System.out.println("+---------------------------------------------------+");
-        System.out.println("|                  BATTLE START                     |");
-        System.out.println("+---------------------------------------------------+");
+        System.out.println("████████████████████████████████████████████████████████████████████");
+        System.out.println("█                       --- BATTLE START ---                       █");
+        System.out.println("████████████████████████████████████████████████████████████████████");
+        System.out.println();
         DelayMachine.delay(1);
 
     }
@@ -665,13 +705,17 @@ public class TUI {
     }
 
     public int playIntroOrNot() {
-        System.out.println("Would you like to play the intro?");
+        System.out.println("Would you like to play the intro? (please say yes)");
         System.out.println("1 for no, 2 for yes");
         return myScanner.nextInt();
     }
 
     public void displayWallMsg() {
         System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
+    }
+
+    public void displayHitWallMsg() {
+        System.out.println(" -You ran into a wall you oaf");
     }
 
     public void heroIntroduction(Hero hero) {
@@ -681,6 +725,44 @@ public class TUI {
         DelayMachine.printDelayedText("*cranks gate open*");
         System.out.println();
 
+    }
+
+    public void displayInstructions() {
+        System.out.println();
+        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  What Am I Looking at?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+        System.out.println();
+        System.out.println(" The giant square you see is a top-down view of the dungeon.");
+        System.out.println(" The '□' symbol is you, the hero.");
+        System.out.println(" The empty spaces are rooms, and the '*' symbols are walls.");
+        System.out.println(" The contents of the rooms will remain hidden until you enter them.");
+        System.out.println();
+        System.out.println(" Each room may contain one or more of the following:");
+        System.out.println("" +
+                " ║ '▮' = exit\n" +
+                " ║ 'M' = monster\n" +
+                " ║ 'X' = pit\n" +
+                " ║ 'p' = potion\n" +
+                " ║ 'A' = abstraction pillar\n" +
+                " ║ 'I' = inheritance pillar\n" +
+                " ║ 'P' = polymorphism pillar\n" +
+                " ║ 'E' = encapsulation pillar\n" +
+                " ║ '&' = multiple items in the same room");
+//        System.out.println();
+//        System.out.println();
+
+//        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Do I Play?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+//        System.out.println();
+//        System.out.println("  You can move around the dungeon by typing 'w', 'a', 's', or 'd'.");
+//        System.out.println("  You can view your inventory (containing potions and pillars) by typing 'e'.");
+//        System.out.println("    * Once open, you can use an item from your inventory by typing the slot it's in.");
+//        System.out.println();
+//
+//        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Do I Win?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+//        System.out.println();
+//        System.out.println("  You win by collecting all 4 pillars and reaching the exit.");
+
+
+//        System.out.println("Beware! Monsters will spawn in a random location every 3 steps you take.");
     }
 
     public void displayCantUseItemDuringBattle(Potion thePotion) {
@@ -693,7 +775,9 @@ public class TUI {
 
     public void levelUpMsg(final int theLevel) {
         System.out.println(" -You leveled up!");
+        System.out.println("  You are now level " + theLevel);
         System.out.println("  Gained +5 damage, +10 max health");
+        System.out.println("  Your health is fully restored!");
         if (theLevel == 5) {
             System.out.println("  You have reached the max level");
         }
@@ -709,9 +793,9 @@ public class TUI {
 
     public void displayBattleEnd() {
         System.out.println();
-        System.out.println("+---------------------------------------------------+");
-        System.out.println("|                    BATTLE END                     |");
-        System.out.println("+---------------------------------------------------+");
+        System.out.println("████████████████████████████████████████████████████████████████████");
+        System.out.println("█                        --- BATTLE END ---                        █");
+        System.out.println("████████████████████████████████████████████████████████████████████");
     }
 
     private boolean isVowel(char ch) {
@@ -741,7 +825,7 @@ public class TUI {
 
     public char pressAnyKeyMsg() {
         System.out.println();
-        System.out.println("Press any key to continue... (except ENTER cuz that just makes a new line)");
+        System.out.println("Press any key, then ENTER to continue...");
         return myScanner.next().charAt(0);
     }
 
@@ -898,8 +982,7 @@ public class TUI {
     }
 
     public int displayPlayAgainMenu() {
-        System.out.println("Would you like to play again?");
-        System.out.println("1 for yes, 2 for no.");
+        System.out.println("Would you like to play again? (1 for yes, 2 for no)");
         System.out.print("Make your selection: ");
         return myScanner.nextInt();
     }
@@ -933,4 +1016,20 @@ public class TUI {
         System.out.println("Personally, I'd recommend listening to the rest of the song. It's pretty good.");
         System.out.println("But when you're ready.");
     }
+
+    public String cheatCodeMenu() {
+        System.out.println("╔██♥☺▓▒▓▒♦▒▒██▒▒░▓☻▒════▓▒█♠♣▒█♥▒▓█▒♣▓█══♣▒▓▒☻█▒═▒♥═╗");
+        System.out.println("▒                                                  ▓");
+        System.out.println("█          ╔═╗╦ ╦╔═╗╔═╗╔╦╗  ╔╦╗╔═╗╔╗╔╦ ╦           ▒");
+        System.out.println("║          ║  ╠═╣║╣ ╠═╣ ║   ║║║║╣ ║║║║ ║           ♦");
+        System.out.println("☺          ╚═╝╩ ╩╚═╝╩ ╩ ╩   ╩ ╩╚═╝╝╚╝╚═╝           █");
+        System.out.println("▓                                                  ║");
+        System.out.println("╚═▓♣▒▓▒♦▓▒█▓▒▓▒══▓▓█♥▓☺▒▒═══▒▒▒▓▓♣▓▒█▒▓♥♦▓█════▓▒▓▓╝");
+
+        System.out.print("Enter a cheat code: ");
+        return myScanner.nextLine(); //? test if this returns ENTIRE line (including "enter a cheat code")
+    }
+
+
+
 }

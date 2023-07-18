@@ -129,7 +129,7 @@ public class MonsterBattle {
     private void playerTurn() {
 
         char choice = myGame.battleMenu(myHero, myMonster);
-        myGame.displayNormalSpacer();
+        myGame.displayChainSpacer();
         System.out.println();
 
         // Basic Attack
@@ -269,7 +269,8 @@ public class MonsterBattle {
 
         //TODO make sure monster initial cooldown is set to 1 or 2?
 
-        //TODO make monster always choose special attack first.
+        //TODO make monster always choose special attack first!!
+        // because strategy needs to be for player to remember when monster will use their special next
 
         // Basic Attack
         if (choice == 0) {

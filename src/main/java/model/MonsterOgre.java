@@ -28,8 +28,11 @@ public class MonsterOgre extends Monster {
     }
 
     @Override
-    public String getBasicName() {
-        return " Punch - ";
+    public String[] getBasicName() {
+        return new String[] {
+                " Punch - ",
+                ""
+        };
     }
 
     @Override

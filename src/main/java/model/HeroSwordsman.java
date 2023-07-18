@@ -79,8 +79,11 @@ public class HeroSwordsman extends Hero {
     }
 
     @Override
-    public String getBasicName() {
-        return "\"Sword Strike\" - Perform a basic sword strike";
+    public String[] getBasicName() {
+        return new String[] {
+                "\"Sword Strike\" - Perform a basic sword strike",
+                ""
+        };
     }
     @Override
     public String[] getSpecialName() {
@@ -92,8 +95,8 @@ public class HeroSwordsman extends Hero {
     @Override
     public String[] getPassiveName() {
         return new String[] {
-                "\"Resilient Defense\" - 50% chance to block half",
-                "the damage from an incoming attack"
+                "\"Battle Stance\" - ",
+                ""
         };
     }
 

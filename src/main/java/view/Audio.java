@@ -30,6 +30,7 @@ public final class Audio {
     public final File infoPopup;
     public final File error;
     public final File beginGame;
+    public final File titleScreen;
 
 
     // MUSIC (Composed by Nathan Hinthorne)
@@ -40,6 +41,7 @@ public final class Audio {
     // MUSIC
     public final File triumpantFinishSong;
     public final File rickRollSong;
+    public final File hackerManSong;
 
 
     // ENVIRONMENT (step1, step2, step3, step4 are from Valve's Team Fortress 2)
@@ -69,8 +71,8 @@ public final class Audio {
     public final File heroBagOpen;
     public final File heroBagClose;
     public final File heroBagFull;
-    public final File heroStatsOn;
-    public final File heroStatsOff;
+    public final File swishOn;
+    public final File swishOff;
 
 
 //    public final File sfx;
@@ -90,12 +92,14 @@ public final class Audio {
         beginGame = new File(getClass().getResource("/sound/sfx/button_spawn.wav").toURI());
         heroPowerUp = new File(getClass().getResource("/sound/sfx/button_powerup.wav").toURI());
         infoPopup = new File(getClass().getResource("/sound/sfx/info_popup.wav").toURI());
+        titleScreen = new File(getClass().getResource("/sound/sfx/title_screen.wav").toURI());
 
         ambientSong = new File(getClass().getResource("/sound/music/music_ambient.wav").toURI());
         battleSong = new File(getClass().getResource("/sound/music/music_battle.wav").toURI());
         startingAnewSong = new File(getClass().getResource("/sound/music/music_starting_anew.wav").toURI());
         triumpantFinishSong = new File(getClass().getResource("/sound/music/music_triumphant_finish.wav").toURI());
         rickRollSong = new File(getClass().getResource("/sound/music/music_rickroll.wav").toURI());
+        hackerManSong = new File(getClass().getResource("/sound/music/music_hacker_man.wav").toURI());
 
         // initialize sfx files
         step1 = new File(getClass().getResource("/sound/sfx/hero_step1.wav").toURI());
@@ -116,8 +120,8 @@ public final class Audio {
         heroBagOpen = new File(getClass().getResource("/sound/sfx/hero_bag_open.wav").toURI());
         heroBagClose = new File(getClass().getResource("/sound/sfx/hero_bag_close.wav").toURI());
         heroBagFull = new File(getClass().getResource("/sound/sfx/hero_bag_full.wav").toURI());
-        heroStatsOn = new File(getClass().getResource("/sound/sfx/hero_stats_on.wav").toURI());
-        heroStatsOff = new File(getClass().getResource("/sound/sfx/hero_stats_off.wav").toURI());
+        swishOn = new File(getClass().getResource("/sound/sfx/hero_stats_on.wav").toURI());
+        swishOff = new File(getClass().getResource("/sound/sfx/hero_stats_off.wav").toURI());
         heroWinBattle = new File(getClass().getResource("/sound/sfx/hero_win_battle.wav").toURI());
 
 //        bonk = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
