@@ -81,22 +81,22 @@ public class HeroSwordsman extends Hero {
     @Override
     public String[] getBasicName() {
         return new String[] {
-                "\"Sword Strike\" - Perform a basic sword strike",
-                ""
+                "\"Sword Strike\" - Perform a basic sword strike,",
+                "skillfully slicing through the enemy's defences."
         };
     }
     @Override
     public String[] getSpecialName() {
         return new String[] {
-            "\"Mighty Swing\" - Unleash a powerful, overhead",
-            "slice with pinpoint accuracy (can crit hit)"
+                "\"Mighty Swing\" - Unleash a powerful, overhead",
+                "slash with pinpoint accuracy (can crit hit)."
         };
     }
     @Override
     public String[] getPassiveName() {
         return new String[] {
-                "\"Battle Stance\" - ",
-                ""
+                "\"Battle Stance\" - On high health, deal more",
+                "damage. On low health, decrease damage taken."
         };
     }
 
@@ -155,7 +155,13 @@ public class HeroSwordsman extends Hero {
     public boolean isUnlocked() {
         return true; // Always unlocked
     }
-    
 
+    @Override
+    public String[] getDescription() {
+        return new String[] {
+                "A master duelist, this hero wields his blade with confidence.",
+                "The ability to swap battle stances makes him a versatile fighter."
+        };
+    }
 
 }

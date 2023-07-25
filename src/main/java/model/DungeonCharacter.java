@@ -314,6 +314,8 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
     public abstract String[] getBasicHitMsg();
     public abstract String[] getSpecialHitMsg();
 
+    public abstract String[] getDescription();
+
 //    public String[] getRandomBasicMissMsg() {
 //        // shuffle array in some way. need to turn everything to arrayLists?
 //        return myBasicMissMsg;

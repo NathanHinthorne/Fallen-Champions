@@ -128,7 +128,7 @@ public class MonsterSpider extends Monster {
     @Override
     public String[] getDeathMsg() {
         return new String[] {
-            "The spider's hisses in anger as it collapses.",
+            "The spider hisses in anger as it collapses.",
             "The spider's legs curl up as it dies.",
             "The spider falls to the ground, dead."
         };

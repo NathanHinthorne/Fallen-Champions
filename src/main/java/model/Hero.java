@@ -66,6 +66,12 @@ public abstract class Hero extends DungeonCharacter {
      */
     protected String myPassiveName;
 
+    /**
+     * The direction the hero is facing
+     */
+    protected Direction myDirection;
+
+
 
     /**
      * constructor for hero
@@ -165,6 +171,22 @@ public abstract class Hero extends DungeonCharacter {
 
     public abstract boolean isUnlocked();
 
+
+    // default implementation
+    public boolean hasMazeAbility() {return false;}
+
+    // default implementation
+    public boolean mazeAbilityActivated() {return false;}
+
+    // default implementation
+    public String mazeAbilityDescription() {return "";}
+
+    // default implementation
+    public void activateMazeAbility(Dungeon theDungeon) {}
+
+
+
+
     @Override
     public String toString() {
         return "□";
@@ -185,4 +207,12 @@ public abstract class Hero extends DungeonCharacter {
             return 0;
         }
     }
+
+    public void setDirection(final Direction theDirection) {
+        myDirection = theDirection;
+    }
+    public Direction getDirection() {
+        return myDirection;
+    }
+
 }

@@ -10,7 +10,7 @@ public class HeroArcher extends Hero {
 
     public static final int HEALTH = 200;
     public static final int SPEED = 3;
-    public static final double BASIC_CHANCE = 0.8;
+    public static final double BASIC_CHANCE = 0.7;
     public static final double SPECIAL_CHANCE = 0.9;
     public static final int MIN_DMG = 20;
     public static final int MAX_DMG = 40;
@@ -81,15 +81,15 @@ public class HeroArcher extends Hero {
     @Override
     public String[] getBasicName() {
         return new String[] {
-                "\"Sword Strike\" - Perform a basic sword strike",
-                ""
+                "\"Swift Draw\" - Deftly draw back and fire",
+                "upon the target, inflicting "
         };
     }
     @Override
     public String[] getSpecialName() {
         return new String[] {
-                "\"Mighty Swing\" - Unleash a powerful, overhead",
-                "slice with pinpoint accuracy (can crit hit)"
+                "\"Triple Shot\" - Rapidly fire a barrage of",
+                "3 arrows, turning the target into a pincushion."
         };
     }
     @Override
@@ -154,6 +154,14 @@ public class HeroArcher extends Hero {
     @Override
     public boolean isUnlocked() {
         return true; // Always unlocked
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[] {
+                "Nothing escapes the watchful eye or the swift bow of the archer.",
+                "With lightning reflexes, he fires volleys of arrows in seconds.",
+        };
     }
 
 

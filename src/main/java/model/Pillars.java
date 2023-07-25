@@ -11,13 +11,13 @@ public enum Pillars implements java.io.Serializable {
     ABSTRACTION {
         @Override
         public String toString() {
-            return "A";
+            return "I";
         }
     },
     ENCAPSULATION {
         @Override
         public String toString() {
-            return "E";
+            return "I";
         }
     },
     INHERITANCE {
@@ -29,7 +29,7 @@ public enum Pillars implements java.io.Serializable {
     POLYMORPHISM {
         @Override
         public String toString() {
-            return "P";
+            return "I";
         }
     };
 }

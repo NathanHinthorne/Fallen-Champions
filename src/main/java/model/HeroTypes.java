@@ -17,22 +17,22 @@ public enum HeroTypes {
     // "silenced" - monster can't use special attack
 
     SWORDSMAN, // mid hp.
-    // basic: sword swing
-    // special: sword slice - will almost certainly hit, but also a small chance crit hit. chance to inflict weaken. max cooldown 2
+    // basic: sword strike
+    // special: mighty swing - will almost certainly hit, but also a small chance crit hit. chance to inflict weaken. max cooldown 2
     // passive: "battle stance" - higher than 50% health, do more damage. lower than 50%, take less damage
 
     ARCHER, // low hp.
-    // basic: shoot - shoot an arrow at the monster, does more damage than other heroes basics, has little higher chance to miss
-    // special: triple shot - shoot 3 arrows at the monster. chance for each of them to hit individually
-    // incorporate range?
+    // basic: Swift Draw - shoot an arrow at the monster, does more damage than other heroes basics, has little higher chance to miss
+    // special: Triple Shot - shoot 3 arrows at the monster. chance for each of them to hit individually
+    // ranged attack (with 2 uses between battles) hitting revealed monsters before engaging in battle
 
     JUGGERNAUT, // high hp.
     // basic: punch - does much damage than other heroes' basics
-    // special: split ground - punch the ground, causing the monster to be stunned for 1 turn. max cooldown 2, initial cooldown 1
+    // special: split ground - punch the ground. inflict stuck. max cooldown 2, initial cooldown 1
     // passive: "battle fury" - every time you take damage, you deal more damage
 
     THIEF, // low hp.
-    // basic: stab (with obtained weapon)
+    // basic: stab - (with obtained weapon) chance to inflict vulnerable
     // special: steal - steal a potion/xp/weapon(increases dmg) from the monster, always inflict stuck
     //         (monster can't attack on player's "wasted" turn because they are confused). max cooldown 4, initial cooldown 2
     // passive "quick reflexes" - chance to counterattack
@@ -44,9 +44,9 @@ public enum HeroTypes {
     // passive: every hit you take has a chance to heal you for a small amount (still take damage)
 
     NINJA, // mid hp.
-    // passive: 2 turns at start of battle
-    // basic: "Mystery weapon" Chance of pulling out either shuriken or numchucks.
-    // special: vanish - run away from battle (leaving monster at same hp you left it at)
+    // passive: 2 turns at start of battle, throw shuriken with ranged attack
+    // basic: numchucks - hit monster with numchucks (medium damage), chance to inflict silenced
+    // special: blowgun - shoot monster with blowgun (low damage), inflict poisoned
 
     MAGE, // low hp.
     // basic: Ethereal Beam  - blast monster with a condensed beam of light (high damage), chance to inflict silence
@@ -56,8 +56,8 @@ public enum HeroTypes {
 
     SCIENTIST, // mid hp.
     // passive: every 8 steps makes you craft a certain kind of damage-dealing potion (going into the inventory)
-    //      potion has chance to deal damage, poison, or stun monster. has 6 inventory slots
-    // basic: Electrocute - shoot monster with electricity (low damage, stun (stuck) chance)
+    //      potion has chance to deal damage, poison, or stuckify monster. has 6 inventory slots
+    // basic: Electrocute - shoot monster with electricity (low damage, stuck chance)
     // special:
 
     BEASTMASTER, // mid hp.
@@ -68,9 +68,9 @@ public enum HeroTypes {
 //    MICHAEL, //
 //    GARRET, // lead pipe - bonk sound
 //    ETHAN,  // throws burritos at monsters
-//    JADON,  // yoyo, baseball bat "hits home run into monster's face" & "throws fastball at monster's stomach", "throws yoyo around monster's legs, tripping it"
-//    NATHAN, // hacks into game and makes monsters glitch, throws goblins at other monsters
-//    THE_ROCK // raises eyebrow at monsters
+//    JADON,  // yoyo, baseball bat "hits home run into monster's face" & "throws a heater at monster's stomach", "throws yoyo around monster's legs, tripping it"
+//    NATHAN, // hacks into game and makes monsters glitch
+//    THE_ROCK // raises eyebrow at monsters, throws goblins at other monsters
 
 /*    ideas:
         garret - ogre meets him, "hey, I know you, you're the guy who stole my lead pipe!",

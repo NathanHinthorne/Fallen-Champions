@@ -9,7 +9,6 @@ public enum MonsterTypes {
         public String toString() {
             return "Skeleton";
         }
-
     },
     OGRE {
         @Override

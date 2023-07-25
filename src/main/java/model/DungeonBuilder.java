@@ -465,7 +465,7 @@ public abstract class DungeonBuilder implements java.io.Serializable {
             x = rand.nextInt(myMazeWidth);
             y = rand.nextInt(myMazeHeight);
 
-        } while (!myMaze[y][x].isEmpty());
+        } while (!myMaze[y][x].isEmpty() || x == myHeroX || y == myHeroY);
 
         myMaze[y][x].placeExit();
     }

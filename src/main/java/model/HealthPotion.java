@@ -21,10 +21,6 @@ public class HealthPotion extends PotionDefensive implements Healable {
      */
     private int myMaxHeal;
     /**
-     * The heal chance
-     */
-    private double myHealChance;
-    /**
      * The amount of health healed from the potion
      */
     private int myHealAmount;
@@ -33,9 +29,8 @@ public class HealthPotion extends PotionDefensive implements Healable {
      * constructor for health potion
      */
     public HealthPotion() {
-        myMinHeal = 150;
-        myMaxHeal = 250;
-        myHealChance = 70.0;
+        myMinHeal = 50;
+        myMaxHeal = 100;
         myHealAmount = random.nextInt(myMaxHeal - myMinHeal) + myMinHeal;
     }
 
@@ -46,7 +41,6 @@ public class HealthPotion extends PotionDefensive implements Healable {
     @Override
     public void effect(final Hero thePlayer) {
         heal(thePlayer);
-
     }
 
     @Override
@@ -67,13 +61,6 @@ public class HealthPotion extends PotionDefensive implements Healable {
      */
     public void heal(final DungeonCharacter theCharacter) {
 
-        /* generate a random int between 0 and the difference between
-         * max and min, since you can't have a lower and upper bound,
-         * then add the minimum back to bump it back into that range.
-         */
-//        int healAmt = random.nextInt(myMaxHeal - myMinHeal);
-//        healAmt += myMinHeal;
-
         if ((theCharacter.getMaxHealth() - theCharacter.getHealth()) < myHealAmount) {
             theCharacter.setHealth(theCharacter.getMaxHealth());
             myHealAmount = theCharacter.getMaxHealth() - theCharacter.getHealth();
@@ -88,7 +75,7 @@ public class HealthPotion extends PotionDefensive implements Healable {
      */
     @Override
     public String useMsg() {
-        return "Restored " + myHealAmount + " HP!";
+        return "Restored " + myHealAmount + " Health!";
     }
 
     @Override

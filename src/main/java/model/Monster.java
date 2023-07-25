@@ -127,9 +127,7 @@ public abstract class Monster extends DungeonCharacter implements Healable {
     public int getXPWorth() {
         return XPWorth;
     }
-
-
-    public abstract String[] getDescription();
+    
 
     public abstract String[] getDeathMsg();
 

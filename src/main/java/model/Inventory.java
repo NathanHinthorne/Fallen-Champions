@@ -68,13 +68,13 @@ public class Inventory implements java.io.Serializable {
 
         myPillarCount++;
         if (thePillar == Pillars.ABSTRACTION) {
-            myPillars.add('A');
+            myPillars.add('I');
         } else if (thePillar == Pillars.INHERITANCE) {
             myPillars.add('I');
         } else if (thePillar == Pillars.ENCAPSULATION) {
-            myPillars.add('E');
+            myPillars.add('I');
         } else if (thePillar == Pillars.POLYMORPHISM) {
-            myPillars.add('P');
+            myPillars.add('I');
         }
 
     }
