@@ -1,7 +1,6 @@
 # Fallen Champions
 A dungeon crawler game. 
 Select a hero and go exploring within a treacherous dungeon packed with monsters, potions, and traps.
-Brimming with strategy, fun 
 
 # What I learned
 * Working and communicating effectively within a team
