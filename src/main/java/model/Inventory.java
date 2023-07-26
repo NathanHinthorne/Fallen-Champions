@@ -16,7 +16,7 @@ public class Inventory implements java.io.Serializable {
      * Used to store items in an ArrayList of a defined
      * size.
      */
-    private final ArrayList<Potion> myInventory;
+    private ArrayList<Potion> myItems;
     /**
      * Used ONLY to store pillars that the player acquires
      * in the dungeon, used to see if the player is
@@ -35,7 +35,7 @@ public class Inventory implements java.io.Serializable {
      * is 4 slots.
      */
     public Inventory() {
-        myInventory = new ArrayList<Potion>(4);
+        myItems = new ArrayList<Potion>(4);
         myPillars = new ArrayList<Character>(4);
         myPillarCount = 0;
     }
@@ -45,12 +45,12 @@ public class Inventory implements java.io.Serializable {
      * as an Arraylist.
      * @param theItem The item to be added
      */
-    public void addToInventory(Potion theItem) {
+    public void addToItems(Potion theItem) {
 
         if (myItemCount == MAX_ITEM_CAPACITY) {
             // Inventory full!
         } else {
-            myInventory.add(theItem);
+            myItems.add(theItem);
             myItemCount++;
         }
 
@@ -85,7 +85,7 @@ public class Inventory implements java.io.Serializable {
      * @param theSlotIndex The index of the item to be removed.
      */
     public void removeItem(final int theSlotIndex) {
-        myInventory.remove(theSlotIndex);
+        myItems.remove(theSlotIndex);
     }
 
 
@@ -96,7 +96,7 @@ public class Inventory implements java.io.Serializable {
      * @return The item at the specified index.
      */
     public Potion getItem(final int theSlotIndex) {
-        return myInventory.get(theSlotIndex);
+        return myItems.get(theSlotIndex);
     }
 
     /**
@@ -119,7 +119,7 @@ public class Inventory implements java.io.Serializable {
      * @return the ArrayList Size.
      */
     public int getCurrentSize() {
-        return myInventory.size();
+        return myItems.size();
     }
 
     public int getMaxSize() {
@@ -134,18 +134,21 @@ public class Inventory implements java.io.Serializable {
         return myItemCount;
     }
 
-    public ArrayList<Potion> getPotionInventory() { return myInventory; }
+    public ArrayList<Potion> getItems() { return myItems; }
+    public void setItems(final ArrayList<Potion> theItems) {
+        myItems = theItems;
+    }
 
-    public String getItemInventory() {
+    public String getItemView() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("\n╔═════════════════════════════════");
         sb.append("\n║  Player Inventory:\n");
         for (int i = 0; i < getMaxSize(); i++) {
-            if (i >= myInventory.size()) {
+            if (i >= myItems.size()) {
                 sb.append("╠  [" + (i+1) + " - Empty]\n");
             } else {
-                sb.append("╠  [" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
+                sb.append("╠  [" + (i + 1) + " - " + myItems.get(i).type() + "]\n");
             }
         }
         sb.append("╚═════════════════════════════════");
@@ -176,10 +179,10 @@ public class Inventory implements java.io.Serializable {
 
         sb.append("\n║  Player Inventory:\n");
         for (int i = 0; i < getMaxSize(); i++) {
-            if (i >= myInventory.size()) {
+            if (i >= myItems.size()) {
                 sb.append("╠  [" + (i+1) + " - Empty]\n");
             } else {
-                sb.append("╠  [" + (i + 1) + " - " + myInventory.get(i).type() + "]\n");
+                sb.append("╠  [" + (i + 1) + " - " + myItems.get(i).type() + "]\n");
             }
         }
         sb.append("║\n");

@@ -41,13 +41,16 @@ public class DungeonGame {
     /**
      * The game's cheat mode. If true, the player will be given extra items and abilities.
      */
-    private static boolean cheatMode = true;
+    private static boolean cheatMode = false;
 
     /**
-     * The game's debug mode. If true, the player will be able to skip past enemies and see the whole map.
+     * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = true;
+    private static boolean skipCutsceneMode = true;
 
+    /**
+     * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
+     */
     private static boolean passThruMonsterMode = true;
 
     /**
@@ -174,7 +177,7 @@ public class DungeonGame {
     }
 
     private static void startMenu() {
-        game.menu(debugMode, audio);
+        game.menu(skipCutsceneMode, audio);
 
         // continue or new game (1 for new game, 2 for continue game)
         char loadSelection = game.continueOrNewGameMenu();
@@ -226,8 +229,7 @@ public class DungeonGame {
         }
 
         // choose hero
-        changeHero();
-        hero.setName(heroFullName);
+        newHero();
 
         if (introSelection == '2') {
             game.heroIntroduction(hero);
@@ -242,7 +244,7 @@ public class DungeonGame {
 
         DelayMachine.delay(1);
 
-        if (!debugMode) {
+        if (!skipCutsceneMode) {
             // start msg
             game.displayStartMsg();
 
@@ -251,8 +253,6 @@ public class DungeonGame {
             DelayMachine.delay(15);
         }
 
-        audio.playMusic(audio.ambientSong, true, -10);
-
         // enter the main game loop
         gameLoop();
     }
@@ -260,7 +260,8 @@ public class DungeonGame {
     private static void loadGameSetup() {
         loadGame();
 
-        //TODO give user option to replay intro
+        // start music
+        audio.playMusic(audio.ambientSong, true, -10);
 
         gameLoop();
     }
@@ -300,10 +301,17 @@ public class DungeonGame {
                 mainMenu();
                 break;
 
-            case '5': // exit
+            case '6':   // save
+                audio.playSFX(audio.menuOne, -10);
+                saveGame();
+                DelayMachine.delay(4);
+                mainMenu();
+                break;
+
+            case '7': // exit
                 audio.playSFX(audio.menuOne, -10);
                 char uSure = game.quitProcess();
-                if (uSure == '2') exitGame();
+                if (uSure == '1') exitGame();
                 else mainMenu();
                 break;
 
@@ -451,8 +459,13 @@ public class DungeonGame {
      * The main game loop
      */
     private static void gameLoop() {
+
         // setup work
         hero.setDirection(Direction.NORTH);
+        heroSteps = 0;
+        stepsWithActiveVisionPotion = 0;
+        audio.playMusic(audio.ambientSong, true, -10);
+
 
         while (!gameOver) { // while the hero is still alive
 
@@ -521,7 +534,7 @@ public class DungeonGame {
                 } else {
                     audio.playSFX(audio.heroCollectPotion, -8);
                     game.collectPotionMsg(potion);
-                    hero.getInventory().addToInventory(potion);
+                    hero.getInventory().addToItems(potion);
                     audio.playSFX(audio.menuTwo, -10);
                     dungeon.removePotion();
                 }
@@ -599,6 +612,7 @@ public class DungeonGame {
 
             if (dungeon.heroIsTouchingExit()) {
                 if (!exitIsOpen) {
+                    audio.playSFX(audio.lockedDoor, -10);
                     game.exitLocked();
 
                 } else {
@@ -607,8 +621,8 @@ public class DungeonGame {
                 }
             }
 
-            // spawn monster every 3 steps
-            if (heroSteps > 1 && heroSteps % 3 == 0) {
+            // spawn monster every 4 steps
+            if (heroSteps > 1 && heroSteps % 4 == 0) {
                 dungeon.spawnMonster();
             }
 
@@ -780,7 +794,9 @@ public class DungeonGame {
             oos.writeObject(hero);
             oos.flush();
             oos.close();
-            System.out.print("Game saved!\n");
+            System.out.println();
+            System.out.print("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
+            System.out.println();
         } catch (Exception e) {
             System.out.println("Couldn't save game!");
             System.out.println(e.getClass() + ": " + e.getMessage());
@@ -799,12 +815,13 @@ public class DungeonGame {
             dungeon = (Dungeon) ois.readObject();
             hero = (Hero) ois.readObject();
             ois.close();
-            System.out.print("Game loaded!\n");
+            System.out.println();
+            System.out.print("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
+            System.out.println();
         } catch (Exception e) {
             System.out.println("Couldn't find any saved games! Try starting a new game instead.");
             newGameSetup();
         }
-
     }
 
 
@@ -818,8 +835,8 @@ public class DungeonGame {
         hero.getInventory().addPillar(Pillars.POLYMORPHISM);
         exitIsOpen = true;
 
-        hero.getInventory().addToInventory(new HealthPotion());
-        hero.getInventory().addToInventory(new VisionPotion());
+        hero.getInventory().addToItems(new HealthPotion());
+        hero.getInventory().addToItems(new VisionPotion());
     }
 
     private static void checkIfLevelUp() {
@@ -875,38 +892,56 @@ public class DungeonGame {
     }
 
     private static void exitGame() {
-        audio.playSFX(audio.menuTwo, 0);
+        audio.playSFX(audio.menuTwo, -5);
         DelayMachine.delay(2);
         game.displayCyaNerd();
-        audio.playSFX(audio.heroOof, 0);
+        audio.playSFX(audio.heroOof, -5);
         DelayMachine.delay(2);
         System.exit(0);
     }
 
     private static void displayPopups() {
+
         if (difficulty == Difficulty.EASY && easyGamesWon == 0) {
-            audio.playSFX(audio.infoPopup, -10);
-            game.displayUnlockedJuggernautAndThief();
             easyGamesWon++;
             mediumUnlocked = true;
+
+            audio.playSFX(audio.infoPopup, -10);
+            game.displayUnlockedMedium();
+            DelayMachine.delay(4);
+            game.pressAnyKeyContinue();
+
+            audio.playSFX(audio.infoPopup, -10);
+            game.displayUnlockedJuggernautAndThief();
             DelayMachine.delay(4);
             game.pressAnyKeyContinue();
         }
+
         if (difficulty == Difficulty.MEDIUM && mediumGamesWon == 0) {
-            audio.playSFX(audio.infoPopup, -10);
-            game.displayUnlockedDoctorAndNinja();
             mediumGamesWon++;
             hardUnlocked = true;
+
+            audio.playSFX(audio.infoPopup, -10);
+            game.displayUnlockedHard();
+            DelayMachine.delay(4);
+            game.pressAnyKeyContinue();
+
+            audio.playSFX(audio.infoPopup, -10);
+            game.displayUnlockedDoctorAndNinja();
             DelayMachine.delay(4);
             game.pressAnyKeyContinue();
         }
+
         if (difficulty == Difficulty.HARD && hardGamesWon == 0) {
+            hardGamesWon++;
+
             audio.playSFX(audio.infoPopup, -10);
             game.displayUnlockedMage();
-            hardGamesWon++;
             DelayMachine.delay(4);
             game.pressAnyKeyContinue();
+
             game.displayHintUnlocking();
+            DelayMachine.delay(4);
             game.pressAnyKeyContinue();
         }
         if (totalHeroSteps > 100) {
@@ -939,12 +974,36 @@ public class DungeonGame {
     }
 
     private static void changeHero() {
+        // copy hero's inventory for the new hero
+        ArrayList<Potion> currentBag = hero.getInventory().getItems();
+
         char heroSelection = game.chooseHero(heroes);
         hero = chooseHero(heroSelection);
         audio.playSFX(audio.menuOne, -10);
+
+        // paste hero's details
+        hero.getInventory().setItems(currentBag);
+        hero.setName(heroFullName);
+    }
+
+    private static void newHero() {
+        char heroSelection = game.chooseHero(heroes);
+        hero = chooseHero(heroSelection);
+        audio.playSFX(audio.menuOne, -10);
+        hero.setName(heroFullName);
     }
     private static void selectDifficulty() {
         char difficultySelection = game.chooseDifficulty(mediumUnlocked, hardUnlocked);
+
+        if ((!mediumUnlocked && (difficultySelection == '2' || difficultySelection == '3'))
+            || (!hardUnlocked && difficultySelection == '3')) {
+
+            audio.playSFX(audio.error, -10);
+            game.displayDifficultyLocked();
+            selectDifficulty();
+            return;
+        }
+
         audio.playSFX(audio.menuTwo, 5);
         setupDungeon(difficultySelection);
         game.displayDifficultySelected(DungeonGame.difficulty);
@@ -957,6 +1016,8 @@ public class DungeonGame {
     }
 
     private static void cheatCodeMenu() {
+        DelayMachine.delay(1);
+        audio.playMusic(audio.hackerManSong, true, -10);
         String code = game.cheatCodeMenu();
         if (code.equals(FUNNY_MODE_CODE)) {
             game.codeSuccessMsg();
@@ -966,7 +1027,7 @@ public class DungeonGame {
         } else if (code.equals(DEBUG_MODE_CODE)) {
             game.codeSuccessMsg();
             game.displayDebugModeMsg();
-            debugMode = true;
+            skipCutsceneMode = true;
 
         } else if (code.equals(CHEAT_MODE_CODE)) {
             game.codeSuccessMsg();
@@ -977,6 +1038,7 @@ public class DungeonGame {
             game.codeFailMsg();
         }
         DelayMachine.delay(4);
+        audio.stopMusic();
     }
 
     private static void playAgain() {
@@ -987,7 +1049,7 @@ public class DungeonGame {
                 DelayMachine.delay(2);
                 audio.stopAll();
                 game.sentToMainMenuMsg();
-                game.pressAnyKeyContinue();
+                DelayMachine.delay(6);
                 mainMenu();
                 break;
             case '2': // exit
@@ -1012,9 +1074,9 @@ public class DungeonGame {
         audio.playMusic(audio.triumpantFinishSong, true, -10);
 
         // play cutscene
-        game.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, debugMode);
+        game.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, skipCutsceneMode);
 
-        if (!debugMode) {
+        if (!skipCutsceneMode) {
             DelayMachine.delay(10);
         }
 
@@ -1028,7 +1090,6 @@ public class DungeonGame {
 
         // update stats
         totalHeroSteps += heroSteps;
-        heroSteps = 0;
 
         DelayMachine.delay(2);
 

@@ -57,6 +57,7 @@ public final class Audio {
     public final File step2; // source: Valve's Team Fortress 2
     public final File step3; // source: Valve's Team Fortress 2
     public final File step4; // source: Valve's Team Fortress 2
+    public final File lockedDoor;
 //    public final File heroHeal;
     public final File heroDrinkPotion;
     public final File heroLevelUp;
@@ -106,6 +107,7 @@ public final class Audio {
         step2 = new File(getClass().getResource("/sound/sfx/hero_step2.wav").toURI());
         step3 = new File(getClass().getResource("/sound/sfx/hero_step3.wav").toURI());
         step4 = new File(getClass().getResource("/sound/sfx/hero_step4.wav").toURI());
+        lockedDoor = new File(getClass().getResource("/sound/sfx/locked_door.wav").toURI());
         encounter = new File(getClass().getResource("/sound/sfx/monster_encounter.wav").toURI());
 
 //        monsterHeal = new File(getClass().getResource("/sound/sfx/monster_heal.wav").toURI());

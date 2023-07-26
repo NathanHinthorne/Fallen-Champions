@@ -82,7 +82,7 @@ public class HeroArcher extends Hero {
     public String[] getBasicName() {
         return new String[] {
                 "\"Swift Draw\" - Deftly draw back and fire",
-                "upon the target, inflicting "
+                "upon the target, inflicting [negative affect]"
         };
     }
     @Override
@@ -95,14 +95,14 @@ public class HeroArcher extends Hero {
     @Override
     public String[] getPassiveName() {
         return new String[] {
-                "\"Battle Stance\" - ",
+                "\"Sniper\" - ",
                 ""
         };
     }
 
     @Override
     public String getBasicSelectMsg() {
-        return " swings their sword at the ";
+        return " nocks an arrow and takes aim at the ";
     }
     @Override
     public String getExtendedBasicSelectMsg() {
@@ -110,7 +110,7 @@ public class HeroArcher extends Hero {
     }
     @Override
     public String getSpecialSelectMsg() {
-        return " grips their sword and arcs a deadly slice towards the ";
+        return " pulls the bowstring taut and releases a hail of arrows towards the ";
     }
     @Override
     public String getExtendedSpecialSelectMsg() {
@@ -120,30 +120,30 @@ public class HeroArcher extends Hero {
     @Override
     public String[] getBasicMissMsg() {
         return new String[]
-                {"The sword misses the monster",
-                        "The sword barely misses the monster",
-                        "The sword flies out of your hand, completely missing the monster"};
+                {"The arrow misses the target",
+                        "The arrow misses the monster by a hair",
+                        "The veers off-course, flying past the monster"};
     }
     @Override
     public String[] getBasicHitMsg() {
         return new String[]
-                {"The sword slices the monster",
-                        "The sword cuts the monster's nose off",
-                        "The sword slashes the monster's arm"};
+                {"The arrow pierces through the monster's defenses",
+                        "The arrow strikes the target",
+                        "The arrow finds its mark, hitting the monster's chest"};
     }
     @Override
     public String[] getSpecialMissMsg() {
         return new String[]
-                {"The sword misses the monster",
-                        "The sword barely misses the monster",
-                        "The sword flies out of your hand, completely missing the monster"};
+                {"All of the arrows missed!",
+                        "All of the arrows missed!",
+                        "All of the arrows missed!"};
     }
     @Override
     public String[] getSpecialHitMsg() {
         return new String[]
-                {"The sword slices through the monster",
-                        "The sword cuts the monster",
-                        "The sword slashes the monster"};
+                {"1 of the 3 arrows lands a hit!",
+                        "2 of the 3 arrows score hits!",
+                        "All three arrows strike the monster!"}; // SOLUTION: make each type of hero CHOOSE what SINGLE string to be returned as the hit message
     }
 
     @Override

@@ -230,6 +230,8 @@ public class TUI {
      * @return the difficulty choice
      */
     public char chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked) {
+        System.out.println();
+        System.out.println();
         System.out.println("Choose your difficulty!");
         displayUpperSpacer();
         System.out.println("              ╔════════════════════════════════════════╗             ");
@@ -272,7 +274,7 @@ public class TUI {
         DelayMachine.delay(2);
 
         if (inBattle) {
-            System.out.println(theBag.getItemInventory());
+            System.out.println(theBag.getItemView());
         } else {
             System.out.println(theBag.toString());
         }
@@ -792,7 +794,7 @@ public class TUI {
         System.out.println();
         System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Does the Dungeon Work?  █ ▇ ▆ ▅ ▄ ▃ ▂");
         System.out.println();
-        System.out.println("Beware! Monsters will spawn in a random location every 3 steps you take.");
+        System.out.println("Beware! Monsters will spawn in a random location every 4 steps you take.");
 //         talk about what different potions do
 
         pressAnyKeyNextPage();
@@ -925,6 +927,23 @@ public class TUI {
         return myScanner.next().charAt(0);
     }
 
+    public void displayUnlockedMedium() {
+        System.out.println();
+        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        System.out.println("║        You've unlocked MEDIUM difficulty!         ║");
+        System.out.println("║   This mode contains Pits and tougher Monsters    ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+
+    public void displayUnlockedHard() {
+        System.out.println();
+        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        System.out.println("║         You've unlocked HARD difficulty!          ║");
+        System.out.println("║   This mode has something waiting at the end...   ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
 
     public void displayUnlockedJuggernautAndThief() {
         System.out.println();
@@ -1115,15 +1134,29 @@ public class TUI {
     }
 
     public void displayCyaNerd() {
-//        System.out.println();
-//        DelayMachine.printDelayedText("Nah, you're trapped here forever now.");
-//        DelayMachine.delay(2);
-//        System.out.println();
-//        DelayMachine.printDelayedText("Don't you dare hit that X button...");
-//        System.out.println();
-//        DelayMachine.delay(3);
-//        System.out.println();
-//        DelayMachine.printDelayedTextFast("Alright, whatever. I'll let you leave.");
+        System.out.println();
+        System.out.print("Nathan: ");
+        DelayMachine.printDelayedText("Nah, you're trapped here forever now.");
+        DelayMachine.delay(8);
+        System.out.println();
+        System.out.print("Nathan: ");
+        DelayMachine.printDelayedText("Don't you dare hit that X button.");
+        System.out.println();
+        DelayMachine.delay(2);
+        System.out.print(". ");
+        DelayMachine.delay(2);
+        System.out.print(". ");
+        DelayMachine.delay(2);
+        System.out.print(". ");
+        DelayMachine.delay(8);
+        System.out.println();
+        System.out.println();
+        System.out.print("Nathan: ");
+        DelayMachine.printDelayedText("FINE!");
+        DelayMachine.delay(2);
+        System.out.print("Nathan: ");
+        DelayMachine.printDelayedText("I'll let you leave.");
+        DelayMachine.delay(4);
         System.out.println();
         System.out.println("" +
                 " ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄            ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄  \n" +
@@ -1185,11 +1218,11 @@ public class TUI {
                 "88YbdP88  dP__Yb  88 88 Y88     88YbdP88 88\"\"   88 Y88 Y8   8P \n" +
                 "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' ");
         System.out.println("╔═════════════════════╗");
-        System.out.println("║ 1. Continue         ║");
-        System.out.println("║ 2. Change Hero      ║");
-        System.out.println("║ 3. Change Name      ║");
-        System.out.println("║ 4. Cheat Code Menu  ║");
-        System.out.println("║ 5. Quit             ║");
+        System.out.println("║ 1. Continue         ║    ╔═════════════════════╗");
+        System.out.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
+        System.out.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
+        System.out.println("║ 4. Cheat Code Menu  ║    ║                     ║");
+        System.out.println("║                     ║    ╚═════════════════════╝");
         System.out.println("╚═════════════════════╝");
 
         System.out.print("Make your selection: ");
@@ -1211,7 +1244,7 @@ public class TUI {
 
     public void displayHeroSelected(final Hero theHero) {
         System.out.println();
-        System.out.println(" -You are now the " + theHero.getName() + "!");
+        System.out.println(" -You are now the " + theHero.getType() + "!");
         System.out.println();
     }
 
@@ -1226,6 +1259,12 @@ public class TUI {
     public void displayHeroNameChanged(final Hero theHero) {
         System.out.println();
         System.out.println(" -You are now 【 Sir " + theHero.getName() + "! 】");
+        System.out.println();
+    }
+
+    public void displayDifficultyLocked() {
+        System.out.println();
+        System.out.println(" -This difficulty is locked!");
         System.out.println();
     }
 }
