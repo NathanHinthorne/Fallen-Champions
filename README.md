@@ -3,15 +3,6 @@ A dungeon crawler game.
 Select a hero and go exploring within a treacherous dungeon packed with monsters, potions, and traps.
 
 # What I learned
-Team:
-* Working and communicating effectively within a team
-* Leadership and planning skills within a team
-* Practicing pair programming with teammates
-
-Agile Developement:
-* Making small, incremental changes via user stories
-* Using agile project management tools such as Pivotal Tracker
-* Using version control tools such as Git
 
 Software Development Concepts and Practices:
 * Using major design patterns such as MVC, singleton, momento, builder, factory, and mock object
@@ -24,6 +15,16 @@ Software Development Concepts and Practices:
    * Designing UML diagrams to follow
    * Implementing the designs in code
    * Deploying game as an installable application
+ 
+Team:
+* Working and communicating effectively within a team
+* Leadership and planning skills within a team
+* Practicing pair programming with teammates
+
+Agile Developement:
+* Making small, incremental changes via user stories
+* Using agile project management tools such as Pivotal Tracker
+* Using version control tools such as Git
 
 External Libraries:
 * Connecting and reading from SQLite for monster data and hero suffixes
