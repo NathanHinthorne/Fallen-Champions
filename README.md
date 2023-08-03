@@ -8,7 +8,6 @@ Team:
 * Leadership and planning skills within a team
 * Practicing pair programming with teammates
 
-
 Software Development Concepts and Practices:
 * Using major design patterns such as MVC, singleton, momento, builder, factory, and mock object
 * Closely following SOLID and OO principles for secure, readable, managable, and maintable code
@@ -16,12 +15,10 @@ Software Development Concepts and Practices:
 * Testing and debugging
 * Writing descriptive and helpful documentation
 
-
 Agile Developement:
 * Making small, incremental changes via user stories
 * Using agile project management tools such as Pivotal Tracker
 * Using version control tools such as Git
-
 
 External Libraries:
 * Connecting and reading from SQLite for monster data and hero suffixes
