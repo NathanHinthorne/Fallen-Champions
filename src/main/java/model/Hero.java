@@ -87,10 +87,10 @@ public abstract class Hero extends DungeonCharacter {
      */
     public Hero(final HeroTypes theType, final int theHealth, final int theSpeed, final double theBasicChance,
                 final double theSpecialChance, final int theMinDmg, final int theMaxDmg, final int theCooldown,
-                final int theMaxCooldown) {
+                final int theMaxCooldown, final int theIntialCooldown) {
 
         super(theHealth, theSpeed, theBasicChance, theSpecialChance, theMinDmg, theMaxDmg,
-                theCooldown, theMaxCooldown);
+                theCooldown, theMaxCooldown, theIntialCooldown);
 
         myType = theType;
         myInventory = new Inventory(); // change parameter for scientist who has larger inventory?
@@ -155,8 +155,22 @@ public abstract class Hero extends DungeonCharacter {
         return myXP;
     }
 
+//    public void resetXP() {
+//        myXP = 0;
+//    }
+
     public int getLevel() {
         return myLevel;
+    }
+
+//    public void resetLevel() {
+//        myLevel = 0;
+//    }
+
+    public void resetStats() {
+        myHealth = myMaxHealth;
+        myLevel = 0;
+        myXP = 0;
     }
 
     public void levelUp() {
@@ -214,5 +228,6 @@ public abstract class Hero extends DungeonCharacter {
     public Direction getDirection() {
         return myDirection;
     }
+
 
 }

@@ -24,19 +24,21 @@ public class MonsterFactory {
 
         if (theValue == MonsterTypes.SKELETON) {
             myMonster = new MonsterSkeleton();
-        } else if (theValue == MonsterTypes.OGRE) {
-            myMonster = new MonsterOgre();
-        } else if (theValue == MonsterTypes.GREMLIN) {
-            myMonster = new MonsterGremlin();
-        } else if (theValue == MonsterTypes.WARLOCK) {
-            myMonster = new MonsterWarlock();
-        } else if (theValue == MonsterTypes.SPIDER) {
-            myMonster = new MonsterSpider();
-        } else if (theValue == MonsterTypes.DRAGON) {
-            myMonster = new MonsterDragon();
         }
-//        } else if (theValue == MonsterTypes.VECTOR) {
-//            myMonster = new MonsterVector();
+        else if (theValue == MonsterTypes.OGRE) {
+            myMonster = new MonsterOgre();
+        }
+        else if (theValue == MonsterTypes.GREMLIN) {
+            myMonster = new MonsterGremlin();
+        }
+        else if (theValue == MonsterTypes.WARLOCK) {
+            myMonster = new MonsterWarlock();
+        }
+        else if (theValue == MonsterTypes.SPIDER) {
+            myMonster = new MonsterSpider();
+        }
+//        else if (theValue == MonsterTypes.DRAGON) {
+//            myMonster = new MonsterDragon();
 //        }
 
         return myMonster;

@@ -41,7 +41,8 @@ public final class Audio {
     // MUSIC
     public final File triumpantFinishSong;
     public final File rickRollSong;
-    public final File hackerManSong;
+    public final File conkerSong;
+    public final File hackerSong;
 
 
     // ENVIRONMENT (step1, step2, step3, step4 are from Valve's Team Fortress 2)
@@ -100,7 +101,8 @@ public final class Audio {
         startingAnewSong = new File(getClass().getResource("/sound/music/music_starting_anew.wav").toURI());
         triumpantFinishSong = new File(getClass().getResource("/sound/music/music_triumphant_finish.wav").toURI());
         rickRollSong = new File(getClass().getResource("/sound/music/music_rickroll.wav").toURI());
-        hackerManSong = new File(getClass().getResource("/sound/music/music_hacker_man.wav").toURI());
+        conkerSong = new File(getClass().getResource("/sound/music/music_conker.wav").toURI());
+        hackerSong = new File(getClass().getResource("/sound/music/music_hacker.wav").toURI());
 
         // initialize sfx files
         step1 = new File(getClass().getResource("/sound/sfx/hero_step1.wav").toURI());

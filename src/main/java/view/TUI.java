@@ -89,6 +89,7 @@ public class TUI {
     public char chooseHero(final List<Hero> theHeroes) {
         System.out.println();
         System.out.println("Choose your hero!");
+        displayChainSpacer();
         displayUpperSpacer();
 
         int menuOption = 1;
@@ -100,11 +101,14 @@ public class TUI {
             } else {
                 System.out.println("  " + menuOption + "  --(LOCKED)--  ");
             }
-            System.out.println();
+            if (menuOption != theHeroes.size()) { // leave out a spacer for the last hero
+                System.out.println();
+            }
             menuOption++;
         }
 
         displayLowerSpacer();
+        displayChainSpacer();
         System.out.print("Make your selection: ");
         return myScanner.next().charAt(0);
     }
@@ -115,13 +119,13 @@ public class TUI {
     public void introductionP1(final boolean theFunnyDialogue, final Audio theAudio) {
         System.out.println("-------------------------INTRODUCTION-------------------------");
         System.out.println();
-        DelayMachine.printDelayedText("Welcome hero,");
-        DelayMachine.printDelayedText("The dungeon you see looming before you is one of many perils.");
-        DelayMachine.printDelayedText("In it lies hordes of monsters, deadly traps, and countless treasures.");
-        DelayMachine.printDelayedText("Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
-        DelayMachine.printDelayedText("Not even I, the keeper of the dungeon, know what awaits you there.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER, "Welcome hero,");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"The dungeon you see looming before you is one of many perils.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"In it lies hordes of monsters, deadly traps, and countless treasures.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Not even I, the keeper of the dungeon, know what awaits you there.");
         System.out.println();
-        DelayMachine.printDelayedText("Now then, what is your name?");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Now then, what is your name?");
     }
 
     public String findHeroName() {
@@ -132,40 +136,45 @@ public class TUI {
     /**
      * Introduces you to the game
      */
-    public void introductionP2(final boolean theFunnyDialogue, final Audio theAudio,
+    public void introductionP2(final boolean theFunnyMode, final Audio theAudio,
                                final String theFirstName, final String theFullName) {
         System.out.println();
-        DelayMachine.printDelayedTextFast("Wait, are you serious? Your name is just " + theFirstName + "?");
-        DelayMachine.delay(2);
-        DelayMachine.printDelayedTextFast("That's far too ordinary -_-");
-        DelayMachine.delay(4);
-        DelayMachine.printDelayedText("I dub thee...");
+
+        if (theFunnyMode) {
+            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"Wait, are you serious? Your name is just " + theFirstName + "?");
+            DelayMachine.delay(2);
+            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"That's far too ordinary -_-");
+            DelayMachine.delay(4);
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I dub thee...");
+            System.out.println();
+            DelayMachine.delay(5);
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"【 Sir " + theFullName + "! 】");
+        } else {
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah, " + theFirstName + ", a fine name indeed.");
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself");
+        }
         System.out.println();
-        DelayMachine.delay(5);
-        DelayMachine.printDelayedText("【 Sir " + theFullName + "! 】");
-        System.out.println();
-        DelayMachine.printDelayedText("Now then, " + theFullName + ", are you ready to begin your adventure?");
-        DelayMachine.printDelayedText("Don't think you're the first to explore this dungeon.");
-        DelayMachine.printDelayedText("Many others have come before you... Not one has made it out alive.");
-        DelayMachine.printDelayedText("Do you think you have what it takes to overcome this dungeon?");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Now then, " + theFullName + ", are you ready to begin your adventure?");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Don't think you're the first to explore this dungeon.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Many others have come before you... Not one has made it out alive.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Do you think you have what it takes to overcome this dungeon?");
         DelayMachine.delay(2);
-        DelayMachine.printDelayedText("Or will you become yet another FALLEN CHAMPION?");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Or will you become yet another FALLEN CHAMPION?");
         System.out.println();
 
-        if (theFunnyDialogue) {
+        if (theFunnyMode) {
             DelayMachine.delay(2);
             theAudio.playSFX(theAudio.rimshot, -10);
             DelayMachine.delay(4);
-            DelayMachine.printDelayedTextFast("By the way, that was a rhetorical question, you don't actually get to answer.");
-            DelayMachine.printDelayedTextFast("Anyway, choose one of these I guess");
+            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"By the way, that was a rhetorical question, you don't actually get to answer.");
+            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"Anyway, choose one of these I guess");
 
         } else {
             DelayMachine.delay(2);
             theAudio.playSFX(theAudio.dunDunDun, -10);
             DelayMachine.delay(4);
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"So " + theFullName + ", what kind of adventurer are you anyway?");
         }
-
-        DelayMachine.printDelayedText("So " + theFullName + ", what kind of adventurer are you anyway?");
     }
 
 
@@ -201,54 +210,108 @@ public class TUI {
     }
 
 
-
     /**
      * Battle menu for battling monsters
      * @param theHero you
-     * @param theMonster the monster you're battling
      * @return battle menu input
      */
-    public char battleMenu(Hero theHero, Monster theMonster) { // is this parameter needed?
-        System.out.println("\nPlayer Health:  " + theHero.getHealth());
-        System.out.println("Monster Health: " + theMonster.getHealth());
+    public char battleMenu(Hero theHero) { // is this parameter needed?
+        System.out.println(" Make your move!");
+        System.out.println();
 
-        System.out.println("\nMake your move!");
-
-        String specialButton = "[2 - Special]";
+        String specialButton = " ['2' - Special] ";
         if (theHero.onCooldown()) {
-            specialButton = "║2 - Special║";
+            specialButton = " ║'2' - Special║ ";
         }
 
-        System.out.print("[1 - Basic] " + specialButton + " [e - Bag] --> ");
+        System.out.println("               ┏━━━━ ( Battle Menu ) ━━━━┓");
+        System.out.println(" ┏━━━━━━━━━━━━━┛                         ┗━━━━━━━━━━━━━┓");
+        System.out.println(" ┃         ['1' - Basic]    " + specialButton + "          ┃");
+        System.out.println(" ┃ ['e' - Bag]  ['r' - Monster Info]  ['q' - Run Away] ┃");
+        System.out.println(" ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+        System.out.println();
+        System.out.print(" Choose an action: ");
 
-        char choice = myScanner.next().charAt(0);
-        return choice;
+        return myScanner.next().charAt(0);
+    }
+
+    public void displayHeroText() {
+        System.out.println();
+        System.out.println(" ║ Hero:");
+    }
+
+    public void displayMonsterText() {
+        System.out.println();
+        System.out.println(" ║ Monster:");
+    }
+
+    /**
+     * The character health
+     * @param theCharacter the character's health to display
+     */
+    public void displayHealth(final DungeonCharacter theCharacter) {
+
+        System.out.print(" ║    ❤ H̲E̲A̲L̲T̲H̲: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth());
+    }
+
+    /**
+     * The character debuffs
+     * @param theCharacter the character's debuffs to display
+     */
+    public void displayDebuffs(final DungeonCharacter theCharacter) {
+        System.out.println();
+        System.out.print(" ║    ✺ S̲T̲A̲T̲U̲S̲:");
+        for (Debuff debuff : theCharacter.getActiveDebuffs().keySet()) {
+            System.out.print(" (" + debuff + ")");
+        }
+        System.out.println();
+    }
+
+    /**
+     * The character health in dungeon
+     * @param theCharacter the character's health to display
+     */
+    public void displayHealthInDungeon(final DungeonCharacter theCharacter) {
+
+        System.out.print(" ❤ H̲E̲A̲L̲T̲H̲: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth());
     }
 
     /**
      * Menu for choosing the difficulty
      * @return the difficulty choice
      */
-    public char chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked) {
+    public char chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked,
+                                 final boolean theGlitchUnlocked) {
         System.out.println();
         System.out.println();
         System.out.println("Choose your difficulty!");
-        displayUpperSpacer();
-        System.out.println("              ╔════════════════════════════════════════╗             ");
-        System.out.println("              ║ 1 for easy | 2 for medium | 3 for hard ║             ");
-        System.out.println("              ╚════════════════════════════════════════╝             ");
+        displayChainSpacer();
 
-        if (theHardUnlocked) {
-            System.out.println("                     ▲            ▲             ▲                   ");
-            System.out.println();
-        } else if (theMediumUnlocked) {
-            System.out.println("                     ▲            ▲             ^                   ");
-            System.out.println("                                             (Locked)               ");
+        if (theGlitchUnlocked) {
+            System.out.println("           ╔═══════════════════════════════════════ʘ═---══▒═-╗     ");
+            System.out.println("           ║ 1 for ▒▓▒ | 2 for ▒▒▓▒ | 3 for ▓▓█ | 4 for ???  |     ");
+            System.out.println("           ╚══════════════════════════════════════█-══--══ʘ══╝     ");
+            System.out.println("                  ^            ^             ^         ▲           ");
+            System.out.println("               (L0CK[D)     (L0CK[D)      (L0CK[D)              ");
+
         } else {
-            System.out.println("                     ▲            ^             ^                   ");
-            System.out.println("                               (Locked)      (Locked)               ");
+            System.out.println("              ╔════════════════════════════════════════╗             ");
+            System.out.println("              ║ 1 for easy | 2 for medium | 3 for hard ║             ");
+            System.out.println("              ╚════════════════════════════════════════╝             ");
+
+            if (theHardUnlocked) {
+                System.out.println("                     ▲            ▲             ▲                   ");
+                System.out.println();
+            } else if (theMediumUnlocked) {
+                System.out.println("                     ▲            ▲             ^                   ");
+                System.out.println("                                             (Locked)               ");
+            } else {
+                System.out.println("                     ▲            ^             ^                   ");
+                System.out.println("                               (Locked)      (Locked)               ");
+            }
         }
-        displayLowerSpacer();
+
+        displayChainSpacer();
         System.out.print("Make your selection: ");
         return myScanner.next().charAt(0);
     }
@@ -349,7 +412,7 @@ public class TUI {
     public void displayHeroStats(final Hero theHero) {
 
         System.out.println(" ╔════════════════════════════════════════════════");
-        System.out.println(" ║ " + theHero.getName());
+        System.out.println(" ║ 『" + theHero.getName() + "』");
         System.out.println(" ║ " + theHero.getType());
         System.out.println(" ║ ");
         System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
@@ -404,6 +467,7 @@ public class TUI {
         System.out.println(" ╠ Attack: " + (theMonster.getMinDmg() + theMonster.getMaxDmg())/2);
         System.out.println(" ╠ Speed: " + theMonster.getSpeed());
         System.out.println(" ╚════════════════════════════════════════════════");
+
     }
 
     /**
@@ -451,82 +515,48 @@ public class TUI {
         return myScanner.next().charAt(0);
     }
 
-    /**
-     * The monster turn text
-     */
-    public void monsterTurnText() {
-        displayChainSpacer();
-        System.out.println(" -The Enemy is making their move...");
-    }
-
-    public void monsterHealMsg(final int theHealAmt) {
+    public void monsterHeal(final int theHealAmt) {
         System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
-        DelayMachine.delay(1);
+        DelayMachine.delay(2);
     }
 
-    public void monsterSelectsBasicMsg(final Monster theMonster, final Hero thePlayer) {
-        System.out.println(" -" + theMonster.getName() + theMonster.getBasicSelectMsg() +
-                thePlayer.getName() + theMonster.getExtendedBasicSelectMsg());
+    public void characterSelectAbility(final DungeonCharacter theAttacker, final DungeonCharacter theDefender,
+                                       final Ability theAbility) {
+
+        if (theAbility == Ability.BASIC) {
+            System.out.println(" " + theAttacker.getBasicSelectMsg(theDefender) + "...");
+
+        } else if (theAbility == Ability.SPECIAL){
+            System.out.println(" " + theAttacker.getSpecialSelectMsg(theDefender) + "...");
+        }
         DelayMachine.delay(3);
     }
-    public void monsterSelectsSpecialMsg(final Monster theMonster, final Hero thePlayer) {
-        System.out.println(" -" + theMonster.getName() + theMonster.getSpecialSelectMsg() +
-                thePlayer.getName() + theMonster.getExtendedSpecialSelectMsg());
-        DelayMachine.delay(3);
-    }
-    public void monsterHitsBasicMsg(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
-        System.out.println(" -" + theMonster.getBasicHitMsg()[0]);
-        System.out.println("  " + theHero.getName() + " took " + theDamageDealt + " damage!");
-        DelayMachine.delay(2);
-    }
-    public void monsterHitsSpecialMsg(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
-        System.out.println(" -" + theMonster.getSpecialHitMsg()[0]);
-        System.out.println("  " + theHero.getName() + " took " + theDamageDealt + " damage!");
-        DelayMachine.delay(2);
-    }
-    public void monsterBasicMiss(final Monster theMonster) {
-        System.out.println("  " + theMonster.getBasicMissMsg()[0]);
+
+    public void monsterAttackResult(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
+
+        System.out.println(" " + theMonster.getAttackResult()); // attackResult contains msg for hits, misses, basics, and specials
+        if (theDamageDealt != 0) {
+            System.out.println("   -" + theHero.getName() + " took " + theDamageDealt + " damage!");
+        }
         DelayMachine.delay(2);
     }
 
-    public void monsterSpecialMiss(final Monster theMonster) {
-        System.out.println("  " + theMonster.getSpecialMissMsg()[0]);
+    public void heroAttackResult(final Hero theHero, final int theDamageDealt) {
+
+        System.out.println(" " + theHero.getAttackResult());
+        if (theDamageDealt != 0) { // if (theMonster.doesDamageOnSpecial() || theAttackHit)
+            System.out.println("   -" + "The enemy took " + theDamageDealt + " damage!");
+        }
         DelayMachine.delay(2);
     }
-
-
-
-    public void playerSelectsBasicMsg(final Hero thePlayer, final Monster theMonster) {
-
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getBasicSelectMsg() +
-                theMonster.getName() + thePlayer.getExtendedBasicSelectMsg() + "...");
-
-        DelayMachine.delay(4);
-    }
-    public void playerSelectsSpecialMsg(final Hero thePlayer, final Monster theMonster) {
-
-        System.out.println(" -" + thePlayer.getName() + thePlayer.getSpecialSelectMsg() +
-                theMonster.getName() + thePlayer.getExtendedSpecialSelectMsg() + "...");
-
-        DelayMachine.delay(4);
-    }
-    public void playerHitsBasicMsg(final Hero thePlayer, final int theDamageDealt, final boolean funnyMode) {
-        System.out.println("  " + thePlayer.getBasicHitMsg()[0]);
-        System.out.println("  The enemy took " + theDamageDealt + " damage!");
-        DelayMachine.delay(2);
-    }
-    public void playerHitsSpecialMsg(final Hero thePlayer, final int theDamageDealt) { // special doesn't always do damage. find way to deal with this
-        System.out.println("  " + thePlayer.getSpecialHitMsg()[0]);
-        System.out.println("  The enemy took " + theDamageDealt + " damage!");
-        DelayMachine.delay(2);
-    }
-    public void playerBasicMissMsg(final Hero thePlayer) {
-        System.out.println("  " + thePlayer.getBasicMissMsg()[0]);
+    public void playerCritMsg() {
+        System.out.println("   -It was a critical hit!");
     }
 
-    public void playerSpecialMissMsg(final Hero thePlayer) {
-        System.out.println("  " + thePlayer.getSpecialMissMsg()[0]);
+    public void inflictedDebuffMsg(final Debuff theDebuff) {
+        System.out.println("   -Inflicted " + theDebuff);
     }
+
 
 
     public void displayCooldown(final int theCooldown) {
@@ -537,13 +567,11 @@ public class TUI {
         }
     }
 
-// YOU WIN
-
     /**
      * The game victory message
      */
     public void displayVictoryMsg(final int theHeroSteps, final int theMonstersDefeated, final int theLevel,
-                                  final Difficulty theDifficulty, boolean funnyMode, final boolean debugMode) {
+                                  final Difficulty theDifficulty, boolean theFunnyMode, final boolean theDebugMode) {
 
         displayChainSpacer();
         System.out.println(" -You escaped the dungeon!");
@@ -556,13 +584,13 @@ public class TUI {
                            "   ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝");
         System.out.println();
 
-        if (!debugMode) {
+        if (!theDebugMode) {
             DelayMachine.delay(2);
-            DelayMachine.printDelayedText("  RESULTS:");
-            DelayMachine.printDelayedText("  You beat the game on " + theDifficulty + " difficulty!");
-            DelayMachine.printDelayedText("  You took " + theHeroSteps + " steps to escape the dungeon.");
-            DelayMachine.printDelayedText("  You reached level " + theLevel + ".");
-            DelayMachine.printDelayedText("  You defeated " + theMonstersDefeated + " monsters.");
+            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  RESULTS:");
+            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You beat the game on " + theDifficulty + " difficulty!");
+            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You took " + theHeroSteps + " steps to escape the dungeon.");
+            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You reached level " + theLevel + ".");
+            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You defeated " + theMonstersDefeated + " monsters.");
         }
     }
 
@@ -572,7 +600,7 @@ public class TUI {
     public void displayBattleWinMsg(final Monster theMonster) {
         System.out.println();
         DelayMachine.delay(1);
-        System.out.println(" -" + theMonster.getDeathMsg()[0]);
+        System.out.println(" -" + theMonster.getDeathMsg());
         System.out.println();
         DelayMachine.delay(4);
         System.out.println("╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
@@ -588,24 +616,33 @@ public class TUI {
     /**
      * The death message
      */
-    public void displayDeathMsg(final boolean theFunnyDialogue) {
+    public void displayDeathMsg(final boolean theFunnyMode) {
         System.out.println(" -You have been defeated.");
-        if (theFunnyDialogue) {
-            System.out.println("  GIT GUD SCRUB!");
-        }
         DelayMachine.delay(4);
-        System.out.println("\n" +
-                " $$$$$$\\                                           $$$$$$\\                                 \n" +
-                "$$  __$$\\                                         $$  __$$\\                                \n" +
-                "$$ /  \\__| $$$$$$\\  $$$$$$\\$$$$\\   $$$$$$\\        $$ /  $$ |$$\\    $$\\  $$$$$$\\   $$$$$$\\  \n" +
-                "$$ |$$$$\\  \\____$$\\ $$  _$$  _$$\\ $$  __$$\\       $$ |  $$ |\\$$\\  $$  |$$  __$$\\ $$  __$$\\ \n" +
-                "$$ |\\_$$ | $$$$$$$ |$$ / $$ / $$ |$$$$$$$$ |      $$ |  $$ | \\$$\\$$  / $$$$$$$$ |$$ |  \\__|\n" +
-                "$$ |  $$ |$$  __$$ |$$ | $$ | $$ |$$   ____|      $$ |  $$ |  \\$$$  /  $$   ____|$$ |      \n" +
-                "\\$$$$$$  |\\$$$$$$$ |$$ | $$ | $$ |\\$$$$$$$\\        $$$$$$  |   \\$  /   \\$$$$$$$\\ $$ |      \n" +
-                " \\______/  \\_______|\\__| \\__| \\__| \\_______|       \\______/     \\_/     \\_______|\\__|      \n" +
-                "                                                                                           \n" +
-                "                                                                                           \n" +
-                "                                                                                           \n");
+        if (theFunnyMode) {
+            System.out.println("" +
+                    " $$$$$$\\  $$$$$$\\ $$$$$$$$\\        $$$$$$\\  $$\\   $$\\ $$$$$$$\\         $$$$$$\\   $$$$$$\\  $$$$$$$\\  $$\\   $$\\ $$$$$$$\\  \n" +
+                    "$$  __$$\\ \\_$$  _|\\__$$  __|      $$  __$$\\ $$ |  $$ |$$  __$$\\       $$  __$$\\ $$  __$$\\ $$  __$$\\ $$ |  $$ |$$  __$$\\ \n" +
+                    "$$ /  \\__|  $$ |     $$ |         $$ /  \\__|$$ |  $$ |$$ |  $$ |      $$ /  \\__|$$ /  \\__|$$ |  $$ |$$ |  $$ |$$ |  $$ |\n" +
+                    "$$ |$$$$\\   $$ |     $$ |         $$ |$$$$\\ $$ |  $$ |$$ |  $$ |      \\$$$$$$\\  $$ |      $$$$$$$  |$$ |  $$ |$$$$$$$\\ |\n" +
+                    "$$ |\\_$$ |  $$ |     $$ |         $$ |\\_$$ |$$ |  $$ |$$ |  $$ |       \\____$$\\ $$ |      $$  __$$< $$ |  $$ |$$  __$$\\ \n" +
+                    "$$ |  $$ |  $$ |     $$ |         $$ |  $$ |$$ |  $$ |$$ |  $$ |      $$\\   $$ |$$ |  $$\\ $$ |  $$ |$$ |  $$ |$$ |  $$ |\n" +
+                    "\\$$$$$$  |$$$$$$\\    $$ |         \\$$$$$$  |\\$$$$$$  |$$$$$$$  |      \\$$$$$$  |\\$$$$$$  |$$ |  $$ |\\$$$$$$  |$$$$$$$  |\n" +
+                    " \\______/ \\______|   \\__|          \\______/  \\______/ \\_______/        \\______/  \\______/ \\__|  \\__| \\______/ \\_______/ !");
+        } else {
+            System.out.println("\n" +
+                    " $$$$$$\\                                           $$$$$$\\                                 \n" +
+                    "$$  __$$\\                                         $$  __$$\\                                \n" +
+                    "$$ /  \\__| $$$$$$\\  $$$$$$\\$$$$\\   $$$$$$\\        $$ /  $$ |$$\\    $$\\  $$$$$$\\   $$$$$$\\  \n" +
+                    "$$ |$$$$\\  \\____$$\\ $$  _$$  _$$\\ $$  __$$\\       $$ |  $$ |\\$$\\  $$  |$$  __$$\\ $$  __$$\\ \n" +
+                    "$$ |\\_$$ | $$$$$$$ |$$ / $$ / $$ |$$$$$$$$ |      $$ |  $$ | \\$$\\$$  / $$$$$$$$ |$$ |  \\__|\n" +
+                    "$$ |  $$ |$$  __$$ |$$ | $$ | $$ |$$   ____|      $$ |  $$ |  \\$$$  /  $$   ____|$$ |      \n" +
+                    "\\$$$$$$  |\\$$$$$$$ |$$ | $$ | $$ |\\$$$$$$$\\        $$$$$$  |   \\$  /   \\$$$$$$$\\ $$ |      \n" +
+                    " \\______/  \\_______|\\__| \\__| \\__| \\_______|       \\______/     \\_/     \\_______|\\__|      \n" +
+                    "                                                                                           \n" +
+                    "                                                                                           \n" +
+                    "                                                                                           \n");
+        }
     }
 
     /**
@@ -636,18 +673,10 @@ public class TUI {
     }
 
     public void displayWrongCode() {
-        DelayMachine.printDelayedText("Uhhhhhh");
-        DelayMachine.printDelayedTextFast("that's not a valid code. Please try again.");
+        DelayMachine.printDelayedText(TalkingCharacters.NONE,"Uhhhhhh");
+        DelayMachine.printDelayedTextFast(TalkingCharacters.NONE,"that's not a valid code. Please try again.");
     }
 
-
-    /**
-     * The hero health
-     * @param theHero you
-     */
-    public void displayHeroHealth(final Hero theHero) {
-        System.out.print("Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
-    }
 
     public void displayHeroDirection(final Hero theHero) {
         System.out.print("    Facing: " + theHero.getDirection());
@@ -744,10 +773,10 @@ public class TUI {
 
     public void heroIntroduction(Hero hero) {
         System.out.println();
-        DelayMachine.printDelayedText("Ah, a " + hero.getType() + "!");
-        DelayMachine.printDelayedText("I'm sure that skill will serve you well.");
-        DelayMachine.printDelayedText("Good luck!");
-        DelayMachine.printDelayedText("*cranks gate open*");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah, a " + hero.getType() + "!");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I'm sure that skill will serve you well.");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Good luck!");
+        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"*cranks gate open*");
         System.out.println();
 
     }
@@ -815,7 +844,7 @@ public class TUI {
         System.out.println(" Whoever has a higher speed will attack first.");
         System.out.println(" You will take turns attacking the monster until one of you dies.");
         System.out.println();
-        System.out.println(" On your turn, you have 3 choices:");
+        System.out.println(" On your turn, you have 3 main choices:");
         System.out.println("  ║ 1. Use your basic attack");
         System.out.println("  ║ 2. Use your special attack");
         System.out.println("  ║ 3. Use a potion from your inventory");
@@ -826,12 +855,13 @@ public class TUI {
         System.out.println(" There are negative effects characters can inflict on each other.");
         System.out.println(" These effects will last for a certain number of turns.");
         System.out.println(" The effects are:");
-        System.out.println("  ║ Poison: lose some health every turn");
-        System.out.println("  ║ Blinded: miss your next attack");
-        System.out.println("  ║ Stuck: skip your next turn");
-        System.out.println("  ║ Weakened: deal less damage");
-        System.out.println("  ║ Vulnerable: next hit on you will deal 3x the damage");
-        System.out.println("  ║ Silenced: can't use special ability");
+        System.out.println("  ║ Poisoned: Lose 5 health every turn");
+        System.out.println("  ║ Blinded: Miss your next attack");
+        System.out.println("  ║ Stuck: Skip your next turn");
+        System.out.println("  ║ Weakened: Deal less damage");
+        System.out.println("  ║ Vulnerable: Next hit on you will deal 3x the damage");
+        System.out.println("  ║ Silenced: Can't use special ability");
+        System.out.println(" You will see these under the \"✺ S̲T̲A̲T̲U̲S̲\" section during a battle.");
 
         pressAnyKeyNextPage();
         theAudio.playSFX(theAudio.swishOn, -10);
@@ -873,10 +903,6 @@ public class TUI {
         System.out.println(" -You found a potion, but your inventory is full.");
     }
 
-    public void playerCritMsg() {
-        System.out.println("  It was a critical hit!");
-    }
-
     public void displayBattleEnd() {
         System.out.println();
         System.out.println("████████████████████████████████████████████████████████████████████");
@@ -903,10 +929,12 @@ public class TUI {
 
     public void heroFasterThanMonsterMsg(final Monster theMonster) {
         System.out.println(" -You have a higher speed than " + theMonster.getName() + ", so you get to attack first!");
+        System.out.println();
     }
 
     public void monsterFasterThanHeroMsg(final Monster theMonster) {
         System.out.println(" -The " + theMonster.getName() + " has a higher speed than you, so it attacks first!");
+        System.out.println();
     }
 
     public char pressAnyKeyGoBack() {
@@ -979,6 +1007,7 @@ public class TUI {
     }
 
     public void displayUnlockedBeastmaster() {
+        System.out.println();
         System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
         System.out.println("║        You've unlocked the BEASTMASTER hero       ║");
         System.out.println("║  He will now appear in the hero selection menu.   ║");
@@ -987,6 +1016,7 @@ public class TUI {
     }
 
     public void displayUnlockedAll() {
+        System.out.println();
         System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
         System.out.println("║           You've unlocked ALL the heroes          ║");
         System.out.println("║                 Congratulations!!!                ║");
@@ -994,13 +1024,67 @@ public class TUI {
         System.out.println();
     }
 
-    public void displayHintUnlocking() {
+    public void displayHintStillMoreHeroes() {
+        System.out.println();
         System.out.println("╔════════════════════ ? HINT ? ═════════════════════╗");
         System.out.println("║       There are still more heroes to find.        ║");
         System.out.println("║    Keep exploring the dungeon to unlock them...   ║");
         System.out.println("╚═══════════════════════════════════════════════════╝");
         System.out.println();
     }
+
+    public void displayHintUnlocking() {
+        System.out.println();
+        System.out.println("╔════════════════════ ? HINT ? ═════════════════════╗"); // either the message for the dragon after beating medium
+        System.out.println("║    You hear a bone-chilling roar. Something is    ║"); // or a funny message for the super gremlin after beating hard
+        System.out.println("║    still lurking in the depths of the dungeon...  ║");
+        System.out.println("╚═══════════════════════════════════════════════════╝");
+        System.out.println();
+    }
+
+    public void displayGlitchHintParchment() {
+        System.out.println();
+        System.out.println("   ╔═--══ʘ═══---═▒═══ʘ══ ? H!NT ? ═════ʘ════----═══▒═══╗");
+        System.out.println("   ║ {}    USE PAR<HMENT INSCR!PTI0N IN GAM3 C0DE []   |");
+        System.out.println(" ║   () ..UN..L0CK..... .....M0DE....()......[]....  ║");
+        System.out.println(" ╚═ʘ════--═▒═══ʘ════-----════▒══════ʘ═══--═══ʘ═════--╝");
+        System.out.println();
+    }
+
+    public void beatEasyDungeonKeeperMsg() {
+        // make dungeon keeper congratulate player
+        System.out.println("Dungeon Keeper: Congratulations! You've beaten the easy dungeon!");
+    }
+
+    public void findParchmentDungeonKeeperMsg(final List<Parchment> theParchments) { // only 1 parchment scrap per dungeon
+        if (theParchments.size() == 1) {
+            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"What's that? You found a scrap of parchment?! Let me see it...");
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah... it's nothing but a bunch of scribbles. Pay it no mind.");
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"It's probably dangerous if anything.");
+
+        } else if (theParchments.size() == 2) {
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Another parchment scrap?");
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I've already told you, it's dangerous...");
+            DelayMachine.printDelayedTextSlow(TalkingCharacters.KEEPER,"Leave it alone and stop collecting these!");
+        }
+    }
+
+    public void beatMediumDungeonKeeperMsg() {
+        // make dungeon keeper congratulate player
+        System.out.println("");
+    }
+
+    public void beatHardDungeonKeeperMsg() {
+        // make dungeon keeper congratulate player
+        System.out.println("");
+    }
+
+    public void displayScrapOfParchment(final Parchment theParchment) {
+        System.out.println("You found a scrap of parchment!");
+        System.out.println("You see something scribbled on it from a previous adventurer: ");
+        System.out.println(theParchment.toString());
+    }
+
 
 
 
@@ -1133,44 +1217,56 @@ public class TUI {
         return myScanner.next().charAt(0);
     }
 
-    public void displayCyaNerd() {
+    public void displayCyaNerd(final boolean theFunnyMode) {
         System.out.println();
-        System.out.print("Nathan: ");
-        DelayMachine.printDelayedText("Nah, you're trapped here forever now.");
-        DelayMachine.delay(8);
-        System.out.println();
-        System.out.print("Nathan: ");
-        DelayMachine.printDelayedText("Don't you dare hit that X button.");
-        System.out.println();
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(2);
-        System.out.print(". ");
-        DelayMachine.delay(8);
-        System.out.println();
-        System.out.println();
-        System.out.print("Nathan: ");
-        DelayMachine.printDelayedText("FINE!");
-        DelayMachine.delay(2);
-        System.out.print("Nathan: ");
-        DelayMachine.printDelayedText("I'll let you leave.");
-        DelayMachine.delay(4);
-        System.out.println();
-        System.out.println("" +
-                " ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄            ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄  \n" +
-                "▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌          ▐░░▌      ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ \n" +
-                "▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌          ▐░▌░▌     ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌\n" +
-                "▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌          ▐░▌▐░▌    ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌\n" +
-                "▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌          ▐░▌ ▐░▌   ▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌\n" +
-                "▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌          ▐░▌  ▐░▌  ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌\n" +
-                "▐░▌           ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌          ▐░▌   ▐░▌ ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀█░█▀▀ ▐░▌       ▐░▌\n" +
-                "▐░▌               ▐░▌     ▐░▌       ▐░▌          ▐░▌    ▐░▌▐░▌▐░▌          ▐░▌     ▐░▌  ▐░▌       ▐░▌\n" +
-                "▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░▌       ▐░▌          ▐░▌     ▐░▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄█░▌\n" +
-                "▐░░░░░░░░░░░▌     ▐░▌     ▐░▌       ▐░▌          ▐░▌      ▐░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░▌ \n" +
-                " ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀         ▀            ▀        ▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀  ");
-        System.out.println();
+        if (theFunnyMode) {
+            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"Nah, you're trapped here forever now.");
+            DelayMachine.delay(8);
+            System.out.println();
+            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"Don't you dare hit that X button.");
+            System.out.println();
+            DelayMachine.delay(2);
+            System.out.print(". ");
+            DelayMachine.delay(2);
+            System.out.print(". ");
+            DelayMachine.delay(2);
+            System.out.print(". ");
+            DelayMachine.delay(8);
+            System.out.println();
+            System.out.println();
+            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"FINE!");
+            DelayMachine.delay(2);
+            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"I'll let you leave.");
+            DelayMachine.delay(4);
+            System.out.println();
+
+            System.out.println("" +
+                    " ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄            ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄  \n" +
+                    "▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌          ▐░░▌      ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ \n" +
+                    "▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌          ▐░▌░▌     ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌\n" +
+                    "▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌          ▐░▌▐░▌    ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌\n" +
+                    "▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌          ▐░▌ ▐░▌   ▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌\n" +
+                    "▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌          ▐░▌  ▐░▌  ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌\n" +
+                    "▐░▌           ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌          ▐░▌   ▐░▌ ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀█░█▀▀ ▐░▌       ▐░▌\n" +
+                    "▐░▌               ▐░▌     ▐░▌       ▐░▌          ▐░▌    ▐░▌▐░▌▐░▌          ▐░▌     ▐░▌  ▐░▌       ▐░▌\n" +
+                    "▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░▌       ▐░▌          ▐░▌     ▐░▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄█░▌\n" +
+                    "▐░░░░░░░░░░░▌     ▐░▌     ▐░▌       ▐░▌          ▐░▌      ▐░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░▌ \n" +
+                    " ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀         ▀            ▀        ▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀  ");
+            System.out.println();
+        } else {
+            System.out.println("" +
+                    " ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄   ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄   ▄ \n" +
+                    "▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌ ▐░▌\n" +
+                    "▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀▀▀  ▐░▌\n" +
+                    "▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌           ▐░▌\n" +
+                    "▐░▌ ▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄  ▐░▌\n" +
+                    "▐░▌▐░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌ ▐░▌\n" +
+                    "▐░▌ ▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀  ▐░▌\n" +
+                    "▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░▌            ▀ \n" +
+                    "▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄   ▄ \n" +
+                    "▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌      ▐░▌     ▐░░░░░░░░░░░▌ ▐░▌\n" +
+                    " ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀▀▀        ▀       ▀▀▀▀▀▀▀▀▀▀▀   ▀ ");
+        }
     }
 
     public void displayRecommendListening() {
@@ -1217,13 +1313,18 @@ public class TUI {
                 "88b  d88   dPYb   88 88Yb88     88b  d88 88__   88Yb88 88   88 \n" +
                 "88YbdP88  dP__Yb  88 88 Y88     88YbdP88 88\"\"   88 Y88 Y8   8P \n" +
                 "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' ");
-        System.out.println("╔═════════════════════╗");
+//        System.out.println("╔═════════════════════╗");
+//        System.out.println("║ 1. Continue         ║    ╔═════════════════════╗");
+//        System.out.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
+//        System.out.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
+//        System.out.println("║ 4. Cheat Code Menu  ║    ║                     ║");
+//        System.out.println("║                     ║    ╚═════════════════════╝");
+//        System.out.println("╚═════════════════════╝");
+        System.out.println("╔═════════════════════╗                           ");
         System.out.println("║ 1. Continue         ║    ╔═════════════════════╗");
         System.out.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
         System.out.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
-        System.out.println("║ 4. Cheat Code Menu  ║    ║                     ║");
-        System.out.println("║                     ║    ╚═════════════════════╝");
-        System.out.println("╚═════════════════════╝");
+        System.out.println("╚═════════════════════╝    ╚═════════════════════╝");
 
         System.out.print("Make your selection: ");
         return myScanner.next().charAt(0);
@@ -1231,14 +1332,14 @@ public class TUI {
 
     public void codeSuccessMsg() {
         System.out.println();
-        DelayMachine.printDelayedText(" -CODE ACCEPTED");
+        DelayMachine.printDelayedText(TalkingCharacters.NONE," -CODE ACCEPTED");
         System.out.println();
     }
 
 
     public void codeFailMsg() {
         System.out.println();
-        DelayMachine.printDelayedText(" -CODE DENIED");
+        DelayMachine.printDelayedText(TalkingCharacters.NONE," -CODE DENIED");
         System.out.println();
     }
 
@@ -1266,5 +1367,124 @@ public class TUI {
         System.out.println();
         System.out.println(" -This difficulty is locked!");
         System.out.println();
+    }
+
+    public void displayPlayerTurn() {
+        System.out.println("--------------------------- PLAYER'S TURN ---------------------------");
+    }
+
+    public void displayEnemyTurn() {
+        System.out.println("--------------------------- ENEMY'S TURN ----------------------------");
+    }
+
+    public void bossAttack1() {
+
+        // need to control missile process somehow
+        // should it be controlled via a method in a boss class?
+
+    }
+    private void drawGround() {
+        System.out.println("    ┕━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━┙");
+    }
+    private void missileProcess(final Missile theMissile) {
+        System.out.println(theMissile);
+        drawGround();
+        theMissile.closerToGround(); // this line is logical, should it be in the view?
+//        DelayMachine.delay(0.01);
+
+        System.out.println(theMissile);
+        drawGround();
+        theMissile.closerToGround();
+//        DelayMachine.delay(0.01);
+    }
+
+    public void bossAttack2() {
+        // giant laser that fires down from the sky
+        System.out.println("   *   ");
+        //        DelayMachine.delay(0.01);
+        System.out.println("  ***  ");
+        //        DelayMachine.delay(0.01);
+        System.out.println(" ***** ");
+        //        DelayMachine.delay(0.01);
+        System.out.println("*******");
+        //        DelayMachine.delay(0.01);
+        System.out.println("*******");
+
+        // like above, but the logic is complex for winning or losing, so it should be contained as a class in the model
+    }
+
+    public void bossAttack3() {
+        // horizontal flappy bird where you need to press the right key to dodge
+        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        System.out.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
+
+        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        System.out.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
+    }
+
+    public void bossAttack4() {
+        // need to defuse bomb
+        // ??? does fit with a boss fight? need to decide
+
+        // step 1: a bunch of random text is printed out, within that text, a random line is generated saying "CODE: 123" or something
+        // step 2: a bomb is printed out
+        // step 3: the user is prompted to enter the code
+        // step 4: if wrong code is entered, or time is up, the bomb explodes
+
+        /*
+             . . .
+              \|/
+            `--+--'
+              /|\
+             ' | '
+               |
+               |
+           ,--'#`--.
+           |#######|
+        _.-'#######`-._
+     ,-'###############`-.
+   ,'#####################`,
+  /#########################\
+ |###########################|
+|#############################|
+|#############################|
+|#############################|
+|#############################|
+ |###########################|
+  \#########################/
+   `.#####################,'
+     `._###############_,'
+        `--..#####..--'
+         */
+
+        /*
+                                   ________________
+                              ____/ (  (    )   )  \___
+                             /( (  (  )   _    ))  )   )\
+                           ((     (   )(    )  )   (   )  )
+                         ((/  ( _(   )   (   _) ) (  () )  )
+                        ( (  ( (_)   ((    (   )  .((_ ) .  )_
+                       ( (  )    (      (  )    )   ) . ) (   )
+                      (  (   (  (   ) (  _  ( _) ).  ) . ) ) ( )
+                      ( (  (   ) (  )   (  ))     ) _)(   )  )  )
+                     ( (  ( \ ) (    (_  ( ) ( )  )   ) )  )) ( )
+                      (  (   (  (   (_ ( ) ( _    )  ) (  )  )   )
+                     ( (  ( (  (  )     (_  )  ) )  _)   ) _( ( )
+                      ((  (   )(    (     _    )   _) _(_ (  (_ )
+                       (_((__(_(__(( ( ( |  ) ) ) )_))__))_)___)
+                       ((__)        \\||lll|l||///          \_))
+                                (   /(/ (  )  ) )\   )
+                              (    ( ( ( | | ) ) )\   )
+                               (   /(| / ( )) ) ) )) )
+                             (     ( ((((_(|)_)))))     )
+                              (      ||\(|(|)|/||     )
+                            (        |(||(||)||||        )
+                              (     //|/l|||)|\\ \     )
+                            (/ / //  /|//||||\\  \ \  \ _)
+    -------------------------------------------------------------------------------
+
+         */
     }
 }

@@ -2,6 +2,7 @@ package controller;
 import model.*;
 import view.*;
 
+import java.util.Map;
 import java.util.Random;
 
 
@@ -70,8 +71,8 @@ public class MonsterBattle {
         myFunnyMode = theFunnyMode;
         audio = theAudio;
 
-        myHero.setCooldown(myHero.initialCooldown());
-        myMonster.setCooldown(myMonster.initialCooldown());
+        myHero.startCooldownAtInitial();
+        myMonster.startCooldownAtInitial();
     }
 
     /**
@@ -96,7 +97,7 @@ public class MonsterBattle {
                     DelayMachine.delay(2);
                 }
                 if (myMonster.getHealth() > 0) {
-                    monsterTurn();
+                    enemyTurn();
                     DelayMachine.delay(2);
                 }
             }
@@ -104,7 +105,7 @@ public class MonsterBattle {
             myGame.monsterFasterThanHeroMsg(myMonster);
             while (!myGameOver) {
                 if (myMonster.getHealth() > 0) {
-                    monsterTurn();
+                    enemyTurn();
                     DelayMachine.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
@@ -128,8 +129,27 @@ public class MonsterBattle {
      */
     private void playerTurn() {
 
-        char choice = myGame.battleMenu(myHero, myMonster);
         myGame.displayChainSpacer();
+        myGame.displayPlayerTurn();
+
+        myGame.displayHeroText();
+        myGame.displayHealth(myHero);
+        if (myHero.getActiveDebuffs().size() > 0) {
+            myGame.displayDebuffs(myHero);
+        } else {
+            System.out.println();
+        }
+
+        myGame.displayMonsterText();
+        myGame.displayHealth(myMonster);
+        if (myMonster.getActiveDebuffs().size() > 0) {
+            myGame.displayDebuffs(myMonster);
+        } else {
+            System.out.println();
+        }
+        System.out.println();
+
+        char choice = myGame.battleMenu(myHero);
         System.out.println();
 
         // Basic Attack
@@ -149,8 +169,13 @@ public class MonsterBattle {
         } else if (choice == 'r') {
             checkMonsterStats();
 
+        // run away
+        } else if (choice == 'q') {
+            //TODO add run away functionality. default 50% chance of success. ninja gets %80
+
+
         // cheat mode instakill
-        } else if (choice == '6' && myCheatMode) {
+        } else if (choice == '6' && myCheatMode) { //TODO change to huge laster firing with asterisks like boss
             myGame.displayInstaKill();
             myMonster.setHealth(0);
 
@@ -166,26 +191,35 @@ public class MonsterBattle {
             myGameOver = true;
             myVictory = true;
         }
-
     }
 
     private void checkMonsterStats() {
+        audio.playSFX(audio.swishOn, -10);
         myGame.displayMonsterStats(myMonster);
+        myGame.pressAnyKeyGoBack();
+        audio.playSFX(audio.swishOff, -13);
         playerTurn();
     }
 
     private void performBasicAttack() {
         audio.playSFX(myHero.getBasicSFX(), -10, true);
-        myGame.playerSelectsBasicMsg(myHero, myMonster);
+        myGame.characterSelectAbility(myHero, myMonster, Ability.BASIC);
+        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
+        DelayMachine.delay(2);
+        myGame.heroAttackResult(myHero, damage);
+        inflictDebuffMsg(myMonster, oldDebuffs); // show what debuffs were inflicted on monster
+//        myGame.displayHealthMeters(myHero, myMonster);
 
-        if (myHero.attackWasSuccessful()) {
-            myGame.playerHitsBasicMsg(myHero, damage, myFunnyMode);
-        } else {
-            myGame.playerBasicMissMsg(myHero);
-        }
+
+//        if (myHero.attackWasSuccessful()) { // might need this to do different things if attack misses
+//            myGame.heroAttackResult(myHero, damage);
+//        } else {
+//            myGame.heroAttackResult(myHero, damage);
+//        }
 
         myHero.decreaseCooldown();
+        myHero.decreaseDebuffDuration();
     }
 
     private void performSpecialAttack() {
@@ -194,25 +228,33 @@ public class MonsterBattle {
             audio.playSFX(audio.error, -10, true);
             myGame.displayCooldown(myHero.getCooldown());
             playerTurn();
-            return;
+            return; // change this return statement for the burst attack?
         }
 
         // proceed with attack
         audio.playSFX(myHero.getSpecialSFX(), -10, true);
-        myGame.playerSelectsSpecialMsg(myHero, myMonster);
+        myGame.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
+        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
         DelayMachine.delay(2);
-
-        if (myHero.attackWasSuccessful()) {
-            myGame.playerHitsSpecialMsg(myHero, damage);
-            if (myHero.wasCritHit()) {
-                myGame.playerCritMsg();
-            }
-        } else {
-            myGame.playerSpecialMissMsg(myHero);
+        myGame.heroAttackResult(myHero, damage);
+        if (myHero.wasCritHit()) {
+            myGame.playerCritMsg();
         }
+        inflictDebuffMsg(myMonster, oldDebuffs); // show what debuffs were inflicted on monster
+//        myGame.displayHealthMeters(myHero, myMonster);
+
+//        if (myHero.attackWasSuccessful()) {
+//            myGame.heroResultSpecial(myHero, damage);
+//            if (myHero.wasCritHit()) {
+//                myGame.playerCritMsg();
+//            }
+//        } else {
+//            myGame.playerSpecialMissMsg(myHero);
+//        }
 
         myHero.resetCooldown();
+        myHero.decreaseDebuffDuration();
     }
 
     public void inventoryMenu() {
@@ -239,6 +281,7 @@ public class MonsterBattle {
                 myGame.usePotionMsg(potion, slotIndex);
 
                 myHero.decreaseCooldown();
+                myHero.decreaseDebuffDuration();
 
             } else {
                 audio.playSFX(audio.error, -10, true);
@@ -256,16 +299,24 @@ public class MonsterBattle {
      * Prompts the monster for their choice
      * current Player and Monster HP and other info
      */
-    private void monsterTurn() {
-        // Bound to how many things the monster can do
+    private void enemyTurn() {
 
-        myGame.monsterTurnText();
+        myGame.displayChainSpacer();
+        myGame.displayEnemyTurn();
+
+        myGame.displayMonsterText();
+        myGame.displayHealth(myMonster);
+        if (myMonster.getActiveDebuffs().size() > 0) {
+            myGame.displayDebuffs(myMonster);
+        } else {
+            System.out.println();
+        }
+        System.out.println();
+
         DelayMachine.delay(2);
 
         int choice = RANDOMIZER.nextInt(3);
         myMonster.decreaseCooldown();
-
-
 
         //TODO make sure monster initial cooldown is set to 1 or 2?
 
@@ -284,7 +335,7 @@ public class MonsterBattle {
         } else if (choice == 2 && myMonster.getHealth() < (myMonster.getMaxHealth() - myMonster.getMaxHeal())) {
             monsterHeal();
 
-            // Basic attack failsafe
+        // Basic attack failsafe
         } else {
             monsterBasic();
         }
@@ -298,33 +349,50 @@ public class MonsterBattle {
 
 
     private void monsterBasic() {
-        myGame.monsterSelectsBasicMsg(myMonster, myHero);
-
+        myGame.characterSelectAbility(myMonster, myHero, Ability.BASIC);
+        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myMonster.basicAtk(myHero);
-        if (myMonster.attackWasSuccessful()) {
-            myGame.monsterHitsBasicMsg(myMonster, myHero, damage);
-        } else {
-            myGame.monsterBasicMiss(myMonster);
-        }
+        myGame.monsterAttackResult(myMonster, myHero, damage);
+        inflictDebuffMsg(myHero, oldDebuffs); // show what debuffs were inflicted on hero
+//        myGame.displayHealthMeters(myHero, myMonster);
+        myMonster.decreaseDebuffDuration();
     }
 
     private void monsterSpecial() {
-        myGame.monsterSelectsSpecialMsg(myMonster, myHero);
-
-        int damage = myMonster.basicAtk(myHero);
-        if (myMonster.attackWasSuccessful()) {
-            myGame.monsterHitsSpecialMsg(myMonster, myHero, damage);
-        } else {
-            myGame.monsterSpecialMiss(myMonster);
+        if (myMonster.getCooldown() > 0) {
+            System.out.println("DEBUG: Monster is on cooldown, but tried to use special attack!");
         }
+        myGame.characterSelectAbility(myMonster, myHero, Ability.SPECIAL);
+        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
+        int damage = myMonster.specialAtk(myHero);
+        myGame.monsterAttackResult(myMonster, myHero, damage);
+        inflictDebuffMsg(myHero, oldDebuffs); // show what debuffs were inflicted on hero
+//        myGame.displayHealthMeters(myHero, myMonster);
+        myMonster.decreaseDebuffDuration();
     }
 
     private void monsterHeal() {
         myMonster.heal(myMonster);
         int healAmount = myMonster.getHealAmount();
-        myGame.monsterHealMsg(healAmount);
-        DelayMachine.delay(2);
+        myGame.monsterHeal(healAmount);
+        myMonster.decreaseDebuffDuration();
     }
 
+    // another solution is to have a field in DungeonCharacter that stores newly applied debuffs
+    private void inflictDebuffMsg(final DungeonCharacter theDebuffedCharacter, final Map<Debuff, Integer> theOldDebuffs) {
+        Map<Debuff, Integer> newDebuffs = theDebuffedCharacter.getActiveDebuffs();
+        for (final Debuff debuff : newDebuffs.keySet()) {
 
+            if (!theOldDebuffs.containsKey(debuff)) { // if the debuff in question is NEW, display the message
+                myGame.inflictedDebuffMsg(debuff);
+            }
+            else { // if the debuff in question is OLD, but the duration has been updated, display the message
+                int newDuration = newDebuffs.get(debuff);
+                int oldDuration = theOldDebuffs.get(debuff);
+                if (newDuration != oldDuration) {
+                    myGame.inflictedDebuffMsg(debuff);
+                }
+            }
+        }
+    }
 }

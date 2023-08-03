@@ -41,10 +41,10 @@ public enum MonsterTypes {
         }
     },
 
-    VECTOR { // committing crimes with both direction and magnitude
+    SUPER_GREMLIN { // a bunch of gremlins in a trench coat (or just all bunched up). a final boss in hardcore
         @Override
         public String toString() {
-            return "Vector";
+            return "Super Gremlin";
         }
     }
 

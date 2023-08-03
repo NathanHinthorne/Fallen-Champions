@@ -10,19 +10,19 @@ public enum HeroTypes {
     // tips for putting strategy into the game:
     // 1. give ability to block damage by pressing a button before a delay ends??
 
-    // "blinded" - monster has higher chance to miss (or always misses?)
+    // "blinded" - monster has higher chance to miss
     // "stuck", "stun" - monster's turn is skipped
-    // "weakened" - monster does less damage
+    // "weakened" - monster does 50% damage on next hit
     // "vulnerable" - next hit on monster will inflict 3x the damage to it
     // "silenced" - monster can't use special attack
 
     SWORDSMAN, // mid hp.
     // basic: sword strike
-    // special: mighty swing - will almost certainly hit, but also a small chance crit hit. chance to inflict weaken. max cooldown 2
+    // special: mighty swing - will almost certainly hit, but also a small chance crit hit. chance to inflict silence. max cooldown 2
     // passive: battle stance - higher than 50% health, do more damage. lower than 50%, take less damage
 
     ARCHER, // low hp.
-    // basic: Swift Draw - shoot an arrow at the monster, does more damage than other heroes basics, has little higher chance to miss
+    // basic: Swift Draw - shoot an arrow at the monster, does more damage than other heroes basics, has little higher chance to miss, chance to inflict weaken
     // special: Triple Shot - shoot 3 arrows at the monster. chance for each of them to hit individually
     // passive: ranged attack (with 2 uses between battles) hitting revealed monsters before engaging in battle
 
@@ -69,9 +69,11 @@ public enum HeroTypes {
 //    MICHAEL, //
 //    GARRET, // lead pipe - bonk sound
 //    ETHAN,  // throws burritos at monsters (chance to instantly defeat or heal slightly)
-//    JADON,  // yoyo, baseball bat "hits home run into monster's face" & "throws a heater at monster's stomach", "throws yoyo around monster's legs, tripping it"
+//    JADON,  // baseball bat "hits home run into monster's face" & "throws a heater at monster's stomach", "throws yoyo around monster's legs, tripping it"
 //    NATHAN, // hacks into game and makes monsters glitch
+//    AARON   // basic: chucks laptop at monsters. special: flinging mouse (with cord), passive: sees 1 square ahead (in a circle)
 //    THE_ROCK // raises eyebrow at monsters, throws goblins at other monsters
+
 
 /*    ideas:
         garret - ogre meets him, "hey, I know you, you're the guy who stole my lead pipe!",

@@ -1,5 +1,7 @@
 package controller;
 
+import model.TalkingCharacters;
+
 import java.io.Console;
 
 /**
@@ -34,7 +36,12 @@ public abstract class DelayMachine {
         }
     }
 
-    public static void printDelayedText(final String theText) {
+    public static void printDelayedText(final TalkingCharacters theOneTalking, String theText) {
+
+        if (theOneTalking != TalkingCharacters.NONE) {
+            System.out.print(theOneTalking.toString() + ": ");
+        }
+
         for (int i = 0; i < theText.length(); i++) {
             System.out.print(theText.charAt(i));
             System.out.flush(); // Flush the output buffer to print the character immediately
@@ -43,11 +50,30 @@ public abstract class DelayMachine {
         System.out.println();
     }
 
-    public static void printDelayedTextFast(final String theText) {
+    public static void printDelayedTextFast(final TalkingCharacters theOneTalking,  final String theText) {
+
+        if (theOneTalking != TalkingCharacters.NONE) {
+            System.out.print(theOneTalking.toString() + ": ");
+        }
+
         for (int i = 0; i < theText.length(); i++) {
             System.out.print(theText.charAt(i));
             System.out.flush(); // Flush the output buffer to print the character immediately
             shortDelay(3);
+        }
+        System.out.println();
+    }
+
+    public static void printDelayedTextSlow(final TalkingCharacters theOneTalking, final String theText) {
+
+        if (theOneTalking != TalkingCharacters.NONE) {
+            System.out.print(theOneTalking.toString() + ": ");
+        }
+
+        for (int i = 0; i < theText.length(); i++) {
+            System.out.print(theText.charAt(i));
+            System.out.flush(); // Flush the output buffer to print the character immediately
+            shortDelay(12);
         }
         System.out.println();
     }

@@ -32,8 +32,8 @@ public class Pit implements java.io.Serializable {
      */
     public int fall(final Hero theHero) {
 
-        int theLowHealth = 10;
-        int theHighHealth = 40;
+        int theLowHealth = 5;
+        int theHighHealth = 10;
 
         int fallDamage = generateNewHealth(theLowHealth, theHighHealth); // don't know if this works
         theHero.setHealth(theHero.getHealth() - fallDamage);

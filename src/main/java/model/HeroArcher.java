@@ -16,11 +16,35 @@ public class HeroArcher extends Hero {
     public static final int MAX_DMG = 40;
     public static final int COOLDOWN = 0;
     public static final int MAX_COOLDOWN = 2;
+    public static final int INITIAL_COOLDOWN = 0;
 
     private static final double CRIT_CHANCE = 0.5;
 
+    private static final String[] BASIC_MISS_MSGS = { //TODO let the getMsg methods handle the choosing of the msg
+            "The arrow misses the target",
+            "The arrow misses the monster by a hair",
+            "The veers off-course, flying past the monster"
+    };
+
+    private static final String SPECIAL_MISS_MSG = "The arrows all miss";
+
+    private static final String[] BASIC_HIT_MSGS = {
+            "The arrow pierces through the monster's defenses",
+            "The arrow strikes the target",
+            "The arrow finds its mark, hitting the monster's chest"
+    };
+
+    private static final String[] SPECIAL_HIT_MSGS = {
+            "1 of the 3 arrows lands a hit!",
+            "2 of the 3 arrows score hits!",
+            "3 of the 3 arrows strike the monster!"
+    };
+
+
+
     public HeroArcher() {
-        super(HeroTypes.ARCHER, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN, MAX_COOLDOWN);
+        super(HeroTypes.ARCHER, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG,
+                COOLDOWN, MAX_COOLDOWN, INITIAL_COOLDOWN);
 
         setBasicSFX("hero_archer_basic.wav");
         setSpecialSFX("hero_archer_special.wav");
@@ -28,22 +52,17 @@ public class HeroArcher extends Hero {
 
     @Override
     public int basicAtk(DungeonCharacter theOther) {
-        int dmg;
+        int dmg = 0;
 
         if (Math.random() <= myBasicChance) {
             myAttackWasSuccess = true;
             dmg = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
         } else {
             myAttackWasSuccess = false;
-            dmg = 0;
         }
 
         // set the monster's health
-        if (theOther.getHealth() - dmg < 0) {
-            theOther.setHealth(0);
-        } else {
-            theOther.setHealth(theOther.getHealth() - dmg);
-        }
+        theOther.hurt(dmg);
 
         return dmg;
     }
@@ -101,54 +120,12 @@ public class HeroArcher extends Hero {
     }
 
     @Override
-    public String getBasicSelectMsg() {
-        return " nocks an arrow and takes aim at the ";
+    public String getBasicSelectMsg(final DungeonCharacter theOther) {
+        return this.getName() + " nocks an arrow and takes aim at the " + theOther.getName() + ".";
     }
     @Override
-    public String getExtendedBasicSelectMsg() {
-        return "";
-    }
-    @Override
-    public String getSpecialSelectMsg() {
-        return " pulls the bowstring taut and releases a hail of arrows towards the ";
-    }
-    @Override
-    public String getExtendedSpecialSelectMsg() {
-        return "";
-    }
-
-    @Override
-    public String[] getBasicMissMsg() {
-        return new String[]
-                {"The arrow misses the target",
-                        "The arrow misses the monster by a hair",
-                        "The veers off-course, flying past the monster"};
-    }
-    @Override
-    public String[] getBasicHitMsg() {
-        return new String[]
-                {"The arrow pierces through the monster's defenses",
-                        "The arrow strikes the target",
-                        "The arrow finds its mark, hitting the monster's chest"};
-    }
-    @Override
-    public String[] getSpecialMissMsg() {
-        return new String[]
-                {"All of the arrows missed!",
-                        "All of the arrows missed!",
-                        "All of the arrows missed!"};
-    }
-    @Override
-    public String[] getSpecialHitMsg() {
-        return new String[]
-                {"1 of the 3 arrows lands a hit!",
-                        "2 of the 3 arrows score hits!",
-                        "All three arrows strike the monster!"}; // SOLUTION: make each type of hero CHOOSE what SINGLE string to be returned as the hit message
-    }
-
-    @Override
-    public int initialCooldown() {
-        return 0;
+    public String getSpecialSelectMsg(final DungeonCharacter theOther) {
+        return this.getName() + " pulls the bowstring taut and releases a hail of arrows towards the " + theOther.getName() + ".";
     }
 
     @Override
@@ -160,7 +137,7 @@ public class HeroArcher extends Hero {
     public String[] getDescription() {
         return new String[] {
                 "Nothing escapes the watchful eye or the swift bow of the archer.",
-                "With lightning reflexes, he fires volleys of arrows in seconds.",
+                "With lightning reflexes, he can fire volleys of arrows in seconds.",
         };
     }
 

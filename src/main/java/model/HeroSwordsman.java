@@ -16,11 +16,38 @@ public class HeroSwordsman extends Hero {
     public static final int MAX_DMG = 40;
     public static final int COOLDOWN = 0;
     public static final int MAX_COOLDOWN = 2;
+    public static final int INITIAL_COOLDOWN = 0;
 
     private static final double CRIT_CHANCE = 0.5;
 
+    private static final String[] BASIC_MISS_MSGS = {
+            "The sword misses the monster",
+            "The sword barely misses the monster",
+            "The sword flies out of your hand, completely missing the monster"
+    };
+
+    private static final String[] SPECIAL_MISS_MSGS = {
+            "The sword misses the monster",
+            "The sword barely misses the monster",
+            "The sword flies out of your hand, completely missing the monster"
+    };
+
+    private static final String[] BASIC_HIT_MSGS = {
+            "The sword slices the monster",
+            "The sword cuts the monster's leg",
+            "The sword slashes the monster's arm"
+    };
+
+    private static final String[] SPECIAL_HIT_MSGS = {
+            "The sword slices through the monster",
+            "The sword cuts the monster",
+            "The sword slashes the monster"
+    };
+
+
     public HeroSwordsman() {
-        super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG, COOLDOWN, MAX_COOLDOWN);
+        super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG,
+                COOLDOWN, MAX_COOLDOWN, INITIAL_COOLDOWN);
 
         setBasicSFX("hero_swordsman_basic.wav");
         setSpecialSFX("hero_swordsman_special.wav");
@@ -28,24 +55,27 @@ public class HeroSwordsman extends Hero {
 
     @Override
     public int basicAtk(DungeonCharacter theOther) {
-        int dmg;
+        critHit = false;
+
+        //temp
+        theOther.inflictDebuff(Debuff.STUCKIFY, 1);
+        theOther.inflictDebuff(Debuff.WEAKEN, 1);
+
+        int damage;
 
         if (Math.random() <= myBasicChance) {
             myAttackWasSuccess = true;
-            dmg = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
+            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
+            myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         } else {
             myAttackWasSuccess = false;
-            dmg = 0;
+            damage = 0;
+            myAttackResult = BASIC_MISS_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         }
 
-        // set the monster's health
-        if (theOther.getHealth() - dmg < 0) {
-            theOther.setHealth(0);
-        } else {
-            theOther.setHealth(theOther.getHealth() - dmg);
-        }
+        theOther.hurt(damage);
 
-        return dmg;
+        return damage;
     }
 
     @Override
@@ -56,7 +86,8 @@ public class HeroSwordsman extends Hero {
 
         if (Math.random() <= mySpecialChance) {
             myAttackWasSuccess = true;
-            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 20;
+            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 10;
+            myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
 
             if (Math.random() <= CRIT_CHANCE) {
                 critHit = true;
@@ -66,14 +97,10 @@ public class HeroSwordsman extends Hero {
         } else {
             myAttackWasSuccess = false;
             damage = 0;
+            myAttackResult = SPECIAL_MISS_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
         }
 
-        // set the monster's health
-        if (theOther.getHealth() - damage < 0) {
-            theOther.setHealth(0);
-        } else {
-            theOther.setHealth(theOther.getHealth() - damage);
-        }
+        theOther.hurt(damage);
 
         return damage;
     }
@@ -82,7 +109,7 @@ public class HeroSwordsman extends Hero {
     public String[] getBasicName() {
         return new String[] {
                 "\"Sword Strike\" - Perform a basic sword strike,",
-                "skillfully slicing through the enemy's defences."
+                "skillfully slicing through the enemy's defenses."
         };
     }
     @Override
@@ -101,54 +128,12 @@ public class HeroSwordsman extends Hero {
     }
 
     @Override
-    public String getBasicSelectMsg() {
-        return " swings their sword at the ";
+    public String getBasicSelectMsg(final DungeonCharacter theOther) {
+        return this.getName() + " swings their sword at the " + theOther.getName();
     }
     @Override
-    public String getExtendedBasicSelectMsg() {
-        return "";
-    }
-    @Override
-    public String getSpecialSelectMsg() {
-        return " grips their sword and arcs a deadly slice towards the ";
-    }
-    @Override
-    public String getExtendedSpecialSelectMsg() {
-        return "";
-    }
-
-    @Override
-    public String[] getBasicMissMsg() {
-        return new String[]
-                {"The sword misses the monster",
-                "The sword barely misses the monster",
-                "The sword flies out of your hand, completely missing the monster"};
-    }
-    @Override
-    public String[] getBasicHitMsg() {
-        return new String[]
-                {"The sword slices the monster",
-                "The sword cuts the monster's nose off",
-                "The sword slashes the monster's arm"};
-    }
-    @Override
-    public String[] getSpecialMissMsg() {
-        return new String[]
-                {"The sword misses the monster",
-                "The sword barely misses the monster",
-                "The sword flies out of your hand, completely missing the monster"};
-    }
-    @Override
-    public String[] getSpecialHitMsg() {
-        return new String[]
-                {"The sword slices through the monster",
-                "The sword cuts the monster",
-                "The sword slashes the monster"};
-    }
-
-    @Override
-    public int initialCooldown() {
-        return 0;
+    public String getSpecialSelectMsg(final DungeonCharacter theOther) {
+        return this.getName() + " grips their sword and arcs a deadly slice towards the " + theOther.getName();
     }
 
     @Override

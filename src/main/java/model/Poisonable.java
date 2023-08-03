@@ -8,7 +8,7 @@ public interface Poisonable {
     /**
      * poison the character
      */
-    void poison(DungeonCharacter theCharacter, int theDamage, int theDuration);
+    void poison(DungeonCharacter theCharacter, int theDuration);
 
     boolean isPoisoned();
 }

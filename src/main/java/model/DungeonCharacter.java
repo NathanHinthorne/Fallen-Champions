@@ -1,6 +1,9 @@
 package model;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -10,8 +13,7 @@ import java.util.Random;
  * @author Nathan Hinthorne
  * @version 1.0
  */
-public abstract class DungeonCharacter implements java.io.Serializable, Poisonable, Blindable,
-                                                    Silencable, Stuckable, Vulnerable, Weakenable {
+public abstract class DungeonCharacter implements java.io.Serializable {
     /**
      * The random number generator
      */
@@ -26,6 +28,11 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
      * Max special cooldown
      */
     protected int myMaxCooldown;
+
+    /**
+     * The initial cooldown
+     */
+    protected int myInitialCooldown;
 
     /**
      * The health
@@ -77,6 +84,15 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
      */
     private File myBasicSFX;
 
+    /**
+     * The debuffs currently taking effect on the character
+     */
+    private Map<Debuff, Integer> myActiveDebuffs;
+
+    /**
+     * The attack result (a miss or hit)
+     */
+    protected String myAttackResult;
 
 
     /**
@@ -91,7 +107,7 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
      * @param theMaxCooldown the max cooldown
      */
     public DungeonCharacter(int theHealth, int theSpeed, double theBasicChance, double theSpecialChance,
-                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown) {
+                            int theMinDmg, int theMaxDmg, int theCooldown, int theMaxCooldown, int theInitialCooldown) {
 
         myHealth = theHealth;
         mySpeed = theSpeed;
@@ -102,48 +118,38 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
         myMaxDmg = theMaxDmg;
         myCooldown = theCooldown;
         myMaxCooldown = theMaxCooldown;
+        myInitialCooldown = theInitialCooldown;
+        myActiveDebuffs = new HashMap<>();
+        myAttackResult = "";
     }
 
     /**
      * Allows for the hero or monster to attack
      * @return the basic attack
      */
-    public int basicAtk(DungeonCharacter theOther) {
-
-        if(myHealth <= 0) {
-            throw new IllegalStateException("Cannot attack when dead.");
-        }
-
-        int damage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
-        double chanceToHit = Math.random();
-
-        if (chanceToHit <= myBasicChance) {
-            myAttackWasSuccess = true;
-
-            // set the other character's health
-            if (theOther.getHealth() - damage < 0) {
-                theOther.setHealth(0);
-            } else {
-                theOther.setHealth(theOther.getHealth() - damage);
-            }
-            return damage;
-
-        } else {
-            myAttackWasSuccess = false;
-            return 0;
-        }
-    }
+    public abstract int basicAtk(DungeonCharacter theOther);
 
     /**
      * Allows the character to summon their special attack
      */
-    public abstract int specialAtk(DungeonCharacter theOther); // different for each character
+    public abstract int specialAtk(DungeonCharacter theOther);
+
+    public String getAttackResult() {
+        return myAttackResult;
+    }
+    public void setAttackResult(final String theAttackResult) {
+        myAttackResult = theAttackResult;
+    }
 
     /**
      * Resets the special ability cooldown
      */
     public void resetCooldown() {
         myCooldown = myMaxCooldown;
+    }
+
+    public void startCooldownAtInitial() {
+        myCooldown = myInitialCooldown;
     }
 
     /**
@@ -304,35 +310,14 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
     public abstract String[] getSpecialName();
     public abstract String[] getPassiveName();
 
-    public abstract String getBasicSelectMsg();
-    public abstract String getExtendedBasicSelectMsg();
-    public abstract String getSpecialSelectMsg();
-    public abstract String getExtendedSpecialSelectMsg();
+    public abstract String getBasicSelectMsg(final DungeonCharacter theOther);
+    public abstract String getSpecialSelectMsg(final DungeonCharacter theOther);
 
-    public abstract String[] getBasicMissMsg();
-    public abstract String[] getSpecialMissMsg();
-    public abstract String[] getBasicHitMsg();
-    public abstract String[] getSpecialHitMsg();
+//    public boolean doesDamageOnSpecial() { // default is true
+//        return true;
+//    }
 
     public abstract String[] getDescription();
-
-//    public String[] getRandomBasicMissMsg() {
-//        // shuffle array in some way. need to turn everything to arrayLists?
-//        return myBasicMissMsg;
-//    }
-//    public String[] getRandomSpecialMissMsg() {
-//        return mySpecialMissMsg;
-//    }
-//
-//    public String[] getRandomBasicHitMsg() {
-//        return myBasicHitMsg;
-//    }
-//
-//    public String[] getRandomSpecialHitMsg() {
-//        return mySpecialHitMsg;
-//    }
-
-    public abstract int initialCooldown();
 
 
     private void setSpecialChance(final double theChance) {
@@ -343,65 +328,54 @@ public abstract class DungeonCharacter implements java.io.Serializable, Poisonab
         myBasicChance = theChance;
     }
 
-    @Override
-    public void poison(DungeonCharacter theOther, int theDamage, int theDuration) {
-        theOther.setHealth(theOther.getHealth() - theDamage);
+
+    /**
+     * Sets the debuff on the current character.
+     *
+     * @param theDebuff The debuff to apply.
+     * @param theDuration The remaining duration of the debuff.
+     */
+    public void inflictDebuff(final Debuff theDebuff, final int theDuration) {
+        myActiveDebuffs.put(theDebuff, theDuration);
     }
 
-    @Override
-    public boolean isPoisoned() {
-        return false;
+    /**
+     * Decrements any active debuffs on the character.
+     */
+    public void decreaseDebuffDuration() {
+        Iterator<Debuff> iterator = myActiveDebuffs.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            Debuff debuff = iterator.next();
+            int remainingDuration = myActiveDebuffs.get(debuff);
+            if (remainingDuration > 0) {
+                myActiveDebuffs.put(debuff, remainingDuration - 1);
+            } else {
+                iterator.remove(); // instead of myActiveDebuffs.remove(debuff);. concurrent modification exception
+            }                      // Use iterator's remove() method to safely remove the element
+        }
     }
 
-    @Override
-    public void stuckify(DungeonCharacter theOther, int theDuration) {
-        theOther.setSpeed(theOther.getSpeed() - 1);
+    /**
+     * Checks if the character is affected by the debuff.
+     *
+     * @param theDebuff The debuff to check.
+     * @return True if the character is affected by the debuff, false otherwise.
+     */
+    public boolean hasDebuff(final Debuff theDebuff) {
+        return myActiveDebuffs.containsKey(theDebuff);
     }
 
-    @Override
-    public boolean isStuck() {
-        return false;
+    public Map<Debuff, Integer> getActiveDebuffs() {
+        return new HashMap<>(myActiveDebuffs);
     }
 
-    @Override
-    public void blind(final DungeonCharacter theOther, final int theDuration) {
-        theOther.setBasicChance(theOther.getBasicChance() - 0.3);
-        theOther.setSpecialChance(theOther.getSpecialChance() - 0.3); // make sure to revert those values somewhere else
-    }
-
-    @Override
-    public boolean isBlind() {
-        return false;
-    }
-
-    @Override
-    public void silence(final DungeonCharacter theOther, final int theDuration) {
-        // block special ability
-    }
-
-    @Override
-    public boolean isSilenced() {
-        return false;
-    }
-
-    @Override
-    public void vulnerate(final DungeonCharacter theOther, final int theDuration) {
-        // increase damage taken by 3x next turn
-    }
-
-    @Override
-    public boolean isVulnerable() {
-        return false;
-    }
-
-    @Override
-    public void weaken(final DungeonCharacter theOther, final int theDuration) {
-        // decrease damage this characters deals by 50%
-    }
-
-    @Override
-    public boolean isWeakened() {
-        return false;
+    public void hurt(final int theDamage) {
+        if (myHealth - theDamage < 0) {
+            myHealth = 0;
+        } else {
+            myHealth = myHealth - theDamage;
+        }
     }
 
 }
