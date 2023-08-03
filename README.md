@@ -14,6 +14,11 @@ Software Development Concepts and Practices:
 * Defensive Programming Techniques
 * Testing and debugging
 * Writing descriptive and helpful documentation
+* Learned and experienced the software development cycle by:
+   * Writing a Software Requirements and Specifications (SRS) document
+   * Designing UML diagrams to follow
+   * Implementing the designs in code
+   * Deploying game as an installable application
 
 Agile Developement:
 * Making small, incremental changes via user stories
@@ -22,8 +27,3 @@ Agile Developement:
 
 External Libraries:
 * Connecting and reading from SQLite for monster data and hero suffixes
-* Learned and experienced the software development cycle by:
-   * Writing a Software Requirements and Specifications (SRS) document
-   * Designing UML diagrams to follow
-   * Implementing the designs in code
-   * Deploying game as an installable application
