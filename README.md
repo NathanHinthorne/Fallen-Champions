@@ -8,7 +8,7 @@ Team:
 * Leadership and planning skills within a team
 * Practicing pair programming with teammates
 
-* Agile Developement:
+Agile Developement:
 * Making small, incremental changes via user stories
 * Using agile project management tools such as Pivotal Tracker
 * Using version control tools such as Git
