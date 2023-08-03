@@ -13,6 +13,7 @@ Select a hero and go exploring within a treacherous dungeon packed with monsters
 * Using version control tools such as Git
 * Testing and debugging
 * Writing descriptive and helpful documentation
+* Defensive Programming Techniques
 * Connecting and reading from SQLite for monster data and hero suffixes
 * Learned and experienced the software development cycle by:
    * Writing a Software Requirements and Specifications (SRS) document
