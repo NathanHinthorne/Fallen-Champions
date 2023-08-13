@@ -1,4 +1,4 @@
-package model.boss;
+package model.characters.boss;
 
 import java.util.Random;
 

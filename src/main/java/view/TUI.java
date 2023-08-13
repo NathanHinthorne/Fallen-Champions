@@ -1,6 +1,6 @@
 package view;
 import controller.DelayMachine;
-import model.boss.Missile;
+import model.characters.boss.Missile;
 import model.characters.Ability;
 import model.characters.Debuff;
 import model.characters.DungeonCharacter;
