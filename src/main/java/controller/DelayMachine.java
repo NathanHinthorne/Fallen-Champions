@@ -1,8 +1,6 @@
 package controller;
 
-import model.TalkingCharacters;
-
-import java.io.Console;
+import view.TalkingCharacters;
 
 /**
  * A class used to streamline time delays for battles and audio.

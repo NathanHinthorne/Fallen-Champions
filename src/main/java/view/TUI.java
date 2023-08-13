@@ -1,6 +1,16 @@
 package view;
 import controller.DelayMachine;
-import model.*;
+import model.boss.Missile;
+import model.characters.Ability;
+import model.characters.Debuff;
+import model.characters.DungeonCharacter;
+import model.characters.heroes.Inventory;
+import model.dungeon.Difficulty;
+import model.dungeon.Dungeon;
+import model.characters.heroes.Hero;
+import model.characters.monsters.Monster;
+import model.dungeon.Parchment;
+import model.potions.Potion;
 
 import java.io.Console;
 import java.net.URISyntaxException;

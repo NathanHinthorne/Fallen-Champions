@@ -1,9 +1,18 @@
 package controller;
 
+import model.characters.heroes.Inventory;
+import model.dungeon.*;
+import model.characters.heroes.Hero;
+import model.characters.heroes.HeroFactory;
+import model.characters.heroes.HeroTypes;
+import model.characters.monsters.Monster;
+import model.potions.HealthPotion;
+import model.potions.Potion;
+import model.potions.PotionDefensive;
+import model.potions.VisionPotion;
 import org.sqlite.SQLiteDataSource;
 import view.Audio;
 import view.TUI;
-import model.*;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -30,7 +39,7 @@ public class DungeonGame {
     /**
      * The code to type in to activate debug mode.
      */
-    private final static String DEBUG_MODE_CODE = "Ethan is awesome";
+    private final static String DEBUG_MODE_CODE = "Ethan is awesome"; // temp for version 1
 
     /**
      * The code to type in to activate cheat mode.

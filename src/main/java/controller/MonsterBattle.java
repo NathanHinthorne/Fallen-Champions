@@ -1,5 +1,13 @@
 package controller;
-import model.*;
+import model.characters.Ability;
+import model.characters.Debuff;
+import model.characters.DungeonCharacter;
+import model.characters.heroes.Hero;
+import model.characters.heroes.Inventory;
+import model.characters.monsters.Monster;
+import model.potions.Potion;
+import model.potions.PotionDefensive;
+import model.potions.PotionOffensive;
 import view.*;
 
 import java.util.Map;
