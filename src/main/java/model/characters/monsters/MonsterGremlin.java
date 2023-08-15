@@ -18,7 +18,7 @@ public class MonsterGremlin extends Monster {
     public static final int MIN_HEAL = 20;
     public static final int MAX_HEAL = 40;
     public static final double HEAL_CHANCE = 0.5;
-    public static final int XP_WORTH = 100;
+    public static final int XP_WORTH = 80;
 
     private static final String[] BASIC_MISS_MSGS = {
             "The slap veers off course, hitting another nearby gremlin instead! You hear a yelp of pain and smile to yourself",
@@ -67,14 +67,12 @@ public class MonsterGremlin extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.WEAKEN, 1);
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_HIT_MSGS.length)];
-
-            //temp
-            theOther.inflictDebuff(Debuff.STUCKIFY, 1);
 
         } else {
             myAttackWasSuccess = false;
@@ -95,10 +93,11 @@ public class MonsterGremlin extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.BLIND, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
         } else {

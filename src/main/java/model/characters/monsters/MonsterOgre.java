@@ -13,7 +13,7 @@ public class MonsterOgre extends Monster {
     public static final int MAX_DMG = 40;
     public static final int COOLDOWN = 2;
     public static final int MAX_COOLDOWN = 3;
-    public static final int INITIAL_COOLDOWN = 0;
+    public static final int INITIAL_COOLDOWN = 1;
     public static final int MIN_HEAL = 15;
     public static final int MAX_HEAL = 30;
     public static final double HEAL_CHANCE = 0.3;
@@ -67,7 +67,7 @@ public class MonsterOgre extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.hurt(dmg);
@@ -96,10 +96,11 @@ public class MonsterOgre extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.WEAKEN, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
         } else {

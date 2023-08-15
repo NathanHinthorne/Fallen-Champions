@@ -43,7 +43,7 @@ public abstract class Hero extends DungeonCharacter {
     /**
      * The name of the hero
      */
-    private String myName;
+    protected String myName;
 
     /**
      * The experience points
@@ -197,10 +197,7 @@ public abstract class Hero extends DungeonCharacter {
     public boolean mazeAbilityActivated() {return false;}
 
     // default implementation
-    public String mazeAbilityDescription() {return "";}
-
-    // default implementation
-    public void activateMazeAbility(Dungeon theDungeon) {}
+    public void activateMazeAbility(final Dungeon theDungeon) {}
 
 
 

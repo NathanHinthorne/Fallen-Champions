@@ -13,8 +13,9 @@ public enum HeroTypes {
     // "blinded" - monster has higher chance to miss
     // "stuck", "stun" - monster's turn is skipped
     // "weakened" - monster does 50% damage on next hit
-    // "vulnerable" - next hit on monster will inflict 3x the damage to it
+    // "vulnerable" - next hit on monster will inflict 2x the damage to it
     // "silenced" - monster can't use special attack
+    // "poisoned" - monster takes 10 damage every turn
 
     SWORDSMAN, // mid hp.
     // basic: sword strike

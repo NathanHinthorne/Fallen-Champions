@@ -17,7 +17,7 @@ public class MonsterSkeleton extends Monster {
     public static final int MIN_HEAL = 20;
     public static final int MAX_HEAL = 40;
     public static final double HEAL_CHANCE = 0.5;
-    public static final int XP_WORTH = 120;
+    public static final int XP_WORTH = 90;
 
     private static final String[] BASIC_MISS_MSGS = {
             "The bone flies past, leaving you unscathed.",
@@ -70,7 +70,7 @@ public class MonsterSkeleton extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.hurt(dmg);
@@ -99,10 +99,11 @@ public class MonsterSkeleton extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.VULNERATE, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
         } else {

@@ -67,14 +67,12 @@ public class MonsterSpider extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.POISON, 1);
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_HIT_MSGS.length)];
-
-            //temp
-            theOther.inflictDebuff(Debuff.STUCKIFY, 1);
 
         } else {
             myAttackWasSuccess = false;
@@ -96,10 +94,11 @@ public class MonsterSpider extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.hurt(dmg);
+            theOther.inflictDebuff(Debuff.STUCKIFY, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
         } else {

@@ -43,6 +43,9 @@ public final class Audio {
     public final File rickRollSong;
     public final File conkerSong;
     public final File hackerSong;
+    public final File genosThemeSong;
+    public final File gasterBossSong;
+    public final File gasterAmbientSong;
 
 
     // ENVIRONMENT (step1, step2, step3, step4 are from Valve's Team Fortress 2)
@@ -103,6 +106,9 @@ public final class Audio {
         rickRollSong = new File(getClass().getResource("/sound/music/music_rickroll.wav").toURI());
         conkerSong = new File(getClass().getResource("/sound/music/music_conker.wav").toURI());
         hackerSong = new File(getClass().getResource("/sound/music/music_hacker.wav").toURI());
+        genosThemeSong = new File(getClass().getResource("/sound/music/music_genos_theme.wav").toURI());
+        gasterBossSong = new File(getClass().getResource("/sound/music/music_gaster_boss.wav").toURI());
+        gasterAmbientSong = new File(getClass().getResource("/sound/music/music_gaster_ambient.wav").toURI());
 
         // initialize sfx files
         step1 = new File(getClass().getResource("/sound/sfx/hero_step1.wav").toURI());

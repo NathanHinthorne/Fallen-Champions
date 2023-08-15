@@ -1,10 +1,7 @@
 package model.characters;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Main Dungeon Character Class.
@@ -50,6 +47,11 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     protected int mySpeed;
 
     /**
+     * The defense (0% - 100%)
+     */
+    protected float myDefense;
+
+    /**
      * The min damage
      */
     protected int myMinDmg;
@@ -62,12 +64,12 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     /**
      * The chance for the basic ability to succeed
      */
-    protected double myBasicChance;
+    protected double myBasicAccuracy;
 
     /**
      * The chance for the special ability to succeed
      */
-    protected double mySpecialChance;
+    protected double mySpecialAccuracy;
 
     /**
      * Whether the attack missed
@@ -87,7 +89,22 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     /**
      * The debuffs currently taking effect on the character
      */
-    private Map<Debuff, Integer> myActiveDebuffs;
+    protected Map<Debuff, Integer> myActiveDebuffs;
+
+    /**
+     * The debuffs applied 1 turn ago, to be consumed by inflictDebuff()
+     */
+    protected Queue<Debuff> myNewDebuffs;
+
+    /**
+     * The messages that appear after the character is attacked
+     */
+    protected Queue<String> myPassiveMsgs;
+
+    /**
+     * The messages that appear after the character attacks another
+     */
+    protected List<String> myOffensiveMsgs;
 
     /**
      * The attack result (a miss or hit)
@@ -111,15 +128,19 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
         myHealth = theHealth;
         mySpeed = theSpeed;
+        myDefense = 0;
         myMaxHealth = theHealth;
-        myBasicChance = theBasicChance;
-        mySpecialChance = theSpecialChance;
+        myBasicAccuracy = theBasicChance;
+        mySpecialAccuracy = theSpecialChance;
         myMinDmg = theMinDmg;
         myMaxDmg = theMaxDmg;
         myCooldown = theCooldown;
         myMaxCooldown = theMaxCooldown;
         myInitialCooldown = theInitialCooldown;
         myActiveDebuffs = new HashMap<>();
+        myNewDebuffs = new LinkedList<>();
+        myPassiveMsgs = new LinkedList<>();
+        myOffensiveMsgs = new ArrayList<>();
         myAttackResult = "";
     }
 
@@ -127,12 +148,12 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * Allows for the hero or monster to attack
      * @return the basic attack
      */
-    public abstract int basicAtk(DungeonCharacter theOther);
+    public abstract int basicAtk(final DungeonCharacter theOther);
 
     /**
      * Allows the character to summon their special attack
      */
-    public abstract int specialAtk(DungeonCharacter theOther);
+    public abstract int specialAtk(final DungeonCharacter theOther);
 
     public String getAttackResult() {
         return myAttackResult;
@@ -141,15 +162,27 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myAttackResult = theAttackResult;
     }
 
+    // default implementation
+    public void initializeCharacterPerBattle() {
+        myCooldown = myInitialCooldown;
+        myActiveDebuffs.clear();
+    }
+
+    // default implementation
+    public void uninitializeCharacterPerBattle() {
+
+    }
+
+    // default implementation
+    public void initializeCharacterPerTurn() {
+
+    }
+
     /**
      * Resets the special ability cooldown
      */
     public void resetCooldown() {
         myCooldown = myMaxCooldown;
-    }
-
-    public void startCooldownAtInitial() {
-        myCooldown = myInitialCooldown;
     }
 
     /**
@@ -206,21 +239,30 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     }
 
     /**
+     * Gets the defense
+     * @return the defense
+     */
+    public float getDefense() {
+
+        return myDefense;
+    }
+
+    /**
      * Gets the hit chance
      * @return the hit chance
      */
-    public double getBasicChance() {
+    public double getBasicAccuracy() {
 
-        return myBasicChance;
+        return myBasicAccuracy;
     }
 
     /**
      * Gets the special chance
      * @return the special chance
      */
-    public double getSpecialChance() {
+    public double getSpecialAccuracy() {
 
-        return mySpecialChance;
+        return mySpecialAccuracy;
     }
 
     /**
@@ -320,13 +362,19 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public abstract String[] getDescription();
 
 
-    private void setSpecialChance(final double theChance) {
-        mySpecialChance = theChance;
+    public void setBasicAccuracy(final double theChance) {
+        if (theChance < 0 || theChance > 1) {
+            throw new IllegalArgumentException("Accuracy must be between 0 and 1");
+        }
+        myBasicAccuracy = theChance;
+    }
+    public void setSpecialAccuracy(final double theChance) {
+        if (theChance < 0 || theChance > 1) {
+            throw new IllegalArgumentException("Accuracy must be between 0 and 1");
+        }
+        mySpecialAccuracy = theChance;
     }
 
-    private void setBasicChance(final double theChance) {
-        myBasicChance = theChance;
-    }
 
 
     /**
@@ -336,7 +384,14 @@ public abstract class DungeonCharacter implements java.io.Serializable {
      * @param theDuration The remaining duration of the debuff.
      */
     public void inflictDebuff(final Debuff theDebuff, final int theDuration) {
+        if (theDuration < 0) {
+            throw new IllegalArgumentException("Duration must be greater than 0");
+        }
+        if (myActiveDebuffs.containsKey(theDebuff)) {
+            myActiveDebuffs.remove(theDebuff);
+        }
         myActiveDebuffs.put(theDebuff, theDuration);
+        myNewDebuffs.add(theDebuff);
     }
 
     /**
@@ -369,8 +424,33 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public Map<Debuff, Integer> getActiveDebuffs() {
         return new HashMap<>(myActiveDebuffs);
     }
+    public Queue<Debuff> getNewDebuffs() {
+        return myNewDebuffs; // not a copy
+    }
 
+    public Queue<String> getPassiveMsgs() {
+        return myPassiveMsgs;
+    }
+
+    /**
+     * Deals damage to the character, factoring in defense.
+     * @param theDamage The damage to deal.
+     */
     public void hurt(final int theDamage) {
+        int damageDealt = (int) (theDamage * (1 - myDefense)); // factor in the defense
+
+        if (myHealth - damageDealt < 0) {
+            myHealth = 0;
+        } else {
+            myHealth = myHealth - damageDealt;
+        }
+    }
+
+    /**
+     * Deals true damage to the character without factoring in defense.
+     * @param theDamage The damage to deal.
+     */
+    public void damage(final int theDamage) { // don't factor in defense
         if (myHealth - theDamage < 0) {
             myHealth = 0;
         } else {

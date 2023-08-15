@@ -53,10 +53,10 @@ public class HeroArcher extends Hero {
     }
 
     @Override
-    public int basicAtk(DungeonCharacter theOther) {
+    public int basicAtk(final DungeonCharacter theOther) {
         int dmg = 0;
 
-        if (Math.random() <= myBasicChance) {
+        if (Math.random() <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
         } else {
@@ -70,12 +70,12 @@ public class HeroArcher extends Hero {
     }
 
     @Override
-    public int specialAtk(DungeonCharacter theOther) {
+    public int specialAtk(final DungeonCharacter theOther) {
         critHit = false;
 
         int damage;
 
-        if (Math.random() <= mySpecialChance) {
+        if (Math.random() <= mySpecialAccuracy) {
             myAttackWasSuccess = true;
             damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 20;
 
@@ -97,6 +97,11 @@ public class HeroArcher extends Hero {
         }
 
         return damage;
+    }
+
+    @Override
+    public void initializeCharacterPerTurn() {
+
     }
 
     @Override

@@ -15,6 +15,7 @@ import model.potions.Potion;
 import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -161,7 +162,7 @@ public class TUI {
             DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"【 Sir " + theFullName + "! 】");
         } else {
             DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah, " + theFirstName + ", a fine name indeed.");
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself");
+            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself.");
         }
         System.out.println();
         DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Now then, " + theFullName + ", are you ready to begin your adventure?");
@@ -173,16 +174,16 @@ public class TUI {
         System.out.println();
 
         if (theFunnyMode) {
-            DelayMachine.delay(2);
+            DelayMachine.delay(3);
             theAudio.playSFX(theAudio.rimshot, -10);
-            DelayMachine.delay(4);
+            DelayMachine.delay(8);
             DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"By the way, that was a rhetorical question, you don't actually get to answer.");
             DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"Anyway, choose one of these I guess");
 
         } else {
-            DelayMachine.delay(2);
+            DelayMachine.delay(3);
             theAudio.playSFX(theAudio.dunDunDun, -10);
-            DelayMachine.delay(4);
+            DelayMachine.delay(8);
             DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"So " + theFullName + ", what kind of adventurer are you anyway?");
         }
     }
@@ -225,12 +226,12 @@ public class TUI {
      * @param theHero you
      * @return battle menu input
      */
-    public char battleMenu(Hero theHero) { // is this parameter needed?
+    public char battleMenu(final Hero theHero) { // is this parameter needed?
         System.out.println(" Make your move!");
         System.out.println();
 
         String specialButton = " ['2' - Special] ";
-        if (theHero.onCooldown()) {
+        if (theHero.onCooldown() || theHero.hasDebuff(Debuff.SILENCE)) {
             specialButton = " ║'2' - Special║ ";
         }
 
@@ -245,14 +246,26 @@ public class TUI {
         return myScanner.next().charAt(0);
     }
 
-    public void displayHeroText() {
+    public void displayHeroAndMonsterInfo(final Hero theHero, final Monster theMonster) {
+        // hero info
         System.out.println();
         System.out.println(" ║ Hero:");
-    }
+        displayHealth(theHero);
+        if (!theHero.getActiveDebuffs().isEmpty()) {
+            displayDebuffs(theHero);
+        } else {
+            System.out.println();
+        }
 
-    public void displayMonsterText() {
+        // monster info
         System.out.println();
         System.out.println(" ║ Monster:");
+        displayHealth(theMonster);
+        if (!theMonster.getActiveDebuffs().isEmpty()) {
+            displayDebuffs(theMonster);
+        } else {
+            System.out.println();
+        }
     }
 
     /**
@@ -1304,8 +1317,8 @@ public class TUI {
     }
 
 
-    public void displayMazeAbility(final Hero theHero) {
-//        System.out.println(theHero.activateMazeAbility());
+    public void mazeAbiltyText(final Hero theHero) {
+        System.out.println(theHero.getPassiveMsgs().remove(0));
     }
 
     public char quitOrContinueMenu() {
@@ -1423,7 +1436,7 @@ public class TUI {
         // like above, but the logic is complex for winning or losing, so it should be contained as a class in the model
     }
 
-    public void bossAttack3() {
+    public void bossAttack3() { // for this attack, like the missile, print the screen every time to appear as if it's moving
         // horizontal flappy bird where you need to press the right key to dodge
         System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
         System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
@@ -1496,5 +1509,39 @@ public class TUI {
     -------------------------------------------------------------------------------
 
          */
+    }
+
+    public void displayPassiveStatus(final Queue<String> theMsgs) {
+        while (!theMsgs.isEmpty()) {
+            System.out.println(theMsgs.remove());
+        }
+    }
+
+    public void displayStuckifyMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is stuck and cannot move this turn!");
+    }
+
+    public void displayBlindedMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is blinded and has a high chance of missing this turn!");
+    }
+
+    public void displayPoisonedMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is poisoned and will take 10 damage at the end of its turn!");
+    }
+
+    public void displaySilencedMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is silenced and cannot use their special this turn!");
+    }
+
+    public void displayVulnerableMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is vulnerable and will take 2x the damage this turn!");
+    }
+
+    public void displayWeakenedMsg(final DungeonCharacter theCharacter) {
+        System.out.println(" " + theCharacter.getName() + " is weakened and will deal half the damage this turn!");
+    }
+
+    public void displaySilenced() {
+        System.out.println(" You are silenced and cannot use your special this turn!");
     }
 }

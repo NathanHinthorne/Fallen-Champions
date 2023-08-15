@@ -15,8 +15,8 @@ public class HeroSwordsman extends Hero {
     public static final int SPEED = 3;
     public static final double BASIC_CHANCE = 0.8;
     public static final double SPECIAL_CHANCE = 0.9;
-    public static final int MIN_DMG = 20;
-    public static final int MAX_DMG = 40;
+    public static final int MIN_DMG = 15;
+    public static final int MAX_DMG = 25;
     public static final int COOLDOWN = 0;
     public static final int MAX_COOLDOWN = 2;
     public static final int INITIAL_COOLDOWN = 0;
@@ -47,6 +47,8 @@ public class HeroSwordsman extends Hero {
             "The sword slashes the monster"
     };
 
+    private boolean offensiveStance;
+
 
     public HeroSwordsman() {
         super(HeroTypes.SWORDSMAN, HEALTH, SPEED, BASIC_CHANCE, SPECIAL_CHANCE, MIN_DMG, MAX_DMG,
@@ -57,16 +59,12 @@ public class HeroSwordsman extends Hero {
     }
 
     @Override
-    public int basicAtk(DungeonCharacter theOther) {
+    public int basicAtk(final DungeonCharacter theOther) {
         critHit = false;
-
-        //temp
-        theOther.inflictDebuff(Debuff.STUCKIFY, 1);
-        theOther.inflictDebuff(Debuff.WEAKEN, 1);
 
         int damage;
 
-        if (Math.random() <= myBasicChance) {
+        if (Math.random() <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
@@ -82,19 +80,20 @@ public class HeroSwordsman extends Hero {
     }
 
     @Override
-    public int specialAtk(DungeonCharacter theOther) {
+    public int specialAtk(final DungeonCharacter theOther) {
         critHit = false;
 
         int damage;
 
-        if (Math.random() <= mySpecialChance) {
+        if (Math.random() <= mySpecialAccuracy) {
             myAttackWasSuccess = true;
-            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 10;
+            damage = (int) ((myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1)) * 1.8f);
+            theOther.inflictDebuff(Debuff.SILENCE, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
 
             if (Math.random() <= CRIT_CHANCE) {
                 critHit = true;
-                damage = damage * 2;
+                damage = (int) (damage * 1.5f);
             }
 
         } else {
@@ -107,6 +106,68 @@ public class HeroSwordsman extends Hero {
 
         return damage;
     }
+
+    @Override
+    public void initializeCharacterPerBattle() {
+        // default setup
+        myCooldown = myInitialCooldown;
+        myActiveDebuffs.clear();
+
+        // custom setup
+        offensiveStance = true;
+        startOffensiveStance();
+    }
+
+    @Override
+    public void uninitializeCharacterPerBattle() {
+        // default setup
+
+
+        // custom setup
+        if (offensiveStance) {
+            undoOffensiveStance();
+        } else {
+            undoDefensiveStance();
+        }
+    }
+
+    @Override
+    public void initializeCharacterPerTurn() {
+        float healthPercent = (float) myHealth / (float) myMaxHealth;
+
+        if (healthPercent > 0.5 && !offensiveStance) {
+            undoDefensiveStance();
+            startOffensiveStance();
+
+        } else if (healthPercent <= 0.5 && offensiveStance) {
+            undoOffensiveStance();
+            startDefensiveStance();
+        }
+    }
+
+
+    private void startOffensiveStance() {
+        myPassiveMsgs.add(" " + myName + " activates their passive ability, switching to an OFFENSIVE stance.");
+        myMinDmg += 10;
+        myMaxDmg += 10;
+    }
+
+    private void undoOffensiveStance() {
+        offensiveStance = false;
+        myMinDmg -= 10;
+        myMaxDmg -= 10;
+    }
+
+    private void startDefensiveStance() {
+        myPassiveMsgs.add(" " + myName + " activates their passive ability, switching to a DEFENSIVE stance.");
+        myDefense = 0.5f;
+    }
+
+    private void undoDefensiveStance() {
+        offensiveStance = true;
+        myDefense = 0;
+    }
+
 
     @Override
     public String[] getBasicName() {

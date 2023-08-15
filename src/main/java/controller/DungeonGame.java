@@ -55,7 +55,7 @@ public class DungeonGame {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = true;
+    private static boolean debugMode = false;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -897,7 +897,7 @@ public class DungeonGame {
             game.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
         }
         if (hero.hasMazeAbility() && hero.mazeAbilityActivated()) { // for archer's ranged attack, etc.
-            game.displayMazeAbility(hero);
+            game.mazeAbiltyText(hero);
         }
     }
 

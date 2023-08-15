@@ -52,6 +52,20 @@ public enum Parchment {
         }
     },
 
+    INFINITE_XP {
+        @Override
+        public String toString() {
+            return "Infinite XP";
+        }
+    },
+
+    LASER {
+        @Override
+        public String toString() {
+            return "Insta-kill Laser";
+        }
+    }
+
     /*
     storyline:
         Dungeon keeper wants to keep you in the game.
@@ -70,7 +84,6 @@ public enum Parchment {
         After hard mode (or after some other part) the dungeon keeper will
         battle you. He will reluctantly alter the game code himself to make himself
         more powerful with cheats in order to beat you.
-
 
 
 

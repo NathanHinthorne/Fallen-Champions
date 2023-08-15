@@ -67,7 +67,7 @@ public class MonsterWarlock extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.hurt(dmg);
@@ -96,7 +96,7 @@ public class MonsterWarlock extends Monster {
 
         double hitChance = Math.random();
 
-        if (hitChance <= myBasicChance) {
+        if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
             dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.hurt(dmg);
