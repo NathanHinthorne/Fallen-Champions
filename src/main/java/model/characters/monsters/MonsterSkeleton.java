@@ -7,7 +7,7 @@ public class MonsterSkeleton extends Monster {
 
     public static final int HEALTH = 140;
     public static final int SPEED = 3;
-    public static final double BASIC_CHANCE = 0.6;
+    public static final double BASIC_CHANCE = 0.65;
     public static final double SPECIAL_CHANCE = 0.8;
     public static final int MIN_DMG = 35;
     public static final int MAX_DMG = 45;
@@ -65,26 +65,24 @@ public class MonsterSkeleton extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                            [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_HIT_MSGS.length)];
-
-            //temp
-            theOther.inflictDebuff(Debuff.STUCKIFY, 1);
 
         } else {
             myAttackWasSuccess = false;
             myAttackResult = BASIC_MISS_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(damageDealt);
+
+        return damageDealt;
     }
 
     @Override
@@ -94,15 +92,13 @@ public class MonsterSkeleton extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                              [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             theOther.inflictDebuff(Debuff.VULNERATE, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
@@ -111,7 +107,10 @@ public class MonsterSkeleton extends Monster {
             myAttackResult = SPECIAL_MISS_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
+
+        return damageDealt;
     }
 
     @Override

@@ -55,7 +55,7 @@ public class DungeonGame {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = false;
+    private static boolean debugMode = true;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -586,10 +586,10 @@ public class DungeonGame {
 
                 DelayMachine.delay(1); // delay for 0.5 seconds
 
-                MonsterBattle battle = new MonsterBattle(hero, monster, game, cheatMode, audio, funnyMode);
-                boolean winnerWinnerChickenDinner = battle.newBattle();
+                MonsterBattle battle = new MonsterBattle(hero, monster, game, cheatMode, audio, funnyMode, debugMode);
+                BattleResult winnerWinnerChickenDinner = battle.newBattle();
 
-                if (winnerWinnerChickenDinner) {
+                if (winnerWinnerChickenDinner == BattleResult.WIN) {
                     // play victory sound
                     audio.playSFX(audio.heroWinBattle, -10);
 
@@ -604,6 +604,12 @@ public class DungeonGame {
                     dungeon.removeMonster();
                     monstersDefeated++;
 
+                } else if (winnerWinnerChickenDinner == BattleResult.RUN) {
+                    game.displayBattleEnd();
+
+                    // kick hero to a nearby room
+                    dungeon.moveHeroToRandomRoom();
+                    
                 } else {
                     // play defeat sound
                     audio.playSFX(audio.heroDefeat, -10);
@@ -804,9 +810,7 @@ public class DungeonGame {
             oos.writeObject(hero);
             oos.flush();
             oos.close();
-            System.out.println();
-            System.out.print("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
-            System.out.println();
+            game.displayGameSaved();
         } catch (Exception e) {
             System.out.println("Couldn't save game!");
             System.out.println(e.getClass() + ": " + e.getMessage());
@@ -825,9 +829,7 @@ public class DungeonGame {
             dungeon = (Dungeon) ois.readObject();
             hero = (Hero) ois.readObject();
             ois.close();
-            System.out.println();
-            System.out.print("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
-            System.out.println();
+            game.displayGameLoaded();
         } catch (Exception e) {
             System.out.println("Couldn't find any saved games! Try starting a new game instead.");
             newGameSetup();
@@ -891,6 +893,7 @@ public class DungeonGame {
     private static void displayDungeonScreen() {
         game.displayDungeonMap(dungeon);
         game.displayHealthInDungeon(hero);
+//        game.displayHeroHealthCool(hero); for healthbars
         game.displayHeroDirection(hero);
 
         if (hero.usingVisionPotion()) {
@@ -1114,7 +1117,7 @@ public class DungeonGame {
         audio.stopAll();
 
         // play credits if on hard mode
-        if (difficulty == Difficulty.HARD || debugMode) {
+        if (difficulty == Difficulty.HARD) {
             game.displayCredits(audio);
         }
 

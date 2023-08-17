@@ -62,15 +62,13 @@ public class MonsterSpider extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                            [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             theOther.inflictDebuff(Debuff.POISON, 1);
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_HIT_MSGS.length)];
 
@@ -79,7 +77,10 @@ public class MonsterSpider extends Monster {
             myAttackResult = BASIC_MISS_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
+
+        return damageDealt;
     }
 
     @Override
@@ -89,15 +90,13 @@ public class MonsterSpider extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                              [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + 3; // Random number between min and max damage
             theOther.inflictDebuff(Debuff.STUCKIFY, 1);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
@@ -106,7 +105,10 @@ public class MonsterSpider extends Monster {
             myAttackResult = SPECIAL_MISS_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
+
+        return damageDealt;
     }
 
     @Override

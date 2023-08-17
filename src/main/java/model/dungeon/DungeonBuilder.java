@@ -15,7 +15,7 @@ import java.util.*;
  * @author Nathan Hinthorne
  * @version 1.0
  */
-public abstract class DungeonBuilder implements java.io.Serializable {
+public abstract class DungeonBuilder implements java.io.Serializable { // TODO idea for generation: the same path cannot turn the same direction twice in a row
 
     /**
      * The chance that a room will choose the left branch off direction when generating the maze.

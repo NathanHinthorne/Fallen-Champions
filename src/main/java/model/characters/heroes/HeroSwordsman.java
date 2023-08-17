@@ -62,49 +62,54 @@ public class HeroSwordsman extends Hero {
     public int basicAtk(final DungeonCharacter theOther) {
         critHit = false;
 
-        int damage;
+        int rawDamage;
 
         if (Math.random() <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
+            rawDamage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         } else {
             myAttackWasSuccess = false;
-            damage = 0;
+            rawDamage = 0;
             myAttackResult = BASIC_MISS_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         }
 
-        theOther.hurt(damage);
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(damageDealt);
 
-        return damage;
+        return rawDamage;
     }
 
     @Override
     public int specialAtk(final DungeonCharacter theOther) {
         critHit = false;
 
-        int damage;
+        int rawDamage;
 
         if (Math.random() <= mySpecialAccuracy) {
             myAttackWasSuccess = true;
-            damage = (int) ((myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1)) * 1.8f);
-            theOther.inflictDebuff(Debuff.SILENCE, 1);
+            rawDamage = (int) ((myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1)) * 1.8f);
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
 
+            if (Math.random() <= 0.6) {
+                theOther.inflictDebuff(Debuff.SILENCE, 1);
+            }
             if (Math.random() <= CRIT_CHANCE) {
                 critHit = true;
-                damage = (int) (damage * 1.5f);
+                rawDamage = (int) (rawDamage * 1.5f);
             }
+
 
         } else {
             myAttackWasSuccess = false;
-            damage = 0;
+            rawDamage = 0;
             myAttackResult = SPECIAL_MISS_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
         }
 
-        theOther.hurt(damage);
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(damageDealt);
 
-        return damage;
+        return damageDealt;
     }
 
     @Override
@@ -114,8 +119,15 @@ public class HeroSwordsman extends Hero {
         myActiveDebuffs.clear();
 
         // custom setup
-        offensiveStance = true;
-        startOffensiveStance();
+        float healthPercent = (float) myHealth / (float) myMaxHealth;
+        if (healthPercent > 0.5) {
+            startOffensiveStance();
+            offensiveStance = true;
+
+        } else if (healthPercent <= 0.5) {
+            startDefensiveStance();
+            offensiveStance = false;
+        }
     }
 
     @Override
@@ -144,7 +156,6 @@ public class HeroSwordsman extends Hero {
             startDefensiveStance();
         }
     }
-
 
     private void startOffensiveStance() {
         myPassiveMsgs.add(" " + myName + " activates their passive ability, switching to an OFFENSIVE stance.");

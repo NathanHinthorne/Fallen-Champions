@@ -26,6 +26,11 @@ public abstract class Hero extends DungeonCharacter {
     private final HeroTypes myType;
 
     /**
+     * The chance to run away from battle successfully
+     */
+    protected float myRunSuccessChance;
+
+    /**
      * Whether the given attack was a critical hit
      */
     protected boolean critHit;
@@ -75,6 +80,11 @@ public abstract class Hero extends DungeonCharacter {
      */
     protected Direction myDirection;
 
+    /**
+     * The constant max health to reset to
+     */
+    protected final int myConstantMaxHealth;
+
 
 
     /**
@@ -97,11 +107,13 @@ public abstract class Hero extends DungeonCharacter {
                 theCooldown, theMaxCooldown, theIntialCooldown);
 
         myType = theType;
+        myConstantMaxHealth = theHealth;
         myInventory = new Inventory(); // change parameter for scientist who has larger inventory?
         myUsingVisionPotion = false;
         myXP = 0;
         myLevel = 0;
         critHit = false;
+        myRunSuccessChance = 0.4f;
     }
 
     /**
@@ -171,8 +183,15 @@ public abstract class Hero extends DungeonCharacter {
 //        myLevel = 0;
 //    }
 
+    public float getRunSuccessChance() {
+        return myRunSuccessChance;
+    }
+
     public void resetStats() {
-        myHealth = myMaxHealth;
+        myInventory.resetPillars();
+//        myInventory.resetPotions();
+        myHealth = myConstantMaxHealth;
+        myMaxHealth = myConstantMaxHealth;
         myLevel = 0;
         myXP = 0;
     }

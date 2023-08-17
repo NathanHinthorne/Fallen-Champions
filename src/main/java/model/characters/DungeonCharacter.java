@@ -72,6 +72,16 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     protected double mySpecialAccuracy;
 
     /**
+     * The constant basic accuracy
+     */
+    private final double myConstantBasicAccuracy;
+
+    /**
+     * The constant special accuracy
+     */
+    private final double myConstantSpecialAccuracy;
+
+    /**
      * Whether the attack missed
      */
     protected boolean myAttackWasSuccess;
@@ -94,7 +104,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     /**
      * The debuffs applied 1 turn ago, to be consumed by inflictDebuff()
      */
-    protected Queue<Debuff> myNewDebuffs;
+    protected Map<Debuff, Integer> myNewDebuffs;
 
     /**
      * The messages that appear after the character is attacked
@@ -132,13 +142,15 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         myMaxHealth = theHealth;
         myBasicAccuracy = theBasicChance;
         mySpecialAccuracy = theSpecialChance;
+        myConstantBasicAccuracy = theBasicChance;
+        myConstantSpecialAccuracy = theSpecialChance;
         myMinDmg = theMinDmg;
         myMaxDmg = theMaxDmg;
         myCooldown = theCooldown;
         myMaxCooldown = theMaxCooldown;
         myInitialCooldown = theInitialCooldown;
         myActiveDebuffs = new HashMap<>();
-        myNewDebuffs = new LinkedList<>();
+        myNewDebuffs = new HashMap<>();
         myPassiveMsgs = new LinkedList<>();
         myOffensiveMsgs = new ArrayList<>();
         myAttackResult = "";
@@ -248,8 +260,8 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     }
 
     /**
-     * Gets the hit chance
-     * @return the hit chance
+     * Gets the basic hit chance
+     * @return the basic hit chance
      */
     public double getBasicAccuracy() {
 
@@ -264,6 +276,15 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
         return mySpecialAccuracy;
     }
+
+    public void resetBasicAccuracy() {
+        myBasicAccuracy = myConstantBasicAccuracy;
+    }
+
+    public void resetSpecialAccuracy() {
+        mySpecialAccuracy = myConstantSpecialAccuracy;
+    }
+
 
     /**
      * Sets the hit points
@@ -391,23 +412,38 @@ public abstract class DungeonCharacter implements java.io.Serializable {
             myActiveDebuffs.remove(theDebuff);
         }
         myActiveDebuffs.put(theDebuff, theDuration);
-        myNewDebuffs.add(theDebuff);
+        myNewDebuffs.put(theDebuff, theDuration);
+    }
+
+    public void tickIndividualDebuff(final Debuff theDebuff) {
+        if (myActiveDebuffs.containsKey(theDebuff)) {
+            int remainingDuration = myActiveDebuffs.get(theDebuff);
+            if (remainingDuration > 1) {
+                myActiveDebuffs.put(theDebuff, remainingDuration - 1);
+            } else {
+                myActiveDebuffs.remove(theDebuff);
+            }
+        } else {
+            System.out.println("DEBUG: Character does not have the debuff to tick.");
+        }
     }
 
     /**
      * Decrements any active debuffs on the character.
      */
-    public void decreaseDebuffDuration() {
+    public void tickDebuffs() {
         Iterator<Debuff> iterator = myActiveDebuffs.keySet().iterator();
 
         while (iterator.hasNext()) {
             Debuff debuff = iterator.next();
             int remainingDuration = myActiveDebuffs.get(debuff);
-            if (remainingDuration > 0) {
-                myActiveDebuffs.put(debuff, remainingDuration - 1);
-            } else {
-                iterator.remove(); // instead of myActiveDebuffs.remove(debuff);. concurrent modification exception
-            }                      // Use iterator's remove() method to safely remove the element
+            if (debuff != Debuff.VULNERATE) { // tick all debuffs EXCEPT VULNERATE
+                if (remainingDuration > 1) {
+                    myActiveDebuffs.put(debuff, remainingDuration - 1);
+                } else {
+                    iterator.remove(); // instead of myActiveDebuffs.remove(debuff);. concurrent modification exception
+                }                      // Use iterator's remove() method to safely remove the element
+            }
         }
     }
 
@@ -424,7 +460,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public Map<Debuff, Integer> getActiveDebuffs() {
         return new HashMap<>(myActiveDebuffs);
     }
-    public Queue<Debuff> getNewDebuffs() {
+    public Map<Debuff, Integer> getNewDebuffs() {
         return myNewDebuffs; // not a copy
     }
 
@@ -432,18 +468,26 @@ public abstract class DungeonCharacter implements java.io.Serializable {
         return myPassiveMsgs;
     }
 
-    /**
-     * Deals damage to the character, factoring in defense.
-     * @param theDamage The damage to deal.
-     */
-    public void hurt(final int theDamage) {
-        int damageDealt = (int) (theDamage * (1 - myDefense)); // factor in the defense
+//    /**
+//     * Deals damage to the character, factoring in defense.
+//     * @param theDamage The damage to deal.
+//     */
+//    public void hurt(final int theDamage) {
+//        int damageDealt = (int) (theDamage * (1 - myDefense)); // factor in the defense
+//
+//        if (myHealth - damageDealt < 0) {
+//            myHealth = 0;
+//        } else {
+//            myHealth = myHealth - damageDealt;
+//        }
+//    }
 
-        if (myHealth - damageDealt < 0) {
-            myHealth = 0;
-        } else {
-            myHealth = myHealth - damageDealt;
+    public int calculateDamageDealt(final int theDamage, final DungeonCharacter theOther) {
+        int trueDamage = (int) (theDamage * (1 - theOther.getDefense()));
+        if (theOther.hasDebuff(Debuff.VULNERATE)) {
+            trueDamage *= 2;
         }
+        return trueDamage;
     }
 
     /**

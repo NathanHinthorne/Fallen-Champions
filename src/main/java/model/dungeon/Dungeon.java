@@ -15,6 +15,11 @@ import java.util.Random;
 public class Dungeon implements java.io.Serializable {
 
     /**
+     * The random number generator
+     */
+    private final Random RANDOM = new Random();
+
+    /**
      * the dungeon's rooms
      */
     private Room[][] myMaze;
@@ -529,5 +534,19 @@ public class Dungeon implements java.io.Serializable {
      */
     public void roomRight() {
         myMaze[myHeroY][myHeroX+1].getContents();
+    }
+
+
+    public void moveHeroToRandomRoom() {
+        boolean hasMoved;
+        int randomDirIndex;
+        Direction randomDir;
+
+        do {
+            randomDirIndex = RANDOM.nextInt(4);
+            randomDir = Direction.values()[randomDirIndex];
+            hasMoved = playerMove(randomDir);
+            
+        } while (!hasMoved);
     }
 }

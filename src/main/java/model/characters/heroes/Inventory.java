@@ -25,7 +25,7 @@ public class Inventory implements java.io.Serializable {
      * in the dungeon, used to see if the player is
      * able to exit the dungeon.
      */
-    private final ArrayList<Character> myPillars;
+    private final ArrayList<Pillars> myPillars;
 
     private int myPillarCount;
     private int myItemCount;
@@ -39,7 +39,7 @@ public class Inventory implements java.io.Serializable {
      */
     public Inventory() {
         myItems = new ArrayList<Potion>(4);
-        myPillars = new ArrayList<Character>(4);
+        myPillars = new ArrayList<Pillars>(4);
         myPillarCount = 0;
     }
 
@@ -70,15 +70,16 @@ public class Inventory implements java.io.Serializable {
     public void addPillar(Pillars thePillar) {
 
         myPillarCount++;
-        if (thePillar == Pillars.ABSTRACTION) {
-            myPillars.add('I');
-        } else if (thePillar == Pillars.INHERITANCE) {
-            myPillars.add('I');
-        } else if (thePillar == Pillars.ENCAPSULATION) {
-            myPillars.add('I');
-        } else if (thePillar == Pillars.POLYMORPHISM) {
-            myPillars.add('I');
-        }
+        myPillars.add(thePillar);
+//        if (thePillar == Pillars.ABSTRACTION) {
+//            myPillars.add('I');
+//        } else if (thePillar == Pillars.INHERITANCE) {
+//            myPillars.add('I');
+//        } else if (thePillar == Pillars.ENCAPSULATION) {
+//            myPillars.add('I');
+//        } else if (thePillar == Pillars.POLYMORPHISM) {
+//            myPillars.add('I');
+//        }
 
     }
 
@@ -129,12 +130,13 @@ public class Inventory implements java.io.Serializable {
         return MAX_ITEM_CAPACITY;
     }
 
-    public int getMyPillarCount() {
-        return myPillarCount;
+    public ArrayList<Pillars> getPillars() {
+        return myPillars;
     }
 
-    public int getMyItemCount() {
-        return myItemCount;
+    public void resetPillars() {
+        myPillars.clear();
+        myPillarCount = 0;
     }
 
     public ArrayList<Potion> getItems() { return myItems; }

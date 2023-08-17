@@ -54,49 +54,45 @@ public class HeroArcher extends Hero {
 
     @Override
     public int basicAtk(final DungeonCharacter theOther) {
-        int dmg = 0;
+        int rawDamage = 0;
 
         if (Math.random() <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
+            rawDamage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1);
         } else {
             myAttackWasSuccess = false;
         }
 
-        // set the monster's health
-        theOther.hurt(dmg);
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(damageDealt);
 
-        return dmg;
+        return rawDamage;
     }
 
     @Override
     public int specialAtk(final DungeonCharacter theOther) {
         critHit = false;
 
-        int damage;
+        int rawDamage;
 
         if (Math.random() <= mySpecialAccuracy) {
             myAttackWasSuccess = true;
-            damage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 20;
+            rawDamage = myMinDmg + RANDOM.nextInt(myMaxDmg - myMinDmg + 1) + 20;
 
             if (Math.random() <= CRIT_CHANCE) {
                 critHit = true;
-                damage = damage * 2;
+                rawDamage = rawDamage * 2;
             }
 
         } else {
             myAttackWasSuccess = false;
-            damage = 0;
+            rawDamage = 0;
         }
 
-        // set the monster's health
-        if (theOther.getHealth() - damage < 0) {
-            theOther.setHealth(0);
-        } else {
-            theOther.setHealth(theOther.getHealth() - damage);
-        }
+        calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
 
-        return damage;
+        return rawDamage;
     }
 
     @Override

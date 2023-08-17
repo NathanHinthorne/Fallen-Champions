@@ -8,7 +8,7 @@ public class MonsterWarlock extends Monster {
     public static final int HEALTH = 150;
     public static final int SPEED = 1;
     public static final double BASIC_CHANCE = 0.8;
-    public static final double SPECIAL_CHANCE = 0.6;
+    public static final double SPECIAL_CHANCE = 0.8;
     public static final int MIN_DMG = 20;
     public static final int MAX_DMG = 40;
     public static final int COOLDOWN = 2;
@@ -62,26 +62,24 @@ public class MonsterWarlock extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                            [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg; // Random number between min and max damage
             myAttackResult = BASIC_HIT_MSGS[RANDOM.nextInt(BASIC_HIT_MSGS.length)];
-
-            //temp
-            theOther.inflictDebuff(Debuff.STUCKIFY, 1);
 
         } else {
             myAttackWasSuccess = false;
             myAttackResult = BASIC_MISS_MSGS[RANDOM.nextInt(BASIC_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
+
+        return damageDealt;
     }
 
     @Override
@@ -91,15 +89,13 @@ public class MonsterWarlock extends Monster {
             throw new IllegalStateException("Cannot attack when dead.");
         }
 
-        int dmg = 0;
-        System.out.println("                                                              [DEBUG: Temporary attack! Override this in the subclass!]");
+        int rawDamage = 0;
 
         double hitChance = Math.random();
 
         if (hitChance <= myBasicAccuracy) {
             myAttackWasSuccess = true;
-            dmg = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
-            theOther.hurt(dmg);
+            rawDamage = RANDOM.nextInt(myMaxDmg - myMinDmg) + myMinDmg * 2; // Random number between min and max damage
             myAttackResult = SPECIAL_HIT_MSGS[RANDOM.nextInt(SPECIAL_HIT_MSGS.length)];
 
         } else {
@@ -107,7 +103,10 @@ public class MonsterWarlock extends Monster {
             myAttackResult = SPECIAL_MISS_MSGS[RANDOM.nextInt(SPECIAL_MISS_MSGS.length)];
         }
 
-        return dmg;
+        int damageDealt = calculateDamageDealt(rawDamage, theOther);
+        theOther.damage(rawDamage);
+
+        return damageDealt;
     }
 
     @Override

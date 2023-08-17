@@ -226,9 +226,7 @@ public class TUI {
      * @param theHero you
      * @return battle menu input
      */
-    public char battleMenu(final Hero theHero) { // is this parameter needed?
-        System.out.println(" Make your move!");
-        System.out.println();
+    public char battleMenu(final Hero theHero) {
 
         String specialButton = " ['2' - Special] ";
         if (theHero.onCooldown() || theHero.hasDebuff(Debuff.SILENCE)) {
@@ -461,6 +459,28 @@ public class TUI {
     }
 
     /**
+     * Displays a debugging version of hero stats
+     * @param theHero you
+     */
+    public void debugHeroStats(final Hero theHero) {
+
+        System.out.println(" ╔════════════════════════════════════════════════");
+        System.out.println(" ║ 『" + theHero.getName() + "』");
+        System.out.println(" ║ " + theHero.getType());
+        System.out.println(" ║ ");
+        System.out.println(" ║ S̲T̲A̲T̲S̲");
+        System.out.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
+        System.out.println(" ╠ Speed: " + theHero.getSpeed());
+        System.out.println(" ╠ MinDmg: " + theHero.getMinDmg() + "   MaxDmg: " + theHero.getMaxDmg());
+        System.out.println(" ╠ Defense: " + theHero.getLevel());
+        System.out.println(" ╠ Basic Accuracy: " + theHero.getBasicAccuracy());
+        System.out.println(" ╠ Special Accuracy: " + theHero.getSpecialAccuracy());
+        System.out.println(" ╠ Level: " + theHero.getLevel());
+        System.out.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
+        System.out.println(" ╚════════════════════════════════════════════════");
+    }
+
+    /**
      * Displays the monster info
      * @param theMonster the monster
      */
@@ -576,8 +596,12 @@ public class TUI {
         System.out.println("   -It was a critical hit!");
     }
 
-    public void inflictedDebuffMsg(final Debuff theDebuff) {
-        System.out.println("   -Inflicted " + theDebuff);
+    public void inflictedDebuffMsg(final Debuff theDebuff, final int theDuration) {
+        if (theDuration == 1) {
+            System.out.println("   -Inflicted " + theDebuff + " for " + theDuration + " turn");
+        } else {
+            System.out.println("   -Inflicted " + theDebuff + " for " + theDuration + " turns");
+        }
     }
 
 
@@ -597,6 +621,7 @@ public class TUI {
                                   final Difficulty theDifficulty, boolean theFunnyMode, final boolean theDebugMode) {
 
         displayChainSpacer();
+        System.out.println();
         System.out.println(" -You escaped the dungeon!");
         System.out.println();
         System.out.println("██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
@@ -626,12 +651,12 @@ public class TUI {
         System.out.println(" -" + theMonster.getDeathMsg());
         System.out.println();
         DelayMachine.delay(4);
-        System.out.println("╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
-        System.out.println("│ ENEMY DEFEATED │");
-        System.out.println("╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
+        System.out.println("                ╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
+        System.out.println("                │ ENEMY DEFEATED │");
+        System.out.println("                ╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
         System.out.println();
         DelayMachine.delay(4);
-        System.out.println("RESULTS:");
+        System.out.println(" RESULTS:");
         System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
         System.out.println();
     }
@@ -878,13 +903,13 @@ public class TUI {
         System.out.println(" There are negative effects characters can inflict on each other.");
         System.out.println(" These effects will last for a certain number of turns.");
         System.out.println(" The effects are:");
-        System.out.println("  ║ Poisoned: Lose 5 health every turn");
-        System.out.println("  ║ Blinded: Miss your next attack");
+        System.out.println("  ║ Poisoned: Lose 10 health every turn");
+        System.out.println("  ║ Blinded: Decrease your accuracy");
         System.out.println("  ║ Stuck: Skip your next turn");
-        System.out.println("  ║ Weakened: Deal less damage");
-        System.out.println("  ║ Vulnerable: Next hit on you will deal 3x the damage");
+        System.out.println("  ║ Weakened: Your next hit will deal half the damage");
+        System.out.println("  ║ Vulnerable: Next hit on you will deal 2x the damage");
         System.out.println("  ║ Silenced: Can't use special ability");
-        System.out.println(" You will see these under the \"✺ S̲T̲A̲T̲U̲S̲\" section during a battle.");
+        System.out.println(" You will see these under the \"S̲T̲A̲T̲U̲S̲\" section during a battle.");
 
         pressAnyKeyNextPage();
         theAudio.playSFX(theAudio.swishOn, -10);
@@ -982,7 +1007,7 @@ public class TUI {
         System.out.println();
         System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
         System.out.println("║        You've unlocked MEDIUM difficulty!         ║");
-        System.out.println("║   This mode contains Pits and tougher Monsters    ║");
+        System.out.println("║   This mode contains pits and tougher monsters    ║");
         System.out.println("╚═══════════════════════════════════════════════════╝");
         System.out.println();
     }
@@ -1511,7 +1536,7 @@ public class TUI {
          */
     }
 
-    public void displayPassiveStatus(final Queue<String> theMsgs) {
+    public void passiveAbilityActivated(final Queue<String> theMsgs) {
         while (!theMsgs.isEmpty()) {
             System.out.println(theMsgs.remove());
         }
@@ -1522,11 +1547,11 @@ public class TUI {
     }
 
     public void displayBlindedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is blinded and has a high chance of missing this turn!");
+        System.out.println(" " + theCharacter.getName() + " is blinded and has a high chance of missing on this move!");
     }
 
     public void displayPoisonedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is poisoned and will take 10 damage at the end of its turn!");
+        System.out.println(" " + theCharacter.getName() + " is poisoned and will take 10 damage when the turn ends!");
     }
 
     public void displaySilencedMsg(final DungeonCharacter theCharacter) {
@@ -1534,7 +1559,7 @@ public class TUI {
     }
 
     public void displayVulnerableMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is vulnerable and will take 2x the damage this turn!");
+        System.out.println(" " + theCharacter.getName() + " is vulnerable and will take 2x the damage on the next hit!");
     }
 
     public void displayWeakenedMsg(final DungeonCharacter theCharacter) {
@@ -1543,5 +1568,49 @@ public class TUI {
 
     public void displaySilenced() {
         System.out.println(" You are silenced and cannot use your special this turn!");
+    }
+
+    public void displayRunAway(final Hero theHero) {
+        System.out.println(" " + theHero.getName() + " attempted to run away...");
+        DelayMachine.delay(4);
+    }
+
+
+    public void displayRunAwaySuccess() {
+        System.out.println(" You successfully ran away!");
+    }
+
+    public void displayRunAwayFail() {
+        System.out.println(" You failed to run away!");
+    }
+
+    public void displayGameSaved() {
+        System.out.println();
+        System.out.println("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
+        System.out.println();
+    }
+
+    public void displayGameLoaded() {
+        System.out.println();
+        System.out.println("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
+        System.out.println();
+    }
+
+    public void displayHeroHealthCool(final Hero theHero) {
+        int health = theHero.getHealth();
+        final int healthChunkCount = 8;
+        final int healthChunkSize = Math.ceilDiv(theHero.getMaxHealth(), healthChunkCount);
+
+        System.out.println();
+        System.out.print("    ");
+        for (int i = 0; i < healthChunkCount; i++) {
+            if (health > healthChunkSize) {
+                System.out.print("▣");
+                health -= healthChunkSize;
+            } else {
+                System.out.print("▢");
+            }
+        }
+        System.out.println();
     }
 }

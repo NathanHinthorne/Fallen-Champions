@@ -5,11 +5,13 @@ import model.characters.DungeonCharacter;
 import model.characters.heroes.Hero;
 import model.characters.heroes.Inventory;
 import model.characters.monsters.Monster;
+import model.dungeon.BattleResult;
 import model.potions.Potion;
 import model.potions.PotionDefensive;
 import model.potions.PotionOffensive;
 import view.*;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -33,6 +35,16 @@ public class MonsterBattle {
      * Funny mode
      */
     private final boolean myFunnyMode;
+
+    /**
+     * Debug mode
+     */
+    private final boolean myDebugMode;
+
+    /**
+     * The cheat mode flag
+     */
+    private boolean myCheatMode;
 
     /**
      * The text user interface
@@ -70,9 +82,9 @@ public class MonsterBattle {
     private boolean myVictory;
 
     /**
-     * The cheat mode flag
+     * Whether the hero ran away
      */
-    private boolean myCheatMode;
+    private boolean myHeroRanAway;
 
     /**
      * The audio object
@@ -81,7 +93,9 @@ public class MonsterBattle {
 
 
     public MonsterBattle(final Hero theHero, final Monster theMonster, final TUI theView,
-                         final boolean theCheatMode, final Audio theAudio, boolean theFunnyMode) {
+                         final boolean theCheatMode, final Audio theAudio, final boolean theFunnyMode,
+                         final boolean theDebugMode) {
+
         myHero = theHero;
         myMonster = theMonster;
 
@@ -90,6 +104,7 @@ public class MonsterBattle {
         myVictory = false;
         myCheatMode = theCheatMode;
         myFunnyMode = theFunnyMode;
+        myDebugMode = theDebugMode;
         audio = theAudio;
 
         myHero.initializeCharacterPerBattle();
@@ -99,9 +114,9 @@ public class MonsterBattle {
     /**
      * Starts a new battle between the player and a random
      * monster.
-     * @return True if the player wins, false if they lose.
+     * @return the result of the battle, win, lose, or run
      */
-    public boolean newBattle() {
+    public BattleResult newBattle() {
 
         /* The battle gameplay loop will end as soon as either the
          * player's or the monster's HP hits 0.
@@ -117,7 +132,7 @@ public class MonsterBattle {
                     heroTurn();
                     DelayMachine.delay(2);
                 }
-                if (myMonster.getHealth() > 0) {
+                if (myMonster.getHealth() > 0 && !myGameOver) { // prevents monster from taking a 2nd turn after hero runs
                     monsterTurn();
                     DelayMachine.delay(2);
                 }
@@ -138,12 +153,17 @@ public class MonsterBattle {
         }
 
         myHero.uninitializeCharacterPerBattle();
+        myMonster.uninitializeCharacterPerBattle();
 
         audio.stopAll();
-        if (myVictory) {
-            return true;
+
+        if (myHeroRanAway) {
+            return BattleResult.RUN;
+        } else if (myVictory) {
+            return BattleResult.WIN;
+        } else {
+            return BattleResult.LOSE;
         }
-        return false;
     }
 
     /**
@@ -162,28 +182,38 @@ public class MonsterBattle {
 
         Queue<String> passiveMsgs = myHero.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.displayPassiveStatus(passiveMsgs); // ex: show swordsman defense stance msg
+            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
         System.out.println();
 
+        boolean debuffMsgTriggered = false;
         if (myHero.hasDebuff(Debuff.STUCKIFY)) {
             stuckProcess(myHero);
             return; // skip turn
         }
         if (myHero.hasDebuff(Debuff.BLIND)) {
-            startBlindedProcess(myHero);
+            blindedProcess(myHero);
+            debuffMsgTriggered = true;
         }
         if (myHero.hasDebuff(Debuff.POISON)) {
             poisonedProcess(myHero);
+            debuffMsgTriggered = true;
         }
         if (myHero.hasDebuff(Debuff.SILENCE)) {
             silencedProcess(myHero);
+            debuffMsgTriggered = true;
         }
         if (myHero.hasDebuff(Debuff.VULNERATE)) {
             vulnerableProcess(myHero);
+            debuffMsgTriggered = true;
         }
         if (myHero.hasDebuff(Debuff.WEAKEN)) {
-            startWeakenedProcess(myHero);
+            weakenedProcess(myHero);
+            debuffMsgTriggered = true;
+        }
+
+        if (debuffMsgTriggered) {
+            System.out.println();
         }
 
         // menu
@@ -209,7 +239,14 @@ public class MonsterBattle {
 
             // run away
         } else if (choice == 'q') {
-            //TODO add run away functionality. default 50% chance of success. ninja gets %80
+            runAwayProcess(myDebugMode);
+
+        } else if (choice == 'f') {
+            audio.playSFX(audio.swishOn, -10);
+            myGame.debugHeroStats(myHero);
+            myGame.pressAnyKeyGoBack();
+            audio.playSFX(audio.swishOff, -13);
+            heroTurn();
 
             // cheat mode instakill
         } else if (choice == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
@@ -231,6 +268,20 @@ public class MonsterBattle {
         }
     }
 
+    private void runAwayProcess(final boolean debugMode) {
+        myGame.displayRunAway(myHero);
+        double runAwayChance = Math.random();
+        if (runAwayChance < myHero.getRunSuccessChance() || debugMode) {
+//            myAudio.playSFX(myAudio.runAwaySuccess, -10);
+            myGame.displayRunAwaySuccess();
+            myHeroRanAway = true;
+            myGameOver = true;
+        } else {
+//            myAudio.playSFX(myAudio.runAwaySuccess, -10);
+            myGame.displayRunAwayFail();
+            myHeroRanAway = false;
+        }
+    }
 
 
     private void checkMonsterStats() {
@@ -246,9 +297,8 @@ public class MonsterBattle {
         myGame.characterSelectAbility(myHero, myMonster, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
-        int trueDamage = (int) (damage * (1 - myMonster.getDefense()));
         DelayMachine.delay(2);
-        myGame.heroAttackResult(myHero, trueDamage);
+        myGame.heroAttackResult(myHero, damage);
         inflictDebuffMsg(myMonster); // show what debuffs were inflicted on monster
 
 //        myGame.displayHealthMeters(myHero, myMonster);
@@ -267,7 +317,8 @@ public class MonsterBattle {
             undoWeakenedProcess(myHero);
         }
         myHero.decreaseCooldown();
-        myHero.decreaseDebuffDuration();
+        myHero.tickDebuffs();
+        myMonster.tickIndividualDebuff(Debuff.VULNERATE);
     }
 
     private void heroSpecial() {
@@ -291,9 +342,8 @@ public class MonsterBattle {
         myGame.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
-        int trueDamage = (int) (damage * (1 - myMonster.getDefense()));
         DelayMachine.delay(2);
-        myGame.heroAttackResult(myHero, trueDamage);
+        myGame.heroAttackResult(myHero, damage);
         if (myHero.wasCritHit()) {
             myGame.playerCritMsg();
         }
@@ -317,7 +367,8 @@ public class MonsterBattle {
             undoBlindedProcess(myHero);
         }
         myHero.resetCooldown();
-        myHero.decreaseDebuffDuration();
+        myHero.tickDebuffs();
+        myMonster.tickIndividualDebuff(Debuff.VULNERATE);
     }
 
     public void inventoryMenu() {
@@ -350,7 +401,8 @@ public class MonsterBattle {
                     undoWeakenedProcess(myHero);
                 }
                 myHero.decreaseCooldown();
-                myHero.decreaseDebuffDuration();
+                myHero.tickDebuffs();
+                myMonster.tickIndividualDebuff(Debuff.VULNERATE);
 
             } else {
                 audio.playSFX(audio.error, -10, true);
@@ -380,28 +432,38 @@ public class MonsterBattle {
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.displayPassiveStatus(passiveMsgs); // ex: show swordsman defense stance msg
+            myGame.passiveAbilityActivated(passiveMsgs);
         }
         System.out.println();
 
+        boolean debuffMsgTriggered = false;
         if (myMonster.hasDebuff(Debuff.STUCKIFY)) {
             stuckProcess(myMonster);
             return; // skip turn
         }
         if (myMonster.hasDebuff(Debuff.BLIND)) {
-            startBlindedProcess(myMonster);
+            blindedProcess(myMonster);
+            debuffMsgTriggered = true;
         }
         if (myMonster.hasDebuff(Debuff.POISON)) {
             poisonedProcess(myMonster);
+            debuffMsgTriggered = true;
         }
         if (myMonster.hasDebuff(Debuff.SILENCE)) {
             silencedProcess(myMonster);
+            debuffMsgTriggered = true;
         }
         if (myMonster.hasDebuff(Debuff.VULNERATE)) {
             vulnerableProcess(myMonster);
+            debuffMsgTriggered = true;
         }
         if (myMonster.hasDebuff(Debuff.WEAKEN)) {
-            startWeakenedProcess(myMonster);
+            weakenedProcess(myMonster);
+            debuffMsgTriggered = true;
+        }
+
+        if (debuffMsgTriggered) {
+            System.out.println();
         }
 
         DelayMachine.delay(2);
@@ -451,16 +513,16 @@ public class MonsterBattle {
         myGame.characterSelectAbility(myMonster, myHero, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myMonster.basicAtk(myHero);
-        int trueDamage = (int) (damage * (1 - myHero.getDefense()));
-        myGame.monsterAttackResult(myMonster, myHero, trueDamage);
+        myGame.monsterAttackResult(myMonster, myHero, damage);
         inflictDebuffMsg(myHero); // show what debuffs were inflicted on hero
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.displayPassiveStatus(passiveMsgs); // ex: show swordsman defense stance msg
+            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
 //        myGame.displayHealthMeters(myHero, myMonster);
-        myMonster.decreaseDebuffDuration();
+        myMonster.tickDebuffs();
+        myHero.tickIndividualDebuff(Debuff.VULNERATE);
     }
 
     private void monsterSpecial() {
@@ -468,77 +530,60 @@ public class MonsterBattle {
             System.out.println("DEBUG: Monster is on cooldown, but tried to use special attack!");
         }
         myGame.characterSelectAbility(myMonster, myHero, Ability.SPECIAL);
-//        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myMonster.specialAtk(myHero);
-        int trueDamage = (int) (damage * (1 - myHero.getDefense()));
-        myGame.monsterAttackResult(myMonster, myHero, trueDamage);
+        myGame.monsterAttackResult(myMonster, myHero, damage);
         inflictDebuffMsg(myHero); // show what debuffs were inflicted on hero
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.displayPassiveStatus(passiveMsgs); // ex: show swordsman defense stance msg
+            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
 
-//        myGame.displayHealthMeters(myHero, myMonster);
-        myMonster.decreaseDebuffDuration();
+        myMonster.tickDebuffs();
     }
 
     private void monsterHeal() {
         myMonster.heal(myMonster);
         int healAmount = myMonster.getHealAmount();
         myGame.monsterHeal(healAmount);
-        myMonster.decreaseDebuffDuration();
+        myMonster.tickDebuffs();
     }
 
-    // another solution is to have another map field in DungeonCharacter that stores newly applied debuffs
-    // every time you add to the old map, you also add to the new map
-    // every turn, you clear the new map
-//    private void inflictDebuffMsg(final DungeonCharacter theDebuffedCharacter, final Map<Debuff, Integer> theOldDebuffs) {
-//        Map<Debuff, Integer> newDebuffs = theDebuffedCharacter.getActiveDebuffs();
-//        for (final Debuff debuff : newDebuffs.keySet()) {
-//
-//            if (!theOldDebuffs.containsKey(debuff)) { // if the debuff in question is NEW, display the message
-//                myGame.inflictedDebuffMsg(debuff);
-//            }
-//            else { // if the debuff in question is OLD, but the duration has been updated, display the message
-//                int newDuration = newDebuffs.get(debuff);
-//                int oldDuration = theOldDebuffs.get(debuff);
-//                if (newDuration != oldDuration) {
-//                    myGame.inflictedDebuffMsg(debuff);
-//                }
-//            }
-//        }
-//    }
 
     private void inflictDebuffMsg(final DungeonCharacter theCharacter) {
-        Queue<Debuff> newDebuffs = theCharacter.getNewDebuffs();
-        while (!newDebuffs.isEmpty()) {
-            Debuff debuff = newDebuffs.remove();
-            myGame.inflictedDebuffMsg(debuff);
+
+        Map<Debuff, Integer> newDebuffs = theCharacter.getNewDebuffs();
+        Iterator<Debuff> iterator = newDebuffs.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            Debuff debuff = iterator.next();
+            int duration = newDebuffs.remove(debuff);
+            myGame.inflictedDebuffMsg(debuff, duration);
+            // instead of myActiveDebuffs.remove(debuff);. concurrent modification exception
+            // Use iterator's remove() method to safely remove the element
         }
     }
-
 
 
     private void stuckProcess(final DungeonCharacter theCharacter) {
         myGame.displayStuckifyMsg(theCharacter);
         theCharacter.decreaseCooldown();
-        theCharacter.decreaseDebuffDuration();
+        theCharacter.tickDebuffs();
         DelayMachine.delay(2);
     }
 
-    private void startBlindedProcess(final DungeonCharacter theCharacter) {
+    private void blindedProcess(final DungeonCharacter theCharacter) {
         myGame.displayBlindedMsg(theCharacter);
         theCharacter.setBasicAccuracy(theCharacter.getBasicAccuracy() - 0.5);
         theCharacter.setSpecialAccuracy(theCharacter.getSpecialAccuracy() - 0.5);
     }
 
     private void undoBlindedProcess(final DungeonCharacter theCharacter) {
-        theCharacter.setBasicAccuracy(theCharacter.getBasicAccuracy() + 0.5);
-        theCharacter.setSpecialAccuracy(theCharacter.getSpecialAccuracy() + 0.5);
+        theCharacter.resetBasicAccuracy();
+        theCharacter.resetSpecialAccuracy();
     }
 
-    private void startWeakenedProcess(final DungeonCharacter theCharacter) {
+    private void weakenedProcess(final DungeonCharacter theCharacter) {
         myGame.displayWeakenedMsg(theCharacter);
 
         int minDmg = theCharacter.getMinDmg();
