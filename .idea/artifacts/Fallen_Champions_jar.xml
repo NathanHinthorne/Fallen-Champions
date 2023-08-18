@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Fallen-Champions:jar">
+    <output-path>$PROJECT_DIR$/../../../../Desktop</output-path>
+    <root id="archive" name="Fallen-Champions.jar">
+      <element id="module-output" name="Fallen-Champions" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.34.0/sqlite-jdbc-3.34.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

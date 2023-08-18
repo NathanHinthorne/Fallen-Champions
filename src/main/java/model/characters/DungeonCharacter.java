@@ -1,6 +1,9 @@
 package model.characters;
 
+import javafx.scene.media.Media;
+
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -89,12 +92,12 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     /**
      * The special ability sfx
      */
-    private File mySpecialSFX;
+    private Media mySpecialSFX;
 
     /**
      * The basic ability sfx
      */
-    private File myBasicSFX;
+    private Media myBasicSFX;
 
     /**
      * The debuffs currently taking effect on the character
@@ -316,30 +319,38 @@ public abstract class DungeonCharacter implements java.io.Serializable {
 
 
     public void setSpecialSFX(String theSFXName) {
-        File sfx = null;
+        Media sfx = null;
         try {
-            sfx =  new File(getClass().getResource("/sound/sfx/" + theSFXName).toURI());
+            sfx = new Media(getClass().getResource("/sound/sfx/" + theSFXName).toExternalForm());
+
+//            InputStream inputStream = getClass().getResourceAsStream("/sound/sfx/" + theSFXName);
+//            sfx = new Media(inputStream.toString());
+
         } catch (Exception e) {
             System.out.println("Error locating a character's special ability SFX file." + e);
         }
         mySpecialSFX = sfx;
     }
 
-    public File getSpecialSFX() {
+    public Media getSpecialSFX() {
         return mySpecialSFX;
     }
 
     public void setBasicSFX(String theSFXName) {
-        File sfx = null;
+        Media sfx = null;
         try {
-            sfx = new File(getClass().getResource("/sound/sfx/" + theSFXName).toURI());
+            sfx = new Media(getClass().getResource("/sound/sfx/" + theSFXName).toExternalForm());
+
+//            InputStream inputStream = getClass().getResourceAsStream("/sound/sfx/" + theSFXName);
+//            sfx = new Media(inputStream.toString());
+
         } catch (Exception e) {
             System.out.println("Error locating a character's basic ability SFX file." + e);
         }
         myBasicSFX = sfx;
     }
 
-    public File getBasicSFX() {
+    public Media getBasicSFX() {
         return myBasicSFX;
     }
 

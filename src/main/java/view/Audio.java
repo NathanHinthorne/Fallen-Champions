@@ -1,10 +1,15 @@
 package view;
 
 import controller.DelayMachine;
-
-import java.io.File;
-import java.net.URISyntaxException;
 import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 /**
  * This class will play audio when called upon by
@@ -17,133 +22,149 @@ import javax.sound.sampled.*;
 public final class Audio {
     private static Audio audio; // to be used in singleton design pattern
 
+    // Constants
+    private static final double DEFAULT_VOLUME = 0.5;
 
-    // Separate clips so that they can both be stopped when need be
-    private static Clip currentSFX;
-    private static Clip currentMusic;
-    private static int currentMusicVolume;
+
+    // Separate media players for music and sound effects
+    private MediaPlayer musicPlayer;
+    private MediaPlayer sfxPlayer;
+
 
     // BUTTON SOUNDS
-    public final File menuOne;
-    public final File menuTwo;
-    public final File menuThree;
-    public final File infoPopup;
-    public final File error;
-    public final File beginGame;
-    public final File titleScreen;
+    public Media menuOne;
+    public Media menuTwo;
+    public Media menuThree;
+    public Media infoPopup;
+    public Media swishOn;
+    public Media swishOff;
+    public Media error;
+    public Media beginGame;
+    public Media titleScreen;
 
 
     // MUSIC (Composed by Nathan Hinthorne)
-    public final File ambientSong;
-    public final File battleSong;
-    public final File startingAnewSong;
+    public Media ambientSong;
+    public Media battleSong;
+    public Media startingAnewSong;
 
     // MUSIC
-    public final File triumpantFinishSong;
-    public final File rickRollSong;
-    public final File conkerSong;
-    public final File hackerSong;
-    public final File genosThemeSong;
-    public final File gasterBossSong;
-    public final File gasterAmbientSong;
-
-
-    // ENVIRONMENT (step1, step2, step3, step4 are from Valve's Team Fortress 2)
+    public Media triumpantFinishSong;
+    public Media rickRollSong;
+    public Media conkerSong;
+    public Media hackerSong;
+    public Media genosThemeSong;
+    public Media gasterBossSong;
+    public Media gasterAmbientSong;
 
 
     // MONSTER
-    public final File encounter; // source: Undertale by Toby Fox
+    public Media encounter; // source: Undertale by Toby Fox
 //    public final File monsterHeal;
 
 
     // HERO (step1, step2, step3, step4 are from Valve's Team Fortress 2)
-    public final File step1; // source: Valve's Team Fortress 2
-    public final File step2; // source: Valve's Team Fortress 2
-    public final File step3; // source: Valve's Team Fortress 2
-    public final File step4; // source: Valve's Team Fortress 2
-    public final File lockedDoor;
-//    public final File heroHeal;
-    public final File heroDrinkPotion;
-    public final File heroLevelUp;
-    public final File heroWinBattle;
-    public final File heroDefeat;
-    public final File heroOof;
-    public final File heroCollectPotion;
-    public final File heroCollectPillar;
+    public Media step1; // source: Valve's Team Fortress 2
+    public Media step2; // source: Valve's Team Fortress 2
+    public Media step3; // source: Valve's Team Fortress 2
+    public Media step4; // source: Valve's Team Fortress 2
+    public Media lockedDoor;
+    public Media heroDrinkPotion;
+    public Media heroLevelUp;
+    public Media heroWinBattle;
+    public Media heroDefeat;
+    public Media heroOof;
+    public Media heroCollectPotion;
+    public Media heroCollectPillar;
+    public Media heroPowerUp; // find place to use this
+    public Media heroBagOpen;
+    public Media heroBagClose;
+    public Media heroBagFull;
+
+
 //    public final File heroCollectWeapon;
-//    public final File heroCriticalHit;
-    public final File heroPowerUp; // find place to use this
-    public final File heroBagOpen;
-    public final File heroBagClose;
-    public final File heroBagFull;
-    public final File swishOn;
-    public final File swishOff;
-
-
-//    public final File sfx;
-
     // FUNNY SFX
-    public final File dunDunDun;
-    public final File rimshot;
+    public Media dunDunDun;
+    public Media rimshot;
 //    public final File bonk;
 
-    private Audio() throws URISyntaxException { // prevent outside instantiation
+    private Audio() { // prevent outside instantiation
 
-        // initialize music files
-        menuOne = new File(getClass().getResource("/sound/sfx/button_menu_option_1.wav").toURI());
-        menuTwo = new File(getClass().getResource("/sound/sfx/button_menu_option_2.wav").toURI());
-        menuThree = new File(getClass().getResource("/sound/sfx/button_menu_option_3.wav").toURI());
-        error = new File(getClass().getResource("/sound/sfx/button_error.wav").toURI());
-        beginGame = new File(getClass().getResource("/sound/sfx/button_spawn.wav").toURI());
-        heroPowerUp = new File(getClass().getResource("/sound/sfx/button_powerup.wav").toURI());
-        infoPopup = new File(getClass().getResource("/sound/sfx/info_popup.wav").toURI());
-        titleScreen = new File(getClass().getResource("/sound/sfx/title_screen.wav").toURI());
+        // Initialize media players
+//        musicPlayer = new MediaPlayer(loadMedia("/sound/music/music_ambient.wav"));
+//        sfxPlayer = new MediaPlayer(loadMedia("/sound/sfx/button_menu_option_1.wav"));
 
-        ambientSong = new File(getClass().getResource("/sound/music/music_ambient.wav").toURI());
-        battleSong = new File(getClass().getResource("/sound/music/music_battle.wav").toURI());
-        startingAnewSong = new File(getClass().getResource("/sound/music/music_starting_anew.wav").toURI());
-        triumpantFinishSong = new File(getClass().getResource("/sound/music/music_triumphant_finish.wav").toURI());
-        rickRollSong = new File(getClass().getResource("/sound/music/music_rickroll.wav").toURI());
-        conkerSong = new File(getClass().getResource("/sound/music/music_conker.wav").toURI());
-        hackerSong = new File(getClass().getResource("/sound/music/music_hacker.wav").toURI());
-        genosThemeSong = new File(getClass().getResource("/sound/music/music_genos_theme.wav").toURI());
-        gasterBossSong = new File(getClass().getResource("/sound/music/music_gaster_boss.wav").toURI());
-        gasterAmbientSong = new File(getClass().getResource("/sound/music/music_gaster_ambient.wav").toURI());
+        // Set default volumes
+//        musicPlayer.setVolume(DEFAULT_VOLUME);
+//        sfxPlayer.setVolume(DEFAULT_VOLUME);
 
-        // initialize sfx files
-        step1 = new File(getClass().getResource("/sound/sfx/hero_step1.wav").toURI());
-        step2 = new File(getClass().getResource("/sound/sfx/hero_step2.wav").toURI());
-        step3 = new File(getClass().getResource("/sound/sfx/hero_step3.wav").toURI());
-        step4 = new File(getClass().getResource("/sound/sfx/hero_step4.wav").toURI());
-        lockedDoor = new File(getClass().getResource("/sound/sfx/locked_door.wav").toURI());
-        encounter = new File(getClass().getResource("/sound/sfx/monster_encounter.wav").toURI());
-
-//        monsterHeal = new File(getClass().getResource("/sound/sfx/monster_heal.wav").toURI());
-//        heroHeal = new File(getClass().getResource("/sound/sfx/hero_heal.wav").toURI());
-        heroDrinkPotion = new File(getClass().getResource("/sound/sfx/hero_drink_potion.wav").toURI());
-        heroLevelUp = new File(getClass().getResource("/sound/sfx/hero_level_up.wav").toURI());
-//        heroVictory = new File(getClass().getResource("/sound/sfx/hero_victory.wav").toURI());
-        heroDefeat = new File(getClass().getResource("/sound/sfx/hero_defeat.wav").toURI());
-        heroOof = new File(getClass().getResource("/sound/sfx/hero_oof.wav").toURI());
-        heroCollectPotion = new File(getClass().getResource("/sound/sfx/hero_collect_potion.wav").toURI());
-        heroCollectPillar = new File(getClass().getResource("/sound/sfx/hero_collect_pillar.wav").toURI());
-        heroBagOpen = new File(getClass().getResource("/sound/sfx/hero_bag_open.wav").toURI());
-        heroBagClose = new File(getClass().getResource("/sound/sfx/hero_bag_close.wav").toURI());
-        heroBagFull = new File(getClass().getResource("/sound/sfx/hero_bag_full.wav").toURI());
-        swishOn = new File(getClass().getResource("/sound/sfx/hero_stats_on.wav").toURI());
-        swishOff = new File(getClass().getResource("/sound/sfx/hero_stats_off.wav").toURI());
-        heroWinBattle = new File(getClass().getResource("/sound/sfx/hero_win_battle.wav").toURI());
-
-//        bonk = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
-//        heroSpecialSlice = new File(getClass().getResource("/sound/sfx/hero_special_slice.wav").toURI());
-//        heroSpecialSmash = new File(getClass().getResource("/sound/sfx/hero_special_smash.wav").toURI());
-//        heroSpecialStab = new File(getClass().getResource("/sound/sfx/hero_special_stab.wav").toURI());
-
-        dunDunDun = new File(getClass().getResource("/sound/sfx/funny_dun_dun_dun.wav").toURI());
-        rimshot = new File(getClass().getResource("/sound/sfx/funny_rimshot.wav").toURI());
-
-//        sfx = new File(getClass().getResource("/sound/sfx/bonk.wav").toURI());
+        // Preload and initialize all media files
+        preloadMediaFiles();
     }
+
+    private void preloadMediaFiles() {
+        // Preload music files
+        ambientSong = loadMedia("/sound/music/music_ambient.wav");
+        battleSong = loadMedia("/sound/music/music_battle.wav");
+        startingAnewSong = loadMedia("/sound/music/music_starting_anew.wav");
+        triumpantFinishSong = loadMedia("/sound/music/music_triumphant_finish.wav");
+        rickRollSong = loadMedia("/sound/music/music_rickroll.wav");
+        conkerSong = loadMedia("/sound/music/music_conker.wav");
+        hackerSong = loadMedia("/sound/music/music_hacker.wav");
+        genosThemeSong = loadMedia("/sound/music/music_genos_theme.wav");
+        gasterBossSong = loadMedia("/sound/music/music_gaster_boss.wav");
+        gasterAmbientSong = loadMedia("/sound/music/music_gaster_ambient.wav");
+
+        // Preload sfx files
+
+            // BUTTONS
+        menuOne = loadMedia("/sound/sfx/menu_one.wav");
+        menuTwo = loadMedia("/sound/sfx/menu_two.wav");
+        menuThree = loadMedia("/sound/sfx/menu_three.wav");
+        error = loadMedia("/sound/sfx/error.wav");
+        beginGame = loadMedia("/sound/sfx/button_spawn.wav");
+        heroPowerUp = loadMedia("/sound/sfx/button_powerup.wav");
+        infoPopup = loadMedia("/sound/sfx/info_popup.wav");
+        titleScreen = loadMedia("/sound/sfx/title_screen.wav");
+//        confirm = loadMedia("/sound/sfx/confirm.wav");
+
+            // HERO
+        step1 = loadMedia("/sound/sfx/hero_step1.wav");
+        step2 = loadMedia("/sound/sfx/hero_step2.wav");
+        step3 = loadMedia("/sound/sfx/hero_step3.wav");
+        step4 = loadMedia("/sound/sfx/hero_step4.wav");
+        lockedDoor = loadMedia("/sound/sfx/locked_door.wav");
+        encounter = loadMedia("/sound/sfx/monster_encounter.wav");
+        heroDrinkPotion = loadMedia("/sound/sfx/hero_drink_potion.wav");
+        heroLevelUp = loadMedia("/sound/sfx/hero_level_up.wav");
+        heroDefeat = loadMedia("/sound/sfx/hero_defeat.wav");
+        heroOof = loadMedia("/sound/sfx/hero_oof.wav");
+        heroCollectPotion = loadMedia("/sound/sfx/hero_collect_potion.wav");
+        heroCollectPillar = loadMedia("/sound/sfx/hero_collect_pillar.wav");
+        heroBagOpen = loadMedia("/sound/sfx/hero_bag_open.wav");
+        heroBagClose = loadMedia("/sound/sfx/hero_bag_close.wav");
+        heroBagFull = loadMedia("/sound/sfx/hero_bag_full.wav");
+
+            // MONSTER
+//        monsterHeal = loadMedia("/sound/sfx/monster_heal.wav");
+//        monsterDefeat = loadMedia("/sound/sfx/monster_defeat.wav");
+
+
+            // FUNNY
+        dunDunDun = loadMedia("/sound/sfx/funny_dun_dun_dun.wav");
+        rimshot = loadMedia("/sound/sfx/funny_rimshot.wav");
+//        bonk = loadMedia("/sound/sfx/funny_bonk.wav");
+
+    }
+
+    private Media loadMedia(String resourcePath) {
+        return new Media(getClass().getResource(resourcePath).toExternalForm()); // don't know which one works
+    }
+//    private Media loadMedia(String resourcePath) {
+//        InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+//        return new Media(inputStream.toString());
+//    }
+
 
     public static Audio getInstance() throws URISyntaxException { // to be used in singleton design pattern
         if (audio == null) {
@@ -152,133 +173,48 @@ public final class Audio {
         return audio;
     }
 
-    /**
-     * Method used to play simplify playing sounds
-     * I got help with this method from here:
-     * https://www.youtube.com/watch?v=SyZQVJiARTQ
-     *
-     * @param theFile The sound to play (from this class' public fields)
-     */
-    public static void playSFX(final File theFile, final int theVolume) {
+    public void playSFX(final Media theSFX, final int theVolume) {
+        sfxPlayer = new MediaPlayer(theSFX);
+        sfxPlayer.setVolume(theVolume);
+        sfxPlayer.play();
+    }
 
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
-            currentSFX = AudioSystem.getClip();
-            currentSFX.open(audioStream);
-            setSFXVolume(theVolume);
+    public void playMusic(final Media theMusic, final boolean theLoop, final int theVolume) {
+        musicPlayer = new MediaPlayer(theMusic);
+        musicPlayer.setVolume(theVolume);
 
-            currentSFX.start();
-
-        } catch (Exception e) {
-            System.out.println("Could not open sound " + theFile.getName());
+        if (theLoop) {
+            musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        } else {
+            musicPlayer.setCycleCount(1);
         }
-    }
 
-    public static void playSFX(final File theFile, final int theVolume, boolean deafenMusic) {
-
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
-            currentSFX = AudioSystem.getClip();
-            currentSFX.open(audioStream);
-            setSFXVolume(theVolume);
-
-            if (deafenMusic) {
-                setMusicVolume(currentMusicVolume-10);
-            }
-
-            currentSFX.start();
-
-            waitUntilSFXStops(); //?
-
-            if (deafenMusic) {
-                setMusicVolume(currentMusicVolume+10);
-            }
-        } catch (Exception e) {
-            System.out.println("Could not open sound " + theFile.getName());
-        }
-    }
-
-    /**
-     * Method used to play simplify playing music
-     * (its a separate method because it needs a different
-     * AudioInputStream to be controlled by the volume slider
-     * in the GUI)
-     * I got help with this method from here:
-     * https://www.youtube.com/watch?v=SyZQVJiARTQ
-     *
-     * @param theFile The sound to play (from this class' public fields)
-     */
-    public static void playMusic(final File theFile, boolean theLoop, int theVolume) {
-
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(theFile);
-            currentMusic = AudioSystem.getClip();
-            currentMusic.open(audioStream);
-            setMusicVolume(theVolume);
-            currentMusic.start();
-            if (theLoop) {
-                currentMusic.loop(Clip.LOOP_CONTINUOUSLY);
-            }
-        } catch (Exception e) {
-            System.out.println("Could not open sound file!");
-        }
-    }
-
-    /**
-     * Method called by the volume slider to change clip
-     * volume
-     * (had help from here:
-     * https://stackoverflow.com/questions/953598/audio-volume-control-increase-or-decrease-in-java)
-     *
-     * @param theVolume The input volume
-     */
-    private static void setMusicVolume(int theVolume) {
-        currentMusicVolume = theVolume;
-        FloatControl gain = (FloatControl) currentMusic.getControl(FloatControl.Type.MASTER_GAIN);
-        gain.setValue(theVolume);
-    }
-
-    private static void setSFXVolume(int theVolume) {
-        FloatControl gain = (FloatControl) currentSFX.getControl(FloatControl.Type.MASTER_GAIN);
-        gain.setValue(theVolume);
+        musicPlayer.play();
     }
 
     /**
      * Method to stop all audio: sounds and music alike.
      */
-    public static void stopAll() {
-        currentSFX.stop();
-        currentSFX.flush();
-        currentSFX.close();
-
-        currentMusic.stop();
-        currentMusic.flush();
-        currentMusic.close();
+    public void stopAll() {
+        musicPlayer.stop();
+        sfxPlayer.stop();
     }
 
-    public static void stopMusic() {
-        currentMusic.stop();
-        currentMusic.flush();
-        currentMusic.close();
+    public void stopMusic() {
+        musicPlayer.stop();
     }
 
-    public static void stopSFX() {
-        currentSFX.stop();
-        currentSFX.flush();
-        currentSFX.close();
+    public boolean isPlayingSFX() {
+        return sfxPlayer.getStatus() == MediaPlayer.Status.PLAYING;
     }
 
-    public static boolean isPlayingSFX() {
-        return currentSFX.isActive();
+    public boolean isPlayingMusic() {
+        return musicPlayer.getStatus() == MediaPlayer.Status.PLAYING;
     }
 
-    public static boolean isPlayingMusic() {
-        return currentMusic.isActive();
-    }
-
-    public static void waitUntilSFXStops() {
-        while (isPlayingSFX()) {
-            DelayMachine.delay(1);
-        }
-    }
+//    public static void waitUntilSFXStops() {
+//        while (isPlayingSFX()) {
+//            DelayMachine.delay(1);
+//        }
+//    }
 }

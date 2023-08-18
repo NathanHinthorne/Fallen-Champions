@@ -128,7 +128,7 @@ public class MonsterBattle {
             myGame.heroFasterThanMonsterMsg(myMonster);
             while (!myGameOver) {
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne, -10, true);
+                    audio.playSFX(audio.menuOne, -10);
                     heroTurn();
                     DelayMachine.delay(2);
                 }
@@ -145,7 +145,7 @@ public class MonsterBattle {
                     DelayMachine.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menuOne, -10, true);
+                    audio.playSFX(audio.menuOne, -10);
                     heroTurn();
                     DelayMachine.delay(2);
                 }
@@ -255,7 +255,7 @@ public class MonsterBattle {
 
             // wrong input must have been given
         } else {
-            audio.playSFX(audio.error, -10, true);
+            audio.playSFX(audio.error, -10);
             myGame.displayWrongInput();
             heroTurn();
         }
@@ -293,7 +293,7 @@ public class MonsterBattle {
     }
 
     private void heroBasic() {
-        audio.playSFX(myHero.getBasicSFX(), -10, true);
+        audio.playSFX(myHero.getBasicSFX(), -10);
         myGame.characterSelectAbility(myHero, myMonster, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
@@ -324,21 +324,21 @@ public class MonsterBattle {
     private void heroSpecial() {
         // check silence
         if (myHero.hasDebuff(Debuff.SILENCE)) {
-            audio.playSFX(audio.error, -10, true);
+            audio.playSFX(audio.error, -10);
             myGame.displaySilenced();
             heroTurn();
             return;
         }
         // check cooldown
         if (myHero.getCooldown() > 0) {
-            audio.playSFX(audio.error, -10, true);
+            audio.playSFX(audio.error, -10);
             myGame.displayCooldown(myHero.getCooldown());
             heroTurn();
             return; // change this return statement for the burst attack?
         }
 
         // proceed with attack
-        audio.playSFX(myHero.getSpecialSFX(), -10, true);
+        audio.playSFX(myHero.getSpecialSFX(), -10);
         myGame.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
@@ -405,7 +405,7 @@ public class MonsterBattle {
                 myMonster.tickIndividualDebuff(Debuff.VULNERATE);
 
             } else {
-                audio.playSFX(audio.error, -10, true);
+                audio.playSFX(audio.error, -10);
                 myGame.displayCantUseItemDuringBattle(potion);
                 inventoryMenu();
             }
