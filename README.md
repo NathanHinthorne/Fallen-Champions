@@ -4,7 +4,7 @@ Select a hero with unique abilties and go exploring within a treacherous dungeon
 
 # What I learned
 
-Software Development Concepts and Practices:
+**Software Development Concepts and Practices**:
 * Using major design patterns such as MVC, singleton, momento, builder, factory, and mock object
 * Closely following SOLID and OO principles for secure, readable, managable, and maintable code
 * Defensive Programming Techniques
@@ -15,16 +15,17 @@ Software Development Concepts and Practices:
    * Designing UML diagrams to follow
    * Implementing the designs in code
    * Deploying game as an installable application
- 
-Team:
+  
+**Team**:
 * Working and communicating effectively within a team
 * Leadership and planning skills within a team
 * Practicing pair programming with teammates
 
-Agile Developement:
+**Agile Developement**:
 * Making small, incremental changes via user stories
 * Using agile project management tools such as Pivotal Tracker
 * Using version control tools such as Git
 
-External Libraries:
+**External Libraries**:
 * Connecting and reading from SQLite for monster data and hero suffixes
+* Using JavaFX for GUI

@@ -1,0 +1,6 @@
+/* button.css */
+.cool-image-button {
+    /* Set the preferred dimensions for the button image */
+    -fx-fit-width: 100px;
+    -fx-fit-height: 40px;
+}
