@@ -231,7 +231,7 @@ public class GameTest {
 
         if (introSelection == '2') {
             tui.introductionP2(funnyMode, audio, heroFirstName, heroFullName);
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
         } else {
             System.out.println("【 " + heroFullName + " 】");
             tui.pressAnyKeyContinue();
@@ -252,7 +252,7 @@ public class GameTest {
         // setup dungeon (1 for easy, 2 for medium, 3 for hard)
         selectDifficulty();
 
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
 
         if (!debugMode) {
             // start msg
@@ -260,7 +260,7 @@ public class GameTest {
 
             // start music
             audio.playMusic(audio.startingAnewSong, false, -12);
-            DelayMachine.delay(15);
+            SleepDelay.delay(15);
         }
 
         // enter the main game loop
@@ -292,7 +292,7 @@ public class GameTest {
                 audio.playSFX(audio.menu1, 100);
                 changeHero();
                 tui.displayHeroSelected(hero);
-                DelayMachine.delay(4);
+                SleepDelay.delay(4);
                 mainMenu();
                 break;
 
@@ -301,21 +301,21 @@ public class GameTest {
                 newHeroName();
                 hero.setName(heroFullName);
                 tui.displayHeroNameChanged(hero);
-                DelayMachine.delay(4);
+                SleepDelay.delay(4);
                 mainMenu();
                 break;
 
             case '4': // cheat code menu
                 audio.playSFX(audio.menu1, 100);
                 cheatCodeMenu();
-                DelayMachine.delay(4);
+                SleepDelay.delay(4);
                 mainMenu();
                 break;
 
             case '6':   // save
                 audio.playSFX(audio.menu1, 100);
                 saveGame();
-                DelayMachine.delay(4);
+                SleepDelay.delay(4);
                 mainMenu();
                 break;
 
@@ -576,7 +576,7 @@ public class GameTest {
                 // play monster encounter cutscene
                 tui.displayMonsterEncounterMsg(monster);
 
-                DelayMachine.delay(1); // delay for 0.5 seconds
+                SleepDelay.delay(1); // delay for 0.5 seconds
 
                 MonsterBattle battle = new MonsterBattle(hero, monster, tui, cheatMode, audio, funnyMode, debugMode);
                 BattleResult winnerWinnerChickenDinner = battle.newBattle();
@@ -612,7 +612,7 @@ public class GameTest {
                     gameOver = true;
                     break;
                 }
-                DelayMachine.delay(8); // delay for 4 seconds
+                SleepDelay.delay(8); // delay for 4 seconds
                 displayDungeonScreen(); // only redisplay the dungeon screen, don't go back to the start of the loop
                 audio.playMusic(audio.ambientSong, true, -10);
 
@@ -853,7 +853,7 @@ public class GameTest {
             hero.levelUp();
             tui.levelUpMsg(hero.getLevel());
             audio.playSFX(audio.heroLevelUp, -15);
-            DelayMachine.delay(2);
+            SleepDelay.delay(2);
         }
     }
 
@@ -898,10 +898,10 @@ public class GameTest {
 
     private static void exitGame() {
         audio.playSFX(audio.menu2, -5);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         tui.displayCyaNerd(funnyMode);
         audio.playSFX(audio.heroOof, -5);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.exit(0);
     }
 
@@ -913,12 +913,12 @@ public class GameTest {
 
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedMedium();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedJuggernautAndThief();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
 
@@ -928,12 +928,12 @@ public class GameTest {
 
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedHard();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedDoctorAndNinja();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
 
@@ -942,29 +942,29 @@ public class GameTest {
 
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedMage();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
 
             tui.displayHintStillMoreHeroes();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
         if (totalHeroSteps > 100) {
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedScientist();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
         if (totalMonstersDefeated > 100) {
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedBeastmaster();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
         if (allHeroesUnlocked()) {
             audio.playSFX(audio.infoPopup, -10);
             tui.displayUnlockedAll();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
             tui.pressAnyKeyContinue();
         }
     }
@@ -1040,7 +1040,7 @@ public class GameTest {
     }
 
     private static void cheatCodeMenu() { //TODO take out cheat code menu. make it hidden
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
         audio.playMusic(audio.hackerSong, true, -10);
         String code = tui.cheatCodeMenu();
 
@@ -1071,7 +1071,7 @@ public class GameTest {
                 }
             }
         }
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         audio.stopMusic();
     }
 
@@ -1080,16 +1080,16 @@ public class GameTest {
         switch (choice) {
             case '1': // play again
                 audio.playSFX(audio.menu1, -10);
-                DelayMachine.delay(2);
+                SleepDelay.delay(2);
                 audio.stopAll();
                 tui.sentToMainMenuMsg();
-                DelayMachine.delay(6);
+                SleepDelay.delay(6);
                 mainMenu();
                 break;
             case '2': // exit
                 audio.playSFX(audio.menu2, -5);
                 exitGame();
-                DelayMachine.delay(2);
+                SleepDelay.delay(2);
                 System.exit(0);
                 break;
             default:
@@ -1102,7 +1102,7 @@ public class GameTest {
 
     private static void victory() {
         audio.stopAll();
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
 
         // play victory sound
         audio.playMusic(audio.triumpantFinishSong, true, -10);
@@ -1111,7 +1111,7 @@ public class GameTest {
         tui.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, debugMode);
 
         if (!debugMode) {
-            DelayMachine.delay(10);
+            SleepDelay.delay(10);
         }
 
         tui.pressAnyKeyContinue();
@@ -1126,7 +1126,7 @@ public class GameTest {
         // update stats
         totalHeroSteps += heroSteps;
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
 
         // info & hint popups
         displayPopups();

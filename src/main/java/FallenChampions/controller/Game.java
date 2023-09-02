@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class Game extends Application {
 
@@ -53,7 +54,7 @@ public class Game extends Application {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = true;
+    private static boolean debugMode = false;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -69,11 +70,6 @@ public class Game extends Application {
      * the dungeon to be used in the game
      */
     private static Dungeon dungeon; // from model
-
-    /**
-     * the view to be used in the game. Swap with GUI later.
-     */
-    private static TUI2 tui; // from view
 
     /**
      * the hero to be used in the game
@@ -143,8 +139,18 @@ public class Game extends Application {
      */
     private static AudioManager audio;
 
-    /** empty constructor to prevent any instances of Game */
-    private Game() { }
+    /**
+     * the view to be used in the game. Swap with GUI later.
+     */
+    private static TUI2 tui; // from view
+
+    /**
+     * the console the user interacts with
+     */
+    private static Console console; // from view
+
+
+    public Game() { }
 
     public static void main(String[] args) {
         launch(args);
@@ -215,9 +221,14 @@ public class Game extends Application {
 
 
 
+
     private void startGame() {
         audio = AudioManager.getInstance();
         tui = TUI2.getInstance();
+        console = Console.getInstance();
+
+        // Set the onMessageReceivedHandler to call onUserInputReceived in TUI
+//        console.setOnMessageReceivedHandler(tui::onUserInputReceived);
 
         heroes = createHeroList();
         codes = createCodesMap();
@@ -248,26 +259,38 @@ public class Game extends Application {
     }
 
     private static void startMenu() {
-        tui.menu(debugMode);
+
+        if (!debugMode) {
+            tui.menu();
+        }
 
         // continue or new game (1 for new game, 2 for continue game)
-        char loadSelection = tui.continueOrNewGameMenu();
-        switch(loadSelection) {
+//        char loadSelection = tui.continueOrNewGameMenu();
+        CompletableFuture<Character> userInputFuture = tui.continueOrNewGameMenu2();
+        userInputFuture.thenApplyAsync(userInput -> {
+            switch(userInput) {
 
-            case '1': // new game
-                audio.playSFX(audio.menu1, 100);
-                newGameSetup();
+                case '1': // new game
+                    audio.playSFX(audio.menu1, 100);
+                    newGameSetup();
 
-            case '2': // continue game
-                audio.playSFX(audio.menu1, 100);
-                loadGameSetup();
-                break;
+                case '2': // continue game
+                    audio.playSFX(audio.menu1, 100);
+                    loadGameSetup();
+                    break;
 
-            default:
-                audio.playSFX(audio.error, 100);
-                tui.displayWrongInput();
-                startMenu();
-        }
+                default:
+                    audio.playSFX(audio.error, 100);
+                    tui.displayWrongInput();
+                    startMenu();
+            }
+            return userInput; // Return the input for further processing if necessary
+
+        }).exceptionally(ex -> {
+            // Handle exceptions if any occur
+            ex.printStackTrace();
+            return null;
+        });
     }
 
     /**
@@ -293,7 +316,7 @@ public class Game extends Application {
 
         if (introSelection == '2') {
             tui.introductionP2(funnyMode, heroFirstName, heroFullName);
-            DelayMachine.delay(4);
+            Delay.seconds(2);
         } else {
             System.out.println("【 " + heroFullName + " 】");
             tui.pressAnyKeyContinue();
@@ -314,7 +337,7 @@ public class Game extends Application {
         // setup dungeon (1 for easy, 2 for medium, 3 for hard)
         selectDifficulty();
 
-        DelayMachine.delay(1);
+        Delay.seconds(0.5);
 
         if (!debugMode) {
             // start msg
@@ -322,7 +345,7 @@ public class Game extends Application {
 
             // start music
             audio.playMusic(audio.startingAnewSong, false, -12);
-            DelayMachine.delay(15);
+            Delay.seconds(7.5);
         }
 
         // enter the main game loop
@@ -354,7 +377,7 @@ public class Game extends Application {
                 audio.playSFX(audio.menu1, 100);
                 changeHero();
                 tui.displayHeroSelected(hero);
-                DelayMachine.delay(4);
+                Delay.seconds(2);
                 mainMenu();
                 break;
 
@@ -363,21 +386,21 @@ public class Game extends Application {
                 newHeroName();
                 hero.setName(heroFullName);
                 tui.displayHeroNameChanged(hero);
-                DelayMachine.delay(4);
+                Delay.seconds(2);
                 mainMenu();
                 break;
 
             case '4': // cheat code menu
                 audio.playSFX(audio.menu1, 100);
                 cheatCodeMenu();
-                DelayMachine.delay(4);
+                Delay.seconds(2);
                 mainMenu();
                 break;
 
             case '6':   // save
                 audio.playSFX(audio.menu1, 100);
                 saveGame();
-                DelayMachine.delay(4);
+                Delay.seconds(2);
                 mainMenu();
                 break;
 
@@ -638,7 +661,7 @@ public class Game extends Application {
                 // play monster encounter cutscene
                 tui.displayMonsterEncounterMsg(monster);
 
-                DelayMachine.delay(1); // delay for 0.5 seconds
+                Delay.seconds(0.5); // delay for 0.5 seconds
 
                 MonsterBattle2 battle = new MonsterBattle2(hero, monster, cheatMode, debugMode, funnyMode);
                 BattleResult winnerWinnerChickenDinner = battle.newBattle();
@@ -674,7 +697,7 @@ public class Game extends Application {
                     gameOver = true;
                     break;
                 }
-                DelayMachine.delay(8); // delay for 4 seconds
+                Delay.seconds(4); // delay for 4 seconds
                 displayDungeonScreen(); // only redisplay the dungeon screen, don't go back to the start of the loop
                 audio.playMusic(audio.ambientSong, true);
 
@@ -880,7 +903,7 @@ public class Game extends Application {
             hero.levelUp();
             tui.levelUpMsg(hero.getLevel());
             audio.playSFX(audio.heroLevelUp, 120);
-            DelayMachine.delay(2);
+            Delay.seconds(1);
         }
     }
 
@@ -925,10 +948,10 @@ public class Game extends Application {
 
     private static void exitGame() {
         audio.playSFX(audio.menu2, -5);
-        DelayMachine.delay(2);
+        Delay.seconds(1);
         tui.displayCyaNerd(funnyMode);
         audio.playSFX(audio.heroOof, -5);
-        DelayMachine.delay(2);
+        Delay.seconds(1);
         System.exit(0);
     }
 
@@ -940,12 +963,12 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedMedium();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedJuggernautAndThief();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
 
@@ -955,12 +978,12 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedHard();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedDoctorAndNinja();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
 
@@ -969,29 +992,29 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedMage();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
 
             tui.displayHintStillMoreHeroes();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
         if (totalHeroSteps > 100) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedScientist();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
         if (totalMonstersDefeated > 100) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedBeastmaster();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
         if (allHeroesUnlocked()) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedAll();
-            DelayMachine.delay(4);
+            Delay.seconds(2);
             tui.pressAnyKeyContinue();
         }
     }
@@ -1067,7 +1090,7 @@ public class Game extends Application {
     }
 
     private static void cheatCodeMenu() { //TODO take out cheat code menu. make it hidden
-        DelayMachine.delay(1);
+        Delay.seconds(0.5);
         audio.playMusic(audio.hackerSong, true);
         String code = tui.cheatCodeMenu();
 
@@ -1098,7 +1121,7 @@ public class Game extends Application {
                 }
             }
         }
-        DelayMachine.delay(4);
+        Delay.seconds(2);
         audio.stopMusic();
     }
 
@@ -1107,16 +1130,16 @@ public class Game extends Application {
         switch (choice) {
             case '1': // play again
                 audio.playSFX(audio.menu1);
-                DelayMachine.delay(2);
+                Delay.seconds(1);
                 audio.stopAll();
                 tui.sentToMainMenuMsg();
-                DelayMachine.delay(6);
+                Delay.seconds(3);
                 mainMenu();
                 break;
             case '2': // exit
                 audio.playSFX(audio.menu2, 80);
                 exitGame();
-                DelayMachine.delay(2);
+                Delay.seconds(1);
                 System.exit(0);
                 break;
             default:
@@ -1129,7 +1152,7 @@ public class Game extends Application {
 
     private static void victory() {
         audio.stopAll();
-        DelayMachine.delay(1);
+        Delay.seconds(0.5);
 
         // play victory sound
         audio.playMusic(audio.triumpantFinishSong, true);
@@ -1138,11 +1161,11 @@ public class Game extends Application {
         tui.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, debugMode);
 
         if (!debugMode) {
-            DelayMachine.delay(10);
+            Delay.seconds(5);
         }
 
         tui.pressAnyKeyContinue();
-        audio.playSFX(audio.menu2, -5);
+        audio.playSFX(audio.menu2, 80);
         audio.stopAll();
 
         // play credits if on hard mode
@@ -1153,7 +1176,7 @@ public class Game extends Application {
         // update stats
         totalHeroSteps += heroSteps;
 
-        DelayMachine.delay(2);
+        Delay.seconds(1);
 
         // info & hint popups
         displayPopups();

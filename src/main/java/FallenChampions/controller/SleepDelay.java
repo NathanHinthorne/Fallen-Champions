@@ -9,7 +9,7 @@ import FallenChampions.view.TalkingCharacters;
  * @author Nathan Hinthorne
  * @version 1.0 - 5/12/23
  */
-public abstract class DelayMachine {
+public class SleepDelay {
 
     /**
      * a timed delay to make the game flow better.

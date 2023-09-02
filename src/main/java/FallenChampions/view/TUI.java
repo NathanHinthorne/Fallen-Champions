@@ -4,7 +4,7 @@ import FallenChampions.model.characters.Debuff;
 import FallenChampions.model.characters.DungeonCharacter;
 import FallenChampions.model.characters.boss.Missile;
 import FallenChampions.model.dungeon.Difficulty;
-import FallenChampions.controller.DelayMachine;
+import FallenChampions.controller.SleepDelay;
 import FallenChampions.model.characters.heroes.Inventory;
 import FallenChampions.model.dungeon.Dungeon;
 import FallenChampions.model.characters.heroes.Hero;
@@ -54,7 +54,7 @@ public class TUI {
         if (!theDebugMode) {
             System.out.println("Welcome to...");
             System.out.println();
-            DelayMachine.delay(4);
+            SleepDelay.delay(4);
 //            theAudio.playSFX(theAudio.titleScreen, -8);
             System.out.println("" +
                     "                    ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
@@ -67,7 +67,7 @@ public class TUI {
                     "                   ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
                     "                                           ▀         ▀                                ");
             System.out.println();
-            DelayMachine.delay(1);
+            SleepDelay.delay(1);
             System.out.println("" +
                     " ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
                     "███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
@@ -79,7 +79,7 @@ public class TUI {
                     "████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
             System.out.println();
             System.out.println();
-            DelayMachine.delay(3);
+            SleepDelay.delay(3);
             System.out.println("I̲M̲P̲O̲R̲T̲A̲N̲T̲ ̲I̲N̲F̲O̲R̲M̲A̲T̲I̲O̲N̲");
             System.out.println("--Since this game is console-based, you will be using the keyboard to play.");
             System.out.println("--You'll notice that the screen \"updates\" by printing new information on top of old information.");
@@ -130,13 +130,13 @@ public class TUI {
     public void introductionP1(final boolean theFunnyDialogue, final AudioManager theAudio) {
         System.out.println("-------------------------INTRODUCTION-------------------------");
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER, "Welcome hero,");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"The dungeon you see looming before you is one of many perils.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"In it lies hordes of monsters, deadly traps, and countless treasures.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Not even I, the keeper of the dungeon, know what awaits you there.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER, "Welcome hero,");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"The dungeon you see looming before you is one of many perils.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"In it lies hordes of monsters, deadly traps, and countless treasures.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Not even I, the keeper of the dungeon, know what awaits you there.");
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Now then, what is your name?");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Now then, what is your name?");
     }
 
     public String findHeroName() {
@@ -152,39 +152,39 @@ public class TUI {
         System.out.println();
 
         if (theFunnyMode) {
-            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"Wait, are you serious? Your name is just " + theFirstName + "?");
-            DelayMachine.delay(2);
-            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"That's far too ordinary -_-");
-            DelayMachine.delay(4);
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I dub thee...");
+            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"Wait, are you serious? Your name is just " + theFirstName + "?");
+            SleepDelay.delay(2);
+            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"That's far too ordinary -_-");
+            SleepDelay.delay(4);
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I dub thee...");
             System.out.println();
-            DelayMachine.delay(5);
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"【 Sir " + theFullName + "! 】");
+            SleepDelay.delay(5);
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"【 Sir " + theFullName + "! 】");
         } else {
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah, " + theFirstName + ", a fine name indeed.");
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself.");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah, " + theFirstName + ", a fine name indeed.");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself.");
         }
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Now then, " + theFullName + ", are you ready to begin your adventure?");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Don't think you're the first to explore this dungeon.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Many others have come before you... Not one has made it out alive.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Do you think you have what it takes to overcome this dungeon?");
-        DelayMachine.delay(2);
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Or will you become yet another FALLEN CHAMPION?");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Now then, " + theFullName + ", are you ready to begin your adventure?");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Don't think you're the first to explore this dungeon.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Many others have come before you... Not one has made it out alive.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Do you think you have what it takes to overcome this dungeon?");
+        SleepDelay.delay(2);
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Or will you become yet another FALLEN CHAMPION?");
         System.out.println();
 
         if (theFunnyMode) {
-            DelayMachine.delay(3);
+            SleepDelay.delay(3);
             theAudio.playSFX(theAudio.rimshot, -10);
-            DelayMachine.delay(8);
-            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"By the way, that was a rhetorical question, you don't actually get to answer.");
-            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"Anyway, choose one of these I guess");
+            SleepDelay.delay(8);
+            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"By the way, that was a rhetorical question, you don't actually get to answer.");
+            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"Anyway, choose one of these I guess");
 
         } else {
-            DelayMachine.delay(3);
+            SleepDelay.delay(3);
             theAudio.playSFX(theAudio.dunDunDun, -10);
-            DelayMachine.delay(8);
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"So " + theFullName + ", what kind of adventurer are you anyway?");
+            SleepDelay.delay(8);
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"So " + theFullName + ", what kind of adventurer are you anyway?");
         }
     }
 
@@ -355,7 +355,7 @@ public class TUI {
     public char openBag(final Inventory theBag, final boolean inBattle, final AudioManager theAudio) {
         displayChainSpacer();
         System.out.println("Opening bag...");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
 
         if (inBattle) {
             System.out.println(theBag.getItemView());
@@ -390,7 +390,7 @@ public class TUI {
     public void closeBag(final AudioManager theAudio) {
         System.out.println("Closing bag...");
         theAudio.playSFX(theAudio.heroBagClose, -10);
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
         displayChainSpacer();
     }
 
@@ -560,7 +560,7 @@ public class TUI {
 
     public void monsterHeal(final int theHealAmt) {
         System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
     }
 
     public void characterSelectAbility(final DungeonCharacter theAttacker, final DungeonCharacter theDefender,
@@ -572,7 +572,7 @@ public class TUI {
         } else if (theAbility == Ability.SPECIAL){
             System.out.println(" " + theAttacker.getSpecialSelectMsg(theDefender) + "...");
         }
-        DelayMachine.delay(3);
+        SleepDelay.delay(3);
     }
 
     public void monsterAttackResult(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
@@ -581,7 +581,7 @@ public class TUI {
         if (theDamageDealt != 0) {
             System.out.println("   -" + theHero.getName() + " took " + theDamageDealt + " damage!");
         }
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
     }
 
     public void heroAttackResult(final Hero theHero, final int theDamageDealt) {
@@ -590,7 +590,7 @@ public class TUI {
         if (theDamageDealt != 0) { // if (theMonster.doesDamageOnSpecial() || theAttackHit)
             System.out.println("   -" + "The enemy took " + theDamageDealt + " damage!");
         }
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
     }
     public void playerCritMsg() {
         System.out.println("   -It was a critical hit!");
@@ -633,12 +633,12 @@ public class TUI {
         System.out.println();
 
         if (!theDebugMode) {
-            DelayMachine.delay(2);
-            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  RESULTS:");
-            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You beat the game on " + theDifficulty + " difficulty!");
-            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You took " + theHeroSteps + " steps to escape the dungeon.");
-            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You reached level " + theLevel + ".");
-            DelayMachine.printDelayedText(TalkingCharacters.NONE,"  You defeated " + theMonstersDefeated + " monsters.");
+            SleepDelay.delay(2);
+            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  RESULTS:");
+            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You beat the game on " + theDifficulty + " difficulty!");
+            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You took " + theHeroSteps + " steps to escape the dungeon.");
+            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You reached level " + theLevel + ".");
+            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You defeated " + theMonstersDefeated + " monsters.");
         }
     }
 
@@ -647,15 +647,15 @@ public class TUI {
      */
     public void displayBattleWinMsg(final Monster theMonster) {
         System.out.println();
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
         System.out.println(" -" + theMonster.getDeathMsg());
         System.out.println();
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         System.out.println("                ╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
         System.out.println("                │ ENEMY DEFEATED │");
         System.out.println("                ╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
         System.out.println();
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         System.out.println(" RESULTS:");
         System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
         System.out.println();
@@ -666,7 +666,7 @@ public class TUI {
      */
     public void displayDeathMsg(final boolean theFunnyMode) {
         System.out.println(" -You have been defeated.");
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         if (theFunnyMode) {
             System.out.println("" +
                     " $$$$$$\\  $$$$$$\\ $$$$$$$$\\        $$$$$$\\  $$\\   $$\\ $$$$$$$\\         $$$$$$\\   $$$$$$\\  $$$$$$$\\  $$\\   $$\\ $$$$$$$\\  \n" +
@@ -721,8 +721,8 @@ public class TUI {
     }
 
     public void displayWrongCode() {
-        DelayMachine.printDelayedText(TalkingCharacters.NONE,"Uhhhhhh");
-        DelayMachine.printDelayedTextFast(TalkingCharacters.NONE,"that's not a valid code. Please try again.");
+        SleepDelay.printDelayedText(TalkingCharacters.NONE,"Uhhhhhh");
+        SleepDelay.printDelayedTextFast(TalkingCharacters.NONE,"that's not a valid code. Please try again.");
     }
 
 
@@ -762,13 +762,13 @@ public class TUI {
         String monsterName = theMonster.getType().toString();
         String article = isVowel(monsterName.charAt(0)) ? " an " : " a ";
         System.out.println(" -You have encountered" + article + monsterName);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
         System.out.println("████████████████████████████████████████████████████████████████████");
         System.out.println("█                       --- BATTLE START ---                       █");
         System.out.println("████████████████████████████████████████████████████████████████████");
         System.out.println();
-        DelayMachine.delay(1);
+        SleepDelay.delay(1);
 
     }
 
@@ -821,10 +821,10 @@ public class TUI {
 
     public void heroIntroduction(Hero hero) {
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah, a " + hero.getType() + "!");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I'm sure that skill will serve you well.");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Good luck!");
-        DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"*cranks gate open*");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah, a " + hero.getType() + "!");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I'm sure that skill will serve you well.");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Good luck!");
+        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"*cranks gate open*");
         System.out.println();
 
     }
@@ -1106,14 +1106,14 @@ public class TUI {
 
     public void findParchmentDungeonKeeperMsg(final List<Parchment> theParchments) { // only 1 parchment scrap per dungeon
         if (theParchments.size() == 1) {
-            DelayMachine.printDelayedTextFast(TalkingCharacters.KEEPER,"What's that? You found a scrap of parchment?! Let me see it...");
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Ah... it's nothing but a bunch of scribbles. Pay it no mind.");
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"It's probably dangerous if anything.");
+            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"What's that? You found a scrap of parchment?! Let me see it...");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah... it's nothing but a bunch of scribbles. Pay it no mind.");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"It's probably dangerous if anything.");
 
         } else if (theParchments.size() == 2) {
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"Another parchment scrap?");
-            DelayMachine.printDelayedText(TalkingCharacters.KEEPER,"I've already told you, it's dangerous...");
-            DelayMachine.printDelayedTextSlow(TalkingCharacters.KEEPER,"Leave it alone and stop collecting these!");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Another parchment scrap?");
+            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I've already told you, it's dangerous...");
+            SleepDelay.printDelayedTextSlow(TalkingCharacters.KEEPER,"Leave it alone and stop collecting these!");
         }
     }
 
@@ -1137,9 +1137,9 @@ public class TUI {
 
 
     public void displayCredits(final AudioManager theAudio) { // CREDITS
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         theAudio.playMusic(theAudio.rickRollSong, false, -10);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
         System.out.println();
         System.out.println("" +
@@ -1156,15 +1156,15 @@ public class TUI {
                 "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ");
 
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("" +
                 "  _____                                               _             \n" +
                 " |  __ \\                                             (_)            \n" +
@@ -1175,21 +1175,21 @@ public class TUI {
                 "                   __/ |                                       __/ |\n" +
                 "                  |___/                                       |___/ ");
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("  Nathan Hinthorne");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("  (with a little help from Brendan Smith and Austin Roaf)");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
 
         System.out.println("" +
@@ -1200,33 +1200,33 @@ public class TUI {
                 " | |  | | |_| \\__ \\ | (__ \n" +
                 " |_|  |_|\\__,_|___/_|\\___|");
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println(" Starting Off Theme by: Nathan Hinthorne");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println(" Dungeon Theme by: Nathan Hinthorne");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println(" Battle Theme by: Nathan Hinthorne");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println(" Victory Theme by: Jon Presstone");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println(" Credits Theme by: 8 Bit Universe");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("" +
                 "   _____                 _       _   _______ _                 _        \n" +
                 "  / ____|               (_)     | | |__   __| |               | |       \n" +
@@ -1237,24 +1237,24 @@ public class TUI {
                 "        | |                                                             \n" +
                 "        |_|                                                             ");
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("  My friends and family, for all their amazing ideas for characters and abilities.");
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         System.out.println("  My professor, Tom Capaul, for giving me the assignment which started this whole game off.");
 
         // make the rest of the text run off the screen with a bunch of blank lines
         for (int i = 0; i < 30; i++) {
-            DelayMachine.delay(2);
+            SleepDelay.delay(2);
             System.out.println();
         }
 
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         displayRecommendListening();
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
         pressAnyKeyContinue();
         theAudio.stopAll();
     }
@@ -1268,24 +1268,24 @@ public class TUI {
     public void displayCyaNerd(final boolean theFunnyMode) {
         System.out.println();
         if (theFunnyMode) {
-            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"Nah, you're trapped here forever now.");
-            DelayMachine.delay(8);
+            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Nah, you're trapped here forever now.");
+            SleepDelay.delay(8);
             System.out.println();
-            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"Don't you dare hit that X button.");
+            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Don't you dare hit that X button.");
             System.out.println();
-            DelayMachine.delay(2);
+            SleepDelay.delay(2);
             System.out.print(". ");
-            DelayMachine.delay(2);
+            SleepDelay.delay(2);
             System.out.print(". ");
-            DelayMachine.delay(2);
+            SleepDelay.delay(2);
             System.out.print(". ");
-            DelayMachine.delay(8);
+            SleepDelay.delay(8);
             System.out.println();
             System.out.println();
-            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"FINE!");
-            DelayMachine.delay(2);
-            DelayMachine.printDelayedText(TalkingCharacters.NATHAN,"I'll let you leave.");
-            DelayMachine.delay(4);
+            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"FINE!");
+            SleepDelay.delay(2);
+            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"I'll let you leave.");
+            SleepDelay.delay(4);
             System.out.println();
 
             System.out.println("" +
@@ -1380,14 +1380,14 @@ public class TUI {
 
     public void codeSuccessMsg() {
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.NONE," -CODE ACCEPTED");
+        SleepDelay.printDelayedText(TalkingCharacters.NONE," -CODE ACCEPTED");
         System.out.println();
     }
 
 
     public void codeFailMsg() {
         System.out.println();
-        DelayMachine.printDelayedText(TalkingCharacters.NONE," -CODE DENIED");
+        SleepDelay.printDelayedText(TalkingCharacters.NONE," -CODE DENIED");
         System.out.println();
     }
 
@@ -1572,7 +1572,7 @@ public class TUI {
 
     public void displayRunAway(final Hero theHero) {
         System.out.println(" " + theHero.getName() + " attempted to run away...");
-        DelayMachine.delay(4);
+        SleepDelay.delay(4);
     }
 
 

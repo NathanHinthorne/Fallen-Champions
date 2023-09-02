@@ -4,8 +4,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -31,8 +29,9 @@ public class Console extends BorderPane {
 
     public Console() {
         output.setEditable(false);
-        setCenter(output);
+        output.setFocusTraversable(false);
         output.setWrapText(false);
+        setCenter(output);
 
         input.addEventHandler(KeyEvent.KEY_RELEASED, keyEvent -> {
             switch (keyEvent.getCode()) {
@@ -73,13 +72,16 @@ public class Console extends BorderPane {
         setBottom(input);
     }
 
-    public String getInput() {
-        return history.get(historyPointer);
+    public void setHintText(String text) {
+        input.setPromptText(text);
     }
 
-    public String getInput(String hintText) {
-        input.setPromptText(hintText); // first msg - "Type here..." other stuff for diff msgs
-        return history.get(historyPointer);
+    // issue: when the thread sleeps, the screen goes white until the thread wakes up.
+    // However, the thread (currently) needs to sleep to wait for input. So the screen is white forever
+
+    public String getInput() { // problem: user can enter multiple inputs, filling queue at a time when nothing is being read
+        requestFocus();
+        return history.get(historyPointer); // always returns the last input
     }
 
     @Override
@@ -110,9 +112,13 @@ public class Console extends BorderPane {
         GuiUtils.runSafe(() -> output.appendText(System.lineSeparator()));
     }
 
-    public void setTextColor(Color color) {
-        output.setStyle("-fx-text-fill: " + toRgbString(color) + ";");
+    public void setInputTextColor(Color color) {
         input.setStyle("-fx-text-fill: " + toRgbString(color) + ";");
+        input.setStyle("-fx-prompt-text-fill: " + toRgbString(color) + ";"); // not working
+    }
+
+    public void setOutputTextColor(Color color) {
+        output.setStyle("-fx-text-fill: " + toRgbString(color) + ";");
     }
 
     public void setOutputBackgroundColor(Color color) {

@@ -29,10 +29,11 @@ public class GameScreen {
         Console consoleWindow = Console.getInstance();
 
         // Set the text color and background color of the console
-        consoleWindow.setTextColor(Color.WHITE);
-        consoleWindow.setOutputBackgroundColor(Color.rgb(30, 30, 30, 1)); // dark grey
+        consoleWindow.setInputTextColor(Color.WHITE);
         consoleWindow.setInputBackgroundColor(Color.rgb(50, 50, 50, 1)); // light grey
-        consoleWindow.setFont(Fonts.JETBRAINS_MONO, 16);
+        consoleWindow.setOutputTextColor(Color.WHITE);
+        consoleWindow.setOutputBackgroundColor(Color.rgb(30, 30, 30, 1)); // dark grey
+        consoleWindow.setFont(Fonts.JETBRAINS_MONO, 14);
 
         // Create ImageView nodes for the left and right images
         Image leftImage = loadImage("/images/wall.png");
@@ -54,10 +55,12 @@ public class GameScreen {
         borderPane.setCenter(consoleWindow);
 
         // Create a new Scene using the borderPane as its root
-        Scene consoleScene = new Scene(borderPane, 1100, 700);
+        int width = 1250;
+        int height = 700;
+        Scene consoleScene = new Scene(borderPane, width, height);
 
-        myPrimaryStage.setMinWidth(600);
-        myPrimaryStage.setMinHeight(400);
+        myPrimaryStage.setY(50); // temp
+        myPrimaryStage.setX(400); // temp
 
         myPrimaryStage.setResizable(false);
 

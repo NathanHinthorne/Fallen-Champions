@@ -131,11 +131,11 @@ public class MonsterBattle2 {
                 if (myHero.getHealth() > 0) {
                     audio.playSFX(audio.menu1, 100);
                     heroTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
                 if (myMonster.getHealth() > 0 && !myGameOver) { // prevents monster from taking a 2nd turn after hero runs
                     monsterTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
             }
         } else {
@@ -143,12 +143,12 @@ public class MonsterBattle2 {
             while (!myGameOver) {
                 if (myMonster.getHealth() > 0) {
                     monsterTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
                     audio.playSFX(audio.menu1, 100);
                     heroTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
             }
         }
@@ -177,7 +177,6 @@ public class MonsterBattle2 {
         tui.displayPlayerTurn();
 
         tui.displayHeroAndMonsterInfo(myHero, myMonster);
-        System.out.println();
 
         myHero.initializeCharacterPerTurn();
 
@@ -185,7 +184,7 @@ public class MonsterBattle2 {
         if (!passiveMsgs.isEmpty()) {
             tui.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
-        System.out.println();
+        tui.println();
 
         boolean debuffMsgTriggered = false;
         if (myHero.hasDebuff(Debuff.STUCKIFY)) {
@@ -214,12 +213,13 @@ public class MonsterBattle2 {
         }
 
         if (debuffMsgTriggered) {
-            System.out.println();
+            tui.println();
         }
 
         // menu
         char choice = tui.battleMenu(myHero);
-        System.out.println();
+        tui.println();
+
 
         // Basic Attack
         if (choice == '1') {
@@ -298,7 +298,7 @@ public class MonsterBattle2 {
         tui.characterSelectAbility(myHero, myMonster, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         tui.heroAttackResult(myHero, damage);
         inflictDebuffMsg(myMonster); // show what debuffs were inflicted on monster
 
@@ -343,7 +343,7 @@ public class MonsterBattle2 {
         tui.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         tui.heroAttackResult(myHero, damage);
         if (myHero.wasCritHit()) {
             tui.playerCritMsg();
@@ -429,13 +429,12 @@ public class MonsterBattle2 {
         tui.displayEnemyTurn();
 
         tui.displayHeroAndMonsterInfo(myHero, myMonster);
-        System.out.println();
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
             tui.passiveAbilityActivated(passiveMsgs);
         }
-        System.out.println();
+        tui.println();
 
         boolean debuffMsgTriggered = false;
         if (myMonster.hasDebuff(Debuff.STUCKIFY)) {
@@ -464,10 +463,10 @@ public class MonsterBattle2 {
         }
 
         if (debuffMsgTriggered) {
-            System.out.println();
+            tui.println();
         }
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
 
         int choice = RANDOMIZER.nextInt(3);
         myMonster.decreaseCooldown();
@@ -570,7 +569,7 @@ public class MonsterBattle2 {
         tui.displayStuckifyMsg(theCharacter);
         theCharacter.decreaseCooldown();
         theCharacter.tickDebuffs();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
     }
 
     private void blindedProcess(final DungeonCharacter theCharacter) {

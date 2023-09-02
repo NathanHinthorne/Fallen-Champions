@@ -132,11 +132,11 @@ public class MonsterBattle {
                 if (myHero.getHealth() > 0) {
                     audio.playSFX(audio.menu1, 100);
                     heroTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
                 if (myMonster.getHealth() > 0 && !myGameOver) { // prevents monster from taking a 2nd turn after hero runs
                     monsterTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
             }
         } else {
@@ -144,12 +144,12 @@ public class MonsterBattle {
             while (!myGameOver) {
                 if (myMonster.getHealth() > 0) {
                     monsterTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
                 if (myHero.getHealth() > 0) {
                     audio.playSFX(audio.menu1, 100);
                     heroTurn();
-                    DelayMachine.delay(2);
+                    SleepDelay.delay(2);
                 }
             }
         }
@@ -299,7 +299,7 @@ public class MonsterBattle {
         myGame.characterSelectAbility(myHero, myMonster, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         myGame.heroAttackResult(myHero, damage);
         inflictDebuffMsg(myMonster); // show what debuffs were inflicted on monster
 
@@ -344,7 +344,7 @@ public class MonsterBattle {
         myGame.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
         myGame.heroAttackResult(myHero, damage);
         if (myHero.wasCritHit()) {
             myGame.playerCritMsg();
@@ -468,7 +468,7 @@ public class MonsterBattle {
             System.out.println();
         }
 
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
 
         int choice = RANDOMIZER.nextInt(3);
         myMonster.decreaseCooldown();
@@ -571,7 +571,7 @@ public class MonsterBattle {
         myGame.displayStuckifyMsg(theCharacter);
         theCharacter.decreaseCooldown();
         theCharacter.tickDebuffs();
-        DelayMachine.delay(2);
+        SleepDelay.delay(2);
     }
 
     private void blindedProcess(final DungeonCharacter theCharacter) {
