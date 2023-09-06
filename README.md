@@ -9,8 +9,8 @@ Select a hero with unique abilities and go exploring within a treacherous dungeo
 * Closely following SOLID and OO principles for secure, readable, manageable, and maintainable code
 * Defensive Programming Techniques
 * Writing multithreaded applications
-* Utilized async and await for asynchronous programming
-* Used event-driven programming
+* Utilizing asynchronous programming for text input
+* Using event-driven programming
 * Testing and debugging
 * Writing descriptive and helpful documentation
 * Learned and experienced the software development cycle by:

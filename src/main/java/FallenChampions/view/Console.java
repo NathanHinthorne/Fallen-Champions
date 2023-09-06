@@ -1,15 +1,21 @@
 package FallenChampions.view;
 
+import FallenChampions.controller.TextSpeed;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -79,10 +85,10 @@ public class Console extends BorderPane {
     // issue: when the thread sleeps, the screen goes white until the thread wakes up.
     // However, the thread (currently) needs to sleep to wait for input. So the screen is white forever
 
-    public String getInput() { // problem: user can enter multiple inputs, filling queue at a time when nothing is being read
-        requestFocus();
-        return history.get(historyPointer); // always returns the last input
-    }
+//    public String getInput() { // problem: user can enter multiple inputs, filling queue at a time when nothing is being read
+//        requestFocus();
+//        return history.get(historyPointer); // always returns the last input
+//    }
 
     @Override
     public void requestFocus() {
@@ -111,6 +117,31 @@ public class Console extends BorderPane {
     public void println() {
         GuiUtils.runSafe(() -> output.appendText(System.lineSeparator()));
     }
+
+    public void printAnimation(final String textToType, final TextSpeed textSpeed) {
+        char[] charactersToType = textToType.toCharArray();
+        AtomicInteger currentIndex = new AtomicInteger(0); // AtomicInteger is thread-safe, meaning only one thread can access it at a time
+        int speedMillis = textSpeed.getDelayMillis();
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(
+                        Duration.millis(speedMillis), // Typing speed
+                        event -> {
+                            int index = currentIndex.get();
+                            if (index < charactersToType.length) {
+                                Platform.runLater(() -> {
+                                    output.appendText(String.valueOf(charactersToType[index]));
+                                });
+                                currentIndex.incrementAndGet();
+                            }
+                        }
+                )
+        );
+        timeline.setCycleCount(charactersToType.length); // Repeat for each character
+
+        timeline.play();
+    }
+
 
     public void setInputTextColor(Color color) {
         input.setStyle("-fx-text-fill: " + toRgbString(color) + ";");

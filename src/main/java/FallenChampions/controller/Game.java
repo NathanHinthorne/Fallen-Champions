@@ -11,6 +11,7 @@ import FallenChampions.model.potions.Potion;
 import FallenChampions.model.potions.PotionDefensive;
 import FallenChampions.model.potions.VisionPotion;
 import FallenChampions.view.*;
+import FallenChampions.view.Console;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -18,10 +19,7 @@ import javafx.stage.Stage;
 import javafx.application.Platform;
 import org.sqlite.SQLiteDataSource;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +27,7 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class Game extends Application {
+public class Game extends Application implements Serializable {
 
     /**
      * Whether the window minimize alert has been shown before
@@ -54,7 +52,7 @@ public class Game extends Application {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = false;
+    private static boolean debugMode = true;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -150,12 +148,20 @@ public class Game extends Application {
     private static Console console; // from view
 
 
-    public Game() { }
-
+    /**
+     * The main method
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Starts the game
+     *
+     * @param primaryStage the primary stage
+     */
     @Override
     public void start(final Stage primaryStage) {
 
@@ -183,6 +189,12 @@ public class Game extends Application {
         });
     }
 
+    /**
+     * Checks if the main window has been minimized or maximized
+     *
+     * @param primaryStage the primary stage
+     * @param gameStage the game stage
+     */
     private void checkIfMinimized(Stage primaryStage, Stage gameStage) {
         gameStage.iconifiedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -199,6 +211,12 @@ public class Game extends Application {
             }
         });
     }
+
+    /**
+     * Shows an alert when the main window is minimized
+     *
+     * @param primaryStage the primary stage
+     */
     private void showAlert(Stage primaryStage) {
         // Show a confirmation dialog
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -261,12 +279,11 @@ public class Game extends Application {
     private static void startMenu() {
 
         if (!debugMode) {
-            tui.menu();
+            tui.title();
         }
 
         // continue or new game (1 for new game, 2 for continue game)
-//        char loadSelection = tui.continueOrNewGameMenu();
-        CompletableFuture<Character> userInputFuture = tui.continueOrNewGameMenu2();
+        CompletableFuture<Character> userInputFuture = tui.continueOrNewGameMenu();
         userInputFuture.thenApplyAsync(userInput -> {
             switch(userInput) {
 
@@ -287,7 +304,6 @@ public class Game extends Application {
             return userInput; // Return the input for further processing if necessary
 
         }).exceptionally(ex -> {
-            // Handle exceptions if any occur
             ex.printStackTrace();
             return null;
         });
@@ -299,57 +315,64 @@ public class Game extends Application {
     private static void newGameSetup() {
 
         // print introduction
-        System.out.println();
-        char introSelection = tui.playIntroOrNot();
-        if (introSelection != '1' && introSelection != '2') {
-            audio.playSFX(audio.error, 100);
-            tui.displayWrongInput();
-            newGameSetup();
-        }
+        console.println();
 
-        audio.playSFX(audio.menu1, 100);
-        if (introSelection == '2') {
-            tui.introductionP1(funnyMode);
-        }
+        CompletableFuture<Character> userInputFuture = tui.playIntroOrNot();
+        userInputFuture.thenApplyAsync(userInput -> {
 
-        newHeroName();
+            if (userInput != '1' && userInput != '2') {
+                audio.playSFX(audio.error, 100);
+                tui.displayWrongInput();
+                newGameSetup();
+            }
 
-        if (introSelection == '2') {
-            tui.introductionP2(funnyMode, heroFirstName, heroFullName);
-            Delay.seconds(2);
-        } else {
-            System.out.println("【 " + heroFullName + " 】");
-            tui.pressAnyKeyContinue();
-            audio.playSFX(audio.menu2, 120);
-        }
-
-        // choose hero
-        newHero();
-
-        if (introSelection == '2') {
-            tui.heroIntroduction(hero);
-        }
-
-        if (cheatMode) {
-            cheatModeStuff();
-        }
-
-        // setup dungeon (1 for easy, 2 for medium, 3 for hard)
-        selectDifficulty();
-
-        Delay.seconds(0.5);
-
-        if (!debugMode) {
-            // start msg
-            tui.displayStartMsg();
-
-            // start music
-            audio.playMusic(audio.startingAnewSong, false, -12);
-            Delay.seconds(7.5);
-        }
-
-        // enter the main game loop
-        gameLoop();
+            audio.playSFX(audio.menu1, 100);
+            if (userInput == '2') {
+                tui.introductionP1(funnyMode);
+            }
+//
+//            newHeroName();
+//
+//            if (userInput == '2') {
+//                tui.introductionP2(funnyMode, heroFirstName, heroFullName);
+//                Delay.delayAndExecute(2);
+//
+//            } else {
+//                console.println("【 " + heroFullName + " 】");
+//                tui.pressAnyKeyContinue();
+//                audio.playSFX(audio.menu2, 120);
+//            }
+//
+//            // choose hero
+//            newHero();
+//
+//            if (userInput == '2') {
+//                tui.heroIntroduction(hero);
+//            }
+//
+//            if (cheatMode) {
+//                cheatModeStuff();
+//            }
+//
+//            // setup dungeon (1 for easy, 2 for medium, 3 for hard)
+//            selectDifficulty();
+//
+//            Delay.delayAndExecute(0.5);
+//
+//            if (!debugMode) {
+//                // start msg
+//                tui.displayStartMsg();
+//
+//                // start music
+//                audio.playMusic(audio.startingAnewSong, false, -12);
+//                Delay.delayAndExecute(7.5);
+//            }
+//
+//            // enter the main game loop
+//            gameLoop();
+//
+            return userInput; // Return the input for further processing if necessary
+        });
     }
 
     private static void loadGameSetup() {
@@ -362,60 +385,73 @@ public class Game extends Application {
     }
 
     private static void mainMenu() {
-        char choice = tui.mainMenu();
-        switch (choice) {
 
-            case '1': // continue
-                audio.playSFX(audio.menu1, 100);
-                hero.resetStats();
-                selectDifficulty();
-                gameOver = false;
-                gameLoop();
-                break;
+        CompletableFuture<Character> userInputFuture = tui.mainMenu();
+        userInputFuture.thenApplyAsync(userInput -> {
 
-            case '2': // change hero
-                audio.playSFX(audio.menu1, 100);
-                changeHero();
-                tui.displayHeroSelected(hero);
-                Delay.seconds(2);
-                mainMenu();
-                break;
+            switch (userInput) {
+                case '1': // continue
+                    audio.playSFX(audio.menu1, 100);
+                    hero.resetStats();
+                    selectDifficulty();
+                    gameOver = false;
+                    gameLoop();
+                    break;
 
-            case '3': // change name
-                audio.playSFX(audio.menu1, 100);
-                newHeroName();
-                hero.setName(heroFullName);
-                tui.displayHeroNameChanged(hero);
-                Delay.seconds(2);
-                mainMenu();
-                break;
+                case '2': // change hero
+                    audio.playSFX(audio.menu1, 100);
+                    changeHero();
+                    tui.displayHeroSelected(hero);
+                    Delay.delayAndExecute(2);
+                    mainMenu();
+                    break;
 
-            case '4': // cheat code menu
-                audio.playSFX(audio.menu1, 100);
-                cheatCodeMenu();
-                Delay.seconds(2);
-                mainMenu();
-                break;
+                case '3': // change name
+                    audio.playSFX(audio.menu1, 100);
+                    newHeroName();
+                    hero.setName(heroFullName);
+                    tui.displayHeroNameChanged(hero);
+                    Delay.delayAndExecute(2);
+                    mainMenu();
+                    break;
 
-            case '6':   // save
-                audio.playSFX(audio.menu1, 100);
-                saveGame();
-                Delay.seconds(2);
-                mainMenu();
-                break;
+                case '4': // cheat code menu
+                    audio.playSFX(audio.menu1, 100);
+                    cheatCodeMenu();
+                    Delay.delayAndExecute(2);
+                    mainMenu();
+                    break;
 
-            case '7': // exit
-                audio.playSFX(audio.menu1, 100);
-                char uSure = tui.quitProcess();
-                if (uSure == '1') exitGame();
-                else mainMenu();
-                break;
+                case '6':   // save
+                    audio.playSFX(audio.menu1, 100);
+                    saveGame();
+                    Delay.delayAndExecute(2);
+                    mainMenu();
+                    break;
 
-            default:
-                audio.playSFX(audio.error, 100);
-                tui.displayWrongInput();
-                mainMenu();
-        }
+                case '7': // exit
+                    audio.playSFX(audio.menu1, 100);
+                    quitProcess();
+                    break;
+
+                default:
+                    audio.playSFX(audio.error, 100);
+                    tui.displayWrongInput();
+                    mainMenu();
+            }
+            return userInput; // Return the input for further processing if necessary
+        });
+    }
+
+    private static void quitProcess() {
+        CompletableFuture<Character> userInputFuture = tui.quitProcessMsg();
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            if (userInput == '1') exitGame();
+            else mainMenu();
+
+            return userInput; // Return the input for further processing if necessary
+        });
     }
 
     private static String capitalize(final String firstName) {
@@ -502,14 +538,20 @@ public class Game extends Application {
             default:
                 audio.playSFX(audio.error, 100);
                 tui.displayWrongInput();
-                char heroSelection = tui.chooseHero(heroes);
-                return chooseHero(heroSelection);
+
+                CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
+                userInputFuture.thenApplyAsync(userInput -> {
+                    hero = chooseHero(userInput);
+
+                    return userInput; // Return the input for further processing if necessary
+                });
+                return hero; // use the hero reference (can't return inside the lambda)
         }
     }
 
     /**
      * Setup the dungeon based on the difficulty.
-     * 1 = easy/small, 2 = medium/medium, 3 = hard/large
+     * 1 = easy/small, 2 = medium, 3 = hard/large
      *
      * @param theDifficulty the difficulty of the dungeon
      */
@@ -571,7 +613,7 @@ public class Game extends Application {
 
             displayDungeonScreen();
 
-            System.out.println();
+            console.println();
 
             if (dungeon.heroIsTouchingWall()) {
                 tui.displayWallMsg();
@@ -661,7 +703,7 @@ public class Game extends Application {
                 // play monster encounter cutscene
                 tui.displayMonsterEncounterMsg(monster);
 
-                Delay.seconds(0.5); // delay for 0.5 seconds
+                Delay.delayAndExecute(0.5); // delay for 0.5 seconds
 
                 MonsterBattle2 battle = new MonsterBattle2(hero, monster, cheatMode, debugMode, funnyMode);
                 BattleResult winnerWinnerChickenDinner = battle.newBattle();
@@ -697,7 +739,7 @@ public class Game extends Application {
                     gameOver = true;
                     break;
                 }
-                Delay.seconds(4); // delay for 4 seconds
+                Delay.delayAndExecute(4); // delay for 4 seconds
                 displayDungeonScreen(); // only redisplay the dungeon screen, don't go back to the start of the loop
                 audio.playMusic(audio.ambientSong, true);
 
@@ -721,122 +763,138 @@ public class Game extends Application {
 
             //' w' to move up, 'a' to move left, 's' to move down, 'd' to move right
             // '1' to display hero info, 'e' open bag, '4' to main menu, '5' to save game
-            int gameMenuSelection = tui.gameplayMenu();
-            boolean hasMoved = false;
-            switch(gameMenuSelection) {
-                case 's':
-                    hasMoved = dungeon.playerMove(Direction.SOUTH);
-                    if (hasMoved) {
-                        heroSteps++;
-                        audio.playSFX(audio.step4, 100);
-                    }
-                    else { tui.displayHitWallMsg(); }
-                    hero.setDirection(Direction.SOUTH);
-                    break;
+            CompletableFuture<Character> userInputFuture = tui.gameplayMenu();
+            userInputFuture.thenApplyAsync(userInput -> {
 
-                case 'a':
-                    hasMoved = dungeon.playerMove(Direction.WEST);
-                    if (hasMoved) {
-                        heroSteps++;
-                        audio.playSFX(audio.step4, 100);
-                    }
-                    else { tui.displayHitWallMsg(); }
-                    hero.setDirection(Direction.WEST);
-                    break;
+                boolean hasMoved;
+                switch(userInput) {
+                    case 's':
+                        hasMoved = dungeon.playerMove(Direction.SOUTH);
+                        if (hasMoved) {
+                            heroSteps++;
+                            audio.playSFX(audio.step4, 100);
+                        }
+                        else { tui.displayHitWallMsg(); }
+                        hero.setDirection(Direction.SOUTH);
+                        break;
 
-                case 'd':
-                    hasMoved = dungeon.playerMove(Direction.EAST);
-                    if (hasMoved) {
-                        heroSteps++;
-                        audio.playSFX(audio.step4, 100);
-                    }
-                    else { tui.displayHitWallMsg(); }
-                    hero.setDirection(Direction.EAST);
-                    break;
+                    case 'a':
+                        hasMoved = dungeon.playerMove(Direction.WEST);
+                        if (hasMoved) {
+                            heroSteps++;
+                            audio.playSFX(audio.step4, 100);
+                        }
+                        else { tui.displayHitWallMsg(); }
+                        hero.setDirection(Direction.WEST);
+                        break;
 
-                case 'w':
-                    hasMoved = dungeon.playerMove(Direction.NORTH);
-                    if (hasMoved) {
-                        heroSteps++;
-                        audio.playSFX(audio.step4, 100);
-                    }
-                    else { tui.displayHitWallMsg(); }
-                    hero.setDirection(Direction.NORTH);
-                    break;
+                    case 'd':
+                        hasMoved = dungeon.playerMove(Direction.EAST);
+                        if (hasMoved) {
+                            heroSteps++;
+                            audio.playSFX(audio.step4, 100);
+                        }
+                        else { tui.displayHitWallMsg(); }
+                        hero.setDirection(Direction.EAST);
+                        break;
 
-                case '1': // hero info
-                    audio.playSFX(audio.swishOn, 100);
-                    tui.displayHeroStats(hero);
-                    tui.pressAnyKeyGoBack();
-                    audio.playSFX(audio.swishOff, 80);
-                    break;
+                    case 'w':
+                        hasMoved = dungeon.playerMove(Direction.NORTH);
+                        if (hasMoved) {
+                            heroSteps++;
+                            audio.playSFX(audio.step4, 100);
+                        }
+                        else { tui.displayHitWallMsg(); }
+                        hero.setDirection(Direction.NORTH);
+                        break;
 
-                case '2':
-                    audio.playSFX(audio.swishOn, 100);
-                    tui.displayInstructions();
-                    tui.pressAnyKeyGoBack();
-                    audio.playSFX(audio.swishOff, 80);
-                    break;
+                    case '1': // hero info
+                        audio.playSFX(audio.swishOn, 100);
+                        tui.displayHeroStats(hero);
+                        tui.pressAnyKeyGoBack();
+                        audio.playSFX(audio.swishOff, 80);
+                        break;
 
-                case 'e': // open bag
-                    inventoryMenu();
+                    case '2':
+                        audio.playSFX(audio.swishOn, 100);
+                        tui.displayInstructions();
+                        tui.pressAnyKeyGoBack();
+                        audio.playSFX(audio.swishOff, 80);
+                        break;
 
-                    break;
+                    case 'e': // open bag
+                        inventoryMenu();
 
-                case '4': // main menu
-                    char quit = tui.goToMainMenu();
-                    if (quit == '1') {
-                        audio.playSFX(audio.menu2, 120);
-                        audio.stopMusic();
-                        gameOver = true; //? needed?
-                        mainMenu();
-                    }
-                    break;
+                        break;
 
-                case '5': // save
-                    saveGame();
-                    break;
+                    case '4': // main menu
+                        mainMenuProcess();
+                        break;
 
-                case 'z': // ranged ability
-                    if (hero.hasMazeAbility()) {
-                        hero.activateMazeAbility(dungeon);
-                    }
-                    break;
+                    case '5': // save
+                        saveGame();
+                        break;
 
-                case 'i':
-                    tui.displayArrowSpacer();
-                    dungeon.roomAbove();
-                    tui.displayArrowSpacer();
-                    break;
+                    case 'z': // ranged ability
+                        if (hero.hasMazeAbility()) {
+                            hero.activateMazeAbility(dungeon);
+                        }
+                        break;
 
-                case 'l':
-                    tui.displayArrowSpacer();
-                    dungeon.roomRight();
-                    tui.displayArrowSpacer();
-                    break;
+                    case 'i':
+                        tui.displayArrowSpacer();
+                        dungeon.roomAbove();
+                        tui.displayArrowSpacer();
+                        break;
 
-                case 'k':
-                    tui.displayArrowSpacer();
-                    dungeon.roomBelow();
-                    tui.displayArrowSpacer();
-                    break;
+                    case 'l':
+                        tui.displayArrowSpacer();
+                        dungeon.roomRight();
+                        tui.displayArrowSpacer();
+                        break;
 
-                case 'j':
-                    tui.displayArrowSpacer();
-                    dungeon.roomLeft();
-                    tui.displayArrowSpacer();
-                    break;
+                    case 'k':
+                        tui.displayArrowSpacer();
+                        dungeon.roomBelow();
+                        tui.displayArrowSpacer();
+                        break;
 
-                case 'p':
-                    hero.setHealth(hero.getHealth()/2);
-                    System.out.println("DEBUG: Decreased Health..." + hero.getHealth());
-                    break;
+                    case 'j':
+                        tui.displayArrowSpacer();
+                        dungeon.roomLeft();
+                        tui.displayArrowSpacer();
+                        break;
 
-                default:
-                    audio.playSFX(audio.error, 100);
-                    tui.displayWrongInput();
-            }
+                    case 'p':
+                        hero.setHealth(hero.getHealth()/2);
+                        System.out.println("DEBUG: Decreased Health..." + hero.getHealth());
+                        break;
+
+                    default:
+                        audio.playSFX(audio.error, 100);
+                        tui.displayWrongInput();
+                }
+
+                return userInput; // Return the input for further processing if necessary
+            });
+
+
         }
+    }
+
+    private static void mainMenuProcess() {
+        CompletableFuture<Character> userInputFuture = tui.goToMainMenu();
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            if (userInput == '1') { // quit to main menu
+                audio.playSFX(audio.menu2, 120);
+                audio.stopMusic();
+                gameOver = true; //? needed?
+                mainMenu();
+            }
+
+            return userInput; // Return the input for further processing if necessary
+        });
     }
 
 
@@ -854,7 +912,7 @@ public class Game extends Application {
             oos.close();
             tui.displayGameSaved();
         } catch (Exception e) {
-            System.out.println("Couldn't save game!");
+            console.println("\nCouldn't save game!");
             System.out.println(e.getClass() + ": " + e.getMessage());
         }
     }
@@ -873,7 +931,7 @@ public class Game extends Application {
             ois.close();
             tui.displayGameLoaded();
         } catch (Exception e) {
-            System.out.println("Couldn't find any saved games! Try starting a new game instead.");
+            console.println("\nCouldn't find any saved games! Try starting a new game instead.");
             newGameSetup();
         }
     }
@@ -903,33 +961,38 @@ public class Game extends Application {
             hero.levelUp();
             tui.levelUpMsg(hero.getLevel());
             audio.playSFX(audio.heroLevelUp, 120);
-            Delay.seconds(1);
+            Delay.delayAndExecute(1);
         }
     }
 
     private static void inventoryMenu() {
         Inventory bag = hero.getInventory();
         audio.playSFX(audio.heroBagOpen);
-        char input = tui.openBag(bag, false); // input is guaranteed to be 1-4 or e
 
-        if (input != 'e') {
-            int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array indexing)
+        CompletableFuture<Character> userInputFuture = tui.openBag(bag, false); // input is guaranteed to be 1-4 or e //TODO substitute a enum state for the boolean
+        userInputFuture.thenApplyAsync(userInput -> {
 
-            Potion potion = bag.getItem(slotIndex);
-            if (potion.canUseOutsideBattle()) {
-                PotionDefensive defPotion = (PotionDefensive) potion;
-                defPotion.effect(hero);
-                bag.removeItem(slotIndex);
-            } else {
-                audio.playSFX(audio.error);
-                tui.displayCantUseItemOutsideBattle(potion);
-                inventoryMenu();
+            if (userInput != 'e') {
+                int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array indexing)
+
+                Potion potion = bag.getItem(slotIndex);
+                if (potion.canUseOutsideBattle()) {
+                    PotionDefensive defPotion = (PotionDefensive) potion;
+                    defPotion.effect(hero);
+                    bag.removeItem(slotIndex);
+                } else {
+                    audio.playSFX(audio.error);
+                    tui.displayCantUseItemOutsideBattle(potion);
+                    inventoryMenu();
+                }
+
+                audio.playSFX(audio.heroDrinkPotion);
+                tui.usePotionMsg(potion, slotIndex);
             }
+            tui.closeBag();
 
-            audio.playSFX(audio.heroDrinkPotion);
-            tui.usePotionMsg(potion, slotIndex);
-        }
-        tui.closeBag();
+            return userInput; // Return the input for further processing if necessary
+        });
     }
 
     private static void displayDungeonScreen() {
@@ -942,16 +1005,16 @@ public class Game extends Application {
             tui.displayStepsWithVisionPotion(stepsWithActiveVisionPotion);
         }
         if (hero.hasMazeAbility() && hero.mazeAbilityActivated()) { // for archer's ranged attack, etc.
-            tui.mazeAbiltyText(hero);
+            tui.mazeAbilityText(hero);
         }
     }
 
     private static void exitGame() {
         audio.playSFX(audio.menu2, -5);
-        Delay.seconds(1);
+        Delay.delayAndExecute(1);
         tui.displayCyaNerd(funnyMode);
         audio.playSFX(audio.heroOof, -5);
-        Delay.seconds(1);
+        Delay.delayAndExecute(1);
         System.exit(0);
     }
 
@@ -963,12 +1026,12 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedMedium();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedJuggernautAndThief();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
 
@@ -978,12 +1041,12 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedHard();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedDoctorAndNinja();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
 
@@ -992,29 +1055,29 @@ public class Game extends Application {
 
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedMage();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
 
             tui.displayHintStillMoreHeroes();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
         if (totalHeroSteps > 100) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedScientist();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
         if (totalMonstersDefeated > 100) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedBeastmaster();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
         if (allHeroesUnlocked()) {
             audio.playSFX(audio.infoPopup);
             tui.displayUnlockedAll();
-            Delay.seconds(2);
+            Delay.delayAndExecute(2);
             tui.pressAnyKeyContinue();
         }
     }
@@ -1032,50 +1095,79 @@ public class Game extends Application {
         // copy hero's inventory for the new hero
         ArrayList<Potion> currentBag = hero.getInventory().getItems();
 
-        char heroSelection = tui.chooseHero(heroes);
-        hero = chooseHero(heroSelection);
-        audio.playSFX(audio.menu1);
+        CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
 
-        // paste hero's details
-        hero.getInventory().setItems(currentBag);
-        hero.setName(heroFullName);
+        userInputFuture.thenApplyAsync(userInput -> {
+            hero = chooseHero(userInput);
+            audio.playSFX(audio.menu1);
+
+            // paste hero's details
+            hero.getInventory().setItems(currentBag);
+            hero.setName(heroFullName);
+
+            return userInput; // Return the input for further processing if necessary
+        });
     }
 
     private static void newHero() {
-        char heroSelection = tui.chooseHero(heroes);
-        hero = chooseHero(heroSelection);
-        audio.playSFX(audio.menu1);
-        hero.setName(heroFullName);
+        CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
+
+        userInputFuture.thenApplyAsync(userInput -> {
+            hero = chooseHero(userInput);
+            audio.playSFX(audio.menu1);
+            hero.setName(heroFullName);
+
+            return userInput; // Return the input for further processing if necessary
+
+        });
     }
     private static void selectDifficulty() {
-        char difficultySelection = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked);
+        CompletableFuture<Character> difficultySelection = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked);
 
-        if ((!mediumUnlocked && (difficultySelection == '2' || difficultySelection == '3'))
-                || (!hardUnlocked && difficultySelection == '3')) {
+        difficultySelection.thenApplyAsync(userInput -> {
 
-            audio.playSFX(audio.error);
-            tui.displayDifficultyLocked();
-            selectDifficulty();
-            return;
-        }
+            if ((!mediumUnlocked && (userInput == '2' || userInput == '3'))
+                    || (!hardUnlocked && userInput == '3')) {
 
-        audio.playSFX(audio.menu2, 5);
-        setupDungeon(difficultySelection);
-        tui.displayDifficultySelected(difficulty);
+                audio.playSFX(audio.error);
+                tui.displayDifficultyLocked();
+                selectDifficulty();
+
+                // solved issue: had 2 return statements in this method. Used 'else' instead.
+                // Another solution is using a boolean flag to check if the outer method should return after the inner method
+
+            } else {
+                audio.playSFX(audio.menu2, 5);
+                setupDungeon(userInput);
+                tui.displayDifficultySelected(difficulty);
+            }
+
+            return userInput; // Return the input for further processing if necessary
+        });
+
     }
-    private static void newHeroName() {
-        System.out.println();
-        heroFirstName = tui.findHeroName();
-        if (!startsWithLetter(heroFirstName) && !debugMode) {
-            audio.playSFX(audio.error);
-            tui.displayWrongInput();
-            newHeroName();
-            return;
-        }
-        audio.playSFX(audio.menu1);
 
-        heroFirstName = capitalize(heroFirstName);
-        heroFullName = giveRandomSuffix(heroFirstName); //TODO easter egg name like "Hiccup"
+    private static void newHeroName() {
+        console.println();
+
+        CompletableFuture<String> userInputFuture = tui.findHeroName(); // hero's first name
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            if (!startsWithLetter(heroFirstName) && !debugMode) {
+                audio.playSFX(audio.error);
+                tui.displayWrongInput();
+                newHeroName();
+
+            } else { //! placed an 'else' here to replace the 'return'. hopefully it works
+                audio.playSFX(audio.menu1);
+
+                heroFirstName = capitalize(heroFirstName);
+                heroFullName = giveRandomSuffix(heroFirstName); //TODO easter egg name like "Hiccup"
+            }
+
+            return userInput; // Return the input for further processing if necessary
+        });
+
     }
 
     private static boolean startsWithLetter(final String heroFirstName) {
@@ -1090,69 +1182,84 @@ public class Game extends Application {
     }
 
     private static void cheatCodeMenu() { //TODO take out cheat code menu. make it hidden
-        Delay.seconds(0.5);
+        Delay.delayAndExecute(0.5);
         audio.playMusic(audio.hackerSong, true);
-        String code = tui.cheatCodeMenu();
 
-        for (String key : codes.keySet()) {
-            if (code.equals(key)) {
-                Modes mode = codes.get(key);
-                switch (mode) {
-                    case CHEAT:
-                        cheatMode = true;
-                        tui.codeSuccessMsg();
-                        tui.displayCheatMode();
-                        break;
-                    case DEBUG:
-                        debugMode = true;
-                        tui.codeSuccessMsg();
-                        tui.displayDebugMode();
-                        break;
-                    case FUNNY:
-                        funnyMode = true;
-                        tui.codeSuccessMsg();
-                        tui.displayFunnyMode();
-                        break;
-                    default:
-                        audio.playSFX(audio.error);
-                        tui.displayWrongInput();
-                        cheatCodeMenu();
-                        break;
+        CompletableFuture<String> userInputFuture = tui.cheatCodeMenu();
+
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            for (String key : codes.keySet()) {
+                if (userInput.equals(key)) {
+                    Modes mode = codes.get(key);
+                    switch (mode) {
+                        case CHEAT:
+                            cheatMode = true;
+                            tui.codeSuccessMsg();
+                            tui.displayCheatMode();
+                            break;
+                        case DEBUG:
+                            debugMode = true;
+                            tui.codeSuccessMsg();
+                            tui.displayDebugMode();
+                            break;
+                        case FUNNY:
+                            funnyMode = true;
+                            tui.codeSuccessMsg();
+                            tui.displayFunnyMode();
+                            break;
+                        default:
+                            audio.playSFX(audio.error);
+                            tui.displayWrongInput();
+                            cheatCodeMenu();
+                            break;
+                    }
                 }
             }
-        }
-        Delay.seconds(2);
-        audio.stopMusic();
+            Delay.delayAndExecute(2);
+            audio.stopMusic();
+
+            return userInput; // Return the input for further processing if necessary
+        });
+
     }
 
     private static void playAgain() {
-        char choice = tui.displayPlayAgainMenu();
-        switch (choice) {
-            case '1': // play again
-                audio.playSFX(audio.menu1);
-                Delay.seconds(1);
-                audio.stopAll();
-                tui.sentToMainMenuMsg();
-                Delay.seconds(3);
-                mainMenu();
-                break;
-            case '2': // exit
-                audio.playSFX(audio.menu2, 80);
-                exitGame();
-                Delay.seconds(1);
-                System.exit(0);
-                break;
-            default:
-                audio.playSFX(audio.error);
-                tui.displayWrongInput();
-                playAgain();
-                break;
-        }
+
+        CompletableFuture<Character> userInputFuture = tui.displayPlayAgainMenu();
+
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            switch (userInput) {
+                case '1': // play again
+                    audio.playSFX(audio.menu1);
+                    Delay.delayAndExecute(1);
+                    audio.stopAll();
+                    tui.sentToMainMenuMsg();
+                    Delay.delayAndExecute(3);
+                    mainMenu();
+                    break;
+                case '2': // exit
+                    audio.playSFX(audio.menu2, 80);
+                    exitGame();
+                    Delay.delayAndExecute(1);
+                    System.exit(0);
+                    break;
+                default:
+                    audio.playSFX(audio.error);
+                    tui.displayWrongInput();
+                    playAgain();
+                    break;
+            }
+
+            return userInput; // Return the input for further processing if necessary
+        });
+
     }
 
     private static void victory() {
         audio.stopAll();
-        Delay.seconds(0.5);
+        Delay.delayAndExecute(0.5);
 
         // play victory sound
         audio.playMusic(audio.triumpantFinishSong, true);
@@ -1161,7 +1268,7 @@ public class Game extends Application {
         tui.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, debugMode);
 
         if (!debugMode) {
-            Delay.seconds(5);
+            Delay.delayAndExecute(5);
         }
 
         tui.pressAnyKeyContinue();
@@ -1176,7 +1283,7 @@ public class Game extends Application {
         // update stats
         totalHeroSteps += heroSteps;
 
-        Delay.seconds(1);
+        Delay.delayAndExecute(1);
 
         // info & hint popups
         displayPopups();

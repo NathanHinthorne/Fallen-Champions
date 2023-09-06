@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 
 /**
@@ -217,51 +218,55 @@ public class MonsterBattle2 {
         }
 
         // menu
-        char choice = tui.battleMenu(myHero);
-        tui.println();
+        CompletableFuture<Character> userInputFuture = tui.battleMenu(myHero);
+        userInputFuture.thenApplyAsync(userInput -> {
+
+            tui.println();
+            // Basic Attack
+            if (userInput == '1') {
+                heroBasic();
+
+                // Special Attack
+            } else if (userInput == '2') {
+                heroSpecial();
+
+                // Open inventory
+            } else if (userInput == 'e') {
+                audio.playSFX(audio.heroBagOpen, 100);
+                inventoryMenu();
+
+                // check monster stats
+            } else if (userInput == 'r') {
+                checkMonsterStats();
+
+                // run away
+            } else if (userInput == 'q') {
+                runAwayProcess(myDebugMode);
+
+            } else if (userInput == 'f') {
+                audio.playSFX(audio.swishOn, 100);
+                tui.debugHeroStats(myHero);
+                tui.pressAnyKeyGoBack();
+                audio.playSFX(audio.swishOff, 80);
+                heroTurn();
+
+                // cheat mode instakill
+            } else if (userInput == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
+                tui.displayInstaKill();
+                myMonster.setHealth(0);
+
+                // wrong input must have been given
+            } else {
+                audio.playSFX(audio.error, 100);
+                tui.displayWrongInput();
+                heroTurn();
+            }
+
+            return userInput; // Return the input for further processing if necessary
+        });
 
 
-        // Basic Attack
-        if (choice == '1') {
-            heroBasic();
-
-            // Special Attack
-        } else if (choice == '2') {
-            heroSpecial();
-
-            // Open inventory
-        } else if (choice == 'e') {
-            audio.playSFX(audio.heroBagOpen, 100);
-            inventoryMenu();
-
-            // check monster stats
-        } else if (choice == 'r') {
-            checkMonsterStats();
-
-            // run away
-        } else if (choice == 'q') {
-            runAwayProcess(myDebugMode);
-
-        } else if (choice == 'f') {
-            audio.playSFX(audio.swishOn, 100);
-            tui.debugHeroStats(myHero);
-            tui.pressAnyKeyGoBack();
-            audio.playSFX(audio.swishOff, 80);
-            heroTurn();
-
-            // cheat mode instakill
-        } else if (choice == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
-            tui.displayInstaKill();
-            myMonster.setHealth(0);
-
-            // wrong input must have been given
-        } else {
-            audio.playSFX(audio.error, 100);
-            tui.displayWrongInput();
-            heroTurn();
-        }
-
-
+        //! need to put inside thenApplySync() to prevent from running before it's supposed to?
         // Checks if the attack killed the enemy
         if (myMonster.getHealth() <= 0) {
             myGameOver = true;
@@ -374,47 +379,53 @@ public class MonsterBattle2 {
 
     public void inventoryMenu() {
         Inventory bag = myHero.getInventory();
-        char input = tui.openBag(bag, true); // input is guaranteed to be 1-4 or e
 
-        if (input != 'e') { // back button was pressed
-            int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array indexing)
+        CompletableFuture<Character> userInputFuture = tui.openBag(bag, true); // input is guaranteed to be 1-4 or e
+        userInputFuture.thenApplyAsync(userInput -> {
 
-            Potion potion = bag.getItem(slotIndex);
-            if (potion.canUseDuringBattle()) {
-                bag.removeItem(slotIndex);
+            if (userInput != 'e') { // back button was pressed
+                int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array indexing)
 
-                if (potion instanceof PotionDefensive) {
-                    PotionDefensive defPotion = (PotionDefensive) potion;
-                    defPotion.effect(myHero);
+                Potion potion = bag.getItem(slotIndex);
+                if (potion.canUseDuringBattle()) {
+                    bag.removeItem(slotIndex);
 
-                } else if (potion instanceof PotionOffensive) {
-                    PotionOffensive offPotion = (PotionOffensive) potion;
-                    offPotion.effect(myMonster);
+                    if (potion instanceof PotionDefensive) {
+                        PotionDefensive defPotion = (PotionDefensive) potion;
+                        defPotion.effect(myHero);
+
+                    } else if (potion instanceof PotionOffensive) {
+                        PotionOffensive offPotion = (PotionOffensive) potion;
+                        offPotion.effect(myMonster);
+                    }
+
+                    audio.playSFX(audio.heroDrinkPotion, 100);
+                    tui.usePotionMsg(potion, slotIndex);
+
+                    if (myHero.hasDebuff(Debuff.BLIND)) {
+                        undoBlindedProcess(myHero);
+                    }
+                    if (myHero.hasDebuff(Debuff.WEAKEN)) {
+                        undoWeakenedProcess(myHero);
+                    }
+                    myHero.decreaseCooldown();
+                    myHero.tickDebuffs();
+                    myMonster.tickIndividualDebuff(Debuff.VULNERATE);
+
+                } else {
+                    audio.playSFX(audio.error, 100);
+                    tui.displayCantUseItemDuringBattle(potion);
+                    inventoryMenu();
                 }
 
-                audio.playSFX(audio.heroDrinkPotion, 100);
-                tui.usePotionMsg(potion, slotIndex);
-
-                if (myHero.hasDebuff(Debuff.BLIND)) {
-                    undoBlindedProcess(myHero);
-                }
-                if (myHero.hasDebuff(Debuff.WEAKEN)) {
-                    undoWeakenedProcess(myHero);
-                }
-                myHero.decreaseCooldown();
-                myHero.tickDebuffs();
-                myMonster.tickIndividualDebuff(Debuff.VULNERATE);
-
-            } else {
-                audio.playSFX(audio.error, 100);
-                tui.displayCantUseItemDuringBattle(potion);
-                inventoryMenu();
+            } else { // back button was pressed
+                tui.closeBag();
+                heroTurn();
             }
 
-        } else { // back button was pressed
-            tui.closeBag();
-            heroTurn();
-        }
+            return userInput; // Return the input for further processing if necessary
+        });
+
     }
 
     /**
