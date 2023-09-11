@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -80,6 +81,9 @@ public class Console extends BorderPane {
 
     public void setHintText(String text) {
         input.setPromptText(text);
+    }
+    public void disableInput(final boolean disable) {
+        input.setDisable(disable);
     }
 
     // issue: when the thread sleeps, the screen goes white until the thread wakes up.
@@ -174,6 +178,9 @@ public class Console extends BorderPane {
         if (fontFamily == Fonts.JETBRAINS_MONO) {
             loadedFont = Font.loadFont(getClass().getResourceAsStream("/styling/JetBrains_Mono/JetBrainsMono-Regular.ttf"), fontSize);
 
+        } else if (fontFamily == Fonts.SANS_DEJA_VU) {
+            loadedFont = Font.loadFont(getClass().getResourceAsStream("/styling/Sans_Deja_Vu/DejaVuSansMono.ttf"), fontSize);
+
         } else if (fontFamily == Fonts.BEAUTY_GLITCH) {
             loadedFont = Font.loadFont(getClass().getResourceAsStream("/styling/BeautyGlitch/BeautyGlitch-Regular.ttf"), fontSize);
 
@@ -182,6 +189,16 @@ public class Console extends BorderPane {
         output.setFont(loadedFont);
         input.setFont(loadedFont);
     }
+    public void setFallbackFont(Fonts fontFamily, int fontSize) {
+        Font loadedFont = null;
+
+        if (fontFamily == Fonts.SANS_DEJA_VU) {
+            loadedFont = Font.loadFont(getClass().getResourceAsStream("/styling/Sans_Deja_Vu/DejaVuSansMono.ttf"), fontSize);
+        }
+
+        output.setStyle("-fx-font-family: 'LoadedFont', 'FallbackFont';"); // doesn't work as expected. turns screen white
+
+    }
 
     public static Console getInstance() {
         if (instance == null) {
@@ -189,4 +206,5 @@ public class Console extends BorderPane {
         }
         return instance;
     }
+
 }

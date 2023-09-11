@@ -16,7 +16,8 @@ public final class AudioManager {
     private static AudioManager audioManager; // to be used in singleton design pattern
 
     // Constants
-    private static final double DEFAULT_VOLUME = 100;
+    private static final double DEFAULT_SFX_VOLUME = 100;
+    private static final double DEFAULT_MUSIC_VOLUME = 0; // 60
 
 
     // Separate media players for music and sound effects
@@ -161,7 +162,7 @@ public final class AudioManager {
         // anonymous inner class that implements the Runnable interface
         Platform.runLater(() -> {
             sfxPlayer = new MediaPlayer(theSFX);
-            sfxPlayer.setVolume(DEFAULT_VOLUME);
+            sfxPlayer.setVolume(DEFAULT_SFX_VOLUME);
             sfxPlayer.play();
         });
     }
@@ -180,7 +181,7 @@ public final class AudioManager {
         // anonymous inner class that implements the Runnable interface
         Platform.runLater(() -> {
             musicPlayer = new MediaPlayer(theMusic);
-            musicPlayer.setVolume(DEFAULT_VOLUME);
+            musicPlayer.setVolume(DEFAULT_MUSIC_VOLUME);
 
             if (theLoop) {
                 musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);

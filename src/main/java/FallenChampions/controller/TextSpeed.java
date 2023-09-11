@@ -2,7 +2,7 @@ package FallenChampions.controller;
 
 public enum TextSpeed {
     FAST(60),
-    MEDIUM(85),
+    MEDIUM(80),
     SLOW(100),
     VERY_SLOW(150);
 

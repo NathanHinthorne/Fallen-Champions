@@ -2,6 +2,36 @@
 A dungeon crawler game. 
 Select a hero with unique abilities and go exploring within a treacherous dungeon packed with monsters, potions, and traps.
 
+# Software Design
+## Design Patterns
+**MVC**  
+Separated the game into three major components: Model, View, and Controller.
+With the model being the game logic, view being the UI, and controller mediating between the two.
+
+**Singleton**  
+Used to ensure only one instance of TUI, AudioManager, and Game is created.
+
+**Momento**  
+
+
+**Builder**  
+
+
+**Factory**  
+
+
+**Mock Object**  
+
+
+## UML Diagrams
+**Model**  
+
+**View**  
+
+**Controller**  
+
+
+
 # What I learned
 
 **Software Development Concepts and Practices**:
@@ -24,7 +54,7 @@ Select a hero with unique abilities and go exploring within a treacherous dungeo
 * Leadership and planning skills within a team
 * Practicing pair programming with teammates
 
-**Agile Developement**:
+**Agile Development**:
 * Making small, incremental changes via user stories
 * Using agile project management tools such as Pivotal Tracker
 * Using version control tools such as Git

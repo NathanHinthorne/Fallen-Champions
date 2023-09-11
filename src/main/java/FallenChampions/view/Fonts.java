@@ -1,5 +1,5 @@
 package FallenChampions.view;
 
 public enum Fonts {
-    JETBRAINS_MONO, BEAUTY_GLITCH, PIXELATED
+    JETBRAINS_MONO, SANS_DEJA_VU, BEAUTY_GLITCH, PIXELATED
 }

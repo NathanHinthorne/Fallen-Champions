@@ -66,6 +66,7 @@ public class TUI2 {
      * @return The user's char input
      */
     private CompletableFuture<Character> futureCharInput() { // review these concepts later
+//        console.disableInput(false); // re-enable input box after output is finished displaying
 
         CompletableFuture<Character> userInputFuture = new CompletableFuture<>();
 
@@ -83,11 +84,17 @@ public class TUI2 {
      * @return The user's string input
      */
     private CompletableFuture<String> futureStringInput() { // review these concepts later
+//        console.disableInput(false); // re-enable input box after output is finished displaying
 
         CompletableFuture<String> userInputFuture = new CompletableFuture<>();
 
         // Set the onMessageReceivedHandler to capture user input
         console.setOnMessageReceivedHandler(userInput -> {
+            // seems like userInput should be a consumer, not a string itself
+            // seems like lambda is creating that string
+            // when are we checking if a string has been accepted to the consumer (thus knowing if text has been entered by user)?
+            // why does userInput represent the text the user entered?
+
             userInputFuture.complete(userInput);
         });
 
@@ -121,6 +128,7 @@ public class TUI2 {
 
         console.setHintText("Type here...");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -139,15 +147,15 @@ public class TUI2 {
         frame1.setOnFinished(event -> {
             //TODO play sfx...
             console.println("" +
-                    "                        ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
-                    "                       ███    ███   ███    ███ ███       ███         ███    ███ ███▀▀▀██▄ \n" +
-                    "                       ███    █▀    ███    ███ ███       ███         ███    █▀  ███   ███ \n" +
-                    "                      ▄███▄▄▄       ███    ███ ███       ███        ▄███▄▄▄     ███   ███ \n" +
-                    "                     ▀▀███▀▀▀     ▀███████████ ███       ███       ▀▀███▀▀▀     ███   ███ \n" +
-                    "                       ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
-                    "                       ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
-                    "                       ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
-                    "                                               ▀         ▀                                ");
+                    "                      ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
+                    "                     ███    ███   ███    ███ ███       ███         ███    ███ ███▀▀▀██▄ \n" +
+                    "                     ███    █▀    ███    ███ ███       ███         ███    █▀  ███   ███ \n" +
+                    "                    ▄███▄▄▄       ███    ███ ███       ███        ▄███▄▄▄     ███   ███ \n" +
+                    "                   ▀▀███▀▀▀     ▀███████████ ███       ███       ▀▀███▀▀▀     ███   ███ \n" +
+                    "                     ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
+                    "                     ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
+                    "                     ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
+                    "                                             ▀         ▀                                ");
             console.println();
         });
 
@@ -155,14 +163,14 @@ public class TUI2 {
         PauseTransition frame2 = new PauseTransition(Duration.seconds(0.5));
         frame2.setOnFinished(event -> {
             console.println("" +
-                    "     ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
-                    "    ███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
-                    "    ███    █▀    ███    ███     ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███    █▀  \n" +
-                    "    ███         ▄███▄▄▄▄███▄▄   ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███        \n" +
-                    "    ███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
-                    "    ███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
-                    "    ███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
-                    "    ████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
+                    "   ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
+                    "  ███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
+                    "  ███    █▀    ███    ███     ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███    █▀  \n" +
+                    "  ███         ▄███▄▄▄▄███▄▄   ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███        \n" +
+                    "  ███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
+                    "  ███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
+                    "  ███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
+                    "  ████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
             console.println();
             console.println();
         });
@@ -213,6 +221,7 @@ public class TUI2 {
         displayChainSpacer();
         console.print("Make your selection: ");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -220,9 +229,13 @@ public class TUI2 {
      * Introduces user to the game
      */
     public void introductionP1(final boolean theFunnyMode) {
+        console.disableInput(true); // disable input box while output is currently being displayed
+
         SequentialTransition sequentialTransition = new SequentialTransition();
 
-        console.println("-------------------------INTRODUCTION-------------------------");
+//        console.println("-------------------------INTRODUCTION-------------------------");
+        console.println("-------------------------------------------------INTRODUCTION-------------------------------------------------");
+//        displayCastle();
         console.println();
         console.print("Dungeon Keeper: ");
         console.printAnimation("Welcome hero,\n", TextSpeed.MEDIUM);
@@ -261,6 +274,47 @@ public class TUI2 {
 
         sequentialTransition.getChildren().addAll(frame1, frame2, frame3, frame4, frame5);
         sequentialTransition.play();
+
+        sequentialTransition.setOnFinished(event -> console.disableInput(false));
+    }
+
+    private void displayCastle() {
+        console.print("" +
+                "                                                  !_\n" +
+                "                                                  |*~=-.,\n" +
+                "                                                  |_,-'`\n" +
+                "                                                  |\n" +
+                "                                                  |\n" +
+                "                                                 /^\\\n" +
+                "                   !_                           /   \\\n" +
+                "                   |*`~-.,                     /,    \\\n" +
+                "                   |.-~^`                     /#\"     \\\n" +
+                "                   |                        _/##_   _  \\_\n" +
+                "              _   _|  _   _   _            [ ]_[ ]_[ ]_[ ]\n" +
+                "             [ ]_[ ]_[ ]_[ ]_[ ]            |_=_-=_ - =_|\n" +
+                "           !_ |_=_ =-_-_  = =_|           !_ |=_= -    |\n" +
+                "           |*`--,_- _        |            |*`~-.,= []  |\n" +
+                "           |.-'|=     []     |   !_       |_.-\"`_-     |\n" +
+                "           |   |_=- -        |   |*`~-.,  |  |=_-      |\n" +
+                "          /^\\  |=_= -        |   |_,-~`  /^\\ |_ - =[]  |\n" +
+                "      _  /   \\_|_=- _   _   _|  _|  _   /   \\|=_-      |\n" +
+                "     [ ]/,    \\[ ]_[ ]_[ ]_[ ]_[ ]_[ ]_/,    \\[ ]=-    |\n" +
+                "      |/#\"     \\_=-___=__=__- =-_ -=_ /#\"     \\| _ []  |\n" +
+                "     _/##_   _  \\_-_ =  _____       _/##_   _  \\_ -    |\\\n" +
+                "    [ ]_[ ]_[ ]_[ ]=_0~{_ _ _}~0   [ ]_[ ]_[ ]_[ ]=-   | \\\n" +
+                "    |_=__-_=-_  =_|-=_ |  ,  |     |_=-___-_ =-__|_    |  \\\n" +
+                "     | _- =-     |-_   | ((* |      |= _=       | -    |___\\\n" +
+                "     |= -_=      |=  _ |  `  |      |_-=_       |=_    |/+\\|\n" +
+                "     | =_  -     |_ = _ `-.-`       | =_ = =    |=_-   ||+||\n" +
+                "     |-_=- _     |=_   =            |=_= -_     |  =   ||+||\n" +
+                "     |=_- /+\\    | -=               |_=- /+\\    |=_    |^^^|\n" +
+                "     |=_ |+|+|   |= -  -_,--,_      |_= |+|+|   |  -_  |=  |\n" +
+                "     |  -|+|+|   |-_=  / |  | \\     |=_ |+|+|   |-=_   |_-/\n" +
+                "     |=_=|+|+|   | =_= | |  | |     |_- |+|+|   |_ =   |=/\n" +
+                "     | _ ^^^^^   |= -  | |  <&>     |=_=^^^^^   |_=-   |/\n" +
+                "     |=_ =       | =_-_| |  | |     |   =_      | -_   |\n" +
+                "     |_=-_       |=_=  | |  | |     |=_=        |=-    |\n" +
+                "^^^^^^^^^^`^`^^`^`^`^^^\"\"\"\"\"\"\"\"^`^^``^^`^^`^^`^`^``^`^``^``^^");
     }
 
     /**
@@ -268,6 +322,7 @@ public class TUI2 {
      * @return the user's name
      */
     public CompletableFuture<String> findHeroName() {
+        console.println();
         console.print("Name (one word): ");
 
         return futureStringInput();
@@ -281,9 +336,6 @@ public class TUI2 {
      */
     public void introductionP2(final boolean theFunnyMode, final String theFirstName, final String theFullName) {
         SequentialTransition sequentialTransition = new SequentialTransition();
-        PauseTransition frame1;
-        PauseTransition frame2;
-        PauseTransition frame3;
 
         console.println();
 
@@ -291,29 +343,35 @@ public class TUI2 {
             console.print("Dungeon Keeper: ");
             console.printAnimation("Wait, are you serious? Your name is just " + theFirstName + "?\n", TextSpeed.FAST);
 
-            frame1 = new PauseTransition(Duration.seconds(1));
+            PauseTransition frame1 = new PauseTransition(Duration.seconds(1));
             frame1.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("That's far too ordinary -_-\n", TextSpeed.FAST);
             });
 
-            frame2 = new PauseTransition(Duration.seconds(2));
+            PauseTransition frame2 = new PauseTransition(Duration.seconds(2));
             frame2.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("I dub thee...\n", TextSpeed.MEDIUM);
             });
 
-            frame3 = new PauseTransition(Duration.seconds(2.5));
+            PauseTransition frame3 = new PauseTransition(Duration.seconds(2.5));
             frame3.setOnFinished(event -> {
                 console.print("                ");
-                console.printAnimation("【 Sir " + theFullName + "! 】\n", TextSpeed.SLOW);
+//                console.printAnimation("【 Sir " + theFullName + "! 】\n", TextSpeed.SLOW);
+                console.printAnimation(" ◄{ Sir " + theFullName + "! }► \n", TextSpeed.SLOW);
             });
 
+            sequentialTransition.getChildren().addAll(frame1, frame2, frame3);
+
         } else {
-            console.print("Dungeon Keeper: ");
-            console.printAnimation("Ah, " + theFirstName + ", a fine name indeed.\n", TextSpeed.MEDIUM);
+            PauseTransition frame1 = new PauseTransition(Duration.seconds(1));
+            frame1.setOnFinished(event -> {
+                console.print("Dungeon Keeper: ");
+                console.printAnimation("Ah, " + theFirstName + ", a fine name indeed.\n", TextSpeed.MEDIUM);
+            });
             console.print("                ");
-            console.printAnimation("However, 【" + theFullName + "】 is befitting of one such as yourself.\n", TextSpeed.MEDIUM);
+            console.printAnimation("However, ◄{ " + theFullName + " }► is befitting of one such as yourself.\n", TextSpeed.MEDIUM);
         }
 
         console.println();
@@ -362,6 +420,7 @@ public class TUI2 {
         displayChainSpacer();
         console.println("Make your selection: ");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -414,6 +473,7 @@ public class TUI2 {
         console.println();
         console.print(" Choose an action: ");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -485,7 +545,7 @@ public class TUI2 {
                                  final boolean theGlitchUnlocked) {
         console.println();
         console.println();
-        console.println("Choose your difficulty!");
+        console.println("Choose your difficulty!"); //TODO: consider making "levels" or "dungeon floors" instead of difficulty
         displayChainSpacer();
 
         if (theGlitchUnlocked) {
@@ -515,6 +575,7 @@ public class TUI2 {
         displayChainSpacer();
         console.print("Make your selection: ");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -549,8 +610,10 @@ public class TUI2 {
         }
 
         console.print("Choose an item (1-4) (e - Back) --> ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         CompletableFuture<Character> userInputFuture = futureCharInput();
-        userInputFuture.thenApplyAsync(userInput -> {
+        userInputFuture.thenApplyAsync(userInput -> { // TODO: figure out how to do 2 .thenApplyAsync() twice to same completable future for the inventory method
 
             int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array index)
 
@@ -588,6 +651,8 @@ public class TUI2 {
         console.println("Are you sure you want to quit?");
         console.println("1 for yes, 2 for no");
         console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -599,6 +664,8 @@ public class TUI2 {
         console.println("Are you sure you want to go to the main menu?");
         console.println("1 for yes, 2 for no");
         console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -798,7 +865,8 @@ public class TUI2 {
         console.println();
         console.println(" -You escaped the dungeon!");
         console.println();
-        console.println("██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
+        console.println("" +
+                "██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
                 "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║\n" +
                 " ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║\n" +
                 "  ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝\n" +
@@ -972,9 +1040,14 @@ public class TUI2 {
     }
 
     public CompletableFuture<Character> playIntroOrNot() {
+        console.println();
         console.println("Would you like to play the intro? (please say yes)");
         console.println("1 for no, 2 for yes");
         console.print("Make your selection: ");
+
+        console.setHintText("");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -1152,22 +1225,55 @@ public class TUI2 {
         console.println();
     }
 
-    public CompletableFuture<Character> pressAnyKeyGoBack() {
+    public void pressAnyKeyGoBack() {
         console.println();
         console.println("Press any key, then ENTER to return...");
-        return futureCharInput();
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            System.out.println("You pressed: " + userInput);
+            return userInput;
+        });
     }
 
-    public CompletableFuture<Character> pressAnyKeyContinue() {
+    public void pressAnyKeyContinue() {
         console.println();
         console.println("Press any key, then ENTER to continue...");
-        return futureCharInput();
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            System.out.println("You pressed: " + userInput);
+            return userInput;
+        });
     }
 
-    public CompletableFuture<Character> pressAnyKeyNextPage() {
+    public void pressAnyKeyNextPage() {
         console.println();
         console.println("Press any key, then ENTER for the next page...");
-        return futureCharInput();
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            System.out.println("You pressed: " + userInput);
+            return userInput;
+        });
     }
 
     public void displayUnlockedMedium() {
@@ -1430,6 +1536,7 @@ public class TUI2 {
         console.println("Would you like to play again? (1 for yes, 2 for no)");
         console.print("Make your selection: ");
 
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -1504,6 +1611,8 @@ public class TUI2 {
 
         console.println();
         console.print("Enter a cheat code: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureStringInput();
     }
 
@@ -1515,6 +1624,8 @@ public class TUI2 {
     public CompletableFuture<Character> quitOrContinueMenu() {
         console.println("Would you like to quit or continue? (1 for continue, 2 for quit)");
         console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -1541,6 +1652,8 @@ public class TUI2 {
         console.println("╚═════════════════════╝    ╚═════════════════════╝");
 
         console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
     }
 
@@ -1573,8 +1686,14 @@ public class TUI2 {
 
     public void displayHeroNameChanged(final Hero theHero) {
         console.println();
-        console.println(" -You are now 【 Sir " + theHero.getName() + "! 】");
+        console.println(" -You are now ◄{ Sir " + theHero.getName() + "! }►");
         console.println();
+    }
+
+    public void displayHeroName(final String theHeroName) {
+        console.println("◄{ Sir " + theHeroName + "! }►");
+//                console.println("◢◤ " + heroFullName + " ◢◤");
+
     }
 
     public void displayDifficultyLocked() {
@@ -1750,13 +1869,13 @@ public class TUI2 {
         console.println(" You failed to run away!");
     }
 
-    public void displayGameSaved() {
+    public void gameSaved() {
         console.println();
         console.println("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
         console.println();
     }
 
-    public void displayGameLoaded() {
+    public void gameLoaded() {
         console.println();
         console.println("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
         console.println();
@@ -1782,6 +1901,14 @@ public class TUI2 {
 
     public void println() {
         console.println();
+    }
+
+    public void noSavedGames() {
+        console.println("\nCouldn't find any saved games! Try starting a new game instead.");
+    }
+
+    public void gameNotSaved() {
+        console.println("\nCouldn't save game!");
     }
 }
 
