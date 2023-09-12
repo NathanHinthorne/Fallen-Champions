@@ -28,12 +28,10 @@ public class GameScreen {
         Console consoleWindow = Console.getInstance();
 
         // Set the text color and background color of the console
-        consoleWindow.setInputTextColor(Color.WHITE);
-        consoleWindow.setInputBackgroundColor(Color.rgb(80, 80, 80, 1)); // light grey
-        consoleWindow.setOutputTextColor(Color.WHITE);
+        consoleWindow.setDefaultFont(FontTypes.JETBRAINS_MONO, 14, Color.WHITE);
+        consoleWindow.setInputBackgroundColor(Color.rgb(70, 70, 70, 1)); // light grey
         consoleWindow.setOutputBackgroundColor(Color.rgb(30, 30, 30, 1)); // dark grey
-        consoleWindow.setFont(Fonts.JETBRAINS_MONO, 14);
-//        consoleWindow.setFallbackFont(Fonts.SANS_DEJA_VU, 14);
+//        consoleWindow.setLineSpacing(2.7); // doesn't work
 
         // Create ImageView nodes for the left and right images
         Image leftImage = loadImage("/images/wall.png");

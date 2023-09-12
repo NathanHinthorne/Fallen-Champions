@@ -20,6 +20,11 @@ public class Dungeon implements java.io.Serializable {
     private final Random RANDOM = new Random();
 
     /**
+     * Spacing between rooms in the dungeon
+     */
+    private static final String ROOM_SPACING = "  ";
+
+    /**
      * the dungeon's rooms
      */
     private Room[][] myMaze;
@@ -413,7 +418,7 @@ public class Dungeon implements java.io.Serializable {
             sb.append("\n");
             for (int x = 0; x < myMazeWidth; x++) {
                 sb.append(myMaze[y][x].toString());
-                sb.append("  ");
+                sb.append(ROOM_SPACING);
             }
         }
 

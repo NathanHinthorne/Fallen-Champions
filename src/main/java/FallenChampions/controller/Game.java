@@ -12,11 +12,14 @@ import FallenChampions.model.potions.PotionDefensive;
 import FallenChampions.model.potions.VisionPotion;
 import FallenChampions.view.*;
 import FallenChampions.view.Console;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import javafx.util.Duration;
 import org.sqlite.SQLiteDataSource;
 
 import java.io.*;
@@ -288,8 +291,11 @@ public class Game extends Application implements Serializable {
         heroes = createHeroList();
         codes = createCodesMap();
 
-        if (!debugMode) tui.title();
-        startMenu();
+        if (!debugMode) {
+            tui.title().thenRun(() -> startMenu());
+        } else {
+            startMenu();
+        }
     }
 
     private static List<Hero> createHeroList() {
@@ -377,30 +383,43 @@ public class Game extends Application implements Serializable {
     }
 
     private static void setupGameWithoutIntro() {
-        newHeroName().thenAcceptAsync(result -> {
+        newHeroName().thenAcceptAsync(result1 -> {
             tui.displayHeroName(heroFullName);
             tui.pressAnyKeyContinue();
             audio.playSFX(audio.menu2, 120);
-            newHero();
-            if (cheatMode) {
-                cheatModeStuff();
-            }
-            // setup dungeon (1 for easy, 2 for medium, 3 for hard)
-            selectDifficulty();
-            Delay.delayAndExecute(0.5);
-            if (!debugMode) {
-                // start msg
-                tui.displayStartMsg();
 
-                // start music
-                audio.playMusic(audio.startingAnewSong, false);
-                Delay.delayAndExecute(7.5);
-            }
+            newHero().thenAcceptAsync(result2 -> {
+                if (cheatMode) {
+                    cheatModeStuff();
+                }
 
-            // enter the main game loop
-            gameLoop();
+                selectDifficulty().thenAcceptAsync(result3 -> { // use pauseTransition here if possible (instead of nesting this thenAcceptAsync() inside the other one)
+                    //TODO delay for 0.5 seconds
+                    if (!debugMode) {
+                        // start msg
+                        tui.displayStartMsg();
+
+                        // start music
+                        audio.playMusic(audio.startingAnewSong, false, 50);
+
+                        // delay for 7.5 seconds with PauseTransition
+                        PauseTransition delay = new PauseTransition(Duration.seconds(7.5));
+                        delay.setOnFinished(event -> {
+                            gameLoop();
+                        });
+                        delay.play();
+
+                    } else {
+                        gameLoop();
+                    }
+                });
+            });
         });
     }
+
+
+
+
 
 
     private static void setupGameWithIntro() {
@@ -590,22 +609,8 @@ public class Game extends Application implements Serializable {
             case '8':
                 return HeroFactory.buildHero(HeroTypes.MAGE);
             default:
-                audio.playSFX(audio.error, 100);
-                tui.displayWrongInput();
-
-                CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
-
-                // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
-                userInputFuture.join();
-
-                userInputFuture.thenApplyAsync(userInput -> {
-                    hero = chooseHero(userInput);
-                    audio.playSFX(audio.menu1);
-                    System.out.println("You chose the " + hero.getType() + " - on the 2nd try or later");
-
-                    return userInput; // Return the input for further processing if necessary
-                });
-                return hero; // use the hero reference (can't return inside the lambda)
+                // user entered an invalid choice
+                return null;
         }
     }
 
@@ -1166,8 +1171,6 @@ public class Game extends Application implements Serializable {
             hero = chooseHero(userInput);
             audio.playSFX(audio.menu1);
 
-            System.out.println("You chose the " + hero.getType() + " - from changing your hero");
-
             // paste hero's details
             hero.getInventory().setItems(currentBag);
             hero.setName(heroFullName);
@@ -1179,45 +1182,108 @@ public class Game extends Application implements Serializable {
     /**
      * Allow user to choose hero
      */
-    private static void newHero() {
-        CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
+//    private static void newHero() {
+//        CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
+//
+//        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+//        userInputFuture.join();
+//
+//        userInputFuture.thenApplyAsync(userInput -> {
+//            hero = chooseHero(userInput); // find way to make this method repeat until it gets correct input
+//            audio.playSFX(audio.menu1);
+//            hero.setName(heroFullName);
+//            System.out.println("You chose the " + hero.getType() + " on the 1st try");
+//
+//            return userInput; // Return the input for further processing if necessary
+//        });
+//    }
+    private static CompletableFuture<Void> newHero() {
+        return CompletableFuture.runAsync(() -> {
+            Character userInput;
+            do {
+                userInput = tui.chooseHeroMsg(heroes).join();
+                hero = chooseHero(userInput);
+                System.out.println("user entered input: '" + userInput + "'");
 
-        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
-        userInputFuture.join();
+                if (hero == null) {
+                    audio.playSFX(audio.error, 100);
+                    tui.displayWrongInput();
+                }
+            } while (hero == null); // Repeat until a valid hero is chosen
 
-        userInputFuture.thenApplyAsync(userInput -> {
-            hero = chooseHero(userInput); // find way to make this method repeat until it gets correct input
             audio.playSFX(audio.menu1);
             hero.setName(heroFullName);
-            System.out.println("You chose the " + hero.getType() + " on the 1st try");
-
-            return userInput; // Return the input for further processing if necessary
+            System.out.println("You chose the " + hero.getType());
         });
     }
-    private static void selectDifficulty() {
-        CompletableFuture<Character> difficultySelection = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked);
 
-        difficultySelection.thenApplyAsync(userInput -> {
 
-            if ((!mediumUnlocked && (userInput == '2' || userInput == '3'))
-                    || (!hardUnlocked && userInput == '3')) {
 
-                audio.playSFX(audio.error);
-                tui.displayDifficultyLocked();
-                selectDifficulty();
+//    private static void selectDifficulty() {
+//        CompletableFuture<Character> userInputFuture = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked);
+//
+//        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+//        userInputFuture.join();
+//
+//        userInputFuture.thenApplyAsync(userInput -> {
+//
+//            if ((!mediumUnlocked && (userInput == '2' || userInput == '3'))
+//                    || (!hardUnlocked && userInput == '3')) {
+//
+//                audio.playSFX(audio.error);
+//                tui.displayDifficultyLocked();
+//                selectDifficulty();
+//
+//                // solved issue: had 2 return statements in this method. Used 'else' instead.
+//                // Another solution is using a boolean flag to check if the outer method should return after the inner method
+//
+//            } else {
+//                System.out.println("You chose difficulty " + userInput);
+//                audio.playSFX(audio.menu2, 5);
+//                setupDungeon(userInput);
+//                tui.displayDifficultySelected(difficulty);
+//                System.out.println("The program is still running after setting up the dungeon");
+//            }
+//
+//            return userInput; // Return the input for further processing if necessary
+//        });
+//    }
 
-                // solved issue: had 2 return statements in this method. Used 'else' instead.
-                // Another solution is using a boolean flag to check if the outer method should return after the inner method
+    private static CompletableFuture<Void> selectDifficulty() {
+        return CompletableFuture.runAsync(() -> {
+            Character userInput;
+            do {
+                userInput = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked).join();
+                System.out.println("user entered input: '" + userInput + "'");
 
-            } else {
-                audio.playSFX(audio.menu2, 5);
-                setupDungeon(userInput);
-                tui.displayDifficultySelected(difficulty);
-            }
+                if (!isValidDifficulty(userInput)) {
+                    audio.playSFX(audio.error);
+                    tui.displayWrongInput();
 
-            return userInput; // Return the input for further processing if necessary
+                } else if (isLockedDifficulty(userInput)) {
+                    audio.playSFX(audio.error);
+                    tui.displayDifficultyLocked();
+                }
+
+            } while (isLockedDifficulty(userInput) || !isValidDifficulty(userInput));
+
+            audio.playSFX(audio.menu2, 100);
+            setupDungeon(userInput);
+            tui.displayDifficultySelected(difficulty);
+
+            System.out.println("The program is still running after setting up the dungeon");
         });
+    }
 
+    private static boolean isValidDifficulty(char difficultyChoice) { //??? solve next time
+        return difficultyChoice == '1'
+                || difficultyChoice == '2'
+                || difficultyChoice == '3';
+    }
+
+    private static boolean isLockedDifficulty(char difficultyChoice) {
+        return (!mediumUnlocked && (difficultyChoice == '2' || difficultyChoice == '3')) // block medium if not unlocked
+                || (!hardUnlocked && difficultyChoice == '3'); // block hard if not unlocked
     }
 
     /**
@@ -1230,11 +1296,11 @@ public class Game extends Application implements Serializable {
                 userInput = tui.findHeroName().join();
                 System.out.println("user entered input: '" + userInput + "'");
 
-                if (isValidName(userInput)) {
+                if (!isValidName(userInput)) {
                     audio.playSFX(audio.error);
                     tui.displayWrongInput();
                 }
-            } while (isValidName(userInput));
+            } while (!isValidName(userInput));
 
             audio.playSFX(audio.menu1);
             heroFirstName = capitalize(userInput);
@@ -1260,7 +1326,7 @@ public class Game extends Application implements Serializable {
          */
 
     private static boolean isValidName(final String name) {
-        return name.isEmpty() || !startsWithLetter(name) || name.length() > 10;
+        return !name.isEmpty() && startsWithLetter(name) && name.length() <= 10;
     }
 
     private static boolean startsWithLetter(final String heroFirstName) {

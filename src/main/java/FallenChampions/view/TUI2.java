@@ -15,6 +15,7 @@ import FallenChampions.model.dungeon.Parchment;
 import FallenChampions.model.potions.Potion;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.net.URISyntaxException;
@@ -136,7 +137,10 @@ public class TUI2 {
     /**
      * Displays the title
      */
-    public void title() {
+    public CompletableFuture<Void> title() {
+
+        console.disableInput(true); // disable input box while output is currently being displayed
+
         SequentialTransition sequentialTransition = new SequentialTransition();
 
         console.println("Welcome to...");
@@ -155,8 +159,7 @@ public class TUI2 {
                     "                     ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
                     "                     ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
                     "                     ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
-                    "                                             ▀         ▀                                ");
-            console.println();
+                    "                                             ▀         ▀                                \n");
         });
 
 //        Delay.delayAndExecute(0.5);
@@ -170,25 +173,37 @@ public class TUI2 {
                     "  ███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
                     "  ███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
                     "  ███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
-                    "  ████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
-            console.println();
-            console.println();
+                    "  ████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  \n\n");
         });
 
 //        Delay.delayAndExecute(1.5);
         PauseTransition frame3 = new PauseTransition(Duration.seconds(1.5));
         frame3.setOnFinished(event -> {
-            console.println("IMPORTANT INFORMATION!");
-            console.println(" --Since this game is console-based, you will be using the keyboard to play.");
-            console.println(" --You'll notice that the screen \"updates\" by printing new information on top of old information.");
-            console.println(" --Any input you give must be followed by the ENTER key.");
-            console.println();
-            console.println();
+            console.println("IMPORTANT INFORMATION! \n" +
+                            " --Since this game is console-based, you will be using the keyboard to play. \n" +
+                            " --You'll notice that the screen \"updates\" by printing new information on top of old information. \n" +
+                            " --Any input you give must be followed by the ENTER key. \n\n");
         });
 
         // Add the transitions to the sequential transition in the desired order
         sequentialTransition.getChildren().addAll(frame1, frame2, frame3);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        sequentialTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
         sequentialTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
     /**
@@ -219,7 +234,9 @@ public class TUI2 {
 
         displayLowerSpacer();
         displayChainSpacer();
-        console.print("Make your selection: ");
+//        console.print("Make your selection: ");
+        console.print("Make your selection: ", FontTypes.JETBRAINS_MONO, 20, Color.GREEN);
+
 
 //        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
@@ -1693,7 +1710,6 @@ public class TUI2 {
     public void displayHeroName(final String theHeroName) {
         console.println("◄{ Sir " + theHeroName + "! }►");
 //                console.println("◢◤ " + heroFullName + " ◢◤");
-
     }
 
     public void displayDifficultyLocked() {
