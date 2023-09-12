@@ -25,6 +25,11 @@ public class Dungeon implements java.io.Serializable {
     private static final String ROOM_SPACING = "  ";
 
     /**
+     * Padding for the dungeon
+     */
+    private static final String DUNGEON_PADDING = "  ";
+
+    /**
      * the dungeon's rooms
      */
     private Room[][] myMaze;
@@ -415,7 +420,7 @@ public class Dungeon implements java.io.Serializable {
         StringBuilder sb = new StringBuilder();
 
         for (int y = 0; y < myMazeHeight; y++) {
-            sb.append("\n");
+            sb.append("\n" + DUNGEON_PADDING);
             for (int x = 0; x < myMazeWidth; x++) {
                 sb.append(myMaze[y][x].toString());
                 sb.append(ROOM_SPACING);

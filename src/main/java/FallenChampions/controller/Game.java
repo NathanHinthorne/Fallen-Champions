@@ -393,6 +393,7 @@ public class Game extends Application implements Serializable {
                     cheatModeStuff();
                 }
 
+                //TODO for performance, consider generating a bunch of easy, medium, and hard dungeons at the start of the game
                 selectDifficulty().thenAcceptAsync(result3 -> { // use pauseTransition here if possible (instead of nesting this thenAcceptAsync() inside the other one)
                     //TODO delay for 0.5 seconds
                     if (!debugMode) {

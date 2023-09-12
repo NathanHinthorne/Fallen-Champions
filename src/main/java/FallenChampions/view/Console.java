@@ -5,10 +5,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -27,8 +27,15 @@ import java.util.function.Consumer;
  * code from https://codereview.stackexchange.com/questions/52197/console-component-in-javafx (with modifications)
  */
 public class Console extends BorderPane {
+
+    private static final String PADDING = "  ";
+
     private static Console instance;
+
 //    private final TextArea output = new TextArea();
+    private ScrollPane scrollPane = new ScrollPane();
+    private boolean doScroll = true;
+
     private final TextFlow output = new TextFlow(); // Use TextFlow instead?
     private final TextField input = new TextField();
 
@@ -48,26 +55,30 @@ public class Console extends BorderPane {
 //        output.setWrapText(false);
         setCenter(output);
 
-
-
-
-
-        // Create a ScrollPane and set the TextFlow as its content
-        ScrollPane scrollPane = new ScrollPane(output);
+        // Create a ScrollPane
         scrollPane.setFitToWidth(true); // Ensure the content resizes with the ScrollPane
+
+        // Create a VBox and add the TextFlow to it
+        VBox vbox = new VBox(output);
+        vbox.setFillWidth(true); // Make sure the VBox stretches to fill available width
+
+        scrollPane.setContent(vbox);
+
+        // Set an initial size for the TextFlow
+        int width = 1225;
+        int height = 674;
+        output.setPrefSize(width, height);
 
         // Add the ScrollPane to the center of the BorderPane
         setCenter(scrollPane);
-
-
-
-
 
         input.addEventHandler(KeyEvent.KEY_RELEASED, keyEvent -> {
             switch (keyEvent.getCode()) {
                 case ENTER:
                     String text = input.getText();
 //                    output.appendText(text + System.lineSeparator());
+                    Text styledText = applyDefaultTextStyle(PADDING + text + System.lineSeparator());
+                    output.getChildren().add(styledText);
                     history.add(text);
                     historyPointer++;
                     if (onMessageReceivedHandler != null) {
@@ -102,6 +113,25 @@ public class Console extends BorderPane {
         setBottom(input);
     }
 
+    private void scrollToBottom() {
+        double scrollMax = scrollPane.getVmax();
+        scrollPane.setVvalue(scrollMax);
+    }
+
+    private Text applyDefaultTextStyle(String text) {
+        Text styledText = new Text(text);
+        styledText.setFont(FontLoader.loadFont(defaultFontFamily, defaultFontSize));
+        styledText.setFill(defaultFontColor);
+        return styledText;
+    }
+
+    private Text applyTextStyle(String text, FontTypes fontFamily, int fontSize, Color fontColor) {
+        Text styledText = new Text(text);
+        styledText.setFont(FontLoader.loadFont(fontFamily, fontSize));
+        styledText.setFill(fontColor);
+        return styledText;
+    }
+
     public void setHintText(String text) {
         input.setPromptText(text);
     }
@@ -131,56 +161,58 @@ public class Console extends BorderPane {
 //        GuiUtils.runSafe(() -> output.clear());
     }
 
-    public void print(final String text) {
-//        Objects.requireNonNull(text, "text");
-//        GuiUtils.runSafe(() -> output.appendText(text));
-
-        Objects.requireNonNull(text, "text");
-
-        Text styledText = new Text(text);
-        styledText.setFont(FontLoader.loadFont(defaultFontFamily, defaultFontSize));
-        styledText.setFill(defaultFontColor);
-
-        // Wrap UI update in GuiUtils.runSafe()
-        GuiUtils.runSafe(() -> output.getChildren().add(styledText));
-    }
-
     public void println(final String text) {
 //        Objects.requireNonNull(text, "text");
 //        GuiUtils.runSafe(() -> output.appendText(text + System.lineSeparator()));
 
         Objects.requireNonNull(text, "text");
 
-        Text styledText = new Text(text + System.lineSeparator());
-        styledText.setFont(FontLoader.loadFont(defaultFontFamily, defaultFontSize));
-        styledText.setFill(defaultFontColor);
+        Text styledText = applyDefaultTextStyle(PADDING + text + System.lineSeparator());
 
         // Wrap UI update in GuiUtils.runSafe()
         GuiUtils.runSafe(() -> output.getChildren().add(styledText));
+
+        if (doScroll) {
+            // Scroll to the bottom with a small delay
+            Platform.runLater(this::scrollToBottom);
+        }
     }
 
     public void println() {
-        GuiUtils.runSafe(() -> output.getChildren().add(new Text(System.lineSeparator() + System.lineSeparator())));
+        GuiUtils.runSafe(() -> output.getChildren().add(new Text(System.lineSeparator())));
+
+        if (doScroll) {
+            // Scroll to the bottom with a small delay
+            Platform.runLater(this::scrollToBottom);
+        }
     }
 
-    public void print(final String text, FontTypes fontFamily, int fontSize, Color fontColor) {
-
-//        Objects.requireNonNull(text, "text");
-//        GuiUtils.runSafe(() -> {
-//            setOutputFont(fontFamily, fontSize, fontColor);
-//            System.out.println("font set to " + fontFamily + ", " + fontSize + ", " + toRgbString(fontColor));
-//            output.appendText(text);
-//            setOutputFont(defaultFontFamily, defaultFontSize, defaultFontColor); // Set the default font after appending text
-//        });
-
+    public void print(final String text) {
         Objects.requireNonNull(text, "text");
 
-        Text styledText = new Text(text);
-        styledText.setFont(FontLoader.loadFont(fontFamily, fontSize));
-        styledText.setFill(fontColor);
+        Text styledText = applyDefaultTextStyle(PADDING + text);
 
         // Wrap UI update in GuiUtils.runSafe()
         GuiUtils.runSafe(() -> output.getChildren().add(styledText));
+
+        if (doScroll) {
+            // Scroll to the bottom with a small delay
+            Platform.runLater(this::scrollToBottom);
+        }
+    }
+
+    public void print(final String text, FontTypes fontFamily, int fontSize, Color fontColor) {
+        Objects.requireNonNull(text, "text");
+
+        Text styledText = applyTextStyle(PADDING + text, fontFamily, fontSize, fontColor);
+
+        // Wrap UI update in GuiUtils.runSafe()
+        GuiUtils.runSafe(() -> output.getChildren().add(styledText));
+
+        if (doScroll) {
+            // Scroll to the bottom with a small delay
+            Platform.runLater(this::scrollToBottom);
+        }
     }
 
     public void printAnimation(final String textToType, final TextSpeed textSpeed) {
@@ -196,9 +228,7 @@ public class Console extends BorderPane {
                             if (index < charactersToType.length) {
                                 Platform.runLater(() -> {
 //                                    output.appendText(String.valueOf(charactersToType[index]));
-                                    Text styledText = new Text(String.valueOf(charactersToType[index]));
-                                    styledText.setFont(FontLoader.loadFont(defaultFontFamily, defaultFontSize));
-                                    styledText.setFill(defaultFontColor);
+                                    Text styledText = applyDefaultTextStyle(String.valueOf(charactersToType[index]));
                                     output.getChildren().add(styledText);
                                 });
                                 currentIndex.incrementAndGet();
@@ -209,54 +239,20 @@ public class Console extends BorderPane {
         timeline.setCycleCount(charactersToType.length); // Repeat for each character
 
         timeline.play();
+
+        timeline.setOnFinished(event -> {
+            if (doScroll) {
+                // Scroll to the bottom with a small delay
+                Platform.runLater(this::scrollToBottom);
+            }
+        });
     }
 
     public void setDefaultFont(FontTypes fontFamily, int fontSize, Color fontColor) {
         defaultFontColor = fontColor;
         defaultFontFamily = fontFamily;
         defaultFontSize = fontSize;
-        setInputFont(fontFamily, fontSize, fontColor);
-        setOutputFont(fontFamily, fontSize, fontColor);
     }
-    private void setInputFont(FontTypes fontFamily, int fontSize, Color fontColor) {
-        // set font family and size
-        Font loadedFont = FontLoader.loadFont(fontFamily, fontSize);
-        input.setFont(loadedFont);
-
-        // set font color
-        String rgbColor = toRgbString(fontColor);
-        input.setStyle(input.getStyle() + "-fx-text-fill: " + rgbColor + ";");
-        input.setStyle(input.getStyle() + "-fx-prompt-text-fill: " + rgbColor + ";");
-    }
-
-    private void setOutputFont(FontTypes fontFamily, int fontSize, Color fontColor) {
-
-//        // Set font family and size
-//        Font loadedFont = FontLoader.loadFont(fontFamily, fontSize);
-//        output.setFont(loadedFont);
-//
-//        // Get the existing styles
-//        String existingStyles = output.getStyle();
-//
-//        // Set font color
-//        String rgbColor = toRgbString(fontColor);
-//
-//        // Check if the -fx-text-fill property already exists
-//        if (existingStyles.contains("-fx-text-fill")) {
-//            // Replace the existing -fx-text-fill property with the new one
-//            existingStyles = existingStyles.replaceAll("-fx-text-fill:[^;]*;", "-fx-text-fill: " + rgbColor + ";");
-//        } else {
-//            // If it doesn't exist, just append it
-//            existingStyles += "-fx-text-fill: " + rgbColor + ";";
-//        }
-//
-//        // Apply the modified styles
-//        output.setStyle(existingStyles);
-//
-//        System.out.println("output style: " + output.getStyle());
-
-    }
-
 
     public void setFallbackFont(FontTypes fontFamily, int fontSize) {
         Font loadedFont = FontLoader.loadFont(fontFamily, fontSize);
@@ -264,12 +260,43 @@ public class Console extends BorderPane {
     }
 
     public void setOutputBackgroundColor(Color color) {
-//        output.setStyle(output.getStyle() + "-fx-control-inner-background: " + toRgbString(color) + ";");
-        output.setStyle(output.getStyle() + "-fx-background-color: " + toRgbString(color) + ";");
+        output.setStyle(output.getStyle() + "-fx-background-color: " + toRgbString(color) + ";"); // simple way, but adds on to existing styles instead of replacing them
+//        String existingStyles = output.getStyle();
+//
+//        String rgbColor = toRgbString(color);
+//
+//        // Check if the -fx-text-fill property already exists
+//        if (existingStyles.contains("-fx-background-color")) {
+//            // Replace the existing -fx-text-fill property with the new one
+//            existingStyles = existingStyles.replaceAll("-fx-background-color:[^;]*;", "-fx-background-color: " + rgbColor + ";");
+//        } else {
+//            // If it doesn't exist, just append it
+//            existingStyles += "-fx-background-color: " + rgbColor + ";";
+//        }
+//
+//        // Apply the modified styles
+//        output.setStyle(existingStyles);
+//        System.out.println("output style: " + output.getStyle());
     }
 
     public void setInputBackgroundColor(Color color) {
         input.setStyle(input.getStyle() + "-fx-control-inner-background: " + toRgbString(color) + ";");
+//        String existingStyles = input.getStyle();
+//
+//        String rgbColor = toRgbString(color);
+//
+//        // Check if the -fx-text-fill property already exists
+//        if (existingStyles.contains("-fx-background-color")) {
+//            // Replace the existing -fx-text-fill property with the new one
+//            existingStyles = existingStyles.replaceAll("-fx-background-color:[^;]*;", "-fx-background-color: " + rgbColor + ";");
+//        } else {
+//            // If it doesn't exist, just append it
+//            existingStyles += "-fx-background-color: " + rgbColor + ";";
+//        }
+//
+//        // Apply the modified styles
+//        input.setStyle(existingStyles);
+//        System.out.println("output style: " + input.getStyle());
     }
 
     public void setLineSpacing(double spacing) {
