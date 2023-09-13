@@ -51,8 +51,7 @@ public class Missile {
     }
 
     // ascii art from https://www.asciiart.eu/buildings-and-places/castles
-    @Override
-    public String toString() {
+    public String drawMissile() {
         StringBuilder sb = new StringBuilder(1000);
 
         if (!hasHitGround()) {

@@ -245,7 +245,7 @@ public class TUI2 {
     /**
      * Introduces user to the game
      */
-    public void introductionP1(final boolean theFunnyMode) {
+    public CompletableFuture<Void> introductionP1(final boolean theFunnyMode, final boolean theDebugMode) {
         console.disableInput(true); // disable input box while output is currently being displayed
 
         SequentialTransition sequentialTransition = new SequentialTransition();
@@ -288,11 +288,27 @@ public class TUI2 {
             console.printAnimation("Now then, what is your name?\n", TextSpeed.MEDIUM);
         });
 
+        PauseTransition frame6 = new PauseTransition(Duration.seconds(2.5)); // buffer for next message
 
-        sequentialTransition.getChildren().addAll(frame1, frame2, frame3, frame4, frame5);
+
+        sequentialTransition.getChildren().addAll(frame1, frame2, frame3, frame4, frame5, frame6);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        sequentialTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
         sequentialTransition.play();
 
-        sequentialTransition.setOnFinished(event -> console.disableInput(false));
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
     private void displayCastle() {
@@ -351,7 +367,7 @@ public class TUI2 {
      * @param theFirstName the user's first name
      * @param theFullName the user's first name and extension
      */
-    public void introductionP2(final boolean theFunnyMode, final String theFirstName, final String theFullName) {
+    public CompletableFuture<Void> introductionP2(final boolean theFunnyMode, final String theFirstName, final String theFullName) {
         SequentialTransition sequentialTransition = new SequentialTransition();
 
         console.println();
@@ -360,19 +376,19 @@ public class TUI2 {
             console.print("Dungeon Keeper: ");
             console.printAnimation("Wait, are you serious? Your name is just " + theFirstName + "?\n", TextSpeed.FAST);
 
-            PauseTransition frame1 = new PauseTransition(Duration.seconds(1));
+            PauseTransition frame1 = new PauseTransition(Duration.seconds(7));
             frame1.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("That's far too ordinary -_-\n", TextSpeed.FAST);
             });
 
-            PauseTransition frame2 = new PauseTransition(Duration.seconds(2));
+            PauseTransition frame2 = new PauseTransition(Duration.seconds(7));
             frame2.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("I dub thee...\n", TextSpeed.MEDIUM);
             });
 
-            PauseTransition frame3 = new PauseTransition(Duration.seconds(2.5));
+            PauseTransition frame3 = new PauseTransition(Duration.seconds(7));
             frame3.setOnFinished(event -> {
                 console.print("                ");
 //                console.printAnimation("【 Sir " + theFullName + "! 】\n", TextSpeed.SLOW);
@@ -382,44 +398,107 @@ public class TUI2 {
             sequentialTransition.getChildren().addAll(frame1, frame2, frame3);
 
         } else {
-            PauseTransition frame1 = new PauseTransition(Duration.seconds(1));
+            PauseTransition frame1 = new PauseTransition(Duration.seconds(2));
             frame1.setOnFinished(event -> {
                 console.print("Dungeon Keeper: ");
                 console.printAnimation("Ah, " + theFirstName + ", a fine name indeed.\n", TextSpeed.MEDIUM);
             });
-            console.print("                ");
-            console.printAnimation("However, ◄{ " + theFullName + " }► is befitting of one such as yourself.\n", TextSpeed.MEDIUM);
+
+            PauseTransition frame2 = new PauseTransition(Duration.seconds(7));
+            frame2.setOnFinished(event -> {
+                console.print("                ");
+                console.printAnimation("However, ◄{ " + theFullName + " }► is befitting of one such as yourself.\n\n", TextSpeed.MEDIUM);
+            });
+
+            sequentialTransition.getChildren().addAll(frame1, frame2);
         }
 
-        console.println();
+        PauseTransition frame4 = new PauseTransition(Duration.seconds(7));
+        frame4.setOnFinished(event -> {
         console.print("Dungeon Keeper: ");
-        console.printAnimation("Now then, " + theFullName + ", are you ready to begin your adventure?\n", TextSpeed.MEDIUM);
-        console.print("                ");
-        console.printAnimation("Don't think you're the first to explore this dungeon.\n", TextSpeed.MEDIUM);
-        console.print("                ");
-        console.printAnimation("Many others have come before you... Not one has made it out alive.\n", TextSpeed.MEDIUM);
-        console.print("                ");
-        console.printAnimation("Do you think you have what it takes to overcome this dungeon?\n", TextSpeed.MEDIUM);
-        console.print("                ");
-        console.printAnimation("Or will you become yet another FALLEN CHAMPION?\n", TextSpeed.MEDIUM);
-        console.println();
+            console.printAnimation("Now then, " + theFullName + ", are you ready to begin your adventure?\n", TextSpeed.MEDIUM);
+        });
+
+        PauseTransition frame5 = new PauseTransition(Duration.seconds(7));
+        frame5.setOnFinished(event -> {
+            console.print("                ");
+            console.printAnimation("Don't think you're the first to explore this dungeon.\n", TextSpeed.MEDIUM);
+        });
+
+        PauseTransition frame6 = new PauseTransition(Duration.seconds(7));
+        frame6.setOnFinished(event -> {
+            console.print("                ");
+            console.printAnimation("Many others have come before you... Not one has made it out alive.\n", TextSpeed.MEDIUM);
+        });
+
+        PauseTransition frame7 = new PauseTransition(Duration.seconds(7));
+        frame7.setOnFinished(event -> {
+            console.print("                ");
+            console.printAnimation("Do you think you have what it takes to overcome this challenge?\n", TextSpeed.MEDIUM);
+        });
+
+        PauseTransition frame8 = new PauseTransition(Duration.seconds(7));
+        frame8.setOnFinished(event -> {
+            console.print("                ");
+            console.printAnimation("Or will you become yet another FALLEN CHAMPION?\n\n", TextSpeed.MEDIUM);
+        });
+
+        sequentialTransition.getChildren().addAll(frame4, frame5, frame6, frame7, frame8);
+
 
         if (theFunnyMode) {
-            Delay.delayAndExecute(1.5);
-            audio.playSFX(audio.rimshot);
-            Delay.delayAndExecute(4);
-            console.print("                ");
-            console.printAnimation("By the way, that was a rhetorical question, you don't actually get to answer.\n", TextSpeed.MEDIUM);
-            console.print("                ");
-            console.printAnimation("Anyway, choose one of these I guess\n", TextSpeed.MEDIUM);
+            PauseTransition frame9 = new PauseTransition(Duration.seconds(7));
+            frame9.setOnFinished(event -> {
+                audio.playSFX(audio.rimshot);
+            });
+
+            PauseTransition frame10 = new PauseTransition(Duration.seconds(2));
+            frame10.setOnFinished(event -> {
+                console.print("                ");
+                console.printAnimation("By the way, that was a rhetorical question, you don't actually get to answer.\n", TextSpeed.MEDIUM);
+            });
+
+            PauseTransition frame11 = new PauseTransition(Duration.seconds(7));
+            frame11.setOnFinished(event -> {
+                console.print("                ");
+                console.printAnimation("Anyway, choose one of these I guess\n", TextSpeed.MEDIUM);
+            });
+
+            sequentialTransition.getChildren().addAll(frame9, frame10, frame11);
 
         } else {
-            Delay.delayAndExecute(1.5);
-            audio.playSFX(audio.dunDunDun);
-            Delay.delayAndExecute(4);
-            console.print("Dungeon Keeper: ");
-            console.printAnimation("So " + theFullName + ", what kind of adventurer are you anyway?\n", TextSpeed.MEDIUM);
+            PauseTransition frame9 = new PauseTransition(Duration.seconds(7));
+            frame9.setOnFinished(event -> {
+                audio.playSFX(audio.dunDunDun);
+            });
+
+            PauseTransition frame10 = new PauseTransition(Duration.seconds(2));
+            frame10.setOnFinished(event -> {
+                console.print("Dungeon Keeper: ");
+                console.printAnimation("So " + theFullName + ", what kind of adventurer are you anyway?\n", TextSpeed.MEDIUM);
+            });
         }
+
+
+        PauseTransition frame12 = new PauseTransition(Duration.seconds(4)); // buffer for next message
+        sequentialTransition.getChildren().addAll(frame12);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        sequentialTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
+        sequentialTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
 
@@ -618,7 +697,7 @@ public class TUI2 {
     public CompletableFuture<Character> openBag(final Inventory theBag, final boolean inBattle) { // TODO: replace inBattle with a state variable
         displayChainSpacer();
         console.println("Opening bag...");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
 
         if (inBattle) {
             console.println(theBag.getItemView());
@@ -655,7 +734,7 @@ public class TUI2 {
     public void closeBag() {
         console.println("Closing bag...");
         audio.playSFX(audio.heroBagClose);
-        Delay.delayAndExecute(0.5);
+        Delay.fakeDelay(0.5);
         displayChainSpacer();
     }
 
@@ -818,7 +897,7 @@ public class TUI2 {
 
     public void monsterHeal(final int theHealAmt) {
         console.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
     }
 
     public void characterSelectAbility(final DungeonCharacter theAttacker, final DungeonCharacter theDefender,
@@ -830,7 +909,7 @@ public class TUI2 {
         } else if (theAbility == Ability.SPECIAL){
             console.println(" " + theAttacker.getSpecialSelectMsg(theDefender) + "...");
         }
-        Delay.delayAndExecute(1.5);
+        Delay.fakeDelay(1.5);
     }
 
     public void monsterAttackResult(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
@@ -839,7 +918,7 @@ public class TUI2 {
         if (theDamageDealt != 0) {
             console.println("   -" + theHero.getName() + " took " + theDamageDealt + " damage!");
         }
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
     }
 
     public void heroAttackResult(final Hero theHero, final int theDamageDealt) {
@@ -848,7 +927,7 @@ public class TUI2 {
         if (theDamageDealt != 0) { // if (theMonster.doesDamageOnSpecial() || theAttackHit)
             console.println("   -" + "The enemy took " + theDamageDealt + " damage!");
         }
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
     }
     public void playerCritMsg() {
         console.println("   -It was a critical hit!");
@@ -892,7 +971,7 @@ public class TUI2 {
         console.println();
 
         if (!theDebugMode) {
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             SleepDelay.printDelayedText(TalkingCharacters.NONE,"  RESULTS:");
             SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You beat the game on " + theDifficulty + " difficulty!");
             SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You took " + theHeroSteps + " steps to escape the dungeon.");
@@ -906,15 +985,15 @@ public class TUI2 {
      */
     public void displayBattleWinMsg(final Monster theMonster) {
         console.println();
-        Delay.delayAndExecute(0.5);
+        Delay.fakeDelay(0.5);
         console.println(" -" + theMonster.getDeathMsg());
         console.println();
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         console.println("                ╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
         console.println("                │ ENEMY DEFEATED │");
         console.println("                ╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
         console.println();
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         console.println(" RESULTS:");
         console.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
         console.println();
@@ -925,7 +1004,7 @@ public class TUI2 {
      */
     public void displayDeathMsg(final boolean theFunnyMode) {
         console.println(" -You have been defeated.");
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         if (theFunnyMode) {
             console.println("" +
                     " $$$$$$\\  $$$$$$\\ $$$$$$$$\\        $$$$$$\\  $$\\   $$\\ $$$$$$$\\         $$$$$$\\   $$$$$$\\  $$$$$$$\\  $$\\   $$\\ $$$$$$$\\  \n" +
@@ -1015,13 +1094,13 @@ public class TUI2 {
         String monsterName = theMonster.getType().toString();
         String article = isVowel(monsterName.charAt(0)) ? " an " : " a ";
         console.println(" -You have encountered" + article + monsterName);
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
         console.println("████████████████████████████████████████████████████████████████████");
         console.println("█                       --- BATTLE START ---                       █");
         console.println("████████████████████████████████████████████████████████████████████");
         console.println();
-        Delay.delayAndExecute(0.5);
+        Delay.fakeDelay(0.5);
     }
 
     /**
@@ -1254,7 +1333,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
-            System.out.println("You pressed: " + userInput);
+            audio.playSFX(audio.menu1);
             return userInput;
         });
     }
@@ -1271,7 +1350,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
-            System.out.println("You pressed: " + userInput);
+            audio.playSFX(audio.menu1);
             return userInput;
         });
     }
@@ -1288,6 +1367,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
+            audio.playSFX(audio.menu1);
             System.out.println("You pressed: " + userInput);
             return userInput;
         });
@@ -1427,9 +1507,9 @@ public class TUI2 {
 
 
     public void displayCredits() { // CREDITS
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         audio.playMusic(audio.rickRollSong, false);
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
         console.println();
         console.println("" +
@@ -1446,15 +1526,15 @@ public class TUI2 {
                 "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ");
 
 
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("" +
                 "  _____                                               _             \n" +
                 " |  __ \\                                             (_)            \n" +
@@ -1465,21 +1545,21 @@ public class TUI2 {
                 "                   __/ |                                       __/ |\n" +
                 "                  |___/                                       |___/ ");
 
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("  Nathan Hinthorne");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("  (with a little help from Brendan Smith and Austin Roaf)");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
 
         console.println("" +
@@ -1490,33 +1570,33 @@ public class TUI2 {
                 " | |  | | |_| \\__ \\ | (__ \n" +
                 " |_|  |_|\\__,_|___/_|\\___|");
 
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println(" Starting Off Theme by: Nathan Hinthorne");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println(" Dungeon Theme by: Nathan Hinthorne");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println(" Battle Theme by: Nathan Hinthorne");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println(" Victory Theme by: Jon Presstone");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println(" Credits Theme by: 8 Bit Universe");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("" +
                 "   _____                 _       _   _______ _                 _        \n" +
                 "  / ____|               (_)     | | |__   __| |               | |       \n" +
@@ -1527,24 +1607,24 @@ public class TUI2 {
                 "        | |                                                             \n" +
                 "        |_|                                                             ");
 
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("  My friends and family, for all their amazing ideas for characters and abilities.");
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println();
-        Delay.delayAndExecute(1);
+        Delay.fakeDelay(1);
         console.println("  My professor, Tom Capaul, for giving me the assignment which started this whole game off.");
 
         // make the rest of the text run off the screen with a bunch of blank lines
         for (int i = 0; i < 30; i++) {
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             console.println();
         }
 
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         displayRecommendListening();
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
         pressAnyKeyContinue();
         audio.stopAll();
     }
@@ -1561,23 +1641,23 @@ public class TUI2 {
         console.println();
         if (theFunnyMode) {
             SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Nah, you're trapped here forever now.");
-            Delay.delayAndExecute(4);
+            Delay.fakeDelay(4);
             console.println();
             SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Don't you dare hit that X button.");
             console.println();
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             console.print(". ");
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             console.print(". ");
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             console.print(". ");
-            Delay.delayAndExecute(4);
+            Delay.fakeDelay(4);
             console.println();
             console.println();
             SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"FINE!");
-            Delay.delayAndExecute(1);
+            Delay.fakeDelay(1);
             SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"I'll let you leave.");
-            Delay.delayAndExecute(2);
+            Delay.fakeDelay(2);
             console.println();
 
             console.println("" +
@@ -1726,7 +1806,7 @@ public class TUI2 {
         console.println("--------------------------- ENEMY'S TURN ----------------------------");
     }
 
-    public void bossAttack1() {
+    public void bossAttack1() { // with new changes to GUI, attacks can finally depend on timing
 
         // need to control missile process somehow
         // should it be controlled via a method in a boss class?
@@ -1736,12 +1816,12 @@ public class TUI2 {
         console.println("    ┕━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━┙");
     }
     private void missileProcess(final Missile theMissile) {
-        console.println(theMissile.toString());
+        console.println(theMissile.drawMissile());
         drawGround();
         theMissile.closerToGround(); // this line is logical, should it be in the view?
 //        DelayMachine.delay(0.01);
 
-        console.println(theMissile.toString());
+        console.println(theMissile.drawMissile());
         drawGround();
         theMissile.closerToGround();
 //        DelayMachine.delay(0.01);
@@ -1873,7 +1953,7 @@ public class TUI2 {
 
     public void displayRunAway(final Hero theHero) {
         console.println(" " + theHero.getName() + " attempted to run away...");
-        Delay.delayAndExecute(2);
+        Delay.fakeDelay(2);
     }
 
 

@@ -49,14 +49,14 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 public class Delay {
-//    public static void delayAndExecute(final double seconds, final Runnable action) {
-//
-//        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
-//        pauseTransition.setOnFinished(event -> action.run());
-//        pauseTransition.play();
-//    }
+    public static void delayAndExecute(final double seconds, final Runnable action) {
 
-    public static void delayAndExecute(final double seconds) {
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
+        pauseTransition.setOnFinished(event -> action.run());
+        pauseTransition.play();
+    }
+
+    public static void fakeDelay(final double seconds) {
 
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
         pauseTransition.play();
