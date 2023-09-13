@@ -108,6 +108,8 @@ public final class AudioManager {
         menu1 = loadMedia("/sound/sfx/button_menu_1.wav");
         menu2 = loadMedia("/sound/sfx/button_menu_2.wav");
         menu3 = loadMedia("/sound/sfx/button_menu_3.wav");
+        swishOn = loadMedia("/sound/sfx/button_swish_on.wav");
+        swishOff = loadMedia("/sound/sfx/button_swish_off.wav");
         error = loadMedia("/sound/sfx/button_error.wav");
         beginGame = loadMedia("/sound/sfx/button_spawn.wav");
         infoPopup = loadMedia("/sound/sfx/info_popup.wav");

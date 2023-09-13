@@ -219,51 +219,48 @@ public class MonsterBattle2 {
 
         // menu
         CompletableFuture<Character> userInputFuture = tui.battleMenu(myHero);
-        userInputFuture.thenApplyAsync(userInput -> {
+        char userInput = userInputFuture.join();
 
-            tui.println();
-            // Basic Attack
-            if (userInput == '1') {
-                heroBasic();
+        tui.println();
+        // Basic Attack
+        if (userInput == '1') {
+            heroBasic();
 
-                // Special Attack
-            } else if (userInput == '2') {
-                heroSpecial();
+            // Special Attack
+        } else if (userInput == '2') {
+            heroSpecial();
 
-                // Open inventory
-            } else if (userInput == 'e') {
-                audio.playSFX(audio.heroBagOpen, 100);
-                inventoryMenu();
+            // Open inventory
+        } else if (userInput == 'e') {
+            audio.playSFX(audio.heroBagOpen, 100);
+            inventoryMenu();
 
-                // check monster stats
-            } else if (userInput == 'r') {
-                checkMonsterStats();
+            // check monster stats
+        } else if (userInput == 'r') {
+            checkMonsterStats();
 
-                // run away
-            } else if (userInput == 'q') {
-                runAwayProcess(myDebugMode);
+            // run away
+        } else if (userInput == 'q') {
+            runAwayProcess(myDebugMode);
 
-            } else if (userInput == 'f') {
-                audio.playSFX(audio.swishOn, 100);
-                tui.debugHeroStats(myHero);
-                tui.pressAnyKeyGoBack();
-                audio.playSFX(audio.swishOff, 80);
-                heroTurn();
+        } else if (userInput == 'f') {
+            audio.playSFX(audio.swishOn, 100);
+            tui.debugHeroStats(myHero);
+            tui.pressAnyKeyGoBack();
+            audio.playSFX(audio.swishOff, 80);
+            heroTurn();
 
-                // cheat mode instakill
-            } else if (userInput == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
-                tui.displayInstaKill();
-                myMonster.setHealth(0);
+            // cheat mode instakill
+        } else if (userInput == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
+            tui.displayInstaKill();
+            myMonster.setHealth(0);
 
-                // wrong input must have been given
-            } else {
-                audio.playSFX(audio.error, 100);
-                tui.displayWrongInput();
-                heroTurn();
-            }
-
-            return userInput; // Return the input for further processing if necessary
-        });
+            // wrong input must have been given
+        } else {
+            audio.playSFX(audio.error, 100);
+            tui.displayWrongInput();
+            heroTurn();
+        }
 
 
         //! need to put inside thenApplySync() to prevent from running before it's supposed to?

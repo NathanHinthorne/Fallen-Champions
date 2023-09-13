@@ -433,7 +433,7 @@ public abstract class DungeonCharacter implements java.io.Serializable {
                 myActiveDebuffs.remove(theDebuff);
             }
         } else {
-            System.out.println("DEBUG: Character does not have the debuff to tick.");
+//            System.out.println("DEBUG: Character does not have the debuff to tick.");
         }
     }
 

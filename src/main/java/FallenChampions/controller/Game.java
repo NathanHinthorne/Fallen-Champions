@@ -1014,29 +1014,27 @@ public class Game extends Application implements Serializable {
         audio.playSFX(audio.heroBagOpen);
 
         CompletableFuture<Character> userInputFuture = tui.openBag(bag, false); // input is guaranteed to be 1-4 or e //TODO substitute a enum state for the boolean
-        userInputFuture.thenApplyAsync(userInput -> {
+        char userInput = userInputFuture.join(); // Wait for user input
 
-            if (userInput != 'e') {
-                int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array indexing)
+        if (userInput != 'e') {
+            int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array indexing)
 
-                Potion potion = bag.getItem(slotIndex);
-                if (potion.canUseOutsideBattle()) {
-                    PotionDefensive defPotion = (PotionDefensive) potion;
-                    defPotion.effect(hero);
-                    bag.removeItem(slotIndex);
-                } else {
-                    audio.playSFX(audio.error);
-                    tui.displayCantUseItemOutsideBattle(potion);
-                    inventoryMenu();
-                }
-
-                audio.playSFX(audio.heroDrinkPotion);
-                tui.usePotionMsg(potion, slotIndex);
+            Potion potion = bag.getItem(slotIndex);
+            if (potion.canUseOutsideBattle()) {
+                PotionDefensive defPotion = (PotionDefensive) potion;
+                defPotion.effect(hero);
+                bag.removeItem(slotIndex);
+            } else {
+                audio.playSFX(audio.error);
+                tui.displayCantUseItemOutsideBattle(potion);
+                inventoryMenu();
+                return; // just added this to new GUI. not sure if it works
             }
-            tui.closeBag();
 
-            return userInput; // Return the input for further processing if necessary
-        });
+            audio.playSFX(audio.heroDrinkPotion);
+            tui.usePotionMsg(potion, slotIndex);
+        }
+        tui.closeBag();
     }
 
     private static void displayDungeonScreen() {

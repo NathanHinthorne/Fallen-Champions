@@ -1333,7 +1333,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
-            audio.playSFX(audio.menu1);
+//            audio.playSFX(audio.menu1);
             return userInput;
         });
     }
@@ -1350,7 +1350,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
-            audio.playSFX(audio.menu1);
+//            audio.playSFX(audio.menu1);
             return userInput;
         });
     }
@@ -1367,7 +1367,7 @@ public class TUI2 {
         futureChar.join();
 
         futureChar.thenApplyAsync(userInput -> {
-            audio.playSFX(audio.menu1);
+//            audio.playSFX(audio.menu1);
             System.out.println("You pressed: " + userInput);
             return userInput;
         });
@@ -1799,14 +1799,17 @@ public class TUI2 {
     }
 
     public void displayPlayerTurn() {
-        console.println("--------------------------- PLAYER'S TURN ---------------------------");
+        console.println("\n--------------------------- PLAYER'S TURN ---------------------------");
     }
 
     public void displayEnemyTurn() {
-        console.println("--------------------------- ENEMY'S TURN ----------------------------");
+        console.println("\n--------------------------- ENEMY'S TURN ----------------------------");
     }
 
-    public void bossAttack1() { // with new changes to GUI, attacks can finally depend on timing
+    public void bossAttack1() { // with new changes to GUI, attacks can finally depend on timing.
+                                // to utilize, use thenApplyAsync() instead of join()
+                                // not perfect. still allows user to press buttons at different timings. make specific timespan they can press buttons
+
 
         // need to control missile process somehow
         // should it be controlled via a method in a boss class?
