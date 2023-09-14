@@ -34,12 +34,12 @@ public class GameScreen {
 //        consoleWindow.setLineSpacing(2.7); // doesn't work
 
         // Create ImageView nodes for the left and right images
-        Image leftImage = loadImage("/images/wall.png");
+        Image leftImage = loadImage("/images/Lwall.png");
         ImageView leftImageView = new ImageView(leftImage);
         leftImageView.preserveRatioProperty().set(true);
         leftImageView.setFitWidth(140);
 
-        Image rightImage = loadImage("/images/wall.png");
+        Image rightImage = loadImage("/images/Rwall.png");
         ImageView rightImageView = new ImageView(rightImage);
         rightImageView.preserveRatioProperty().set(true);
         rightImageView.setFitWidth(140);

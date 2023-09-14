@@ -2,6 +2,7 @@ package FallenChampions.view;
 
 import FallenChampions.controller.TextSpeed;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
@@ -18,6 +19,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -146,7 +148,7 @@ public class Console extends BorderPane {
         });
     }
 
-    public void printAnimation(final String textToType, final TextSpeed textSpeed) {
+    public CompletableFuture<Void> printAnimation(final String textToType, final TextSpeed textSpeed) {
         char[] charactersToType = textToType.toCharArray();
         AtomicInteger currentIndex = new AtomicInteger(0); // AtomicInteger is thread-safe, meaning only one thread can access it at a time
         int speedMillis = textSpeed.getDelayMillis();
@@ -166,8 +168,24 @@ public class Console extends BorderPane {
                 )
         );
         timeline.setCycleCount(charactersToType.length); // Repeat for each character
-
         timeline.play();
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        timeline.setOnFinished(event -> {
+            // After the animation completes, create a PauseTransition for the post-animation delay
+            PauseTransition postAnimationPause = new PauseTransition(Duration.seconds(0.5));
+            postAnimationPause.setOnFinished(postEvent -> {
+                completionIndicator.complete(null);
+            });
+
+            // Start the post-animation pause
+            postAnimationPause.play();
+        });
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
     public void setDefaultFont(FontTypes fontFamily, int fontSize, Color fontColor) {

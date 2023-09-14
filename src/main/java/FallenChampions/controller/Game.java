@@ -54,7 +54,7 @@ public class Game extends Application implements Serializable {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = true;
+    private static boolean debugMode = false;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -290,24 +290,28 @@ public class Game extends Application implements Serializable {
         // TODO generate dungeons of different types here?
 
         if (!debugMode) {
-            tui.title().thenRun(() -> startMenu());
+            tui.title().thenRun(Game::startMenu);
         } else {
             startMenu();
         }
     }
 
     private static List<Hero> createHeroList() {
-        heroes = new ArrayList<>();
-        heroes.add(HeroFactory.buildHero(HeroTypes.SWORDSMAN));
-        heroes.add(HeroFactory.buildHero(HeroTypes.ARCHER));
-        heroes.add(HeroFactory.buildHero(HeroTypes.JUGGERNAUT));
-        heroes.add(HeroFactory.buildHero(HeroTypes.THIEF));
-        heroes.add(HeroFactory.buildHero(HeroTypes.DOCTOR));
-        heroes.add(HeroFactory.buildHero(HeroTypes.NINJA));
-        heroes.add(HeroFactory.buildHero(HeroTypes.SCIENTIST));
-        heroes.add(HeroFactory.buildHero(HeroTypes.MAGE));
-        heroes.add(HeroFactory.buildHero(HeroTypes.BEASTMASTER));
-        return heroes;
+        List<Hero> heroList = new ArrayList<>();
+
+        for (int i = 0; i < 9; i++) {
+            heroList.add(HeroFactory.buildHero(HeroTypes.values()[i]));
+        }
+//        heroes.add(HeroFactory.buildHero(HeroTypes.SWORDSMAN));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.ARCHER));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.JUGGERNAUT));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.THIEF));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.DOCTOR));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.NINJA));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.SCIENTIST));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.MAGE));
+//        heroes.add(HeroFactory.buildHero(HeroTypes.BEASTMASTER));
+        return heroList;
     }
 
     private static Map<String, Modes> createCodesMap() {
@@ -392,20 +396,11 @@ public class Game extends Application implements Serializable {
         }
 
         selectDifficulty().join();
-        //TODO delay for 0.5 seconds
         if (!debugMode) {
-            tui.displayStartMsg();
             audio.playMusic(audio.startingAnewSong, false, 50);
-
-            PauseTransition delay = new PauseTransition(Duration.seconds(7.5));
-            delay.setOnFinished(event -> {
-                gameLoop();
-            });
-            delay.play();
-
-        } else {
-            gameLoop();
+            tui.displayStartMsg().join();
         }
+        gameLoop();
     }
 
     private static void setupGameWithIntro() {
@@ -423,18 +418,10 @@ public class Game extends Application implements Serializable {
 
         selectDifficulty().join();
         if (!debugMode) {
-            tui.displayStartMsg();
             audio.playMusic(audio.startingAnewSong, false);
-
-            PauseTransition delay = new PauseTransition(Duration.seconds(7.5));
-            delay.setOnFinished(event -> {
-                gameLoop();
-            });
-            delay.play();
-
-        } else {
-            gameLoop();
+            tui.displayStartMsg().join();
         }
+        gameLoop();
     }
 
     private static void loadGameSetup() {
@@ -454,6 +441,8 @@ public class Game extends Application implements Serializable {
         switch (userInput) {
             case '1': // continue
                 audio.playSFX(audio.menu1, 100);
+                continueMenuProcess(); //? do I need a break if the user selects no?
+
                 hero.resetStats();
                 selectDifficulty().join();
                 gameOver = false;
@@ -506,13 +495,10 @@ public class Game extends Application implements Serializable {
 
     private static void quitProcess() {
         CompletableFuture<Character> userInputFuture = tui.quitProcessMsg();
-        userInputFuture.thenApplyAsync(userInput -> {
+        char userInput = userInputFuture.join(); // Wait for user input
 
-            if (userInput == '1') exitGame();
-            else mainMenu();
-
-            return userInput; // Return the input for further processing if necessary
-        });
+        if (userInput == '1') exitGame();
+        else mainMenu();
     }
 
     private static String capitalize(final String firstName) {
@@ -522,16 +508,42 @@ public class Game extends Application implements Serializable {
     }
 
     private static String giveRandomSuffix(final String theFirstName) {
-        List<String> names = makeNamesList(theFirstName);
 
-        // randomize the suffixes
-        Collections.shuffle(names);
-        int randomIndex = (int) (Math.random() * names.size());
-        String suffix = names.get(randomIndex);
+        String suffix;
+
+        if (isSpecialName(theFirstName)) {
+            suffix = giveSpecialSuffix(theFirstName);
+
+        } else {
+            List<String> names = makeNamesList(theFirstName);
+
+            // randomize the suffixes
+            Collections.shuffle(names);
+            int randomIndex = (int) (Math.random() * names.size());
+            suffix = names.get(randomIndex);
+        }
 
         // make the full name
         return theFirstName + " the " + suffix;
 
+    }
+
+    private static boolean isSpecialName(String theFirstName) {
+        return theFirstName.equals("Nate"); //TODO add more
+    }
+
+    private static String giveSpecialSuffix(String theFirstName) {
+        String suffix;
+
+        switch(theFirstName) {
+            case "Nate":
+                suffix = "Great";
+                break;
+            default:
+                suffix = "Great";
+        }
+
+        return suffix;
     }
 
     private static List<String> makeNamesList(final String theFirstName) {
@@ -926,17 +938,25 @@ public class Game extends Application implements Serializable {
 
     private static void mainMenuProcess() {
         CompletableFuture<Character> userInputFuture = tui.goToMainMenu();
-        userInputFuture.thenApplyAsync(userInput -> {
+        char userInput = userInputFuture.join(); // Wait for user input
 
-            if (userInput == '1') { // quit to main menu
-                audio.playSFX(audio.menu2, 120);
-                audio.stopMusic();
-                gameOver = true; //? needed?
-                mainMenu();
-            }
+        if (userInput == '1') { // quit to main menu
+            audio.playSFX(audio.menu2, 120);
+            audio.stopMusic();
+            gameOver = true; //? needed?
+            mainMenu();
+        }
+    }
 
-            return userInput; // Return the input for further processing if necessary
-        });
+    private static void continueMenuProcess() {
+        CompletableFuture<Character> userInputFuture = tui.goToContinueMenu();
+        char userInput = userInputFuture.join(); // Wait for user input
+
+        audio.playSFX(audio.menu1, 100);
+
+        if (userInput == '2') { // quit to main menu
+            mainMenu();
+        }
     }
 
 
@@ -1217,10 +1237,19 @@ public class Game extends Application implements Serializable {
                 userInput = tui.findHeroName().join();
                 System.out.println("user entered input: '" + userInput + "'");
 
-                if (!isValidName(userInput)) {
+                if (!startsWithLetter(userInput)) {
                     audio.playSFX(audio.error);
-                    tui.displayWrongInput();
+                    tui.displayNumberStartingName();
+
+                } else if (userInput.length() < 3) {
+                    audio.playSFX(audio.error);
+                    tui.displayNotEnoughLetters();
+
+                } else if (userInput.length() > 10) {
+                    audio.playSFX(audio.error);
+                    tui.displayTooManyLetters();
                 }
+
             } while (!isValidName(userInput));
 
             audio.playSFX(audio.menu1);
@@ -1232,7 +1261,7 @@ public class Game extends Application implements Serializable {
     }
 
     private static boolean isValidName(final String name) {
-        return !name.isEmpty() && startsWithLetter(name) && name.length() <= 10;
+        return startsWithLetter(name) && name.length() >= 3 && name.length() <= 10;
     }
 
     private static boolean startsWithLetter(final String heroFirstName) {

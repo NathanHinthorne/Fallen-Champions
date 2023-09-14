@@ -207,6 +207,36 @@ public class TUI2 {
     }
 
     /**
+     * The game start message
+     */
+    public CompletableFuture<Void> displayStartMsg() {
+        console.disableInput(true);
+
+        console.println("                     ╔═════════════════════════╗                     ");
+        console.println("---------------------║ Welcome to the Dungeon! ║---------------------");
+        console.println("                     ╚═════════════════════════╝                     ");
+
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(8));
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        pauseTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
+        pauseTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
+    }
+
+    /**
      * Chooses the hero
      * @return the hero choice
      */
@@ -376,19 +406,19 @@ public class TUI2 {
             console.print("Dungeon Keeper: ");
             console.printAnimation("Wait, are you serious? Your name is just " + theFirstName + "?\n", TextSpeed.FAST);
 
-            PauseTransition frame1 = new PauseTransition(Duration.seconds(7));
+            PauseTransition frame1 = new PauseTransition(Duration.seconds(5));
             frame1.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("That's far too ordinary -_-\n", TextSpeed.FAST);
             });
 
-            PauseTransition frame2 = new PauseTransition(Duration.seconds(7));
+            PauseTransition frame2 = new PauseTransition(Duration.seconds(5));
             frame2.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("I dub thee...\n", TextSpeed.MEDIUM);
             });
 
-            PauseTransition frame3 = new PauseTransition(Duration.seconds(7));
+            PauseTransition frame3 = new PauseTransition(Duration.seconds(5));
             frame3.setOnFinished(event -> {
                 console.print("                ");
 //                console.printAnimation("【 Sir " + theFullName + "! 】\n", TextSpeed.SLOW);
@@ -404,7 +434,7 @@ public class TUI2 {
                 console.printAnimation("Ah, " + theFirstName + ", a fine name indeed.\n", TextSpeed.MEDIUM);
             });
 
-            PauseTransition frame2 = new PauseTransition(Duration.seconds(7));
+            PauseTransition frame2 = new PauseTransition(Duration.seconds(4));
             frame2.setOnFinished(event -> {
                 console.print("                ");
                 console.printAnimation("However, ◄{ " + theFullName + " }► is befitting of one such as yourself.\n\n", TextSpeed.MEDIUM);
@@ -413,31 +443,31 @@ public class TUI2 {
             sequentialTransition.getChildren().addAll(frame1, frame2);
         }
 
-        PauseTransition frame4 = new PauseTransition(Duration.seconds(7));
+        PauseTransition frame4 = new PauseTransition(Duration.seconds(6));
         frame4.setOnFinished(event -> {
         console.print("Dungeon Keeper: ");
             console.printAnimation("Now then, " + theFullName + ", are you ready to begin your adventure?\n", TextSpeed.MEDIUM);
         });
 
-        PauseTransition frame5 = new PauseTransition(Duration.seconds(7));
+        PauseTransition frame5 = new PauseTransition(Duration.seconds(6.5));
         frame5.setOnFinished(event -> {
             console.print("                ");
             console.printAnimation("Don't think you're the first to explore this dungeon.\n", TextSpeed.MEDIUM);
         });
 
-        PauseTransition frame6 = new PauseTransition(Duration.seconds(7));
+        PauseTransition frame6 = new PauseTransition(Duration.seconds(6.5));
         frame6.setOnFinished(event -> {
             console.print("                ");
             console.printAnimation("Many others have come before you... Not one has made it out alive.\n", TextSpeed.MEDIUM);
         });
 
-        PauseTransition frame7 = new PauseTransition(Duration.seconds(7));
+        PauseTransition frame7 = new PauseTransition(Duration.seconds(6));
         frame7.setOnFinished(event -> {
             console.print("                ");
             console.printAnimation("Do you think you have what it takes to overcome this challenge?\n", TextSpeed.MEDIUM);
         });
 
-        PauseTransition frame8 = new PauseTransition(Duration.seconds(7));
+        PauseTransition frame8 = new PauseTransition(Duration.seconds(5.5));
         frame8.setOnFinished(event -> {
             console.print("                ");
             console.printAnimation("Or will you become yet another FALLEN CHAMPION?\n\n", TextSpeed.MEDIUM);
@@ -467,7 +497,7 @@ public class TUI2 {
             sequentialTransition.getChildren().addAll(frame9, frame10, frame11);
 
         } else {
-            PauseTransition frame9 = new PauseTransition(Duration.seconds(7));
+            PauseTransition frame9 = new PauseTransition(Duration.seconds(4));
             frame9.setOnFinished(event -> {
                 audio.playSFX(audio.dunDunDun);
             });
@@ -477,10 +507,12 @@ public class TUI2 {
                 console.print("Dungeon Keeper: ");
                 console.printAnimation("So " + theFullName + ", what kind of adventurer are you anyway?\n", TextSpeed.MEDIUM);
             });
+
+            sequentialTransition.getChildren().addAll(frame9, frame10);
         }
 
 
-        PauseTransition frame12 = new PauseTransition(Duration.seconds(4)); // buffer for next message
+        PauseTransition frame12 = new PauseTransition(Duration.seconds(5)); // buffer for next message
         sequentialTransition.getChildren().addAll(frame12);
 
         // Create a CompletableFuture to signal completion
@@ -514,7 +546,7 @@ public class TUI2 {
         console.println("╠ 'e' bag, '1' hero info, '2' HELP, '4' main menu, '5' save game   ╣");
         console.println("╚══════════════════════════════════════════════════════════════════╝");
         displayChainSpacer();
-        console.println("Make your selection: ");
+        console.print("Make your selection: ");
 
 //        console.disableInput(false); // re-enable input box after output is finished displaying
         return futureCharInput();
@@ -709,24 +741,21 @@ public class TUI2 {
 
 //        console.disableInput(false); // re-enable input box after output is finished displaying
         CompletableFuture<Character> userInputFuture = futureCharInput();
-        userInputFuture.thenApplyAsync(userInput -> { // TODO: figure out how to do 2 .thenApplyAsync() twice to same completable future for the inventory method
+        char userInput = userInputFuture.join(); // wait for user input
 
-            int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array index)
+        int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array index)
 
-            if ((slotIndex < 0 || slotIndex > 3) && userInput != 'e') { // out of bounds
-                audio.playSFX(audio.error);
-                displayWrongInput();
-                return openBag(theBag, inBattle);
+        if ((slotIndex < 0 || slotIndex > 3) && userInput != 'e') { // out of bounds
+            audio.playSFX(audio.error);
+            displayWrongInput();
+            return openBag(theBag, inBattle);
 
-            } else if (slotIndex > theBag.getCurrentSize()-1 && slotIndex <= theBag.getMaxSize() && userInput != 'e') { // empty slot
-                audio.playSFX(audio.error);
-                console.println("That slot is empty!");
-                return openBag(theBag, inBattle);
-            }
-            console.println();
-
-            return userInput; // Return the input for further processing if necessary
-        });
+        } else if (slotIndex > theBag.getCurrentSize()-1 && slotIndex <= theBag.getMaxSize() && userInput != 'e') { // empty slot
+            audio.playSFX(audio.error);
+            console.println("That slot is empty!");
+            return openBag(theBag, inBattle);
+        }
+        console.println();
 
         return userInputFuture;
     }
@@ -757,11 +786,19 @@ public class TUI2 {
      * @return the menu selection
      */
     public CompletableFuture<Character> goToMainMenu() {
-        console.println("Are you sure you want to go to the main menu?");
+        console.println("\nAre you sure you want to go to the main menu?");
         console.println("1 for yes, 2 for no");
         console.print("Make your selection: ");
 
 //        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
+    }
+
+    public CompletableFuture<Character> goToContinueMenu() {
+        console.println("\nAre you sure you want to continue?");
+        console.println("1 for yes, 2 for no");
+        console.print("Make your selection: ");
+
         return futureCharInput();
     }
 
@@ -1070,14 +1107,6 @@ public class TUI2 {
         console.print("    Steps left with vision potion: " + (4-theSteps));
     }
 
-    /**
-     * The game start message
-     */
-    public void displayStartMsg() {
-        console.println("                     ╔═════════════════════════╗                     ");
-        console.println("---------------------║ Welcome to the Dungeon! ║---------------------");
-        console.println("                     ╚═════════════════════════╝                     ");
-    }
 
     /**
      * The instant kill message
@@ -1133,6 +1162,18 @@ public class TUI2 {
      */
     public void displayWrongInput() {
         console.println("Invalid input. Please try again.");
+    }
+
+    public void displayNotEnoughLetters() {
+        console.println("Your name contain least 3 letters. Please try again.");
+    }
+
+    public void displayTooManyLetters() {
+        console.println("Your name must contain no more than 10 letters. Please try again.");
+    }
+
+    public void displayNumberStartingName() {
+        console.println("Your name cannot start with a number. Please try again.");
     }
 
     public CompletableFuture<Character> playIntroOrNot() {
@@ -1727,14 +1768,14 @@ public class TUI2 {
     }
 
     public CompletableFuture<Character> mainMenu() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 25; i++) {
             console.println();
         }
         console.println("" +
                 "8b    d8    db    88 88b 88     8b    d8 888888 88b 88 88   88 \n" +
                 "88b  d88   dPYb   88 88Yb88     88b  d88 88__   88Yb88 88   88 \n" +
                 "88YbdP88  dP__Yb  88 88 Y88     88YbdP88 88\"\"   88 Y88 Y8   8P \n" +
-                "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' ");
+                "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' \n\n");
 //        console.println("╔═════════════════════╗");
 //        console.println("║ 1. Continue         ║    ╔═════════════════════╗");
 //        console.println("║ 2. Change Hero      ║    ║ 6. Save             ║");

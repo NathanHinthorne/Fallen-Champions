@@ -67,12 +67,12 @@ public class MonsterBattle2 {
     /**
      * 1 if the current character's minDmg was originally an odd number, 0 otherwise
      */
-    int minWeakenOffset;
+    private int minWeakenOffset;
 
     /**
      * 1 if the current character's maxDmg was originally an odd number, 0 otherwise
      */
-    int maxWeakenOffset;
+    private int maxWeakenOffset;
 
     /**
      * The game over flag
@@ -124,7 +124,7 @@ public class MonsterBattle2 {
          * player's or the monster's HP hits 0.
          */
 
-        audio.playMusic(audio.battleSong, true, -5);
+        audio.playMusic(audio.battleSong, true);
 
         if (myHero.getSpeed() > myMonster.getSpeed()) {
             tui.heroFasterThanMonsterMsg(myMonster);
