@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import java.io.Serializable;
+
 /**
  * This class will play audio when called upon by
  * another method.
@@ -16,8 +18,9 @@ public final class AudioManager {
     private static AudioManager audioManager; // to be used in singleton design pattern
 
     // Constants
-    private static final double DEFAULT_SFX_VOLUME = 100;
-    private static final double DEFAULT_MUSIC_VOLUME = 60; // 60
+
+    private static final double VOLUME_MODIFIER = 0.6;
+
 
 
     // Separate media players for music and sound effects
@@ -160,47 +163,21 @@ public final class AudioManager {
         return audioManager;
     }
 
-    public void playSFX(final Media theSFX) {
+    public void playSFX(final Media theSFX, final double theVolume) {
         // anonymous inner class that implements the Runnable interface
         Platform.runLater(() -> {
             sfxPlayer = new MediaPlayer(theSFX);
-            sfxPlayer.setVolume(DEFAULT_SFX_VOLUME);
+            sfxPlayer.setVolume(theVolume * VOLUME_MODIFIER);
             sfxPlayer.play();
         });
     }
 
-    public void playSFX(final Media theSFX, final int theVolume) {
-        // anonymous inner class that implements the Runnable interface
-        Platform.runLater(() -> {
-            sfxPlayer = new MediaPlayer(theSFX);
-            sfxPlayer.setVolume(theVolume);
-            sfxPlayer.play();
-        });
-    }
-
-    public void playMusic(final Media theMusic, final boolean theLoop) {
+    public void playMusic(final Media theMusic, final boolean theLoop, final double theVolume) {
 
         // anonymous inner class that implements the Runnable interface
         Platform.runLater(() -> {
             musicPlayer = new MediaPlayer(theMusic);
-            musicPlayer.setVolume(DEFAULT_MUSIC_VOLUME);
-
-            if (theLoop) {
-                musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            } else {
-                musicPlayer.setCycleCount(1);
-            }
-
-            musicPlayer.play();
-        });
-    }
-
-    public void playMusic(final Media theMusic, final boolean theLoop, final int theVolume) {
-
-        // anonymous inner class that implements the Runnable interface
-        Platform.runLater(() -> {
-            musicPlayer = new MediaPlayer(theMusic);
-            musicPlayer.setVolume(theVolume);
+            musicPlayer.setVolume(theVolume * VOLUME_MODIFIER);
 
             if (theLoop) {
                 musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);

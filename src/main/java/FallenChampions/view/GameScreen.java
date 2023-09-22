@@ -1,8 +1,10 @@
 package FallenChampions.view;
 
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -57,8 +59,15 @@ public class GameScreen {
         int height = 700;
         Scene consoleScene = new Scene(borderPane, width, height);
 
+        // Disable horizontal scrolling by consuming horizontal scroll events
+        consoleScene.setOnScroll(event -> {
+            if (event.getDeltaX() != 0) {
+                event.consume();
+            }
+        });
+
         myPrimaryStage.setY(50); // temp
-        myPrimaryStage.setX(400); // temp
+        myPrimaryStage.setX(250); // temp
 
         myPrimaryStage.setResizable(false);
 

@@ -27,5 +27,18 @@ public enum Difficulty {
         public String toString() {
             return "Hard";
         }
+    };
+
+    public static Difficulty getDifficulty(Character userInput) {
+        switch (userInput) {
+            case '1':
+                return EASY;
+            case '2':
+                return MEDIUM;
+            case '3':
+                return HARD;
+            default:
+                return null;
+        }
     }
 }

@@ -48,17 +48,36 @@ package FallenChampions.controller;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Delay {
-    public static void delayAndExecute(final double seconds, final Runnable action) {
+    public static CompletableFuture<Void> pause(double seconds) {
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
 
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
-        pauseTransition.setOnFinished(event -> action.run());
+        pauseTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+        });
+
+        // Start playing the sequentialTransition
         pauseTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
-    public static void fakeDelay(final double seconds) {
-
-        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
-        pauseTransition.play();
-    }
+//    public static void delayAndExecute(final double seconds, final Runnable action) {
+//
+//        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
+//        pauseTransition.setOnFinished(event -> action.run());
+//        pauseTransition.play();
+//    }
+//
+//    public static void fakeDelay(final double seconds) {
+//
+//        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(seconds));
+//        pauseTransition.play();
+//    }
 }

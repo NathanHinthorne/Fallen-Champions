@@ -1,19 +1,17 @@
 package FallenChampions.view;
 
+import FallenChampions.controller.Delay;
 import FallenChampions.controller.TextSpeed;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -123,6 +121,10 @@ public class Console extends BorderPane {
         GuiUtils.runSafe(() -> output.clear());
     }
 
+    public void clearMove() {
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
     public void print(final String text) {
         Objects.requireNonNull(text, "text");
         GuiUtils.runSafe(() -> output.appendText(text));
@@ -137,18 +139,30 @@ public class Console extends BorderPane {
         GuiUtils.runSafe(() -> output.appendText(System.lineSeparator()));
     }
 
-    public void print(final String text, FontTypes fontFamily, int fontSize, Color fontColor) {
+//    public void print(final String text, FontTypes fontFamily, int fontSize, Color fontColor) {
+//
+//        Objects.requireNonNull(text, "text");
+//        GuiUtils.runSafe(() -> {
+//            setOutputFont(fontFamily, fontSize, fontColor);
+//            System.out.println("font set to " + fontFamily + ", " + fontSize + ", " + toRgbString(fontColor));
+//            output.appendText(text);
+//            setOutputFont(defaultFontFamily, defaultFontSize, defaultFontColor); // Set the default font after appending text
+//        });
+//    }
 
-        Objects.requireNonNull(text, "text");
-        GuiUtils.runSafe(() -> {
-            setOutputFont(fontFamily, fontSize, fontColor);
-            System.out.println("font set to " + fontFamily + ", " + fontSize + ", " + toRgbString(fontColor));
-            output.appendText(text);
-            setOutputFont(defaultFontFamily, defaultFontSize, defaultFontColor); // Set the default font after appending text
-        });
+    public CompletableFuture<Void> lineAnimation(List<String> theText, float theSecondsBetweenLines) {
+        for (String line : theText) {
+            println(line);
+            Delay.pause(theSecondsBetweenLines).join();
+        }
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+        completionIndicator.complete(null);
+        return completionIndicator;
     }
 
-    public CompletableFuture<Void> printAnimation(final String textToType, final TextSpeed textSpeed) {
+    public CompletableFuture<Void> typeAnimation(final String textToType, final TextSpeed textSpeed) {
         char[] charactersToType = textToType.toCharArray();
         AtomicInteger currentIndex = new AtomicInteger(0); // AtomicInteger is thread-safe, meaning only one thread can access it at a time
         int speedMillis = textSpeed.getDelayMillis();
@@ -175,7 +189,7 @@ public class Console extends BorderPane {
 
         timeline.setOnFinished(event -> {
             // After the animation completes, create a PauseTransition for the post-animation delay
-            PauseTransition postAnimationPause = new PauseTransition(Duration.seconds(0.5));
+            PauseTransition postAnimationPause = new PauseTransition(Duration.seconds(0.2));
             postAnimationPause.setOnFinished(postEvent -> {
                 completionIndicator.complete(null);
             });

@@ -6,17 +6,18 @@ import FallenChampions.model.characters.DungeonCharacter;
 import FallenChampions.model.dungeon.BattleResult;
 import FallenChampions.model.potions.PotionDefensive;
 import FallenChampions.model.potions.PotionOffensive;
-import FallenChampions.view.TUI;
 import FallenChampions.view.AudioManager;
 import FallenChampions.model.characters.heroes.Hero;
 import FallenChampions.model.characters.heroes.Inventory;
 import FallenChampions.model.characters.monsters.Monster;
 import FallenChampions.model.potions.Potion;
+import FallenChampions.view.TUI;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 
 /**
@@ -46,12 +47,12 @@ public class MonsterBattle {
     /**
      * The cheat mode flag
      */
-    private boolean myCheatMode;
+    private final boolean myCheatMode;
 
     /**
      * The text user interface
      */
-    private final TUI myGame;
+    private static TUI tui;
 
     /**
      * The hero
@@ -66,12 +67,12 @@ public class MonsterBattle {
     /**
      * 1 if the current character's minDmg was originally an odd number, 0 otherwise
      */
-    int minWeakenOffset;
+    private int minWeakenOffset;
 
     /**
      * 1 if the current character's maxDmg was originally an odd number, 0 otherwise
      */
-    int maxWeakenOffset;
+    private int maxWeakenOffset;
 
     /**
      * The game over flag
@@ -94,21 +95,26 @@ public class MonsterBattle {
     private static AudioManager audio;
 
 
-    public MonsterBattle(final Hero theHero, final Monster theMonster, final TUI theView,
-                         final boolean theCheatMode, final AudioManager theAudio, final boolean theFunnyMode,
-                         final boolean theDebugMode) {
+    //TODO change up this class
+    // Two options:
+    // 1. make it a static, utility class that has a setup() and still has a newBattle()
+    // 2. make the constructor start the battle, take out newBattle(). Add a field containing the battle result
 
-        myHero = theHero;
-        myMonster = theMonster;
+
+    public MonsterBattle(final Hero theHero, final Monster theMonster,
+                         final boolean theCheatMode, final boolean theDebugMode, final boolean theFunnyMode) {
+
+        tui = TUI.getInstance();
+        audio = AudioManager.getInstance();
 
         myGameOver = false;
-        myGame = theView;
         myVictory = false;
         myCheatMode = theCheatMode;
         myFunnyMode = theFunnyMode;
         myDebugMode = theDebugMode;
-        audio = theAudio;
 
+        myHero = theHero;
+        myMonster = theMonster;
         myHero.initializeCharacterPerBattle();
         myMonster.initializeCharacterPerBattle();
     }
@@ -124,32 +130,32 @@ public class MonsterBattle {
          * player's or the monster's HP hits 0.
          */
 
-        audio.playMusic(audio.battleSong, true, -5);
+        audio.playMusic(audio.battleSong, true, 0.6);
 
         if (myHero.getSpeed() > myMonster.getSpeed()) {
-            myGame.heroFasterThanMonsterMsg(myMonster);
+            tui.heroFasterThanMonsterMsg(myMonster);
             while (!myGameOver) {
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     heroTurn();
-                    SleepDelay.delay(2);
+                    Delay.pause(2).join();
                 }
                 if (myMonster.getHealth() > 0 && !myGameOver) { // prevents monster from taking a 2nd turn after hero runs
                     monsterTurn();
-                    SleepDelay.delay(2);
+                    Delay.pause(2).join();
                 }
             }
         } else {
-            myGame.monsterFasterThanHeroMsg(myMonster);
+            tui.monsterFasterThanHeroMsg(myMonster);
             while (!myGameOver) {
                 if (myMonster.getHealth() > 0) {
                     monsterTurn();
-                    SleepDelay.delay(2);
+                    Delay.pause(2).join();
                 }
                 if (myHero.getHealth() > 0) {
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     heroTurn();
-                    SleepDelay.delay(2);
+                    Delay.pause(2).join();
                 }
             }
         }
@@ -174,19 +180,17 @@ public class MonsterBattle {
      */
     private void heroTurn() {
 
-        myGame.displayChainSpacer();
-        myGame.displayPlayerTurn();
+        tui.displayPlayerTurn();
 
-        myGame.displayHeroAndMonsterInfo(myHero, myMonster);
-        System.out.println();
+        tui.displayHeroAndMonsterInfo(myHero, myMonster);
 
         myHero.initializeCharacterPerTurn();
 
         Queue<String> passiveMsgs = myHero.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
+            tui.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
-        System.out.println();
+        tui.println();
 
         boolean debuffMsgTriggered = false;
         if (myHero.hasDebuff(Debuff.STUCKIFY)) {
@@ -215,53 +219,53 @@ public class MonsterBattle {
         }
 
         if (debuffMsgTriggered) {
-            System.out.println();
+            tui.println();
         }
 
         // menu
-        char choice = myGame.battleMenu(myHero);
-        System.out.println();
+        CompletableFuture<Character> userInputFuture = tui.battleMenu(myHero);
+        char userInput = userInputFuture.join();
 
-            // Basic Attack
-        if (choice == '1') {
+        tui.println();
+        // Basic Attack
+        if (userInput == '1') {
             heroBasic();
 
             // Special Attack
-        } else if (choice == '2') {
+        } else if (userInput == '2') {
             heroSpecial();
 
             // Open inventory
-        } else if (choice == 'e') {
-            audio.playSFX(audio.heroBagOpen, 100);
+        } else if (userInput == 'e') {
+            audio.playSFX(audio.heroBagOpen, 1.00);
             inventoryMenu();
 
             // check monster stats
-        } else if (choice == 'r') {
+        } else if (userInput == 'r') {
             checkMonsterStats();
 
             // run away
-        } else if (choice == 'q') {
+        } else if (userInput == 'q') {
             runAwayProcess(myDebugMode);
 
-        } else if (choice == 'f') {
-            audio.playSFX(audio.swishOn, 100);
-            myGame.debugHeroStats(myHero);
-            myGame.pressAnyKeyGoBack();
-            audio.playSFX(audio.swishOff, 80);
+        } else if (userInput == 'f') {
+            audio.playSFX(audio.swishOn, 1.00);
+            tui.debugHeroStats(myHero);
+            tui.pressAnyKeyGoBack();
+            audio.playSFX(audio.swishOff, 0.80);
             heroTurn();
 
             // cheat mode instakill
-        } else if (choice == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
-            myGame.displayInstaKill();
+        } else if (userInput == '6' && myCheatMode) { //TODO change to huge laser firing with asterisks like boss
+            tui.displayInstaKill();
             myMonster.setHealth(0);
 
             // wrong input must have been given
         } else {
-            audio.playSFX(audio.error, 100);
-            myGame.displayWrongInput();
+            audio.playSFX(audio.error, 1.00);
+            tui.displayWrongInput();
             heroTurn();
         }
-
 
         // Checks if the attack killed the enemy
         if (myMonster.getHealth() <= 0) {
@@ -271,36 +275,36 @@ public class MonsterBattle {
     }
 
     private void runAwayProcess(final boolean debugMode) {
-        myGame.displayRunAway(myHero);
+        tui.displayRunAway(myHero);
         double runAwayChance = Math.random();
         if (runAwayChance < myHero.getRunSuccessChance() || debugMode) {
-//            myAudio.playSFX(myAudio.runAwaySuccess, 100);
-            myGame.displayRunAwaySuccess();
+//            myAudio.playSFX(myAudio.runAwaySuccess, 1.00);
+            tui.displayRunAwaySuccess();
             myHeroRanAway = true;
             myGameOver = true;
         } else {
-//            myAudio.playSFX(myAudio.runAwaySuccess, 100);
-            myGame.displayRunAwayFail();
+//            myAudio.playSFX(myAudio.runAwaySuccess, 1.00);
+            tui.displayRunAwayFail();
             myHeroRanAway = false;
         }
     }
 
 
     private void checkMonsterStats() {
-        audio.playSFX(audio.swishOn, 100);
-        myGame.displayMonsterStats(myMonster);
-        myGame.pressAnyKeyGoBack();
-        audio.playSFX(audio.swishOff, 80);
+        audio.playSFX(audio.swishOn, 1.00);
+        tui.displayMonsterStats(myMonster);
+        tui.pressAnyKeyGoBack();
+        audio.playSFX(audio.swishOff, 0.80);
         heroTurn();
     }
 
     private void heroBasic() {
-        audio.playSFX(myHero.getBasicSFX(), 100);
-        myGame.characterSelectAbility(myHero, myMonster, Ability.BASIC);
+        audio.playSFX(myHero.getBasicSFX(), 1.00);
+        tui.characterSelectAbility(myHero, myMonster, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.basicAtk(myMonster);
-        SleepDelay.delay(2);
-        myGame.heroAttackResult(myHero, damage);
+        Delay.pause(2).join();
+        tui.heroAttackResult(myHero, damage);
         inflictDebuffMsg(myMonster); // show what debuffs were inflicted on monster
 
 //        myGame.displayHealthMeters(myHero, myMonster);
@@ -326,28 +330,29 @@ public class MonsterBattle {
     private void heroSpecial() {
         // check silence
         if (myHero.hasDebuff(Debuff.SILENCE)) {
-            audio.playSFX(audio.error, 100);
-            myGame.displaySilenced();
+            audio.playSFX(audio.error, 1.00);
+            tui.displaySilenced();
             heroTurn();
             return;
         }
         // check cooldown
         if (myHero.getCooldown() > 0) {
-            audio.playSFX(audio.error, 100);
-            myGame.displayCooldown(myHero.getCooldown());
+            audio.playSFX(audio.error, 1.00);
+            tui.displayCooldown(myHero.getCooldown());
+            Delay.pause(2).join();
             heroTurn();
             return; // change this return statement for the burst attack?
         }
 
         // proceed with attack
-        audio.playSFX(myHero.getSpecialSFX(), 100);
-        myGame.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
+        audio.playSFX(myHero.getSpecialSFX(), 1.00);
+        tui.characterSelectAbility(myHero, myMonster, Ability.SPECIAL);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myHero.specialAtk(myMonster);
-        SleepDelay.delay(2);
-        myGame.heroAttackResult(myHero, damage);
+        Delay.pause(2).join();
+        tui.heroAttackResult(myHero, damage);
         if (myHero.wasCritHit()) {
-            myGame.playerCritMsg();
+            tui.playerCritMsg();
         }
         inflictDebuffMsg(myMonster); // show what debuffs were inflicted on monster
 
@@ -375,10 +380,12 @@ public class MonsterBattle {
 
     public void inventoryMenu() {
         Inventory bag = myHero.getInventory();
-        char input = myGame.openBag(bag, true, audio); // input is guaranteed to be 1-4 or e
 
-        if (input != 'e') { // back button was pressed
-            int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array indexing)
+        CompletableFuture<Character> userInputFuture = tui.openBag(bag, true); // input is guaranteed to be 1-4 or e
+        char userInput = userInputFuture.join(); // wait for user input
+
+        if (userInput != 'e') { // back button was pressed
+            int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array indexing)
 
             Potion potion = bag.getItem(slotIndex);
             if (potion.canUseDuringBattle()) {
@@ -393,8 +400,8 @@ public class MonsterBattle {
                     offPotion.effect(myMonster);
                 }
 
-                audio.playSFX(audio.heroDrinkPotion, 100);
-                myGame.usePotionMsg(potion, slotIndex);
+                audio.playSFX(audio.heroDrinkPotion, 1.00);
+                tui.usePotionMsg(potion, slotIndex);
 
                 if (myHero.hasDebuff(Debuff.BLIND)) {
                     undoBlindedProcess(myHero);
@@ -407,13 +414,13 @@ public class MonsterBattle {
                 myMonster.tickIndividualDebuff(Debuff.VULNERATE);
 
             } else {
-                audio.playSFX(audio.error, 100);
-                myGame.displayCantUseItemDuringBattle(potion);
+                audio.playSFX(audio.error, 1.00);
+                tui.displayCantUseItemDuringBattle(potion);
                 inventoryMenu();
             }
 
         } else { // back button was pressed
-            myGame.closeBag(audio);
+            tui.closeBag();
             heroTurn();
         }
     }
@@ -426,17 +433,15 @@ public class MonsterBattle {
 
         myMonster.initializeCharacterPerTurn();
 
-        myGame.displayChainSpacer();
-        myGame.displayEnemyTurn();
+        tui.displayEnemyTurn();
 
-        myGame.displayHeroAndMonsterInfo(myHero, myMonster);
-        System.out.println();
+        tui.displayHeroAndMonsterInfo(myHero, myMonster);
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.passiveAbilityActivated(passiveMsgs);
+            tui.passiveAbilityActivated(passiveMsgs);
         }
-        System.out.println();
+        tui.println();
 
         boolean debuffMsgTriggered = false;
         if (myMonster.hasDebuff(Debuff.STUCKIFY)) {
@@ -465,10 +470,10 @@ public class MonsterBattle {
         }
 
         if (debuffMsgTriggered) {
-            System.out.println();
+            tui.println();
         }
 
-        SleepDelay.delay(2);
+        Delay.pause(2).join();
 
         int choice = RANDOMIZER.nextInt(3);
         myMonster.decreaseCooldown();
@@ -482,15 +487,15 @@ public class MonsterBattle {
         if (choice == 0) {
             monsterBasic();
 
-        // Special Attack
+            // Special Attack
         } else if (choice == 1 && myMonster.getCooldown() <= 0 && !myMonster.hasDebuff(Debuff.SILENCE)) {
             monsterSpecial();
 
-        // Heal
+            // Heal
         } else if (choice == 2 && myMonster.getHealth() < (myMonster.getMaxHealth() - myMonster.getMaxHeal())) {
             monsterHeal();
 
-        // Basic attack failsafe
+            // Basic attack failsafe
         } else {
             monsterBasic();
         }
@@ -512,15 +517,15 @@ public class MonsterBattle {
 
 
     private void monsterBasic() {
-        myGame.characterSelectAbility(myMonster, myHero, Ability.BASIC);
+        tui.characterSelectAbility(myMonster, myHero, Ability.BASIC);
 //        Map<Debuff, Integer> oldDebuffs = myHero.getActiveDebuffs(); // snapshot of debuffs before more are applied
         int damage = myMonster.basicAtk(myHero);
-        myGame.monsterAttackResult(myMonster, myHero, damage);
+        tui.monsterAttackResult(myMonster, myHero, damage);
         inflictDebuffMsg(myHero); // show what debuffs were inflicted on hero
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
+            tui.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
 //        myGame.displayHealthMeters(myHero, myMonster);
         myMonster.tickDebuffs();
@@ -531,14 +536,14 @@ public class MonsterBattle {
         if (myMonster.getCooldown() > 0) {
             System.out.println("DEBUG: Monster is on cooldown, but tried to use special attack!");
         }
-        myGame.characterSelectAbility(myMonster, myHero, Ability.SPECIAL);
+        tui.characterSelectAbility(myMonster, myHero, Ability.SPECIAL);
         int damage = myMonster.specialAtk(myHero);
-        myGame.monsterAttackResult(myMonster, myHero, damage);
+        tui.monsterAttackResult(myMonster, myHero, damage);
         inflictDebuffMsg(myHero); // show what debuffs were inflicted on hero
 
         Queue<String> passiveMsgs = myMonster.getPassiveMsgs();
         if (!passiveMsgs.isEmpty()) {
-            myGame.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
+            tui.passiveAbilityActivated(passiveMsgs); // ex: show swordsman defense stance msg
         }
 
         myMonster.tickDebuffs();
@@ -547,7 +552,7 @@ public class MonsterBattle {
     private void monsterHeal() {
         myMonster.heal(myMonster);
         int healAmount = myMonster.getHealAmount();
-        myGame.monsterHeal(healAmount);
+        tui.monsterHeal(healAmount);
         myMonster.tickDebuffs();
     }
 
@@ -560,7 +565,7 @@ public class MonsterBattle {
         while (iterator.hasNext()) {
             Debuff debuff = iterator.next();
             int duration = newDebuffs.remove(debuff);
-            myGame.inflictedDebuffMsg(debuff, duration);
+            tui.inflictedDebuffMsg(debuff, duration);
             // instead of myActiveDebuffs.remove(debuff);. concurrent modification exception
             // Use iterator's remove() method to safely remove the element
         }
@@ -568,14 +573,14 @@ public class MonsterBattle {
 
 
     private void stuckProcess(final DungeonCharacter theCharacter) {
-        myGame.displayStuckifyMsg(theCharacter);
+        tui.displayStuckifyMsg(theCharacter);
         theCharacter.decreaseCooldown();
         theCharacter.tickDebuffs();
-        SleepDelay.delay(2);
+        Delay.pause(2).join();
     }
 
     private void blindedProcess(final DungeonCharacter theCharacter) {
-        myGame.displayBlindedMsg(theCharacter);
+        tui.displayBlindedMsg(theCharacter);
         theCharacter.setBasicAccuracy(theCharacter.getBasicAccuracy() - 0.5);
         theCharacter.setSpecialAccuracy(theCharacter.getSpecialAccuracy() - 0.5);
     }
@@ -586,7 +591,7 @@ public class MonsterBattle {
     }
 
     private void weakenedProcess(final DungeonCharacter theCharacter) {
-        myGame.displayWeakenedMsg(theCharacter);
+        tui.displayWeakenedMsg(theCharacter);
 
         int minDmg = theCharacter.getMinDmg();
         int maxDmg = theCharacter.getMaxDmg();
@@ -596,7 +601,7 @@ public class MonsterBattle {
 
         theCharacter.setMinDmg(minDmg/2); //TODO problem with odd numbers, ex: 5/2 = 2
         theCharacter.setMaxDmg(maxDmg/2); //TODO when reverting the change, 2*2 = 4, not 5
-                                          // offset should fix this!!
+        // offset should fix this!!
     }
 
     private void undoWeakenedProcess(final DungeonCharacter theCharacter) {
@@ -605,16 +610,16 @@ public class MonsterBattle {
     }
 
     private void poisonedProcess(final DungeonCharacter theCharacter) {
-        myGame.displayPoisonedMsg(theCharacter);
+        tui.displayPoisonedMsg(theCharacter);
         theCharacter.damage(10);
     }
 
     private void silencedProcess(final DungeonCharacter theCharacter) {
-        myGame.displaySilencedMsg(theCharacter);
+        tui.displaySilencedMsg(theCharacter);
     }
 
     private void vulnerableProcess(final DungeonCharacter theCharacter) { // only debuff that takes affect on OTHER player's turn
-        myGame.displayVulnerableMsg(theCharacter);
+        tui.displayVulnerableMsg(theCharacter);
     }
 
 }

@@ -12,13 +12,11 @@ import FallenChampions.model.potions.PotionDefensive;
 import FallenChampions.model.potions.VisionPotion;
 import FallenChampions.view.*;
 import FallenChampions.view.Console;
-import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-import javafx.util.Duration;
 import org.sqlite.SQLiteDataSource;
 
 import java.io.*;
@@ -28,6 +26,45 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+
+// IDEAS FOR FUTURE EDITIONS:
+/*
+        *  - Add an option to the battle menu called "block" or "dodge". Now monsters only miss if the player successfully guards
+        *    If the player chooses guards, they are presented with a new menu that might look like this:
+        *
+        * The monster attacks you from your left!
+        *                   w
+        *             →  a     d
+        *
+        * The monster attacks you from your right!
+        *                   w
+        *                a     d  ←
+        *
+        * The monster attacks you from above!
+        *                   ↓
+        *                   w   
+        *                a     d
+        * Quickly choose a direction to guard the blow:
+        *
+        *   The player chooses a direction to guard quickly. Based on timing
+        *
+        *   goblins trick the player by fake attacking in a direction? or should that be reserved for the boss?
+        *
+        * -- OR --
+        *
+        * Make room for a separate window within the game screen. This will be an undertale bullet-hell screen.
+        * Install a small clone of undertale and somehow set that up within the game screen.
+
+
+        *  - Arrow image ideas:
+        *  ↢  ↣
+        *
+
+
+        * With his dying breath, the boss starts the goose virus
+
+ */
+
 
 public class Game extends Application implements Serializable {
 
@@ -54,7 +91,7 @@ public class Game extends Application implements Serializable {
     /**
      * The game's debug mode. If true, the player will be able to skip past cutscenes.
      */
-    private static boolean debugMode = false;
+    private static boolean debugMode = true;
 
     /**
      * The game's pass-thru monster mode. If true, the player will be able to walk through monsters.
@@ -142,7 +179,7 @@ public class Game extends Application implements Serializable {
     /**
      * the view to be used in the game. Swap with GUI later.
      */
-    private static TUI2 tui; // from view
+    private static TUI tui; // from view
 
     /**
      * the console the user interacts with
@@ -171,7 +208,8 @@ public class Game extends Application implements Serializable {
             // Create a new stage for the game screen
             Stage gameStage = new Stage();
             GameScreen gameScreen = new GameScreen(gameStage); // don't need to save a reference?
-            gameStage.setTitle("Fallen Champions - Game                ¯\\_( ͡° ͜ʖ ͡°)_/¯");
+//            gameStage.setTitle("Fallen Champions - Game                ¯\\_( ͡° ͜ʖ ͡°)_/¯");
+            gameStage.setTitle("Fallen Champions - Game");
             gameStage.show();
             startGame();
             return;
@@ -179,7 +217,8 @@ public class Game extends Application implements Serializable {
 
         // Show the JavaFX stage (title screen)
         TitleScreen titleScreen = new TitleScreen(primaryStage);
-        primaryStage.setTitle("Fallen Champions - Title Screen (do people even look at this?)");
+//        primaryStage.setTitle("Fallen Champions - Title Screen (do people even look at this?)");
+        primaryStage.setTitle("Fallen Champions - Title Screen");
         primaryStage.show();
 
         titleScreen.setStartButtonListener(event -> {
@@ -189,7 +228,8 @@ public class Game extends Application implements Serializable {
             // Create a new stage for the game screen
             Stage gameStage = new Stage();
             GameScreen gameScreen = new GameScreen(gameStage); // don't need to save a reference?
-            gameStage.setTitle("Fallen Champions - Game                ¯\\_( ͡° ͜ʖ ͡°)_/¯");
+//            gameStage.setTitle("Fallen Champions - Game                ¯\\_( ͡° ͜ʖ ͡°)_/¯");
+            gameStage.setTitle("Fallen Champions - Game");
             gameStage.show();
 
             titleScreen.hide();
@@ -281,7 +321,7 @@ public class Game extends Application implements Serializable {
 
     private void startGame() {
         audio = AudioManager.getInstance();
-        tui = TUI2.getInstance();
+        tui = TUI.getInstance();
         console = Console.getInstance();
 
         heroes = createHeroList();
@@ -324,6 +364,7 @@ public class Game extends Application implements Serializable {
 
     private static void startMenu() {
 
+        tui.displayChainSpacer();
         // continue or new game (1 for new game, 2 for continue game)
         CompletableFuture<Character> userInputFuture = tui.continueOrNewGameMenu();
         userInputFuture.thenApplyAsync(userInput -> {
@@ -331,20 +372,27 @@ public class Game extends Application implements Serializable {
 
             switch(userInput) {
                 case '1': // new game
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     System.out.println("Starting new game...");
+                    tui.displayChainSpacer();
+                    tui.println();
                     newGameSetup();
                     break;
 
                 case '2': // continue game
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     System.out.println("Loading game...");
+                    tui.displayChainSpacer();
+                    tui.println();
                     loadGameSetup();
                     break;
 
                 default:
-                    audio.playSFX(audio.error, 100);
+                    audio.playSFX(audio.error, 1.00);
+                    tui.println();
                     tui.displayWrongInput();
+                    tui.displayChainSpacer();
+                    tui.println();
                     startMenu();
             }
             return userInput; // Return the input for further processing if necessary
@@ -360,23 +408,27 @@ public class Game extends Application implements Serializable {
      */
     private static void newGameSetup() {
 
+        console.println();
+        tui.displayChainSpacer();
         CompletableFuture<Character> userInputFuture = tui.playIntroOrNot();
         userInputFuture.thenApplyAsync(userInput -> {
 
             switch(userInput) {
                 case '1':
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     setupGameWithoutIntro();
                     break;
 
                 case '2':
-                    audio.playSFX(audio.menu1, 100);
+                    audio.playSFX(audio.menu1, 1.00);
                     setupGameWithIntro();
                     break;
 
                 default:
-                    audio.playSFX(audio.error, 100);
+                    audio.playSFX(audio.error, 1.00);
+                    tui.println();
                     tui.displayWrongInput();
+                    tui.displayChainSpacer();
                     newGameSetup();
             }
 
@@ -385,25 +437,34 @@ public class Game extends Application implements Serializable {
     }
 
     private static void setupGameWithoutIntro() {
+        tui.displayChainSpacer();
+        tui.println();
+
         newHeroName().join();
         tui.displayHeroName(heroFullName);
+
         tui.pressAnyKeyContinue();
-        audio.playSFX(audio.menu2, 120);
+        audio.playSFX(audio.menu2, 1.20);
 
         newHero().join();
+
         if (cheatMode) {
             cheatModeStuff();
         }
 
         selectDifficulty().join();
+
         if (!debugMode) {
-            audio.playMusic(audio.startingAnewSong, false, 50);
+            audio.playMusic(audio.startingAnewSong, false, 0.50);
             tui.displayStartMsg().join();
         }
         gameLoop();
     }
 
     private static void setupGameWithIntro() {
+
+        tui.displayChainSpacer();
+        tui.println();
 
         tui.introductionP1(funnyMode, debugMode).join();
 
@@ -416,9 +477,10 @@ public class Game extends Application implements Serializable {
             cheatModeStuff();
         }
 
+        Delay.pause(2).join();
         selectDifficulty().join();
         if (!debugMode) {
-            audio.playMusic(audio.startingAnewSong, false);
+            audio.playMusic(audio.startingAnewSong, false, 0.6);
             tui.displayStartMsg().join();
         }
         gameLoop();
@@ -428,7 +490,7 @@ public class Game extends Application implements Serializable {
         loadGame();
 
         // start music
-        audio.playMusic(audio.ambientSong, true);
+        audio.playMusic(audio.ambientSong, true, 0.6);
 
         gameLoop();
     }
@@ -440,7 +502,7 @@ public class Game extends Application implements Serializable {
 
         switch (userInput) {
             case '1': // continue
-                audio.playSFX(audio.menu1, 100);
+                audio.playSFX(audio.menu1, 1.00);
                 continueMenuProcess(); //? do I need a break if the user selects no?
 
                 hero.resetStats();
@@ -450,44 +512,43 @@ public class Game extends Application implements Serializable {
                 break;
 
             case '2': // change hero
-                audio.playSFX(audio.menu1, 100);
+                audio.playSFX(audio.menu1, 1.00);
                 changeHero();
-                tui.displayHeroSelected(hero);
-
-                Delay.delayAndExecute(2, Game::mainMenu); // "Game::mainMenu" This is a method reference.
-                                                                  // It is a shorthand way to refer to a method by name without invoking it
+                tui.displayHeroChanged(hero);
+                Delay.pause(2).join();
+                mainMenu();
                 break;
 
             case '3': // change name
-                audio.playSFX(audio.menu1, 100);
-                newHeroName();
+                audio.playSFX(audio.menu1, 1.00);
+                newHeroName().join();
                 hero.setName(heroFullName);
                 tui.displayHeroNameChanged(hero);
-                Delay.fakeDelay(2);
+                Delay.pause(2).join();
                 mainMenu();
                 break;
 
             case '4': // cheat code menu
-                audio.playSFX(audio.menu1, 100);
+                audio.playSFX(audio.menu1, 1.00);
                 cheatCodeMenu();
-                Delay.fakeDelay(2);
+                Delay.pause(2).join();
                 mainMenu();
                 break;
 
             case '6':   // save
-                audio.playSFX(audio.menu1, 100);
+                audio.playSFX(audio.menu1, 1.00);
                 saveGame();
-                Delay.fakeDelay(2);
+                Delay.pause(2).join();
                 mainMenu();
                 break;
 
             case '7': // exit
-                audio.playSFX(audio.menu1, 100);
+                audio.playSFX(audio.menu1, 1.00);
                 quitProcess();
                 break;
 
             default:
-                audio.playSFX(audio.error, 100);
+                audio.playSFX(audio.error, 1.00);
                 tui.displayWrongInput();
                 mainMenu();
         }
@@ -555,7 +616,7 @@ public class Game extends Application implements Serializable {
         try {
             ds = new SQLiteDataSource();
 //            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monster_Database.db").getPath()); // can't access instance stuff here?
-            ds.setUrl("jdbc:sqlite:" + GameTest.class.getResource("/Hero_Names.db").getPath()); // hopefully this works instead
+            ds.setUrl("jdbc:sqlite:" + Game.class.getResource("/Hero_Names.db").getPath()); // hopefully this works instead
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);
@@ -642,7 +703,7 @@ public class Game extends Application implements Serializable {
                 difficulty = Difficulty.HARD;
                 break;
             default:
-                audio.playSFX(audio.error, 100);
+                audio.playSFX(audio.error, 1.00);
                 tui.displayWrongInput();
                 selectDifficulty().join();
         }
@@ -658,7 +719,7 @@ public class Game extends Application implements Serializable {
         hero.setDirection(Direction.NORTH);
         heroSteps = 0;
         stepsWithActiveVisionPotion = 0;
-        audio.playMusic(audio.ambientSong, true);
+        audio.playMusic(audio.ambientSong, true, 0.6);
 
 
         while (!gameOver) { // while the hero is still alive
@@ -686,7 +747,7 @@ public class Game extends Application implements Serializable {
 
             if (dungeon.heroIsTouchingPillar() && !cheatMode) {
                 // play ding sound
-                audio.playSFX(audio.heroCollectPillar, 100);
+                audio.playSFX(audio.heroCollectPillar, 1.00);
 
                 Pillars pillar = dungeon.getPillar();
                 hero.getInventory().addPillar(pillar);
@@ -717,13 +778,13 @@ public class Game extends Application implements Serializable {
                 Potion potion = dungeon.getPotion();
 
                 if (hero.getInventory().isFull()) {
-                    audio.playSFX(audio.heroBagFull, 100);
+                    audio.playSFX(audio.heroBagFull, 1.00);
                     tui.displayInventoryFullMsg();
                 } else {
-                    audio.playSFX(audio.heroCollectPotion, 110);
+                    audio.playSFX(audio.heroCollectPotion, 1.10);
                     tui.collectPotionMsg(potion);
                     hero.getInventory().addToItems(potion);
-                    audio.playSFX(audio.menu2, 120);
+                    audio.playSFX(audio.menu2, 1.20);
                     dungeon.removePotion();
                 }
             }
@@ -739,9 +800,9 @@ public class Game extends Application implements Serializable {
                 if (hero.getHealth() <= 0) {
                     // play death sound
                     if (funnyMode) {
-                        audio.playSFX(audio.heroOof, 100);
+                        audio.playSFX(audio.heroOof, 1.00);
                     } else {
-                        audio.playSFX(audio.heroDefeat, 100);
+                        audio.playSFX(audio.heroDefeat, 1.00);
                     }
 
                     tui.displayDeathMsg(funnyMode);
@@ -757,19 +818,19 @@ public class Game extends Application implements Serializable {
 //                    DelayMachine.delay(4);
 //                }
                 audio.stopMusic();
-                audio.playSFX(audio.encounter, 100);
+                audio.playSFX(audio.encounter, 1.00);
 
                 // play monster encounter cutscene
                 tui.displayMonsterEncounterMsg(monster);
 
-                Delay.fakeDelay(0.5); // delay for 0.5 seconds
+                Delay.pause(2).join();
 
-                MonsterBattle2 battle = new MonsterBattle2(hero, monster, cheatMode, debugMode, funnyMode);
+                MonsterBattle battle = new MonsterBattle(hero, monster, cheatMode, debugMode, funnyMode);
                 BattleResult winnerWinnerChickenDinner = battle.newBattle();
 
                 if (winnerWinnerChickenDinner == BattleResult.WIN) {
                     // play victory sound
-                    audio.playSFX(audio.heroWinBattle, 100);
+                    audio.playSFX(audio.heroWinBattle, 1.00);
 
                     // earn rewards
                     hero.gainXP(monster.getXPWorth());
@@ -790,7 +851,7 @@ public class Game extends Application implements Serializable {
 
                 } else {
                     // play defeat sound
-                    audio.playSFX(audio.heroDefeat, 100);
+                    audio.playSFX(audio.heroDefeat, 1.00);
 
                     // defeat cutscene
                     tui.displayDeathMsg(funnyMode);
@@ -798,15 +859,15 @@ public class Game extends Application implements Serializable {
                     gameOver = true;
                     break;
                 }
-                Delay.fakeDelay(4); // delay for 4 seconds
+                Delay.pause(4).join();
                 displayDungeonScreen(); // only redisplay the dungeon screen, don't go back to the start of the loop
-                audio.playMusic(audio.ambientSong, true);
+                audio.playMusic(audio.ambientSong, true, 0.6);
 
             }
 
             if (dungeon.heroIsTouchingExit()) {
                 if (!exitIsOpen) {
-                    audio.playSFX(audio.lockedDoor, 100);
+                    audio.playSFX(audio.lockedDoor, 1.00);
                     tui.exitLocked();
 
                 } else {
@@ -825,13 +886,17 @@ public class Game extends Application implements Serializable {
             CompletableFuture<Character> userInputFuture = tui.gameplayMenu();
             char userInput = userInputFuture.join(); // Wait for user input
 
+            tui.displayChainSpacer();
+            tui.println();
+            tui.println();
+
             boolean hasMoved;
             switch(userInput) {
                 case 's':
                     hasMoved = dungeon.playerMove(Direction.SOUTH);
                     if (hasMoved) {
                         heroSteps++;
-                        audio.playSFX(audio.step4, 100);
+                        audio.playSFX(audio.step4, 1.00);
                     }
                     else { tui.displayHitWallMsg(); }
                     hero.setDirection(Direction.SOUTH);
@@ -841,7 +906,7 @@ public class Game extends Application implements Serializable {
                     hasMoved = dungeon.playerMove(Direction.WEST);
                     if (hasMoved) {
                         heroSteps++;
-                        audio.playSFX(audio.step4, 100);
+                        audio.playSFX(audio.step4, 1.00);
                     }
                     else { tui.displayHitWallMsg(); }
                     hero.setDirection(Direction.WEST);
@@ -851,7 +916,7 @@ public class Game extends Application implements Serializable {
                     hasMoved = dungeon.playerMove(Direction.EAST);
                     if (hasMoved) {
                         heroSteps++;
-                        audio.playSFX(audio.step4, 100);
+                        audio.playSFX(audio.step4, 1.00);
                     }
                     else { tui.displayHitWallMsg(); }
                     hero.setDirection(Direction.EAST);
@@ -861,24 +926,24 @@ public class Game extends Application implements Serializable {
                     hasMoved = dungeon.playerMove(Direction.NORTH);
                     if (hasMoved) {
                         heroSteps++;
-                        audio.playSFX(audio.step4, 100);
+                        audio.playSFX(audio.step4, 1.00);
                     }
                     else { tui.displayHitWallMsg(); }
                     hero.setDirection(Direction.NORTH);
                     break;
 
                 case '1': // hero info
-                    audio.playSFX(audio.swishOn, 100);
+                    audio.playSFX(audio.swishOn, 1.00);
                     tui.displayHeroStats(hero);
                     tui.pressAnyKeyGoBack();
-                    audio.playSFX(audio.swishOff, 80);
+                    audio.playSFX(audio.swishOff, 0.80);
                     break;
 
                 case '2':
-                    audio.playSFX(audio.swishOn, 100);
+                    audio.playSFX(audio.swishOn, 1.00);
                     tui.displayInstructions();
                     tui.pressAnyKeyGoBack();
-                    audio.playSFX(audio.swishOff, 80);
+                    audio.playSFX(audio.swishOff, 0.80);
                     break;
 
                 case 'e': // open bag
@@ -930,7 +995,7 @@ public class Game extends Application implements Serializable {
                     break;
 
                 default:
-                    audio.playSFX(audio.error, 100);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayWrongInput();
             }
         }
@@ -941,7 +1006,7 @@ public class Game extends Application implements Serializable {
         char userInput = userInputFuture.join(); // Wait for user input
 
         if (userInput == '1') { // quit to main menu
-            audio.playSFX(audio.menu2, 120);
+            audio.playSFX(audio.menu2, 1.20);
             audio.stopMusic();
             gameOver = true; //? needed?
             mainMenu();
@@ -952,7 +1017,7 @@ public class Game extends Application implements Serializable {
         CompletableFuture<Character> userInputFuture = tui.goToContinueMenu();
         char userInput = userInputFuture.join(); // Wait for user input
 
-        audio.playSFX(audio.menu1, 100);
+        audio.playSFX(audio.menu1, 1.00);
 
         if (userInput == '2') { // quit to main menu
             mainMenu();
@@ -1024,14 +1089,14 @@ public class Game extends Application implements Serializable {
 
             hero.levelUp();
             tui.levelUpMsg(hero.getLevel());
-            audio.playSFX(audio.heroLevelUp, 120);
-            Delay.fakeDelay(1);
+            audio.playSFX(audio.heroLevelUp, 1.20);
+            Delay.pause(1).join();
         }
     }
 
     private static void inventoryMenu() {
         Inventory bag = hero.getInventory();
-        audio.playSFX(audio.heroBagOpen);
+        audio.playSFX(audio.heroBagOpen, 1.00);
 
         CompletableFuture<Character> userInputFuture = tui.openBag(bag, false); // input is guaranteed to be 1-4 or e //TODO substitute a enum state for the boolean
         char userInput = userInputFuture.join(); // Wait for user input
@@ -1045,13 +1110,13 @@ public class Game extends Application implements Serializable {
                 defPotion.effect(hero);
                 bag.removeItem(slotIndex);
             } else {
-                audio.playSFX(audio.error);
+                audio.playSFX(audio.error, 1.00);
                 tui.displayCantUseItemOutsideBattle(potion);
                 inventoryMenu();
                 return; // just added this to new GUI. not sure if it works
             }
 
-            audio.playSFX(audio.heroDrinkPotion);
+            audio.playSFX(audio.heroDrinkPotion, 1.00);
             tui.usePotionMsg(potion, slotIndex);
         }
         tui.closeBag();
@@ -1072,11 +1137,11 @@ public class Game extends Application implements Serializable {
     }
 
     private static void exitGame() {
-        audio.playSFX(audio.menu2, -5);
-        Delay.fakeDelay(1);
+        audio.playSFX(audio.menu2, 1.20);
+        Delay.pause(1).join();
         tui.displayCyaNerd(funnyMode);
-        audio.playSFX(audio.heroOof, -5);
-        Delay.fakeDelay(1);
+        audio.playSFX(audio.heroOof, 1.00);
+        Delay.pause(1).join();
         System.exit(0);
     }
 
@@ -1086,14 +1151,14 @@ public class Game extends Application implements Serializable {
             easyGamesWon++;
             mediumUnlocked = true;
 
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedMedium();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
 
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedJuggernautAndThief();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
 
@@ -1101,45 +1166,45 @@ public class Game extends Application implements Serializable {
             mediumGamesWon++;
             hardUnlocked = true;
 
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedHard();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
 
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedDoctorAndNinja();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
 
         if (difficulty == Difficulty.HARD && hardGamesWon == 0) {
             hardGamesWon++;
 
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedMage();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
 
             tui.displayHintStillMoreHeroes();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
         if (totalHeroSteps > 100) {
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedScientist();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
         if (totalMonstersDefeated > 100) {
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedBeastmaster();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
         if (allHeroesUnlocked()) {
-            audio.playSFX(audio.infoPopup);
+            audio.playSFX(audio.infoPopup, 1.00);
             tui.displayUnlockedAll();
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             tui.pressAnyKeyContinue();
         }
     }
@@ -1157,13 +1222,13 @@ public class Game extends Application implements Serializable {
         // copy hero's inventory for the new hero
         ArrayList<Potion> currentBag = hero.getInventory().getItems();
 
-        CompletableFuture<Character> userInputFuture = tui.chooseHeroMsg(heroes);
+        tui.println();
 
         // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
-        char userInput = userInputFuture.join();
+        char userInput = tui.chooseHeroMsg(heroes, debugMode).join();
 
         hero = chooseHero(userInput);
-        audio.playSFX(audio.menu1);
+        audio.playSFX(audio.menu1, 1.00);
 
         // paste hero's details
         hero.getInventory().setItems(currentBag);
@@ -1174,19 +1239,26 @@ public class Game extends Application implements Serializable {
         return CompletableFuture.runAsync(() -> {
             Character userInput;
             do {
-                userInput = tui.chooseHeroMsg(heroes).join();
+                tui.println();
+                tui.displayChainSpacer();
+                userInput = tui.chooseHeroMsg(heroes, debugMode).join();
                 hero = chooseHero(userInput);
                 System.out.println("user entered input: '" + userInput + "'");
 
                 if (hero == null) {
-                    audio.playSFX(audio.error, 100);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayWrongInput();
+                    tui.displayChainSpacer();
+                    tui.println();
                 }
             } while (hero == null); // Repeat until a valid hero is chosen
 
-            audio.playSFX(audio.menu1);
+            audio.playSFX(audio.menu1, 1.00);
+            tui.displayHeroSelected(hero.getType().toString());
+            tui.displayChainSpacer();
+            tui.println();
+            tui.println();
             hero.setName(heroFullName);
-            System.out.println("You chose the " + hero.getType());
         });
     }
 
@@ -1194,23 +1266,34 @@ public class Game extends Application implements Serializable {
         return CompletableFuture.runAsync(() -> {
             Character userInput;
             do {
+                tui.displayChainSpacer();
                 userInput = tui.chooseDifficulty(mediumUnlocked, hardUnlocked, glitchUnlocked).join();
                 System.out.println("user entered input: '" + userInput + "'");
 
                 if (!isValidDifficulty(userInput)) {
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayWrongInput();
+                    tui.displayChainSpacer();
+                    tui.println();
 
                 } else if (isLockedDifficulty(userInput)) {
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayDifficultyLocked();
+                    tui.displayChainSpacer();
+                    tui.println();
+
+                } else { // valid input
+                    difficulty = Difficulty.getDifficulty(userInput);
                 }
 
             } while (isLockedDifficulty(userInput) || !isValidDifficulty(userInput));
 
-            audio.playSFX(audio.menu2, 100);
-            setupDungeon(userInput);
+            audio.playSFX(audio.menu2, 1.00);
             tui.displayDifficultySelected(difficulty);
+            tui.displayChainSpacer();
+            tui.println();
+            tui.println();
+            setupDungeon(userInput);
 
             System.out.println("The program is still running after setting up the dungeon");
         });
@@ -1234,29 +1317,31 @@ public class Game extends Application implements Serializable {
         return CompletableFuture.runAsync(() -> {
             String userInput;
             do {
+                tui.println();
+                tui.displayChainSpacer();
                 userInput = tui.findHeroName().join();
-                System.out.println("user entered input: '" + userInput + "'");
 
                 if (!startsWithLetter(userInput)) {
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayNumberStartingName();
+                    tui.displayChainSpacer();
 
                 } else if (userInput.length() < 3) {
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayNotEnoughLetters();
+                    tui.displayChainSpacer();
 
                 } else if (userInput.length() > 10) {
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayTooManyLetters();
+                    tui.displayChainSpacer();
                 }
 
             } while (!isValidName(userInput));
 
-            audio.playSFX(audio.menu1);
+            audio.playSFX(audio.menu1, 1.00);
             heroFirstName = capitalize(userInput);
             heroFullName = giveRandomSuffix(heroFirstName);
-
-            System.out.println("Hero name: " + heroFullName);
         });
     }
 
@@ -1276,8 +1361,8 @@ public class Game extends Application implements Serializable {
     }
 
     private static void cheatCodeMenu() { //TODO take out cheat code menu. make it hidden
-        Delay.fakeDelay(0.5);
-        audio.playMusic(audio.hackerSong, true);
+        Delay.pause(0.5).join();
+        audio.playMusic(audio.hackerSong, true, 0.6);
 
         CompletableFuture<String> userInputFuture = tui.cheatCodeMenu();
 
@@ -1303,14 +1388,14 @@ public class Game extends Application implements Serializable {
                             tui.displayFunnyMode();
                             break;
                         default:
-                            audio.playSFX(audio.error);
+                            audio.playSFX(audio.error, 1.00);
                             tui.displayWrongInput();
                             cheatCodeMenu();
                             break;
                     }
                 }
             }
-            Delay.fakeDelay(2);
+            Delay.pause(2).join();
             audio.stopMusic();
 
             return userInput; // Return the input for further processing if necessary
@@ -1326,21 +1411,21 @@ public class Game extends Application implements Serializable {
 
             switch (userInput) {
                 case '1': // play again
-                    audio.playSFX(audio.menu1);
-                    Delay.fakeDelay(1);
+                    audio.playSFX(audio.menu1, 1.00);
+                    Delay.pause(1).join();
                     audio.stopAll();
                     tui.sentToMainMenuMsg();
-                    Delay.fakeDelay(3);
+                    Delay.pause(3).join();
                     mainMenu();
                     break;
                 case '2': // exit
-                    audio.playSFX(audio.menu2, 80);
+                    audio.playSFX(audio.menu2, 0.80);
                     exitGame();
-                    Delay.fakeDelay(1);
+                    Delay.pause(1).join();
                     System.exit(0);
                     break;
                 default:
-                    audio.playSFX(audio.error);
+                    audio.playSFX(audio.error, 1.00);
                     tui.displayWrongInput();
                     playAgain();
                     break;
@@ -1353,20 +1438,20 @@ public class Game extends Application implements Serializable {
 
     private static void victory() {
         audio.stopAll();
-        Delay.fakeDelay(0.5);
+        Delay.pause(0.5).join();
 
         // play victory sound
-        audio.playMusic(audio.triumpantFinishSong, true);
+        audio.playMusic(audio.triumpantFinishSong, true, 0.6);
 
         // play cutscene
         tui.displayVictoryMsg(heroSteps, monstersDefeated, hero.getLevel(), difficulty, funnyMode, debugMode);
 
         if (!debugMode) {
-            Delay.fakeDelay(5);
+            Delay.pause(5).join();
         }
 
         tui.pressAnyKeyContinue();
-        audio.playSFX(audio.menu2, 80);
+        audio.playSFX(audio.menu2, 0.80);
         audio.stopAll();
 
         // play credits if on hard mode
@@ -1377,7 +1462,7 @@ public class Game extends Application implements Serializable {
         // update stats
         totalHeroSteps += heroSteps;
 
-        Delay.fakeDelay(1);
+        Delay.pause(1).join();
 
         // info & hint popups
         displayPopups();

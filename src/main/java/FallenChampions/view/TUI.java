@@ -1,22 +1,26 @@
 package FallenChampions.view;
+import FallenChampions.controller.Delay;
+import FallenChampions.controller.TextSpeed;
 import FallenChampions.model.characters.Ability;
 import FallenChampions.model.characters.Debuff;
 import FallenChampions.model.characters.DungeonCharacter;
 import FallenChampions.model.characters.boss.Missile;
 import FallenChampions.model.dungeon.Difficulty;
-import FallenChampions.controller.SleepDelay;
 import FallenChampions.model.characters.heroes.Inventory;
 import FallenChampions.model.dungeon.Dungeon;
 import FallenChampions.model.characters.heroes.Hero;
 import FallenChampions.model.characters.monsters.Monster;
 import FallenChampions.model.dungeon.Parchment;
 import FallenChampions.model.potions.Potion;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.util.Duration;
 
-import java.io.Console;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * TUI mode of the game
@@ -29,368 +33,675 @@ import java.util.Scanner;
 public class TUI {
 
     /**
-     * The scanner object that will be used to read user input.
+     * The TUI object that sends and receives information from the user.
      */
-    private final Scanner myScanner;
+    private static TUI instance;
 
     /**
-     * The console object that will pop up for the user.
+     * The console object that the user will interact with.
      */
-//    private final Consol;
+    private static Console console;
 
+    /**
+     * The audio manager object that will play sfx and music
+     */
+    private static AudioManager audio;
 
-    public TUI(final Console theConsole) {
-//       = theConsole;
-//        myScanner = new Scanne.reader());
-        myScanner = new Scanner(System.in);
+    private State currentState; // Variable to track the current state
+
+    private TUI() {
+        audio = AudioManager.getInstance();
+        console = Console.getInstance();
+    }
+
+    public static TUI getInstance() {
+        if (instance == null) {
+            instance = new TUI();
+        }
+        return instance;
+    }
+
+    /**
+     * Utilizes async operations to get user input
+     * @return The user's char input
+     */
+    private CompletableFuture<Character> futureCharInput() { // review these concepts later
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> userInputFuture = new CompletableFuture<>();
+
+        // Set the onMessageReceivedHandler to capture user input
+        console.setOnMessageReceivedHandler(userInput -> {
+            userInputFuture.complete(userInput.charAt(0));
+        });
+
+        // Return the CompletableFuture to await user input asynchronously
+        return userInputFuture;
+    }
+
+    private CompletableFuture<Character> futureCharInputWithinTimeLimit(final int theTimeLimit) { // used autocomplete to make this. review it.
+
+        CompletableFuture<Character> userInputFuture = new CompletableFuture<>();
+
+        // Set the onMessageReceivedHandler to capture user input
+        console.setOnMessageReceivedHandler(userInput -> {
+            userInputFuture.complete(userInput.charAt(0));
+        });
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        // Complete the CompletableFuture
+        Delay.pause(theTimeLimit).join();
+        completionIndicator.complete(null);
+
+        // Return the CompletableFuture to await user input asynchronously
+        return userInputFuture;
+    }
+
+    /**
+     * Utilizes async operations to get user input
+     * @return The user's string input
+     */
+    private CompletableFuture<String> futureStringInput() { // review these concepts later
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<String> userInputFuture = new CompletableFuture<>();
+
+        // Set the onMessageReceivedHandler to capture user input
+        console.setOnMessageReceivedHandler(userInput -> {
+            // seems like userInput should be a consumer, not a string itself
+            // seems like lambda is creating that string
+            // when are we checking if a string has been accepted to the consumer (thus knowing if text has been entered by user)?
+            // why does userInput represent the text the user entered?
+
+            userInputFuture.complete(userInput);
+        });
+
+        // Return the CompletableFuture to await user input asynchronously
+        return userInputFuture;
+    }
+
+//    public void onUserInputReceived(String userInput) { // won't use this approach, but should keep track of state for other methods
+//        switch (currentState) {
+//            case START_MENU:
+//                handleStartMenuInput(userInput);
+//                break;
+//            case MAIN_MENU:
+//                handleMainMenuInput(userInput);
+//                break;
+//            case DUNGEON_MENU:
+//                handleGamePlayInput(userInput);
+//                break;
+//        }
+//    }
+
+    /**
+     * Asks whether you want to start a new game or continue on a prior save
+     * @return the game choice
+     */
+    public CompletableFuture<Character> continueOrNewGameMenu() {
+
+        console.println("Would you like to start a new game or continue a previous game?");
+        console.println("1 for new game, 2 for continue game");
+        console.print("Make your selection: ");
+
+        console.setHintText("Type here...");
+
+        return futureCharInput();
     }
 
 
     /**
-     * Main menu of the game
-     * @return main menu input
+     * Displays the title
      */
-    public void menu(final boolean theDebugMode, final AudioManager theAudio) {
-        if (!theDebugMode) {
-            System.out.println("Welcome to...");
-            System.out.println();
-            SleepDelay.delay(4);
-//            theAudio.playSFX(theAudio.titleScreen, -8);
-            System.out.println("" +
-                    "                    ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
-                    "                   ███    ███   ███    ███ ███       ███         ███    ███ ███▀▀▀██▄ \n" +
-                    "                   ███    █▀    ███    ███ ███       ███         ███    █▀  ███   ███ \n" +
-                    "                  ▄███▄▄▄       ███    ███ ███       ███        ▄███▄▄▄     ███   ███ \n" +
-                    "                 ▀▀███▀▀▀     ▀███████████ ███       ███       ▀▀███▀▀▀     ███   ███ \n" +
-                    "                   ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
-                    "                   ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
-                    "                   ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
-                    "                                           ▀         ▀                                ");
-            System.out.println();
-            SleepDelay.delay(1);
-            System.out.println("" +
-                    " ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
-                    "███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
-                    "███    █▀    ███    ███     ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███    █▀  \n" +
-                    "███         ▄███▄▄▄▄███▄▄   ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███        \n" +
-                    "███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
-                    "███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
-                    "███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
-                    "████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  ");
-            System.out.println();
-            System.out.println();
-            SleepDelay.delay(3);
-            System.out.println("I̲M̲P̲O̲R̲T̲A̲N̲T̲ ̲I̲N̲F̲O̲R̲M̲A̲T̲I̲O̲N̲");
-            System.out.println("--Since this game is console-based, you will be using the keyboard to play.");
-            System.out.println("--You'll notice that the screen \"updates\" by printing new information on top of old information.");
-            System.out.println("--Any input you give must be followed by the ENTER key.");
-            System.out.println();
-            System.out.println();
-        }
+    public CompletableFuture<Void> title() {
 
-//        System.out.println("1 to start game, 2 to exit game");
-//        System.out.print("Make your selection: ");
-//        return myScanner.next().charAt(0);
+        console.disableInput(true); // disable input box while output is currently being displayed
+
+        SequentialTransition sequentialTransition = new SequentialTransition();
+
+        console.println("Welcome to...");
+        console.println();
+
+//        Delay.delayAndExecute(2);
+        PauseTransition frame1 = new PauseTransition(Duration.seconds(2));
+        frame1.setOnFinished(event -> {
+            //TODO play sfx...
+            console.println("" +
+                    "                     ▄████████    ▄████████  ▄█        ▄█          ▄████████ ███▄▄▄▄   \n" +
+                    "                    ███    ███   ███    ███ ███       ███         ███    ███ ███▀▀▀██▄ \n" +
+                    "                    ███    █▀    ███    ███ ███       ███         ███    █▀  ███   ███ \n" +
+                    "                   ▄███▄▄▄       ███    ███ ███       ███        ▄███▄▄▄     ███   ███ \n" +
+                    "                  ▀▀███▀▀▀     ▀███████████ ███       ███       ▀▀███▀▀▀     ███   ███ \n" +
+                    "                    ███          ███    ███ ███       ███         ███    █▄  ███   ███ \n" +
+                    "                    ███          ███    ███ ███▌    ▄ ███▌    ▄   ███    ███ ███   ███ \n" +
+                    "                    ███          ███    █▀  █████▄▄██ █████▄▄██   ██████████  ▀█   █▀  \n" +
+                    "                                             ▀         ▀                                \n");
+        });
+
+//        Delay.delayAndExecute(0.5);
+        PauseTransition frame2 = new PauseTransition(Duration.seconds(0.5));
+        frame2.setOnFinished(event -> {
+            console.println("" +
+                    "  ▄████████    ▄█    █▄       ▄████████   ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄█   ▄██████▄  ███▄▄▄▄      ▄████████ \n" +
+                    " ███    ███   ███    ███     ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███    ███ ███▀▀▀██▄   ███    ███ \n" +
+                    " ███    █▀    ███    ███     ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███    █▀  \n" +
+                    " ███         ▄███▄▄▄▄███▄▄   ███    ███ ███   ███   ███   ███    ███ ███▌ ███    ███ ███   ███   ███        \n" +
+                    " ███        ▀▀███▀▀▀▀███▀  ▀███████████ ███   ███   ███ ▀█████████▀  ███▌ ███    ███ ███   ███ ▀███████████ \n" +
+                    " ███    █▄    ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███          ███ \n" +
+                    " ███    ███   ███    ███     ███    ███ ███   ███   ███   ███        ███  ███    ███ ███   ███    ▄█    ███ \n" +
+                    " ████████▀    ███    █▀      ███    █▀   ▀█   ███   █▀   ▄████▀      █▀    ▀██████▀   ▀█   █▀   ▄████████▀  \n\n");
+        });
+
+//        Delay.delayAndExecute(1.5);
+        PauseTransition frame3 = new PauseTransition(Duration.seconds(1.5));
+        frame3.setOnFinished(event -> {
+            console.println("IMPORTANT INFORMATION! \n" +
+                            " --Since this game is console-based, you will be using the keyboard to play. \n" +
+                            " --You'll notice that the screen \"updates\" by printing new information on top of old information. \n" +
+                            " --Any input you give must be followed by the ENTER key. \n\n");
+        });
+
+        // Add the transitions to the sequential transition in the desired order
+        sequentialTransition.getChildren().addAll(frame1, frame2, frame3);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        sequentialTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
+        sequentialTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
+    }
+
+    /**
+     * The game start message
+     */
+    public CompletableFuture<Void> displayStartMsg() {
+        console.disableInput(true);
+
+        console.println("                     ╔═════════════════════════╗                     ");
+        console.println("---------------------║ Welcome to the Dungeon! ║---------------------");
+        console.println("                     ╚═════════════════════════╝                     ");
+
+        PauseTransition pauseTransition = new PauseTransition(Duration.seconds(8));
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        pauseTransition.setOnFinished(event -> {
+            // Complete the CompletableFuture when the sequentialTransition finishes
+            completionIndicator.complete(null);
+
+            // Re-enable input box after output is finished displaying
+            console.disableInput(false);
+        });
+
+        // Start playing the sequentialTransition
+        pauseTransition.play();
+
+        // Return the CompletableFuture to the caller
+        return completionIndicator;
     }
 
     /**
      * Chooses the hero
      * @return the hero choice
      */
-    public char chooseHero(final List<Hero> theHeroes) {
-        System.out.println();
-        System.out.println("Choose your hero!");
-        displayChainSpacer();
+    public CompletableFuture<Character> chooseHeroMsg(final List<Hero> theHeroes, final boolean theDebugMode) {
+        console.disableInput(true); // disable input box while output is currently being displayed
+
+        console.println("Choose your hero!");
+        if (!theDebugMode) {
+            Delay.pause(2).join();
+        }
         displayUpperSpacer();
 
         int menuOption = 1;
         for (Hero hero : theHeroes) {
+            if (!theDebugMode) {
+                Delay.pause(0.25).join();
+            }
             if (hero.isUnlocked()) {
-                System.out.println("  " + menuOption + " for " + hero.getType() + ":");
-                System.out.println("  " + hero.getDescription()[0]);
-                System.out.println("  " + hero.getDescription()[1]);
+                console.println("  " + menuOption + " for " + hero.getType() + ":");
+                console.println("  " + hero.getDescription()[0]);
+                console.println("  " + hero.getDescription()[1]);
             } else {
-                System.out.println("  " + menuOption + "  --(LOCKED)--  ");
+                console.println("  " + menuOption + "  --(LOCKED)--  ");
             }
             if (menuOption != theHeroes.size()) { // leave out a spacer for the last hero
-                System.out.println();
+                console.println();
             }
             menuOption++;
         }
 
         displayLowerSpacer();
+        console.print("Make your selection: ");
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        return futureCharInput();
+    }
+
+    private void displayCastle() {
+        List<String> castle = new ArrayList<>();
+
+        castle.add("                                                                    !_");
+        castle.add("                                                                    |*~=-.,");
+        castle.add("                                                                    |_,-'`");
+        castle.add("                                                                    |");
+        castle.add("                                                                    |");
+        castle.add("                                                                   /^\\");
+        castle.add("                                     !_                           /   \\");
+        castle.add("                                     |*`~-.,                     /,    \\");
+        castle.add("                                     |.-~^`                     /#\"     \\");
+        castle.add("                                     |                        _/##_   _  \\_");
+        castle.add("                                _   _|  _   _   _            [ ]_[ ]_[ ]_[ ]");
+        castle.add("                               [ ]_[ ]_[ ]_[ ]_[ ]            |_=_-=_ - =_|");
+        castle.add("                             !_ |_=_ =-_-_  = =_|           !_ |=_= -    |");
+        castle.add("                             |*`--,_- _        |            |*`~-.,= []  |");
+        castle.add("                             |.-'|=     []     |   !_       |_.-\"`_-     |");
+        castle.add("                             |   |_=- -        |   |*`~-.,  |  |=_-      |");
+        castle.add("                            /^\\  |=_= -        |   |_,-~`  /^\\ |_ - =[]  |");
+        castle.add("                        _  /   \\_|_=- _   _   _|  _|  _   /   \\|=_-      |");
+        castle.add("                       [ ]/,    \\[ ]_[ ]_[ ]_[ ]_[ ]_[ ]_/,    \\[ ]=-    |");
+        castle.add("                        |/#\"     \\_=-___=__=__- =-_ -=_ /#\"     \\| _ []  |");
+        castle.add("                       _/##_   _  \\_-_ =  _____       _/##_   _  \\_ -    |\\");
+        castle.add("                      [ ]_[ ]_[ ]_[ ]=_0~{_ _ _}~0   [ ]_[ ]_[ ]_[ ]=-   | \\");
+        castle.add("                      |_=__-_=-_  =_|-=_ |  ,  |     |_=-___-_ =-__|_    |  \\");
+        castle.add("                       | _- =-     |-_   | ((* |      |= _=       | -    |___\\");
+        castle.add("                       |= -_=      |=  _ |  `  |      |_-=_       |=_    |/+\\|");
+        castle.add("                       | =_  -     |_ = _ `-.-`       | =_ = =    |=_-   ||+||");
+        castle.add("                       |-_=- _     |=_   =            |=_= -_     |  =   ||+||");
+        castle.add("                       |=_- /+\\    | -=               |_=- /+\\    |=_    |^^^|");
+        castle.add("                       |=_ |+|+|   |= -  -_,--,_      |_= |+|+|   |  -_  |=  |");
+        castle.add("                       |  -|+|+|   |-_=  / |  | \\     |=_ |+|+|   |-=_   |_-/");
+        castle.add("                       |=_=|+|+|   | =_= | |  | |     |_- |+|+|   |_ =   |=/");
+        castle.add("                       | _ ^^^^^   |= -  | |  <&>     |=_=^^^^^   |_=-   |/");
+        castle.add("                       |=_ =       | =_-_| |  | |     |   =_      | -_   |");
+        castle.add("                       |_=-_       |=_=  | |  | |     |=_=        |=-    |");
+        castle.add("                  ^^^^^^^^^^`^`^^`^`^`^^^\"\"\"\"\"\"\"\"^`^^``^^`^^`^^`^`^``^`^``^``^^");
+
+        console.lineAnimation(castle, 0.1f).join();
+        console.println();
+    }
+
+    /**
+     * Introduces user to the game
+     */
+    public CompletableFuture<Void> introductionP1(final boolean theFunnyMode, final boolean theDebugMode) {
+        console.disableInput(true); // disable input box while output is currently being displayed
+
+        SequentialTransition sequentialTransition = new SequentialTransition();
+
+        console.println("------------------------------------------------INTRODUCTION------------------------------------------------\n");
+        displayCastle();
+        Delay.pause(1).join();
+        console.print("Dungeon Keeper: ");
+        console.typeAnimation("Welcome hero,\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("The dungeon you see looming before you is one of many perils.\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("In it lies hordes of monsters, deadly traps, and countless treasures.\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("Find the 4 ancient pillars, and you shall be granted access to the final chamber.\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("Not even I, the master of this dungeon, know what awaits you there.\n", TextSpeed.MEDIUM).join();
+
+        Delay.pause(1).join();
+        console.println();
+        console.print("Dungeon Keeper: ");
+        console.typeAnimation("Now then, what is your name?\n", TextSpeed.MEDIUM).join();
+
+        Delay.pause(0.5).join(); // buffer for next message
+
+        // Re-enable input box after output is finished displaying
+        console.disableInput(false);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        // Complete the CompletableFuture
+        completionIndicator.complete(null);
+        return completionIndicator;
+    }
+
+
+    /**
+     * Gets the user's name
+     * @return the user's name
+     */
+    public CompletableFuture<String> findHeroName() {
+        console.print("Name (one word): ");
+
+        return futureStringInput();
+    }
+
+    /**
+     * Introduces user to the game
+     * @param theFunnyMode whether the funny mode is on
+     * @param theFirstName the user's first name
+     * @param theFullName the user's first name and extension
+     */
+    public CompletableFuture<Void> introductionP2(final boolean theFunnyMode, final String theFirstName, final String theFullName) {
         displayChainSpacer();
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
-    }
 
-    /**
-     * Introduces you to the game
-     */
-    public void introductionP1(final boolean theFunnyDialogue, final AudioManager theAudio) {
-        System.out.println("-------------------------INTRODUCTION-------------------------");
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER, "Welcome hero,");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"The dungeon you see looming before you is one of many perils.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"In it lies hordes of monsters, deadly traps, and countless treasures.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Find the 4 ancient pillars, and you shall be granted access to the final chamber.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Not even I, the keeper of the dungeon, know what awaits you there.");
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Now then, what is your name?");
-    }
+        console.disableInput(true); // disable input box while output is currently being displayed
 
-    public String findHeroName() {
-        System.out.print("Name (one word): ");
-        return myScanner.next();
-    }
-
-    /**
-     * Introduces you to the game
-     */
-    public void introductionP2(final boolean theFunnyMode, final AudioManager theAudio,
-                               final String theFirstName, final String theFullName) {
-        System.out.println();
+        console.println();
 
         if (theFunnyMode) {
-            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"Wait, are you serious? Your name is just " + theFirstName + "?");
-            SleepDelay.delay(2);
-            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"That's far too ordinary -_-");
-            SleepDelay.delay(4);
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I dub thee...");
-            System.out.println();
-            SleepDelay.delay(5);
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"【 Sir " + theFullName + "! 】");
+            console.print("Dungeon Keeper: ");
+            console.typeAnimation("Wait, are you serious? Your name is just " + theFirstName + "?\n", TextSpeed.FAST).join();
+            Delay.pause(1).join();
+
+            console.print("                ");
+            console.typeAnimation("That's far too ordinary -_-\n", TextSpeed.FAST).join();
+            Delay.pause(2).join();
+
+            console.print("                ");
+            console.typeAnimation("I dub thee...", TextSpeed.MEDIUM).join();
+            Delay.pause(1).join();
+
+//            console.printAnimation("【 Sir " + theFullName + "! 】\n", TextSpeed.SLOW);
+            console.typeAnimation(" ◄{ Sir " + theFullName + "! }► \n\n", TextSpeed.SLOW).join();
+            Delay.pause(1).join();
+
         } else {
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah, " + theFirstName + ", a fine name indeed.");
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"However, 【" + theFullName + "】 is befitting of one such as yourself.");
+            Delay.pause(1).join();
+            console.print("Dungeon Keeper: ");
+            console.typeAnimation("Ah, " + theFirstName + ", a fine name indeed.\n", TextSpeed.MEDIUM).join();
+
+            Delay.pause(1).join();
+            console.print("                ");
+            console.typeAnimation("However, ◄{ " + theFullName + " }► is befitting of one such as yourself.\n\n", TextSpeed.MEDIUM).join();
+            Delay.pause(1).join();
         }
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Now then, " + theFullName + ", are you ready to begin your adventure?");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Don't think you're the first to explore this dungeon.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Many others have come before you... Not one has made it out alive.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Do you think you have what it takes to overcome this dungeon?");
-        SleepDelay.delay(2);
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Or will you become yet another FALLEN CHAMPION?");
-        System.out.println();
+
+        console.print("Dungeon Keeper: ");
+        console.typeAnimation("Now then, " + theFullName + ", I hope you're ready to begin your adventure.\n", TextSpeed.MEDIUM).join();
+        Delay.pause(1).join();
+
+        console.print("                ");
+        console.typeAnimation("Don't think you're the first to explore this dungeon.\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("Many others have come before you... Not one has made it out alive.\n", TextSpeed.MEDIUM).join();
+        Delay.pause(2).join();
+
+        console.print("                ");
+        console.typeAnimation("Do you think you have what it takes to overcome this challenge?\n", TextSpeed.MEDIUM).join();
+        Delay.pause(1).join();
+
+        console.print("                ");
+        console.typeAnimation("Or will you become yet another ", TextSpeed.MEDIUM).join();
+        console.typeAnimation("FALLEN CHAMPION?\n", TextSpeed.SLOW).join();
+        Delay.pause(1).join();
 
         if (theFunnyMode) {
-            SleepDelay.delay(3);
-            theAudio.playSFX(theAudio.rimshot, -10);
-            SleepDelay.delay(8);
-            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"By the way, that was a rhetorical question, you don't actually get to answer.");
-            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"Anyway, choose one of these I guess");
+            audio.playSFX(audio.rimshot, 0.8);
+            Delay.pause(6).join();
+
+            console.print("\nDungeon Keeper: ");
+            console.typeAnimation("Anyway, choose one of these I guess\n", TextSpeed.MEDIUM).join();
 
         } else {
-            SleepDelay.delay(3);
-            theAudio.playSFX(theAudio.dunDunDun, -10);
-            SleepDelay.delay(8);
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"So " + theFullName + ", what kind of adventurer are you anyway?");
+            audio.playSFX(audio.dunDunDun, 0.8);
+            Delay.pause(6).join();
+
+            console.print("\nDungeon Keeper: ");
+            console.typeAnimation("So " + theFullName + ", what kind of adventurer are you anyway?\n", TextSpeed.MEDIUM).join();
         }
+
+        Delay.pause(1.5).join(); // buffer for next message
+
+        // Re-enable input box after output is finished displaying
+        console.disableInput(false);
+
+        // Create a CompletableFuture to signal completion
+        CompletableFuture<Void> completionIndicator = new CompletableFuture<>();
+
+        // Complete the CompletableFuture
+        completionIndicator.complete(null);
+        return completionIndicator;
     }
 
 
     /**
-     * Gameplay menu
-     * @return gameplay menu choice
+     * Dungeon menu
+     * @return user's choice from the dungeon menu
      */
-    public int gameplayMenu() {
-        System.out.println();
-        displayChainSpacer();
-        System.out.println("╔══════════════════════════════════════════════════════════════════╗");
-        System.out.println("╠ 'w' move North, 'd' move East, 's' move South, 'a' move West     ╣");
-        System.out.println("╠ 'e' bag, '1' hero info, '2' HELP, '4' main menu, '5' save game   ╣");
-        System.out.println("╚══════════════════════════════════════════════════════════════════╝");
-        displayChainSpacer();
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public CompletableFuture<Character> gameplayMenu() {
+        console.println();
+        console.println("╔══════════════════════════════════════════════════════════════════╗");
+        console.println("╠ 'w' move North, 'd' move East, 's' move South, 'a' move West     ╣");
+        console.println("╠ 'e' bag, '1' hero info, '2' HELP, '4' main menu, '5' save game   ╣");
+        console.println("╚══════════════════════════════════════════════════════════════════╝");
+        console.println();
+        console.print("Make your selection: ");
+
+        return futureCharInput();
     }
 
+    /**
+     * Displays a line spacer
+     */
     public void displayNormalSpacer() {
-        System.out.println("---------------------------------------------------------------------"); //TODO replace all spacers with this method in the controller
+        console.println("---------------------------------------------------------------------");
     }
 
+    /**
+     * Displays a chain spacer
+     */
     public void displayChainSpacer() {
-        System.out.println("<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>");
+//        console.println("<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>");
+        console.println("<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->");
     }
 
+    /**
+     * Displays a top bar spacer
+     */
     public void displayUpperSpacer() {
-        System.out.println("╔═══════════════════════════════════════════════════════════════════╗");
+//        console.println("╔═══════════════════════════════════════════════════════════════════╗");
+        console.println("╔══════════════════════════════════════════════════════════════════════════════════════╗");
     }
+
+    /**
+     * Displays a bottom bar spacer
+     */
     public void displayLowerSpacer() {
-        System.out.println("╚═══════════════════════════════════════════════════════════════════╝");
+//        console.println("╚═══════════════════════════════════════════════════════════════════╝");
+        console.println("╚══════════════════════════════════════════════════════════════════════════════════════╝");
     }
 
 
     /**
      * Battle menu for battling monsters
-     * @param theHero you
-     * @return battle menu input
+     * @param theHero the hero the user is playing as
+     * @return user's battle menu choice
      */
-    public char battleMenu(final Hero theHero) {
+    public CompletableFuture<Character> battleMenu(final Hero theHero) {
 
         String specialButton = " ['2' - Special] ";
         if (theHero.onCooldown() || theHero.hasDebuff(Debuff.SILENCE)) {
             specialButton = " ║'2' - Special║ ";
         }
 
-        System.out.println("               ┏━━━━ ( Battle Menu ) ━━━━┓");
-        System.out.println(" ┏━━━━━━━━━━━━━┛                         ┗━━━━━━━━━━━━━┓");
-        System.out.println(" ┃         ['1' - Basic]    " + specialButton + "          ┃");
-        System.out.println(" ┃ ['e' - Bag]  ['r' - Monster Info]  ['q' - Run Away] ┃");
-        System.out.println(" ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
-        System.out.println();
-        System.out.print(" Choose an action: ");
+        console.println("               ┏━━━━ ( Battle Menu ) ━━━━┓");
+        console.println(" ┏━━━━━━━━━━━━━┛                         ┗━━━━━━━━━━━━━┓");
+        console.println(" ┃         ['1' - Basic]    " + specialButton + "          ┃");
+        console.println(" ┃ ['e' - Bag]  ['r' - Monster Info]  ['q' - Run Away] ┃");
+        console.println(" ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+        console.println();
+        console.print(" Choose an action: ");
 
-        return myScanner.next().charAt(0);
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
+    /**
+     * Displays hero and monster info for a battle
+     * @param theHero the hero
+     * @param theMonster the monster
+     */
     public void displayHeroAndMonsterInfo(final Hero theHero, final Monster theMonster) {
         // hero info
-        System.out.println();
-        System.out.println(" ║ Hero:");
+        console.println();
+        console.println(" ║ Hero:");
         displayHealth(theHero);
         if (!theHero.getActiveDebuffs().isEmpty()) {
             displayDebuffs(theHero);
         } else {
-            System.out.println();
+            console.println();
         }
 
         // monster info
-        System.out.println();
-        System.out.println(" ║ Monster:");
+        console.println();
+        console.println(" ║ Monster:");
         displayHealth(theMonster);
         if (!theMonster.getActiveDebuffs().isEmpty()) {
             displayDebuffs(theMonster);
         } else {
-            System.out.println();
+            console.println();
         }
+        console.println();
+        console.println();
     }
 
     /**
-     * The character health
+     * Displays the character health
      * @param theCharacter the character's health to display
      */
     public void displayHealth(final DungeonCharacter theCharacter) {
 
-        System.out.print(" ║    ❤ H̲E̲A̲L̲T̲H̲: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth());
+        console.print(" ║    HEALTH: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth()); // ❤
     }
 
     /**
-     * The character debuffs
+     * Displays the character's debuffs
      * @param theCharacter the character's debuffs to display
      */
     public void displayDebuffs(final DungeonCharacter theCharacter) {
-        System.out.println();
-        System.out.print(" ║    ✺ S̲T̲A̲T̲U̲S̲:");
+        console.println();
+        console.print(" ║    STATUS:"); // ✺
         for (Debuff debuff : theCharacter.getActiveDebuffs().keySet()) {
-            System.out.print(" (" + debuff + ")");
+            console.print(" (" + debuff + ")");
         }
-        System.out.println();
+        console.println();
     }
 
     /**
-     * The character health in dungeon
+     * Displays the character's health in the dungeon
      * @param theCharacter the character's health to display
      */
     public void displayHealthInDungeon(final DungeonCharacter theCharacter) {
 
-        System.out.print(" ❤ H̲E̲A̲L̲T̲H̲: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth());
+        console.print("  HEALTH: " + theCharacter.getHealth() + "/" + theCharacter.getMaxHealth());
     }
 
     /**
      * Menu for choosing the difficulty
      * @return the difficulty choice
      */
-    public char chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked,
+    public CompletableFuture<Character> chooseDifficulty(final boolean theMediumUnlocked, final boolean theHardUnlocked,
                                  final boolean theGlitchUnlocked) {
-        System.out.println();
-        System.out.println();
-        System.out.println("Choose your difficulty!");
-        displayChainSpacer();
+        console.println("Choose your difficulty!\n"); //TODO: consider making "levels" or "dungeon floors" instead of difficulty
 
         if (theGlitchUnlocked) {
-            System.out.println("           ╔═══════════════════════════════════════ʘ═---══▒═-╗     ");
-            System.out.println("           ║ 1 for ▒▓▒ | 2 for ▒▒▓▒ | 3 for ▓▓█ | 4 for ???  |     ");
-            System.out.println("           ╚══════════════════════════════════════█-══--══ʘ══╝     ");
-            System.out.println("                  ^            ^             ^         ▲           ");
-            System.out.println("               (L0CK[D)     (L0CK[D)      (L0CK[D)              ");
+            console.println("           ╔═══════════════════════════════════════ʘ═---══▒═-╗     ");
+            console.println("           ║ 1 for ▒▓▒ | 2 for ▒▒▓▒ | 3 for ▓▓█ | 4 for ???  |     ");
+            console.println("           ╚══════════════════════════════════════█-══--══ʘ══╝     ");
+            console.println("                  ^            ^             ^         ▲           ");
+            console.println("               (L0CK[D)     (L0CK[D)      (L0CK[D)              ");
 
         } else {
-            System.out.println("              ╔════════════════════════════════════════╗             ");
-            System.out.println("              ║ 1 for easy | 2 for medium | 3 for hard ║             ");
-            System.out.println("              ╚════════════════════════════════════════╝             ");
+            console.println("              ╔════════════════════════════════════════╗             ");
+            console.println("              ║ 1 for easy | 2 for medium | 3 for hard ║             ");
+            console.println("              ╚════════════════════════════════════════╝             ");
 
             if (theHardUnlocked) {
-                System.out.println("                     ▲            ▲             ▲                   ");
-                System.out.println();
+                console.println("                     ▲            ▲             ▲                   ");
+                console.println();
             } else if (theMediumUnlocked) {
-                System.out.println("                     ▲            ▲             ^                   ");
-                System.out.println("                                             (Locked)               ");
+                console.println("                     ▲            ▲             ^                   ");
+                console.println("                                             (Locked)               ");
             } else {
-                System.out.println("                     ▲            ^             ^                   ");
-                System.out.println("                               (Locked)      (Locked)               ");
+                console.println("                     ▲            ^             ^                   ");
+                console.println("                               (Locked)      (Locked)               ");
             }
         }
 
-        displayChainSpacer();
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
+    /**
+     * Displays the difficulty selected
+     * @param difficulty the difficulty selected
+     */
     public void displayDifficultySelected(final Difficulty difficulty) {
-        System.out.println("You have selected " + difficulty.toString() + " difficulty.");
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        console.println();
+        console.println("You have selected " + difficulty.toString() + " difficulty.");
+    }
+
+    public void displayHeroSelected(final String heroType) {
+        console.println("\nYou have selected the " + heroType + ".");
     }
 
     /**
      * Menu for inventory choice
-     * @param theBag your inventory bag
-     * @param inBattle whether you're in battle
+     * @param theBag hero's inventory bag
+     * @param inBattle whether hero is in battle
      * @return the inventory choice
      */
-    public char openBag(final Inventory theBag, final boolean inBattle, final AudioManager theAudio) {
-        displayChainSpacer();
-        System.out.println("Opening bag...");
-        SleepDelay.delay(2);
+    public CompletableFuture<Character> openBag(final Inventory theBag, final boolean inBattle) { // TODO: replace inBattle with a state variable
+        console.println("Opening bag...");
+        Delay.pause(1);
 
         if (inBattle) {
-            System.out.println(theBag.getItemView());
+            console.println(theBag.getItemView());
         } else {
-            System.out.println(theBag.toString());
+            console.println(theBag.toString());
         }
 
-        System.out.print("Choose an item (1-4) (e - Back) --> ");
-        char input = myScanner.next().charAt(0);
-        System.out.println();
+        console.print("Choose an item (1-4) (e - Back) --> ");
 
-        if (input == 'e') { // back
-            return 'e';
-        }
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        CompletableFuture<Character> userInputFuture = futureCharInput();
+        char userInput = userInputFuture.join(); // wait for user input
 
-        int slotIndex = Character.getNumericValue(input)-1; // convert input to int (with -1 due to array index)
+        int slotIndex = Character.getNumericValue(userInput)-1; // convert input to int (with -1 due to array index)
 
-        if (slotIndex < 0 || slotIndex > 3) { // out of bounds
-            theAudio.playSFX(theAudio.error, -10);
+        if ((slotIndex < 0 || slotIndex > 3) && userInput != 'e') { // out of bounds
+            audio.playSFX(audio.error, 1.0);
             displayWrongInput();
-            return openBag(theBag, inBattle, theAudio);
+            return openBag(theBag, inBattle);
 
-        } else if (slotIndex > theBag.getCurrentSize()-1 && slotIndex <= theBag.getMaxSize()) { // empty slot
-            theAudio.playSFX(theAudio.error, -10);
-            System.out.println("That slot is empty!");
-            return openBag(theBag, inBattle, theAudio);
+        } else if (slotIndex > theBag.getCurrentSize()-1 && slotIndex <= theBag.getMaxSize() && userInput != 'e') { // empty slot
+            audio.playSFX(audio.error, 1.0);
+            console.println("That slot is empty!");
+            return openBag(theBag, inBattle);
         }
+        console.println();
 
-        return input;
+        return userInputFuture;
     }
 
-    public void closeBag(final AudioManager theAudio) {
-        System.out.println("Closing bag...");
-        theAudio.playSFX(theAudio.heroBagClose, -10);
-        SleepDelay.delay(1);
+    public void closeBag() {
+        console.println("Closing bag...");
+        audio.playSFX(audio.heroBagClose, 1.0);
+        Delay.pause(0.5).join();
         displayChainSpacer();
     }
 
@@ -399,22 +710,34 @@ public class TUI {
      * Brings you a menu for whether you want to quit the game or not
      * @return the menu selection
      */
-    public char quitProcess() {
-        System.out.println("Are you sure you want to quit?");
-        System.out.println("1 for yes, 2 for no");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public CompletableFuture<Character> quitProcessMsg() {
+        console.println("Are you sure you want to quit?");
+        console.println("1 for yes, 2 for no");
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
     /**
      * Brings you a menu for whether you want to quit the game or not
      * @return the menu selection
      */
-    public char goToMainMenu() {
-        System.out.println("Are you sure you want to go to the main menu?");
-        System.out.println("1 for yes, 2 for no");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public CompletableFuture<Character> goToMainMenu() {
+        console.println("\nAre you sure you want to go to the main menu?");
+        console.println("1 for yes, 2 for no");
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
+    }
+
+    public CompletableFuture<Character> goToContinueMenu() {
+        console.println("\nAre you sure you want to continue?");
+        console.println("1 for yes, 2 for no");
+        console.print("Make your selection: ");
+
+        return futureCharInput();
     }
 
     /**
@@ -422,8 +745,8 @@ public class TUI {
      * @param theDungeon the map
      */
     public void displayDungeonMap(Dungeon theDungeon) {
-        System.out.println(theDungeon.toString());
-        System.out.println();
+        console.println(theDungeon.toString());
+        console.println();
     }
 
     /**
@@ -432,30 +755,30 @@ public class TUI {
      */
     public void displayHeroStats(final Hero theHero) {
 
-        System.out.println(" ╔════════════════════════════════════════════════");
-        System.out.println(" ║ 『" + theHero.getName() + "』");
-        System.out.println(" ║ " + theHero.getType());
-        System.out.println(" ║ ");
-        System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
-        System.out.println(" ╠ Basic: ");
-        System.out.println(" ║ " + theHero.getBasicName()[0]);
-        System.out.println(" ║ " + theHero.getBasicName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ╠ Special: ");
-        System.out.println(" ║ " + theHero.getSpecialName()[0]);
-        System.out.println(" ║ " + theHero.getSpecialName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ╠ Passive: ");
-        System.out.println(" ║ " + theHero.getPassiveName()[0]);
-        System.out.println(" ║ " + theHero.getPassiveName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ║ S̲T̲A̲T̲S̲");
-        System.out.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
-        System.out.println(" ╠ Attack: " + (theHero.getMinDmg() + theHero.getMaxDmg())/2);
-        System.out.println(" ╠ Speed: " + theHero.getSpeed());
-        System.out.println(" ╠ Level: " + theHero.getLevel());
-        System.out.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
-        System.out.println(" ╚════════════════════════════════════════════════");
+        console.println(" ╔════════════════════════════════════════════════");
+        console.println(" ║ 『" + theHero.getName() + "』");
+        console.println(" ║ " + theHero.getType());
+        console.println(" ║ ");
+        console.println(" ║ -ABILITIES-");
+        console.println(" ╠ Basic: ");
+        console.println(" ║ " + theHero.getBasicName()[0]);
+        console.println(" ║ " + theHero.getBasicName()[1]);
+        console.println(" ║ ");
+        console.println(" ╠ Special: ");
+        console.println(" ║ " + theHero.getSpecialName()[0]);
+        console.println(" ║ " + theHero.getSpecialName()[1]);
+        console.println(" ║ ");
+        console.println(" ╠ Passive: ");
+        console.println(" ║ " + theHero.getPassiveName()[0]);
+        console.println(" ║ " + theHero.getPassiveName()[1]);
+        console.println(" ║ ");
+        console.println(" ║ -STATS-");
+        console.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
+        console.println(" ╠ Attack: " + (theHero.getMinDmg() + theHero.getMaxDmg())/2);
+        console.println(" ╠ Speed: " + theHero.getSpeed());
+        console.println(" ╠ Level: " + theHero.getLevel());
+        console.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
+        console.println(" ╚════════════════════════════════════════════════");
     }
 
     /**
@@ -464,20 +787,20 @@ public class TUI {
      */
     public void debugHeroStats(final Hero theHero) {
 
-        System.out.println(" ╔════════════════════════════════════════════════");
-        System.out.println(" ║ 『" + theHero.getName() + "』");
-        System.out.println(" ║ " + theHero.getType());
-        System.out.println(" ║ ");
-        System.out.println(" ║ S̲T̲A̲T̲S̲");
-        System.out.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
-        System.out.println(" ╠ Speed: " + theHero.getSpeed());
-        System.out.println(" ╠ MinDmg: " + theHero.getMinDmg() + "   MaxDmg: " + theHero.getMaxDmg());
-        System.out.println(" ╠ Defense: " + theHero.getLevel());
-        System.out.println(" ╠ Basic Accuracy: " + theHero.getBasicAccuracy());
-        System.out.println(" ╠ Special Accuracy: " + theHero.getSpecialAccuracy());
-        System.out.println(" ╠ Level: " + theHero.getLevel());
-        System.out.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
-        System.out.println(" ╚════════════════════════════════════════════════");
+        console.println(" ╔════════════════════════════════════════════════");
+        console.println(" ║ 『" + theHero.getName() + "』");
+        console.println(" ║ " + theHero.getType());
+        console.println(" ║ ");
+        console.println(" ║ STATS");
+        console.println(" ╠ Health: " + theHero.getHealth() + "/" + theHero.getMaxHealth());
+        console.println(" ╠ Speed: " + theHero.getSpeed());
+        console.println(" ╠ MinDmg: " + theHero.getMinDmg() + "   MaxDmg: " + theHero.getMaxDmg());
+        console.println(" ╠ Defense: " + theHero.getLevel());
+        console.println(" ╠ Basic Accuracy: " + theHero.getBasicAccuracy());
+        console.println(" ╠ Special Accuracy: " + theHero.getSpecialAccuracy());
+        console.println(" ╠ Level: " + theHero.getLevel());
+        console.println(" ╠ Experience: " + theHero.getXP() + "/" + theHero.getXPToLevel());
+        console.println(" ╚════════════════════════════════════════════════");
     }
 
     /**
@@ -485,31 +808,31 @@ public class TUI {
      * @param theMonster the monster
      */
     public void displayMonsterStats(final Monster theMonster) {
-        System.out.println(" ╔════════════════════════════════════════════════");
-        System.out.println(" ║ " + theMonster.getName());
-        System.out.println(" ║ ");
-        System.out.println(" ║ D̲E̲S̲C̲R̲I̲P̲T̲I̲O̲N̲: ");
-        System.out.println(" ║ " + theMonster.getDescription()[0]);
-        System.out.println(" ║ " + theMonster.getDescription()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ║ A̲B̲I̲L̲I̲T̲I̲E̲S̲");
-        System.out.println(" ╠ Basic: ");
-        System.out.println(" ║ " + theMonster.getBasicName()[0]);
-        System.out.println(" ║ " + theMonster.getBasicName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ╠ Special: ");
-        System.out.println(" ║ " + theMonster.getSpecialName()[0]);
-        System.out.println(" ║ " + theMonster.getSpecialName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ╠ Passive: ");
-        System.out.println(" ║ " + theMonster.getPassiveName()[0]);
-        System.out.println(" ║ " + theMonster.getPassiveName()[1]);
-        System.out.println(" ║ ");
-        System.out.println(" ║ S̲T̲A̲T̲S̲:");
-        System.out.println(" ╠ Health: " + theMonster.getHealth() + "/" + theMonster.getMaxHealth());
-        System.out.println(" ╠ Attack: " + (theMonster.getMinDmg() + theMonster.getMaxDmg())/2);
-        System.out.println(" ╠ Speed: " + theMonster.getSpeed());
-        System.out.println(" ╚════════════════════════════════════════════════");
+        console.println(" ╔════════════════════════════════════════════════");
+        console.println(" ║ " + theMonster.getName());
+        console.println(" ║ ");
+        console.println(" ║ DESCRIPTION: ");
+        console.println(" ║ " + theMonster.getDescription()[0]);
+        console.println(" ║ " + theMonster.getDescription()[1]);
+        console.println(" ║ ");
+        console.println(" ║ ABILITIES");
+        console.println(" ╠ Basic: ");
+        console.println(" ║ " + theMonster.getBasicName()[0]);
+        console.println(" ║ " + theMonster.getBasicName()[1]);
+        console.println(" ║ ");
+        console.println(" ╠ Special: ");
+        console.println(" ║ " + theMonster.getSpecialName()[0]);
+        console.println(" ║ " + theMonster.getSpecialName()[1]);
+        console.println(" ║ ");
+        console.println(" ╠ Passive: ");
+        console.println(" ║ " + theMonster.getPassiveName()[0]);
+        console.println(" ║ " + theMonster.getPassiveName()[1]);
+        console.println(" ║ ");
+        console.println(" ║ STATS:");
+        console.println(" ╠ Health: " + theMonster.getHealth() + "/" + theMonster.getMaxHealth());
+        console.println(" ╠ Attack: " + (theMonster.getMinDmg() + theMonster.getMaxDmg())/2);
+        console.println(" ╠ Speed: " + theMonster.getSpeed());
+        console.println(" ╚════════════════════════════════════════════════");
 
     }
 
@@ -518,89 +841,78 @@ public class TUI {
      * @param thePotion the potion info
      */
     public void collectPotionMsg(final Potion thePotion) {
-        System.out.println(" -You collected a " + thePotion.type() + "!");
+        console.println(" -You collected a " + thePotion.type() + "!");
     }
 
     /**
      * Displays Abstraction Pillar Message
      */
     public void displayAbstractionPillarMsg() {
-        System.out.println(" -You collected a PILLAR!");
+        console.println(" -You collected a PILLAR!");
     }
     /**
      * Displays Encapsulation Pillar Message
      */
     public void displayEncapsulationPillarMsg() {
-        System.out.println(" -You collected a PILLAR!");
+        console.println(" -You collected a PILLAR!");
     }
     /**
      * Displays Inheritance Pillar Message
      */
     public void displayInheritancePillarMsg() {
-        System.out.println(" -You collected a PILLAR!");
+        console.println(" -You collected a PILLAR!");
     }
     /**
      * Displays Polymorphism Pillar Message
      */
     public void displayPolymorphismPillarMsg() {
-        System.out.println(" -You collected a PILLAR!");
+        console.println(" -You collected a PILLAR!");
     }
 
-
-    /**
-     * Asks whether you want to start a new game or continue on a prior save
-     * @return the game choice
-     */
-    public char continueOrNewGameMenu() {
-        System.out.println("Would you like to start a new game or continue a previous game?");
-        System.out.println("1 for new game, 2 for continue game");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
-    }
 
     public void monsterHeal(final int theHealAmt) {
-        System.out.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
-        SleepDelay.delay(2);
+        console.println(" -The enemy heals themselves for " + theHealAmt + " Health Points!");
+        Delay.pause(1).join();
     }
 
     public void characterSelectAbility(final DungeonCharacter theAttacker, final DungeonCharacter theDefender,
                                        final Ability theAbility) {
 
         if (theAbility == Ability.BASIC) {
-            System.out.println(" " + theAttacker.getBasicSelectMsg(theDefender) + "...");
+            console.println(" " + theAttacker.getBasicSelectMsg(theDefender) + "...");
 
         } else if (theAbility == Ability.SPECIAL){
-            System.out.println(" " + theAttacker.getSpecialSelectMsg(theDefender) + "...");
+            console.println(" " + theAttacker.getSpecialSelectMsg(theDefender) + "...");
         }
-        SleepDelay.delay(3);
+        Delay.pause(1.5).join();
     }
 
     public void monsterAttackResult(final Monster theMonster, final Hero theHero, final int theDamageDealt) {
 
-        System.out.println(" " + theMonster.getAttackResult()); // attackResult contains msg for hits, misses, basics, and specials
+        console.println(" " + theMonster.getAttackResult()); // attackResult contains msg for hits, misses, basics, and specials
         if (theDamageDealt != 0) {
-            System.out.println("   -" + theHero.getName() + " took " + theDamageDealt + " damage!");
+            console.println("   -" + theHero.getName() + " took " + theDamageDealt + " damage!");
         }
-        SleepDelay.delay(2);
+        Delay.pause(1).join();
     }
 
     public void heroAttackResult(final Hero theHero, final int theDamageDealt) {
 
-        System.out.println(" " + theHero.getAttackResult());
+        console.println(" " + theHero.getAttackResult());
         if (theDamageDealt != 0) { // if (theMonster.doesDamageOnSpecial() || theAttackHit)
-            System.out.println("   -" + "The enemy took " + theDamageDealt + " damage!");
+            console.println("   -" + "The enemy took " + theDamageDealt + " damage!");
         }
-        SleepDelay.delay(2);
+        Delay.pause(1).join();
     }
     public void playerCritMsg() {
-        System.out.println("   -It was a critical hit!");
+        console.println("   -It was a critical hit!");
     }
 
     public void inflictedDebuffMsg(final Debuff theDebuff, final int theDuration) {
         if (theDuration == 1) {
-            System.out.println("   -Inflicted " + theDebuff + " for " + theDuration + " turn");
+            console.println("   -Inflicted " + theDebuff + " for " + theDuration + " turn");
         } else {
-            System.out.println("   -Inflicted " + theDebuff + " for " + theDuration + " turns");
+            console.println("   -Inflicted " + theDebuff + " for " + theDuration + " turns");
         }
     }
 
@@ -608,67 +920,74 @@ public class TUI {
 
     public void displayCooldown(final int theCooldown) {
         if (theCooldown == 1) {
-            System.out.println(" -You can't use that ability for " + theCooldown + " more turn!");
+            console.println(" -You can't use that ability for " + theCooldown + " more turn!");
         } else {
-            System.out.println(" -You can't use that ability for " + theCooldown + " more turns!");
+            console.println(" -You can't use that ability for " + theCooldown + " more turns!");
         }
     }
 
     /**
-     * The game victory message
+     * The game's victory message
      */
     public void displayVictoryMsg(final int theHeroSteps, final int theMonstersDefeated, final int theLevel,
                                   final Difficulty theDifficulty, boolean theFunnyMode, final boolean theDebugMode) {
 
         displayChainSpacer();
-        System.out.println();
-        System.out.println(" -You escaped the dungeon!");
-        System.out.println();
-        System.out.println("██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
-                           "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║\n" +
-                           " ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║\n" +
-                           "  ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝\n" +
-                           "   ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║██╗\n" +
-                           "   ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝");
-        System.out.println();
+        console.println();
+        console.println(" -You escaped the dungeon!");
+        console.println();
+        console.println("" +
+                "██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗██╗███╗   ██╗██╗\n" +
+                "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██║████╗  ██║██║\n" +
+                " ╚████╔╝ ██║   ██║██║   ██║    ██║ █╗ ██║██║██╔██╗ ██║██║\n" +
+                "  ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║██║╚██╗██║╚═╝\n" +
+                "   ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝██║██║ ╚████║██╗\n" +
+                "   ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═╝");
+        console.println();
 
         if (!theDebugMode) {
-            SleepDelay.delay(2);
-            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  RESULTS:");
-            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You beat the game on " + theDifficulty + " difficulty!");
-            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You took " + theHeroSteps + " steps to escape the dungeon.");
-            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You reached level " + theLevel + ".");
-            SleepDelay.printDelayedText(TalkingCharacters.NONE,"  You defeated " + theMonstersDefeated + " monsters.");
+            console.disableInput(true); // disable input box while output is currently being displayed
+
+            Delay.pause(1);
+            console.typeAnimation("  RESULTS:", TextSpeed.MEDIUM).join();
+            console.typeAnimation("  You beat the game on " + theDifficulty + " difficulty!", TextSpeed.MEDIUM).join();
+            console.typeAnimation("  You took " + theHeroSteps + " steps to escape the dungeon.", TextSpeed.MEDIUM).join();
+            console.typeAnimation("  You reached level " + theLevel + ".", TextSpeed.MEDIUM).join();
+            console.typeAnimation("  You defeated " + theMonstersDefeated + " monsters.", TextSpeed.MEDIUM).join();
+
+            console.disableInput(false); // re-enable input box after output is finished displaying
         }
+
+
     }
 
     /**
      * The battle win message
      */
     public void displayBattleWinMsg(final Monster theMonster) {
-        System.out.println();
-        SleepDelay.delay(1);
-        System.out.println(" -" + theMonster.getDeathMsg());
-        System.out.println();
-        SleepDelay.delay(4);
-        System.out.println("                ╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
-        System.out.println("                │ ENEMY DEFEATED │");
-        System.out.println("                ╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
-        System.out.println();
-        SleepDelay.delay(4);
-        System.out.println(" RESULTS:");
-        System.out.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
-        System.out.println();
+        console.println();
+        Delay.pause(0.5).join();
+        console.println(" -" + theMonster.getDeathMsg());
+        console.println();
+        Delay.pause(2).join();
+        console.println("                ╒≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╕");
+        console.println("                │ ENEMY DEFEATED │");
+        console.println("                ╘≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡╛");
+        console.println();
+        Delay.pause(2).join();
+        console.println(" RESULTS:");
+        console.println(" -You gained " + theMonster.getXPWorth() + " experience points!");
+        console.println();
     }
 
     /**
      * The death message
      */
     public void displayDeathMsg(final boolean theFunnyMode) {
-        System.out.println(" -You have been defeated.");
-        SleepDelay.delay(4);
+        console.println(" -You have been defeated.");
+        Delay.pause(2).join();
         if (theFunnyMode) {
-            System.out.println("" +
+            console.println("" +
                     " $$$$$$\\  $$$$$$\\ $$$$$$$$\\        $$$$$$\\  $$\\   $$\\ $$$$$$$\\         $$$$$$\\   $$$$$$\\  $$$$$$$\\  $$\\   $$\\ $$$$$$$\\  \n" +
                     "$$  __$$\\ \\_$$  _|\\__$$  __|      $$  __$$\\ $$ |  $$ |$$  __$$\\       $$  __$$\\ $$  __$$\\ $$  __$$\\ $$ |  $$ |$$  __$$\\ \n" +
                     "$$ /  \\__|  $$ |     $$ |         $$ /  \\__|$$ |  $$ |$$ |  $$ |      $$ /  \\__|$$ /  \\__|$$ |  $$ |$$ |  $$ |$$ |  $$ |\n" +
@@ -678,7 +997,7 @@ public class TUI {
                     "\\$$$$$$  |$$$$$$\\    $$ |         \\$$$$$$  |\\$$$$$$  |$$$$$$$  |      \\$$$$$$  |\\$$$$$$  |$$ |  $$ |\\$$$$$$  |$$$$$$$  |\n" +
                     " \\______/ \\______|   \\__|          \\______/  \\______/ \\_______/        \\______/  \\______/ \\__|  \\__| \\______/ \\_______/ !");
         } else {
-            System.out.println("\n" +
+            console.println("\n" +
                     " $$$$$$\\                                           $$$$$$\\                                 \n" +
                     "$$  __$$\\                                         $$  __$$\\                                \n" +
                     "$$ /  \\__| $$$$$$\\  $$$$$$\\$$$$\\   $$$$$$\\        $$ /  $$ |$$\\    $$\\  $$$$$$\\   $$$$$$\\  \n" +
@@ -697,37 +1016,31 @@ public class TUI {
      * The cheat mode message
      */
     public void displayCheatMode() {
-        System.out.println("***********************************");
-        System.out.println(" You have entered cheat mode ಠ_ಠ ");
-        System.out.println("***********************************");
+        console.println("***********************************");
+        console.println(" You have entered cheat mode ಠ_ಠ ");
+        console.println("***********************************");
     }
 
     /**
      * The funny mode message
      */
     public void displayFunnyMode() {
-        System.out.println("****************************************");
-        System.out.println(" You have entered funny mode ( ͡° ͜ʖ ͡°) ");
-        System.out.println("****************************************");
+        console.println("****************************************");
+        console.println(" You have entered funny mode ( ͡° ͜ʖ ͡°) ");
+        console.println("****************************************");
     }
 
     /**
      * The debug mode message
      */
     public void displayDebugMode() {
-        System.out.println("************************************");
-        System.out.println(" You have entered debug mode ❐‿❑ ");
-        System.out.println("************************************");
+        console.println("************************************");
+        console.println(" You have entered debug mode ❐‿❑ ");
+        console.println("************************************");
     }
-
-    public void displayWrongCode() {
-        SleepDelay.printDelayedText(TalkingCharacters.NONE,"Uhhhhhh");
-        SleepDelay.printDelayedTextFast(TalkingCharacters.NONE,"that's not a valid code. Please try again.");
-    }
-
 
     public void displayHeroDirection(final Hero theHero) {
-        System.out.print("    Facing: " + theHero.getDirection());
+        console.print("    Facing: " + theHero.getDirection());
     }
 
     /**
@@ -735,23 +1048,15 @@ public class TUI {
      * @param theSteps the steps the hero has taken while the vision potion is active
      */
     public void displayStepsWithVisionPotion(final int theSteps) {
-        System.out.print("    Steps left with vision potion: " + (4-theSteps));
+        console.print("    Steps left with vision potion: " + (4-theSteps));
     }
 
-    /**
-     * The game start message
-     */
-    public void displayStartMsg() {
-        System.out.println("                     ╔═════════════════════════╗                     ");
-        System.out.println("---------------------║ Welcome to the Dungeon! ║---------------------");
-        System.out.println("                     ╚═════════════════════════╝                     ");
-    }
 
     /**
      * The instant kill message
      */
     public void displayInstaKill() {
-        System.out.println("Woooow, you must be so powerful... cheater");
+        console.println("Woooow, you must be so powerful... cheater");
     }
 
     /**
@@ -761,22 +1066,21 @@ public class TUI {
     public void displayMonsterEncounterMsg(final Monster theMonster) {
         String monsterName = theMonster.getType().toString();
         String article = isVowel(monsterName.charAt(0)) ? " an " : " a ";
-        System.out.println(" -You have encountered" + article + monsterName);
-        SleepDelay.delay(2);
-        System.out.println();
-        System.out.println("████████████████████████████████████████████████████████████████████");
-        System.out.println("█                       --- BATTLE START ---                       █");
-        System.out.println("████████████████████████████████████████████████████████████████████");
-        System.out.println();
-        SleepDelay.delay(1);
-
+        console.println(" -You have encountered" + article + monsterName);
+        Delay.pause(1).join();
+        console.println();
+        console.println("████████████████████████████████████████████████████████████████████");
+        console.println("█                       --- BATTLE START ---                       █");
+        console.println("████████████████████████████████████████████████████████████████████");
+        console.println();
+        Delay.pause(0.5).join();
     }
 
     /**
      * Locked Exit message
      */
     public void exitLocked() {
-        System.out.println(" -The exit is locked! You need to collect all 4 pillars to open it!");
+        console.println(" -The exit is locked! You need to collect all 4 pillars to open it!");
     }
 
     /**
@@ -784,7 +1088,7 @@ public class TUI {
      * @param theFallDamage the pit you fell in
      */
     public void displayPitMsg(final int theFallDamage) {
-        System.out.println(" -You fell into a pit! You took " + theFallDamage + " damage!");
+        console.println(" -You fell into a pit! You took " + theFallDamage + " damage!");
     }
 
     /**
@@ -793,169 +1097,191 @@ public class TUI {
      * @param theSlotIndex the slot of the potion
      */
     public void usePotionMsg(final Potion thePotion, int theSlotIndex) {
-        System.out.println(" -You used a " + thePotion.type() + " from the slot #" + (theSlotIndex+1));
-        System.out.println(thePotion.useMsg());
+        console.println(" -You used a " + thePotion.type() + " from the slot #" + (theSlotIndex+1));
+        console.println(thePotion.useMsg());
     }
 
     /**
      * The invalid input message
      */
     public void displayWrongInput() {
-        System.out.println("Invalid input. Please try again.");
+        console.println("Invalid input. Please try again.");
     }
 
-    public char playIntroOrNot() {
-        System.out.println("Would you like to play the intro? (please say yes)");
-        System.out.println("1 for no, 2 for yes");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public void displayNotEnoughLetters() {
+        console.println("Your name contain least 3 letters. Please try again.");
+    }
+
+    public void displayTooManyLetters() {
+        console.println("Your name must contain no more than 10 letters. Please try again.");
+    }
+
+    public void displayNumberStartingName() {
+        console.println("Your name cannot start with a number. Please try again.");
+    }
+
+    public CompletableFuture<Character> playIntroOrNot() {
+        console.println("Would you like to play the intro? (please say yes)");
+        console.println("1 for no, 2 for yes");
+        console.print("Make your selection: ");
+
+        console.setHintText("");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
     public void displayWallMsg() {
-        System.out.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
+        console.println("WHAT ARE YOU DOING IN A WALL?! GET OUT OF THERE YOU FOOL");
     }
 
     public void displayHitWallMsg() {
-        System.out.println(" -You ran into a wall you oaf");
+        console.println(" -You ran into a wall you oaf");
     }
 
     public void heroIntroduction(Hero hero) {
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah, a " + hero.getType() + "!");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I'm sure that skill will serve you well.");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Good luck!");
-        SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"*cranks gate open*");
-        System.out.println();
+        console.disableInput(true); // disable input box while output is currently being displayed
 
+        console.print("\nDungeon Keeper: ");
+        console.typeAnimation("Ah, a " + hero.getType() + "!\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("I'm sure that skill will serve you well.\n", TextSpeed.MEDIUM).join();
+        console.print("                ");
+        console.typeAnimation("Good luck!\n", TextSpeed.MEDIUM).join();
+//        console.print("                ");
+//        console.printAnimation("*cranks gate open*\n", TextSpeed.MEDIUM).join();
+        console.println();
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
     }
 
-    public void displayInstructions(final AudioManager theAudio) {
-        System.out.println();
-        System.out.println();
-        System.out.println("" +
+    public void displayInstructions() {
+        console.println();
+        console.println();
+        console.println("" +
                 "88 88b 88 .dP\"Y8 888888 88\"\"Yb 88   88  dP\"\"b8 888888 88  dP\"Yb  88b 88 .dP\"Y8 \n" +
                 "88 88Yb88 `Ybo.\"   88   88__dP 88   88 dP   `\"   88   88 dP   Yb 88Yb88 `Ybo.\" \n" +
                 "88 88 Y88 o.`Y8b   88   88\"Yb  Y8   8P Yb        88   88 Yb   dP 88 Y88 o.`Y8b \n" +
                 "88 88  Y8 8bodP'   88   88  Yb `YbodP'  YboodP   88   88  YbodP  88  Y8 8bodP' ");
-        System.out.println();
-        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  What Am I Looking at?  █ ▇ ▆ ▅ ▄ ▃ ▂");
-        System.out.println();
-        System.out.println(" The giant square you see is a top-down view of the dungeon,");
-        System.out.println(" which is a 2D grid of rooms/walls.");
-        System.out.println(" The empty spaces are rooms, and the '*' symbols are walls.");
-        System.out.println(" The '□' symbol is you, the hero.");
-        System.out.println(" The contents of the rooms will remain hidden until you enter them.");
-        System.out.println();
-        System.out.println(" Each room may contain one or more of the following:");
-        System.out.println("" +
+        console.println();
+        console.println("▂ ▃ ▄ ▅ ▆ ▇ █  What Am I Looking at?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+        console.println();
+        console.println(" The giant square you see is a top-down view of the dungeon,");
+        console.println(" which is a 2D grid of rooms/walls.");
+        console.println(" The empty spaces are rooms, and the '*' symbols are walls.");
+        console.println(" The '□' symbol is you, the hero.");
+        console.println(" The contents of the rooms will remain hidden until you enter them.");
+        console.println();
+        console.println(" Each room may contain one or more of the following:");
+        console.println("" +
                 " ║ '▮' = exit\n" +
                 " ║ 'M' = monster\n" +
                 " ║ 'X' = pit\n" +
                 " ║ 'p' = potion\n" +
                 " ║ 'I' = pillar\n" +
                 " ║ '&' = multiple items in the same room");
-        System.out.println();
-        System.out.println(" You may find a vision potion on your journey.");
-        System.out.println(" Using this potion will reveal the contents of EVERY room");
+        console.println();
+        console.println(" You may find a vision potion on your journey.");
+        console.println(" Using this potion will reveal the contents of EVERY room");
 
         pressAnyKeyNextPage();
-        theAudio.playSFX(theAudio.swishOn, -10);
+        audio.playSFX(audio.swishOn, 1.0);
 
-        System.out.println();
-        System.out.println();
-        System.out.println("" +
+        console.println();
+        console.println();
+        console.println("" +
                 "88 88b 88 .dP\"Y8 888888 88\"\"Yb 88   88  dP\"\"b8 888888 88  dP\"Yb  88b 88 .dP\"Y8 \n" +
                 "88 88Yb88 `Ybo.\"   88   88__dP 88   88 dP   `\"   88   88 dP   Yb 88Yb88 `Ybo.\" \n" +
                 "88 88 Y88 o.`Y8b   88   88\"Yb  Y8   8P Yb        88   88 Yb   dP 88 Y88 o.`Y8b \n" +
                 "88 88  Y8 8bodP'   88   88  Yb `YbodP'  YboodP   88   88  YbodP  88  Y8 8bodP' ");
-        System.out.println();
-        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Does the Dungeon Work?  █ ▇ ▆ ▅ ▄ ▃ ▂");
-        System.out.println();
-        System.out.println("Beware! Monsters will spawn in a random location every 4 steps you take.");
+        console.println();
+        console.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Does the Dungeon Work?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+        console.println();
+        console.println("Beware! Monsters will spawn in a random location every 4 steps you take.");
 //         talk about what different potions do
 
         pressAnyKeyNextPage();
-        theAudio.playSFX(theAudio.swishOn, -10);
+        audio.playSFX(audio.swishOn, 1.0);
 
-        System.out.println();
-        System.out.println();
-        System.out.println("" +
+        console.println();
+        console.println();
+        console.println("" +
                 "88 88b 88 .dP\"Y8 888888 88\"\"Yb 88   88  dP\"\"b8 888888 88  dP\"Yb  88b 88 .dP\"Y8 \n" +
                 "88 88Yb88 `Ybo.\"   88   88__dP 88   88 dP   `\"   88   88 dP   Yb 88Yb88 `Ybo.\" \n" +
                 "88 88 Y88 o.`Y8b   88   88\"Yb  Y8   8P Yb        88   88 Yb   dP 88 Y88 o.`Y8b \n" +
                 "88 88  Y8 8bodP'   88   88  Yb `YbodP'  YboodP   88   88  YbodP  88  Y8 8bodP' ");
-        System.out.println();
-        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How do I battle?  █ ▇ ▆ ▅ ▄ ▃ ▂");
-        System.out.println();
-        System.out.println(" You will eventually encounter monsters in the dungeon.");
-        System.out.println(" After encountering one, a battle will commence.");
-        System.out.println(" Whoever has a higher speed will attack first.");
-        System.out.println(" You will take turns attacking the monster until one of you dies.");
-        System.out.println();
-        System.out.println(" On your turn, you have 3 main choices:");
-        System.out.println("  ║ 1. Use your basic attack");
-        System.out.println("  ║ 2. Use your special attack");
-        System.out.println("  ║ 3. Use a potion from your inventory");
-        System.out.println();
-        System.out.println(" Strategy is key!");
-        System.out.println(" Use all 3 options to gain the upper hand and win the battle.");
-        System.out.println();
-        System.out.println(" There are negative effects characters can inflict on each other.");
-        System.out.println(" These effects will last for a certain number of turns.");
-        System.out.println(" The effects are:");
-        System.out.println("  ║ Poisoned: Lose 10 health every turn");
-        System.out.println("  ║ Blinded: Decrease your accuracy");
-        System.out.println("  ║ Stuck: Skip your next turn");
-        System.out.println("  ║ Weakened: Your next hit will deal half the damage");
-        System.out.println("  ║ Vulnerable: Next hit on you will deal 2x the damage");
-        System.out.println("  ║ Silenced: Can't use special ability");
-        System.out.println(" You will see these under the \"S̲T̲A̲T̲U̲S̲\" section during a battle.");
+        console.println();
+        console.println("▂ ▃ ▄ ▅ ▆ ▇ █  How do I battle?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+        console.println();
+        console.println(" You will eventually encounter monsters in the dungeon.");
+        console.println(" After encountering one, a battle will commence.");
+        console.println(" Whoever has a higher speed will attack first.");
+        console.println(" You will take turns attacking the monster until one of you dies.");
+        console.println();
+        console.println(" On your turn, you have 3 main choices:");
+        console.println("  ║ 1. Use your basic attack");
+        console.println("  ║ 2. Use your special attack");
+        console.println("  ║ 3. Use a potion from your inventory");
+        console.println();
+        console.println(" Strategy is key!");
+        console.println(" Use all 3 options to gain the upper hand and win the battle.");
+        console.println();
+        console.println(" There are negative effects characters can inflict on each other.");
+        console.println(" These effects will last for a certain number of turns.");
+        console.println(" The effects are:");
+        console.println("  ║ Poisoned: Lose 10 health every turn");
+        console.println("  ║ Blinded: Decrease your accuracy");
+        console.println("  ║ Stuck: Skip your next turn");
+        console.println("  ║ Weakened: Your next hit will deal half the damage");
+        console.println("  ║ Vulnerable: Next hit on you will deal 2x the damage");
+        console.println("  ║ Silenced: Can't use special ability");
+        console.println(" You will see these under the \"S̲T̲A̲T̲U̲S̲\" section during a battle.");
 
         pressAnyKeyNextPage();
-        theAudio.playSFX(theAudio.swishOn, -10);
+        audio.playSFX(audio.swishOn, 1.0);
 
-        System.out.println();
-        System.out.println();
-        System.out.println("" +
+        console.println();
+        console.println();
+        console.println("" +
                 "88 88b 88 .dP\"Y8 888888 88\"\"Yb 88   88  dP\"\"b8 888888 88  dP\"Yb  88b 88 .dP\"Y8 \n" +
                 "88 88Yb88 `Ybo.\"   88   88__dP 88   88 dP   `\"   88   88 dP   Yb 88Yb88 `Ybo.\" \n" +
                 "88 88 Y88 o.`Y8b   88   88\"Yb  Y8   8P Yb        88   88 Yb   dP 88 Y88 o.`Y8b \n" +
                 "88 88  Y8 8bodP'   88   88  Yb `YbodP'  YboodP   88   88  YbodP  88  Y8 8bodP' ");
-        System.out.println();
-        System.out.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Do I Win?  █ ▇ ▆ ▅ ▄ ▃ ▂");
-        System.out.println();
-        System.out.println(" You win by escaping through the exit door.");
-        System.out.println(" However, the exit will remain locked until you possess");
-        System.out.println(" all 4 pillars in your inventory.");
+        console.println();
+        console.println("▂ ▃ ▄ ▅ ▆ ▇ █  How Do I Win?  █ ▇ ▆ ▅ ▄ ▃ ▂");
+        console.println();
+        console.println(" You win by escaping through the exit door.");
+        console.println(" However, the exit will remain locked until you possess");
+        console.println(" all 4 pillars in your inventory.");
     }
 
     public void displayCantUseItemDuringBattle(Potion thePotion) {
-        System.out.println(" -You can't use a " + thePotion.type() + " during a battle!");
+        console.println(" -You can't use a " + thePotion.type() + " during a battle!");
     }
 
     public void displayCantUseItemOutsideBattle(Potion thePotion) {
-        System.out.println(" -You can't use a " + thePotion.type() + " outside of a battle!");
+        console.println(" -You can't use a " + thePotion.type() + " outside of a battle!");
     }
 
     public void levelUpMsg(final int theLevel) {
-        System.out.println(" -You leveled up!");
-        System.out.println("  You are now level " + theLevel);
-        System.out.println("  Gained +5 damage, +10 max health");
-        System.out.println("  Your health is fully restored!");
+        console.println(" -You leveled up!");
+        console.println("  You are now level " + theLevel);
+        console.println("  Gained +5 damage, +10 max health");
+        console.println("  Your health is fully restored!");
         if (theLevel == 5) {
-            System.out.println("  You have reached the max level");
+            console.println("  You have reached the max level");
         }
     }
 
     public void displayInventoryFullMsg() {
-        System.out.println(" -You found a potion, but your inventory is full.");
+        console.println(" -You found a potion, but your inventory is full.");
     }
 
     public void displayBattleEnd() {
-        System.out.println();
-        System.out.println("████████████████████████████████████████████████████████████████████");
-        System.out.println("█                        --- BATTLE END ---                        █");
-        System.out.println("████████████████████████████████████████████████████████████████████");
+        console.println();
+        console.println("████████████████████████████████████████████████████████████████████");
+        console.println("█                        --- BATTLE END ---                        █");
+        console.println("████████████████████████████████████████████████████████████████████");
     }
 
     private boolean isVowel(char ch) {
@@ -964,185 +1290,237 @@ public class TUI {
     }
 
     public void exitIsOpenMsg() {
-        System.out.println(" -You hear a door creak open in the distance...");
+        console.println(" -You hear a door creak open in the distance...");
     }
 
     public void displayArrowSpacer() {
-        System.out.println("<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>");
+        console.println("<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>");
     }
 
     public void printAudioError(URISyntaxException theError) {
-        System.out.println("Error: Audio source could not be parsed." + theError);
+        console.println("Error: Audio source could not be parsed." + theError);
     }
 
     public void heroFasterThanMonsterMsg(final Monster theMonster) {
-        System.out.println(" -You have a higher speed than " + theMonster.getName() + ", so you get to attack first!");
-        System.out.println();
+        console.println(" -You have a higher speed than " + theMonster.getName() + ", so you get to attack first!");
+        console.println();
     }
 
     public void monsterFasterThanHeroMsg(final Monster theMonster) {
-        System.out.println(" -The " + theMonster.getName() + " has a higher speed than you, so it attacks first!");
-        System.out.println();
+        console.println(" -The " + theMonster.getName() + " has a higher speed than you, so it attacks first!");
+        console.println();
     }
 
-    public char pressAnyKeyGoBack() {
-        System.out.println();
-        System.out.println("Press any key, then ENTER to return...");
-        return myScanner.next().charAt(0);
+    public void pressAnyKeyGoBack() {
+        console.println();
+        displayChainSpacer();
+        console.println("Press any key, then ENTER to return...");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            audio.playSFX(audio.menu1, 1.0);
+            displayChainSpacer(); //!!! BIG PROBLEM: this displays after a delay, causing other stuff to display before this
+            console.println();
+            return userInput;
+        });
     }
 
-    public char pressAnyKeyContinue() {
-        System.out.println();
-        System.out.println("Press any key, then ENTER to continue...");
-        return myScanner.next().charAt(0);
+    public void pressAnyKeyContinue() {
+        console.println();
+        displayChainSpacer();
+        console.println("Press any key, then ENTER to continue...");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            audio.playSFX(audio.menu1, 1.0);
+            displayChainSpacer();
+            console.println();
+            return userInput;
+        });
     }
 
-    public char pressAnyKeyNextPage() {
-        System.out.println();
-        System.out.println("Press any key, then ENTER for the next page...");
-        return myScanner.next().charAt(0);
+    public void pressAnyKeyNextPage() {
+        console.println();
+        displayChainSpacer();
+        console.println("Press any key, then ENTER for the next page...");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+
+        CompletableFuture<Character> futureChar = futureCharInput();
+
+        // Ensure that all the asynchronous tasks associated with the CompletableFuture chain have finished before the program proceeds further
+        futureChar.join();
+
+        futureChar.thenApplyAsync(userInput -> {
+            audio.playSFX(audio.menu1, 1.0);
+            displayChainSpacer();
+            console.println();
+            return userInput;
+        });
     }
 
     public void displayUnlockedMedium() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║        You've unlocked MEDIUM difficulty!         ║");
-        System.out.println("║   This mode contains pits and tougher monsters    ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║        You've unlocked MEDIUM difficulty!         ║");
+        console.println("║   This mode contains pits and tougher monsters    ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayUnlockedHard() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║         You've unlocked HARD difficulty!          ║");
-        System.out.println("║   This mode has something waiting at the end...   ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║         You've unlocked HARD difficulty!          ║");
+        console.println("║   This mode has something waiting at the end...   ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayUnlockedJuggernautAndThief() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║ You've unlocked the JUGGERNAUT and THIEF heroes!  ║");
-        System.out.println("║ They will now appear in the hero selection menu.  ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║ You've unlocked the JUGGERNAUT and THIEF heroes!  ║");
+        console.println("║ They will now appear in the hero selection menu.  ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
     public void displayUnlockedDoctorAndNinja() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║   You've unlocked the DOCTOR and NINJA heroes!    ║");
-        System.out.println("║ They will now appear in the hero selection menu.  ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║   You've unlocked the DOCTOR and NINJA heroes!    ║");
+        console.println("║ They will now appear in the hero selection menu.  ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
     public void displayUnlockedScientist() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║         You've unlocked the SCIENTIST hero        ║");
-        System.out.println("║  He will now appear in the hero selection menu.   ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║         You've unlocked the SCIENTIST hero        ║");
+        console.println("║  He will now appear in the hero selection menu.   ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
     public void displayUnlockedMage() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║           You've unlocked the MAGE hero!          ║");
-        System.out.println("║  He will now appear in the hero selection menu.   ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║           You've unlocked the MAGE hero!          ║");
+        console.println("║  He will now appear in the hero selection menu.   ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayUnlockedBeastmaster() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║        You've unlocked the BEASTMASTER hero       ║");
-        System.out.println("║  He will now appear in the hero selection menu.   ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║        You've unlocked the BEASTMASTER hero       ║");
+        console.println("║  He will now appear in the hero selection menu.   ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayUnlockedAll() {
-        System.out.println();
-        System.out.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
-        System.out.println("║           You've unlocked ALL the heroes          ║");
-        System.out.println("║                 Congratulations!!!                ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ◈ INFO ◈ ════════════════════╗");
+        console.println("║           You've unlocked ALL the heroes          ║");
+        console.println("║                 Congratulations!!!                ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayHintStillMoreHeroes() {
-        System.out.println();
-        System.out.println("╔════════════════════ ? HINT ? ═════════════════════╗");
-        System.out.println("║       There are still more heroes to find.        ║");
-        System.out.println("║    Keep exploring the dungeon to unlock them...   ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ? HINT ? ═════════════════════╗");
+        console.println("║       There are still more heroes to find.        ║");
+        console.println("║    Keep exploring the dungeon to unlock them...   ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayHintUnlocking() {
-        System.out.println();
-        System.out.println("╔════════════════════ ? HINT ? ═════════════════════╗"); // either the message for the dragon after beating medium
-        System.out.println("║    You hear a bone-chilling roar. Something is    ║"); // or a funny message for the super gremlin after beating hard
-        System.out.println("║    still lurking in the depths of the dungeon...  ║");
-        System.out.println("╚═══════════════════════════════════════════════════╝");
-        System.out.println();
+        console.println();
+        console.println("╔════════════════════ ? HINT ? ═════════════════════╗"); // either the message for the dragon after beating medium
+        console.println("║    You hear a bone-chilling roar. Something is    ║"); // or a funny message for the super gremlin after beating hard
+        console.println("║    still lurking in the depths of the dungeon...  ║");
+        console.println("╚═══════════════════════════════════════════════════╝");
+        console.println();
     }
 
     public void displayGlitchHintParchment() {
-        System.out.println();
-        System.out.println("   ╔═--══ʘ═══---═▒═══ʘ══ ? H!NT ? ═════ʘ════----═══▒═══╗");
-        System.out.println("   ║ {}    USE PAR<HMENT INSCR!PTI0N IN GAM3 C0DE []   |");
-        System.out.println(" ║   () ..UN..L0CK..... .....M0DE....()......[]....  ║");
-        System.out.println(" ╚═ʘ════--═▒═══ʘ════-----════▒══════ʘ═══--═══ʘ═════--╝");
-        System.out.println();
+        console.println();
+        console.println("   ╔═--══ʘ═══---═▒═══ʘ══ ? H!NT ? ═════ʘ════----═══▒═══╗");
+        console.println("   ║ {}    USE PAR<HMENT INSCR!PTI0N IN GAM3 C0DE []   |");
+        console.println(" ║   () ..UN..L0CK..... .....M0DE....()......[]....  ║");
+        console.println(" ╚═ʘ════--═▒═══ʘ════-----════▒══════ʘ═══--═══ʘ═════--╝");
+        console.println();
     }
 
     public void beatEasyDungeonKeeperMsg() {
         // make dungeon keeper congratulate player
-        System.out.println("Dungeon Keeper: Congratulations! You've beaten the easy dungeon!");
+        console.println("Dungeon Keeper: Congratulations! You've beaten the easy dungeon!");
     }
 
     public void findParchmentDungeonKeeperMsg(final List<Parchment> theParchments) { // only 1 parchment scrap per dungeon
+        console.disableInput(true); // disable input box while output is currently being displayed
+
         if (theParchments.size() == 1) {
-            SleepDelay.printDelayedTextFast(TalkingCharacters.KEEPER,"What's that? You found a scrap of parchment?! Let me see it...");
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Ah... it's nothing but a bunch of scribbles. Pay it no mind.");
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"It's probably dangerous if anything.");
+            console.print("Dungeon Keeper: ");
+            console.typeAnimation("What's that? You found a scrap of parchment?! Let me see it...", TextSpeed.FAST).join();
+            console.print("                ");
+            console.typeAnimation("Ah... it's nothing but a bunch of scribbles. Pay it no mind.", TextSpeed.MEDIUM).join();
+            console.print("                ");
+            console.typeAnimation("It's probably dangerous if anything.", TextSpeed.SLOW).join();
 
         } else if (theParchments.size() == 2) {
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"Another parchment scrap?");
-            SleepDelay.printDelayedText(TalkingCharacters.KEEPER,"I've already told you, it's dangerous...");
-            SleepDelay.printDelayedTextSlow(TalkingCharacters.KEEPER,"Leave it alone and stop collecting these!");
+            console.print("Dungeon Keeper: ");
+            console.typeAnimation("Another parchment scrap?", TextSpeed.MEDIUM).join();
+            console.print("                ");
+            console.typeAnimation("I've already told you, it's dangerous...", TextSpeed.MEDIUM).join();
+            console.print("                ");
+            console.typeAnimation("Leave it alone and stop collecting these!", TextSpeed.SLOW).join();
         }
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
     }
 
     public void beatMediumDungeonKeeperMsg() {
         // make dungeon keeper congratulate player
-        System.out.println("");
+        console.println("");
     }
 
     public void beatHardDungeonKeeperMsg() {
         // make dungeon keeper congratulate player
-        System.out.println("");
+        console.println("");
     }
 
     public void displayScrapOfParchment(final Parchment theParchment) {
-        System.out.println("You found a scrap of parchment!");
-        System.out.println("You see something scribbled on it from a previous adventurer: ");
-        System.out.println(theParchment.toString());
+        console.println("You found a scrap of parchment!");
+        console.println("You see something scribbled on it from a previous adventurer: ");
+        console.println(theParchment.toString());
     }
 
 
 
 
-    public void displayCredits(final AudioManager theAudio) { // CREDITS
-        SleepDelay.delay(4);
-        theAudio.playMusic(theAudio.rickRollSong, false, -10);
-        SleepDelay.delay(2);
-        System.out.println();
-        System.out.println();
-        System.out.println("" +
+    public void displayCredits() { // CREDITS
+        Delay.pause(2).join();
+        audio.playMusic(audio.rickRollSong, false, 0.6);
+        Delay.pause(1).join();
+        console.println();
+        console.println();
+        console.println("" +
                 "    ,o888888o.    8 888888888o.   8 8888888888   8 888888888o.       8 8888 8888888 8888888888    d888888o.   \n" +
                 "   8888     `88.  8 8888    `88.  8 8888         8 8888    `^888.    8 8888       8 8888        .`8888:' `88. \n" +
                 ",8 8888       `8. 8 8888     `88  8 8888         8 8888        `88.  8 8888       8 8888        8.`8888.   Y8 \n" +
@@ -1156,16 +1534,16 @@ public class TUI {
                 "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ");
 
 
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("" +
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println("" +
                 "  _____                                               _             \n" +
                 " |  __ \\                                             (_)            \n" +
                 " | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _ \n" +
@@ -1175,24 +1553,24 @@ public class TUI {
                 "                   __/ |                                       __/ |\n" +
                 "                  |___/                                       |___/ ");
 
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("  Nathan Hinthorne");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("  (with a little help from Brendan Smith and Austin Roaf)");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println("  Nathan Hinthorne");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println("  (with a little help from Brendan Smith and Austin Roaf)");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
 
-        System.out.println("" +
+        console.println("" +
                 "  __  __           _      \n" +
                 " |  \\/  |         (_)     \n" +
                 " | \\  / |_   _ ___ _  ___ \n" +
@@ -1200,34 +1578,34 @@ public class TUI {
                 " | |  | | |_| \\__ \\ | (__ \n" +
                 " |_|  |_|\\__,_|___/_|\\___|");
 
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println(" Starting Off Theme by: Nathan Hinthorne");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println(" Dungeon Theme by: Nathan Hinthorne");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println(" Battle Theme by: Nathan Hinthorne");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println(" Victory Theme by: Jon Presstone");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println(" Credits Theme by: 8 Bit Universe");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("" +
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println(" Starting Off Theme by: Nathan Hinthorne");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println(" Dungeon Theme by: Nathan Hinthorne");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println(" Battle Theme by: Nathan Hinthorne");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println(" Victory Theme by: Jon Presstone");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println(" Credits Theme by: 8 Bit Universe");
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println();
+        Delay.pause(1).join();
+        console.println("" +
                 "   _____                 _       _   _______ _                 _        \n" +
                 "  / ____|               (_)     | | |__   __| |               | |       \n" +
                 " | (___  _ __   ___  ___ _  __ _| |    | |  | |__   __ _ _ __ | | _____ \n" +
@@ -1237,58 +1615,65 @@ public class TUI {
                 "        | |                                                             \n" +
                 "        |_|                                                             ");
 
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("  My friends and family, for all their amazing ideas for characters and abilities.");
-        SleepDelay.delay(2);
-        System.out.println();
-        SleepDelay.delay(2);
-        System.out.println("  My professor, Tom Capaul, for giving me the assignment which started this whole game off.");
+        Delay.pause(1).join();
+        console.println();
+//        Delay.pause(1).join();
+//        console.println("  My friends and family, for all their amazing ideas for characters and abilities.");
+//        Delay.pause(1).join();
+//        console.println();
+//        Delay.pause(1).join();
+//        console.println("  My professor, Tom Capaul, for giving me the assignment which started this whole game off.");
+        Delay.pause(1).join();
+        console.println("  Ethan, for his wonderful cooking skills");
+        Delay.pause(1).join();
+        console.println("  Garret, for his insightful ideas on battle mechanics and, of course, his ownership of the lead pipe");
+        Delay.pause(1).join();
+        console.println("  Aaron, for giving a supportive comment on every update I made to the game.");
+        Delay.pause(1).join();
 
         // make the rest of the text run off the screen with a bunch of blank lines
         for (int i = 0; i < 30; i++) {
-            SleepDelay.delay(2);
-            System.out.println();
+            Delay.pause(1).join();
+            console.println();
         }
 
-        SleepDelay.delay(4);
+        Delay.pause(2).join();
         displayRecommendListening();
-        SleepDelay.delay(4);
+        Delay.pause(2).join();
         pressAnyKeyContinue();
-        theAudio.stopAll();
+        audio.stopAll();
     }
 
-    public char displayPlayAgainMenu() {
-        System.out.println("Would you like to play again? (1 for yes, 2 for no)");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public CompletableFuture<Character> displayPlayAgainMenu() {
+        console.println("Would you like to play again? (1 for yes, 2 for no)");
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
     public void displayCyaNerd(final boolean theFunnyMode) {
-        System.out.println();
-        if (theFunnyMode) {
-            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Nah, you're trapped here forever now.");
-            SleepDelay.delay(8);
-            System.out.println();
-            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"Don't you dare hit that X button.");
-            System.out.println();
-            SleepDelay.delay(2);
-            System.out.print(". ");
-            SleepDelay.delay(2);
-            System.out.print(". ");
-            SleepDelay.delay(2);
-            System.out.print(". ");
-            SleepDelay.delay(8);
-            System.out.println();
-            System.out.println();
-            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"FINE!");
-            SleepDelay.delay(2);
-            SleepDelay.printDelayedText(TalkingCharacters.NATHAN,"I'll let you leave.");
-            SleepDelay.delay(4);
-            System.out.println();
+        console.disableInput(true); // disable input box while output is currently being displayed
 
-            System.out.println("" +
+        console.println();
+        if (theFunnyMode) {
+            console.print("Nathan: ");
+            console.typeAnimation("Nah, you're trapped here forever now.", TextSpeed.MEDIUM).join();
+            Delay.pause(4);
+            console.print("                ");
+            console.typeAnimation("Don't you dare hit that X button.", TextSpeed.MEDIUM).join();
+            console.print("                ");
+            console.typeAnimation(". ", TextSpeed.VERY_SLOW).join();
+            console.typeAnimation(". ", TextSpeed.VERY_SLOW).join();
+            console.typeAnimation(". ", TextSpeed.VERY_SLOW).join();
+            Delay.pause(1);
+            console.typeAnimation("FINE!", TextSpeed.MEDIUM).join();
+            console.print("                ");
+            console.typeAnimation("I'll let you leave.", TextSpeed.MEDIUM).join();
+            console.println();
+            Delay.pause(2);
+
+            console.println("" +
                     " ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄            ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄  \n" +
                     "▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌          ▐░░▌      ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ \n" +
                     "▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌          ▐░▌░▌     ▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌\n" +
@@ -1300,9 +1685,9 @@ public class TUI {
                     "▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░▌       ▐░▌          ▐░▌     ▐░▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄█░▌\n" +
                     "▐░░░░░░░░░░░▌     ▐░▌     ▐░▌       ▐░▌          ▐░▌      ▐░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░▌ \n" +
                     " ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀         ▀            ▀        ▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀  ");
-            System.out.println();
+            console.println();
         } else {
-            System.out.println("" +
+            console.println("" +
                     " ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄   ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄   ▄ \n" +
                     "▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌ ▐░▌\n" +
                     "▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀▀▀  ▐░▌\n" +
@@ -1315,197 +1700,201 @@ public class TUI {
                     "▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░▌      ▐░▌     ▐░░░░░░░░░░░▌ ▐░▌\n" +
                     " ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀▀▀        ▀       ▀▀▀▀▀▀▀▀▀▀▀   ▀ ");
         }
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
     }
 
     public void displayRecommendListening() {
-        System.out.println("Personally, I'd recommend listening to the rest of the song. It's pretty good.");
-        System.out.println("But when you're ready.");
+        console.println("Personally, I'd recommend listening to the rest of the song. It's pretty good.");
+        console.println("But when you're ready.");
     }
 
-    public String cheatCodeMenu() {
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println("╔██♥☺▓▒▓▒♦▒██▒(ʘ ͟ʖ ʘ)══▓▒█♠♣▒█♥▒▓█▒♣▓█══♣▒▓▒☻█▒═▒♥═╗");
-        System.out.println("▒                                                  ▓");
-        System.out.println("█          ╔═╗╦ ╦╔═╗╔═╗╔╦╗  ╔╦╗╔═╗╔╗╔╦ ╦           ▒");
-        System.out.println("║          ║  ╠═╣║╣ ╠═╣ ║   ║║║║╣ ║║║║ ║           ♦");
-        System.out.println("☺          ╚═╝╩ ╩╚═╝╩ ╩ ╩   ╩ ╩╚═╝╝╚╝╚═╝           █");
-        System.out.println("▓                                                  ║");
-        System.out.println("╚═▓♣▒¯\\_(ツ)_/¯══▓▓█♥▓☺▒▒═══▒▒▒▓▓♣▓(͡° ͜ʖ ͡°)█════▓▒▓▓╝");
+    public CompletableFuture<String> cheatCodeMenu() {
+        console.println();
+        console.println();
+        console.println();
+        console.println("╔██♥☺▓▒▓▒♦▒██▒(ʘ ͟ʖ ʘ)══▓▒█♠♣▒█♥▒▓█▒♣▓█══♣▒▓▒☻█▒═▒♥═╗");
+        console.println("▒                                                  ▓");
+        console.println("█          ╔═╗╦ ╦╔═╗╔═╗╔╦╗  ╔╦╗╔═╗╔╗╔╦ ╦           ▒");
+        console.println("║          ║  ╠═╣║╣ ╠═╣ ║   ║║║║╣ ║║║║ ║           ♦");
+        console.println("☺          ╚═╝╩ ╩╚═╝╩ ╩ ╩   ╩ ╩╚═╝╝╚╝╚═╝           █");
+        console.println("▓                                                  ║");
+        console.println("╚═▓♣▒¯\\_(ツ)_/¯══▓▓█♥▓☺▒▒═══▒▒▒▓▓♣▓(͡° ͜ʖ ͡°)█════▓▒▓▓╝");
 
-        System.out.println();
-        System.out.print("Enter a cheat code: ");
-        String input = myScanner.nextLine(); // Read the entire line
-        myScanner.nextLine(); // Consume the leftover newline character
-        return input;
+        console.println();
+        console.print("Enter a cheat code: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureStringInput();
     }
 
 
-    public void mazeAbiltyText(final Hero theHero) {
-        System.out.println(theHero.getPassiveMsgs().remove(0));
+    public void mazeAbilityText(final Hero theHero) {
+//        console.println(theHero.getPassiveMsgs().remove(0));
     }
 
-    public char quitOrContinueMenu() {
-        System.out.println("Would you like to quit or continue? (1 for continue, 2 for quit)");
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+    public CompletableFuture<Character> quitOrContinueMenu() {
+        console.println("Would you like to quit or continue? (1 for continue, 2 for quit)");
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
-    public char mainMenu() {
-        for (int i = 0; i < 15; i++) {
-            System.out.println();
+    public CompletableFuture<Character> mainMenu() {
+        for (int i = 0; i < 25; i++) {
+            console.println();
         }
-        System.out.println("" +
+        console.println("" +
                 "8b    d8    db    88 88b 88     8b    d8 888888 88b 88 88   88 \n" +
                 "88b  d88   dPYb   88 88Yb88     88b  d88 88__   88Yb88 88   88 \n" +
                 "88YbdP88  dP__Yb  88 88 Y88     88YbdP88 88\"\"   88 Y88 Y8   8P \n" +
-                "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' ");
-//        System.out.println("╔═════════════════════╗");
-//        System.out.println("║ 1. Continue         ║    ╔═════════════════════╗");
-//        System.out.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
-//        System.out.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
-//        System.out.println("║ 4. Cheat Code Menu  ║    ║                     ║");
-//        System.out.println("║                     ║    ╚═════════════════════╝");
-//        System.out.println("╚═════════════════════╝");
-        System.out.println("╔═════════════════════╗                           ");
-        System.out.println("║ 1. Continue         ║    ╔═════════════════════╗");
-        System.out.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
-        System.out.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
-        System.out.println("╚═════════════════════╝    ╚═════════════════════╝");
+                "88 YY 88 dP\"\"\"\"Yb 88 88  Y8     88 YY 88 888888 88  Y8 `YbodP' \n\n");
+//        console.println("╔═════════════════════╗");
+//        console.println("║ 1. Continue         ║    ╔═════════════════════╗");
+//        console.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
+//        console.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
+//        console.println("║ 4. Cheat Code Menu  ║    ║                     ║");
+//        console.println("║                     ║    ╚═════════════════════╝");
+//        console.println("╚═════════════════════╝");
+        console.println("╔═════════════════════╗                           ");
+        console.println("║ 1. Continue         ║    ╔═════════════════════╗");
+        console.println("║ 2. Change Hero      ║    ║ 6. Save             ║");
+        console.println("║ 3. Change Name      ║    ║ 7. Quit             ║");
+        console.println("╚═════════════════════╝    ╚═════════════════════╝");
 
-        System.out.print("Make your selection: ");
-        return myScanner.next().charAt(0);
+        console.print("Make your selection: ");
+
+//        console.disableInput(false); // re-enable input box after output is finished displaying
+        return futureCharInput();
     }
 
     public void codeSuccessMsg() {
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.NONE," -CODE ACCEPTED");
-        System.out.println();
+        console.disableInput(true); // disable input box while output is currently being displayed
+
+        console.println();
+        console.typeAnimation(" -CODE ACCEPTED", TextSpeed.MEDIUM).join();
+        console.println();
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
     }
 
 
     public void codeFailMsg() {
-        System.out.println();
-        SleepDelay.printDelayedText(TalkingCharacters.NONE," -CODE DENIED");
-        System.out.println();
+        console.disableInput(true); // disable input box while output is currently being displayed
+
+        console.println();
+        console.typeAnimation(" -CODE DENIED", TextSpeed.MEDIUM).join();
+        console.println();
+
+        console.disableInput(false); // re-enable input box after output is finished displaying
     }
 
-    public void displayHeroSelected(final Hero theHero) {
-        System.out.println();
-        System.out.println(" -You are now the " + theHero.getType() + "!");
-        System.out.println();
+    public void displayHeroChanged(final Hero theHero) {
+        console.println();
+        console.println(" -You are now the " + theHero.getType() + "!");
+        console.println();
     }
 
     public void sentToMainMenuMsg() {
-        System.out.println();
+        console.println();
         displayChainSpacer();
-        System.out.println(" You will now be sent to the main menu, where you can select");
-        System.out.println(" a different hero and continue your adventure...");
+        console.println(" You will now be sent to the main menu, where you can select");
+        console.println(" a different hero and continue your adventure...");
         displayChainSpacer();
     }
 
     public void displayHeroNameChanged(final Hero theHero) {
-        System.out.println();
-        System.out.println(" -You are now 【 Sir " + theHero.getName() + "! 】");
-        System.out.println();
+        console.println();
+        console.println(" -You are now ◄{ Sir " + theHero.getName() + "! }►");
+        console.println();
+    }
+
+    public void displayHeroName(final String theHeroName) {
+        console.println("◄{ Sir " + theHeroName + "! }►");
+//                console.println("◢◤ " + heroFullName + " ◢◤");
+        displayChainSpacer();
+        console.println();
     }
 
     public void displayDifficultyLocked() {
-        System.out.println();
-        System.out.println(" -This difficulty is locked!");
-        System.out.println();
+        console.println();
+        console.println(" -This difficulty is locked!");
+        console.println();
     }
 
     public void displayPlayerTurn() {
-        System.out.println("--------------------------- PLAYER'S TURN ---------------------------");
+        console.println("\n--------------------------- PLAYER'S TURN ---------------------------");
     }
 
     public void displayEnemyTurn() {
-        System.out.println("--------------------------- ENEMY'S TURN ----------------------------");
+        console.println("\n--------------------------- ENEMY'S TURN ----------------------------");
     }
 
-    public void bossAttack1() {
+    public void bossAttack1() { // with new changes to GUI, attacks can finally depend on timing.
+                                // to utilize, use thenApplyAsync() instead of join()  i.e. futureUserInput.thenApplyAsync()
+                                // not perfect. still allows user to press buttons at different timings. make specific timespan they can press buttons
 
         // need to control missile process somehow
         // should it be controlled via a method in a boss class?
+        Missile missile = new Missile();
+        int distFromGround = missile.getDistToGround();
+        for (int i = 0; i < distFromGround; i++) {
+            missileMove(missile);
+            Delay.pause(0.5f).join();
+        }
 
     }
     private void drawGround() {
-        System.out.println("    ┕━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━┙");
+        console.println("    ┕━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━┙");
     }
-    private void missileProcess(final Missile theMissile) {
-        System.out.println(theMissile);
+    private void missileMove(final Missile theMissile) {
+        console.clearMove();
+        console.println(theMissile.drawMissile());
         drawGround();
         theMissile.closerToGround(); // this line is logical, should it be in the view?
-//        DelayMachine.delay(0.01);
-
-        System.out.println(theMissile);
-        drawGround();
-        theMissile.closerToGround();
-//        DelayMachine.delay(0.01);
     }
 
     public void bossAttack2() {
         // giant laser that fires down from the sky
-        System.out.println("   *   ");
-        //        DelayMachine.delay(0.01);
-        System.out.println("  ***  ");
-        //        DelayMachine.delay(0.01);
-        System.out.println(" ***** ");
-        //        DelayMachine.delay(0.01);
-        System.out.println("*******");
-        //        DelayMachine.delay(0.01);
-        System.out.println("*******");
+
+        List<String> laser = new ArrayList<>();
+        laser.add("    *   ");
+        laser.add("   ***  ");
+        laser.add("  ***** ");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add("*********");
+        laser.add(" ******* ");
+
+        console.lineAnimation(laser, 0.02f).join();
 
         // like above, but the logic is complex for winning or losing, so it should be contained as a class in the model
     }
 
     public void bossAttack3() { // for this attack, like the missile, print the screen every time to appear as if it's moving
         // horizontal flappy bird where you need to press the right key to dodge
-        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
-        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
-        System.out.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
+        console.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        console.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        console.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
 
-        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
-        System.out.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
-        System.out.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
+        console.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        console.println("    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓       ▓▓▓▓▓▓▓▓▓▓▓▓▓");
+        console.println("    ━━━━━━ 1 ━━━━━ 2 ━━━━━ 3 ━━━━━ 4 ━━━━━ 5 ━━━━━ 6 ━━━━━ 7 ━━━━━ 8 ━━━━━ 9 ━━━━━━ ");
     }
 
     public void bossAttack4() {
-        // need to defuse bomb
-        // ??? does fit with a boss fight? need to decide
-
-        // step 1: a bunch of random text is printed out, within that text, a random line is generated saying "CODE: 123" or something
-        // step 2: a bomb is printed out
-        // step 3: the user is prompted to enter the code
-        // step 4: if wrong code is entered, or time is up, the bomb explodes
-
-        /*
-             . . .
-              \|/
-            `--+--'
-              /|\
-             ' | '
-               |
-               |
-           ,--'#`--.
-           |#######|
-        _.-'#######`-._
-     ,-'###############`-.
-   ,'#####################`,
-  /#########################\
- |###########################|
-|#############################|
-|#############################|
-|#############################|
-|#############################|
- |###########################|
-  \#########################/
-   `.#####################,'
-     `._###############_,'
-        `--..#####..--'
-         */
+        // add stuff related to GUI like buttons that pop up, and you need to press them in time
 
         /*
                                    ________________
@@ -1538,62 +1927,62 @@ public class TUI {
 
     public void passiveAbilityActivated(final Queue<String> theMsgs) {
         while (!theMsgs.isEmpty()) {
-            System.out.println(theMsgs.remove());
+            console.println(theMsgs.remove());
         }
     }
 
     public void displayStuckifyMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is stuck and cannot move this turn!");
+        console.println(" " + theCharacter.getName() + " is stuck and cannot move this turn!");
     }
 
     public void displayBlindedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is blinded and has a high chance of missing on this move!");
+        console.println(" " + theCharacter.getName() + " is blinded and has a high chance of missing on this move!");
     }
 
     public void displayPoisonedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is poisoned and will take 10 damage when the turn ends!");
+        console.println(" " + theCharacter.getName() + " is poisoned and will take 10 damage when the turn ends!");
     }
 
     public void displaySilencedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is silenced and cannot use their special this turn!");
+        console.println(" " + theCharacter.getName() + " is silenced and cannot use their special this turn!");
     }
 
     public void displayVulnerableMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is vulnerable and will take 2x the damage on the next hit!");
+        console.println(" " + theCharacter.getName() + " is vulnerable and will take 2x the damage on the next hit!");
     }
 
     public void displayWeakenedMsg(final DungeonCharacter theCharacter) {
-        System.out.println(" " + theCharacter.getName() + " is weakened and will deal half the damage this turn!");
+        console.println(" " + theCharacter.getName() + " is weakened and will deal half the damage this turn!");
     }
 
     public void displaySilenced() {
-        System.out.println(" You are silenced and cannot use your special this turn!");
+        console.println(" You are silenced and cannot use your special this turn!");
     }
 
     public void displayRunAway(final Hero theHero) {
-        System.out.println(" " + theHero.getName() + " attempted to run away...");
-        SleepDelay.delay(4);
+        console.println(" " + theHero.getName() + " attempted to run away...");
+        Delay.pause(2).join();
     }
 
 
     public void displayRunAwaySuccess() {
-        System.out.println(" You successfully ran away!");
+        console.println(" You successfully ran away!");
     }
 
     public void displayRunAwayFail() {
-        System.out.println(" You failed to run away!");
+        console.println(" You failed to run away!");
     }
 
-    public void displayGameSaved() {
-        System.out.println();
-        System.out.println("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
-        System.out.println();
+    public void gameSaved() {
+        console.println();
+        console.println("[ [ [ [ [ [ [ [ [ [       ---Game saved!---       ] ] ] ] ] ] ] ] ] ]\n");
+        console.println();
     }
 
-    public void displayGameLoaded() {
-        System.out.println();
-        System.out.println("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
-        System.out.println();
+    public void gameLoaded() {
+        console.println();
+        console.println("[ [ [ [ [ [ [ [ [ [       ---Game loaded!---        ] ] ] ] ] ] ] ] ] ]\n");
+        console.println();
     }
 
     public void displayHeroHealthCool(final Hero theHero) {
@@ -1601,16 +1990,31 @@ public class TUI {
         final int healthChunkCount = 8;
         final int healthChunkSize = Math.ceilDiv(theHero.getMaxHealth(), healthChunkCount);
 
-        System.out.println();
-        System.out.print("    ");
+        console.println();
+        console.print("    ");
         for (int i = 0; i < healthChunkCount; i++) {
             if (health > healthChunkSize) {
-                System.out.print("▣");
+                console.print("▣");
                 health -= healthChunkSize;
             } else {
-                System.out.print("▢");
+                console.print("▢");
             }
         }
-        System.out.println();
+        console.println();
     }
+
+    public void println() {
+        console.println();
+    }
+
+    public void noSavedGames() {
+        console.println("\nCouldn't find any saved games! Try starting a new game instead.");
+    }
+
+    public void gameNotSaved() {
+        console.println("\nCouldn't save game!");
+    }
+
 }
+
+
