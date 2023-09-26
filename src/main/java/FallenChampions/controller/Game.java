@@ -1363,43 +1363,40 @@ public class Game extends Application implements Serializable {
     private static void cheatCodeMenu() { //TODO take out cheat code menu. make it hidden
         Delay.pause(0.5).join();
         audio.playMusic(audio.hackerSong, true, 0.6);
+//        audio.playMusic(audio.conkerSong, true, 0.6);
 
-        CompletableFuture<String> userInputFuture = tui.cheatCodeMenu();
+        CompletableFuture<String> userInputFuture = tui.cheatMenu();
+        String userInput = userInputFuture.join(); // Wait for user input
 
-        userInputFuture.thenApplyAsync(userInput -> {
-
-            for (String key : codes.keySet()) {
-                if (userInput.equals(key)) {
-                    Modes mode = codes.get(key);
-                    switch (mode) {
-                        case CHEAT:
-                            cheatMode = true;
-                            tui.codeSuccessMsg();
-                            tui.displayCheatMode();
-                            break;
-                        case DEBUG:
-                            debugMode = true;
-                            tui.codeSuccessMsg();
-                            tui.displayDebugMode();
-                            break;
-                        case FUNNY:
-                            funnyMode = true;
-                            tui.codeSuccessMsg();
-                            tui.displayFunnyMode();
-                            break;
-                        default:
-                            audio.playSFX(audio.error, 1.00);
-                            tui.displayWrongInput();
-                            cheatCodeMenu();
-                            break;
-                    }
+        for (String key : codes.keySet()) {
+            if (userInput.equals(key)) {
+                Modes mode = codes.get(key);
+                switch (mode) {
+                    case CHEAT:
+                        cheatMode = true;
+                        tui.codeSuccessMsg();
+                        tui.displayCheatMode();
+                        break;
+                    case DEBUG:
+                        debugMode = true;
+                        tui.codeSuccessMsg();
+                        tui.displayDebugMode();
+                        break;
+                    case FUNNY:
+                        funnyMode = true;
+                        tui.codeSuccessMsg();
+                        tui.displayFunnyMode();
+                        break;
+                    default:
+                        audio.playSFX(audio.error, 1.00);
+                        tui.displayWrongInput();
+                        cheatCodeMenu();
+                        break;
                 }
             }
-            Delay.pause(2).join();
-            audio.stopMusic();
-
-            return userInput; // Return the input for further processing if necessary
-        });
+        }
+        Delay.pause(2).join();
+        audio.stopMusic();
 
     }
 

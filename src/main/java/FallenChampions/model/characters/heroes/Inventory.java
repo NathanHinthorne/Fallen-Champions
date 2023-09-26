@@ -165,10 +165,9 @@ public class Inventory implements java.io.Serializable {
     /**
      * Represents the current player inventory in
      * String format.
-     * @return
+     * @return The String representation of the inventory.
      */
-    @Override
-    public String toString() {
+    public String getFullView() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("\n╔═════════════════════════════════");

@@ -319,9 +319,9 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public void setSpecialSFX(String theSFXName) {
         Media sfx = null;
         try {
-            sfx = new Media(getClass().getResource("/sound/sfx/" + theSFXName).toExternalForm());
+            sfx = new Media(getClass().getResource("/audio/sfx/" + theSFXName).toExternalForm());
 
-//            InputStream inputStream = getClass().getResourceAsStream("/sound/sfx/" + theSFXName);
+//            InputStream inputStream = getClass().getResourceAsStream("/audio/sfx/" + theSFXName);
 //            sfx = new Media(inputStream.toString());
 
         } catch (Exception e) {
@@ -337,9 +337,9 @@ public abstract class DungeonCharacter implements java.io.Serializable {
     public void setBasicSFX(String theSFXName) {
         Media sfx = null;
         try {
-            sfx = new Media(getClass().getResource("/sound/sfx/" + theSFXName).toExternalForm());
+            sfx = new Media(getClass().getResource("/audio/sfx/" + theSFXName).toExternalForm());
 
-//            InputStream inputStream = getClass().getResourceAsStream("/sound/sfx/" + theSFXName);
+//            InputStream inputStream = getClass().getResourceAsStream("/audio/sfx/" + theSFXName);
 //            sfx = new Media(inputStream.toString());
 
         } catch (Exception e) {

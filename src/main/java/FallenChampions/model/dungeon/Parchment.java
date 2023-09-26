@@ -38,6 +38,13 @@ public enum Parchment {
         }
     },
 
+    INFINITE_XP {
+        @Override
+        public String toString() {
+            return "Infinite XP";
+        }
+    },
+
     INSANE_DAMAGE {
         @Override
         public String toString() {
@@ -49,13 +56,6 @@ public enum Parchment {
         @Override
         public String toString() {
             return "Infinite Health";
-        }
-    },
-
-    INFINITE_XP {
-        @Override
-        public String toString() {
-            return "Infinite XP";
         }
     },
 
@@ -76,7 +76,7 @@ public enum Parchment {
         that you can use the inscriptions as cheat codes.
         (1 parchment per dungeon)
 
-        He also gets more and more angry whenever you find access
+        He also gets more and more angry whenever you access
         a "portion of game code" inside a room. ex: "you didn't find anything suspicious in there, did you?"
         Somehow he can always tell when you found one.
         (can be more than 1 "portion of game code" in a dungeon. percentage increases as dungeonsBeaten increase)

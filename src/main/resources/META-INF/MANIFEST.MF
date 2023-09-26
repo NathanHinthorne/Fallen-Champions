@@ -1,3 +1,8 @@
 Manifest-Version: 1.0
 Main-Class: FallenChampions.controller.Game
+Class-Path: javafx-media-18.0.1-win.jar javafx-fxml-18.0.1.jar javafx-fx
+ ml-18.0.1-win.jar javafx-controls-18.0.1-win.jar javafx-media-18.0.1.ja
+ r javafx-graphics-18.0.1-win.jar javafx-controls-18.0.1.jar javafx-base
+ -18.0.1.jar javafx-base-18.0.1-win.jar javafx-graphics-18.0.1.jar sqlit
+ e-jdbc-3.8.11.2.jar
 

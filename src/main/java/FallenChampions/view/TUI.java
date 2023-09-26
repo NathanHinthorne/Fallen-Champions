@@ -672,12 +672,11 @@ public class TUI {
         if (inBattle) {
             console.println(theBag.getItemView());
         } else {
-            console.println(theBag.toString());
+            console.println(theBag.getFullView());
         }
 
         console.print("Choose an item (1-4) (e - Back) --> ");
 
-//        console.disableInput(false); // re-enable input box after output is finished displaying
         CompletableFuture<Character> userInputFuture = futureCharInput();
         char userInput = userInputFuture.join(); // wait for user input
 
@@ -1709,7 +1708,7 @@ public class TUI {
         console.println("But when you're ready.");
     }
 
-    public CompletableFuture<String> cheatCodeMenu() {
+    public CompletableFuture<String> cheatMenu() {
         console.println();
         console.println();
         console.println();

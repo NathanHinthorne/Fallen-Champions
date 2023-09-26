@@ -40,6 +40,8 @@ public class Console extends BorderPane {
     private int defaultFontSize;
     private Color defaultFontColor;
 
+    private final AudioManager audio = AudioManager.getInstance();
+
     /*
     In a standard JavaFX TextArea, the text is automatically scrolled down as new text is appended,
     as long as the TextArea has the focus and the caret is at the end of the text. However, if the
@@ -175,6 +177,7 @@ public class Console extends BorderPane {
                             if (index < charactersToType.length) {
                                 Platform.runLater(() -> {
                                     output.appendText(String.valueOf(charactersToType[index]));
+//                                    audio.playSFX(audio.talking, 0.4); // too annoying, don't use sfx
                                 });
                                 currentIndex.incrementAndGet();
                             }

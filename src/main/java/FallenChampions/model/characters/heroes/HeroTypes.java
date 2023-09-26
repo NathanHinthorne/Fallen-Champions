@@ -74,6 +74,7 @@ public enum HeroTypes {
 //    NATHAN, // hacks into game and makes monsters glitch
 //    AARON   // basic: chucks laptop at monsters. special: flinging mouse (with cord), passive: sees 1 square ahead (in a circle)
 //    THE_ROCK // raises eyebrow at monsters, throws goblins at other monsters
+//    NATAN
 
 
 /*    ideas:

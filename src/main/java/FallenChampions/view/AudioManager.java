@@ -5,6 +5,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This class will play audio when called upon by
@@ -81,6 +82,9 @@ public final class AudioManager {
     public Media heroBagFull;
 //    public final File heroCollectWeapon;
 
+    // DIALOGUE
+    public Media talking;
+    public Media talking2;
 
     // FUNNY SFX
     public Media dunDunDun;
@@ -93,58 +97,62 @@ public final class AudioManager {
 
     private void preloadMediaFiles() {
         // Preload music files
-        ambientSong = loadMedia("/sound/music/music_ambient.wav");
-        battleSong = loadMedia("/sound/music/music_battle.wav");
-        startingAnewSong = loadMedia("/sound/music/music_starting_anew.wav");
-        triumpantFinishSong = loadMedia("/sound/music/music_triumphant_finish.wav");
-        rickRollSong = loadMedia("/sound/music/music_rickroll.wav");
-        conkerSong = loadMedia("/sound/music/music_conker.wav");
-        hackerSong = loadMedia("/sound/music/music_hacker.wav");
-        genosThemeSong = loadMedia("/sound/music/music_genos_theme.wav");
-        gasterBossSong = loadMedia("/sound/music/music_gaster_boss.wav");
-        gasterAmbientSong = loadMedia("/sound/music/music_gaster_ambient.wav");
+        ambientSong = loadMedia("/audio/music/music_ambient.wav");
+        battleSong = loadMedia("/audio/music/music_battle.wav");
+        startingAnewSong = loadMedia("/audio/music/music_starting_anew.wav");
+        triumpantFinishSong = loadMedia("/audio/music/music_triumphant_finish.wav");
+        rickRollSong = loadMedia("/audio/music/music_rickroll.wav");
+        conkerSong = loadMedia("/audio/music/music_conker.wav");
+        hackerSong = loadMedia("/audio/music/music_hacker.wav");
+        genosThemeSong = loadMedia("/audio/music/music_genos_theme.wav");
+        gasterBossSong = loadMedia("/audio/music/music_gaster_boss.wav");
+        gasterAmbientSong = loadMedia("/audio/music/music_gaster_ambient.wav");
 
         // Preload sfx files
 
             // BUTTONS
-        mouseClick = loadMedia("/sound/sfx/button_click.wav");
-        menu1 = loadMedia("/sound/sfx/button_menu_1.wav");
-        menu2 = loadMedia("/sound/sfx/button_menu_2.wav");
-        menu3 = loadMedia("/sound/sfx/button_menu_3.wav");
-        swishOn = loadMedia("/sound/sfx/hero_stats_on.wav");
-        swishOff = loadMedia("/sound/sfx/hero_stats_off.wav");
-        error = loadMedia("/sound/sfx/button_error.wav");
-        beginGame = loadMedia("/sound/sfx/button_spawn.wav");
-        infoPopup = loadMedia("/sound/sfx/info_popup.wav");
-        titleScreen = loadMedia("/sound/sfx/title_screen.wav");
-        startUp = loadMedia("/sound/sfx/button_startup.wav"); // find place to use this (starting up game or level?)
-//        confirm = loadMedia("/sound/sfx/confirm.wav");
+        mouseClick = loadMedia("/audio/sfx/button_click.wav");
+        menu1 = loadMedia("/audio/sfx/button_menu_1.wav");
+        menu2 = loadMedia("/audio/sfx/button_menu_2.wav");
+        menu3 = loadMedia("/audio/sfx/button_menu_3.wav");
+        swishOn = loadMedia("/audio/sfx/hero_stats_on.wav");
+        swishOff = loadMedia("/audio/sfx/hero_stats_off.wav");
+        error = loadMedia("/audio/sfx/button_error.wav");
+        beginGame = loadMedia("/audio/sfx/button_spawn.wav");
+        infoPopup = loadMedia("/audio/sfx/info_popup.wav");
+        titleScreen = loadMedia("/audio/sfx/title_screen.wav");
+        startUp = loadMedia("/audio/sfx/button_startup.wav"); // find place to use this (starting up game or level?)
+//        confirm = loadMedia("/audio/sfx/confirm.wav");
 
             // HERO
-        step1 = loadMedia("/sound/sfx/hero_step1.wav");
-        step2 = loadMedia("/sound/sfx/hero_step2.wav");
-        step3 = loadMedia("/sound/sfx/hero_step3.wav");
-        step4 = loadMedia("/sound/sfx/hero_step4.wav");
-        lockedDoor = loadMedia("/sound/sfx/locked_door.wav");
-        encounter = loadMedia("/sound/sfx/monster_encounter.wav");
-        heroDrinkPotion = loadMedia("/sound/sfx/hero_drink_potion.wav");
-        heroLevelUp = loadMedia("/sound/sfx/hero_level_up.wav");
-        heroDefeat = loadMedia("/sound/sfx/hero_defeat.wav");
-        heroOof = loadMedia("/sound/sfx/hero_oof.wav");
-        heroCollectPotion = loadMedia("/sound/sfx/hero_collect_potion.wav");
-        heroCollectPillar = loadMedia("/sound/sfx/hero_collect_pillar.wav");
-        heroBagOpen = loadMedia("/sound/sfx/hero_bag_open.wav");
-        heroBagClose = loadMedia("/sound/sfx/hero_bag_close.wav");
-        heroBagFull = loadMedia("/sound/sfx/hero_bag_full.wav");
+        step1 = loadMedia("/audio/sfx/hero_step1.wav");
+        step2 = loadMedia("/audio/sfx/hero_step2.wav");
+        step3 = loadMedia("/audio/sfx/hero_step3.wav");
+        step4 = loadMedia("/audio/sfx/hero_step4.wav");
+        lockedDoor = loadMedia("/audio/sfx/locked_door.wav");
+        encounter = loadMedia("/audio/sfx/monster_encounter.wav");
+        heroDrinkPotion = loadMedia("/audio/sfx/hero_drink_potion.wav");
+        heroLevelUp = loadMedia("/audio/sfx/hero_level_up.wav");
+        heroDefeat = loadMedia("/audio/sfx/hero_defeat.wav");
+        heroOof = loadMedia("/audio/sfx/hero_oof.wav");
+        heroCollectPotion = loadMedia("/audio/sfx/hero_collect_potion.wav");
+        heroCollectPillar = loadMedia("/audio/sfx/hero_collect_pillar.wav");
+        heroBagOpen = loadMedia("/audio/sfx/hero_bag_open.wav");
+        heroBagClose = loadMedia("/audio/sfx/hero_bag_close.wav");
+        heroBagFull = loadMedia("/audio/sfx/hero_bag_full.wav");
 
             // MONSTER
-//        monsterHeal = loadMedia("/sound/sfx/monster_heal.wav");
-//        monsterDefeat = loadMedia("/sound/sfx/monster_defeat.wav");
+//        monsterHeal = loadMedia("/audio/sfx/monster_heal.wav");
+//        monsterDefeat = loadMedia("/audio/sfx/monster_defeat.wav");
+
+            // DIALOGUE
+        talking = loadMedia("/audio/sfx/dialogue_talking.wav");
+        talking2 = loadMedia("/audio/sfx/dialogue_talking2.wav");
 
             // FUNNY
-        dunDunDun = loadMedia("/sound/sfx/funny_dun_dun_dun.wav");
-        rimshot = loadMedia("/sound/sfx/funny_rimshot.wav");
-//        bonk = loadMedia("/sound/sfx/funny_bonk.wav");
+        dunDunDun = loadMedia("/audio/sfx/funny_dun_dun_dun.wav");
+        rimshot = loadMedia("/audio/sfx/funny_rimshot.wav");
+//        bonk = loadMedia("/audio/sfx/funny_bonk.wav");
 
     }
 
