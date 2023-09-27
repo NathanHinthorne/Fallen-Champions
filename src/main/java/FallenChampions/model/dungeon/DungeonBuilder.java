@@ -1,12 +1,7 @@
 package FallenChampions.model.dungeon;
 
 import FallenChampions.model.characters.monsters.*;
-import org.sqlite.SQLiteDataSource;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -15,7 +10,9 @@ import java.util.*;
  * @author Nathan Hinthorne
  * @version 1.0
  */
-public abstract class DungeonBuilder implements java.io.Serializable { // TODO idea for generation: the same path cannot turn the same direction twice in a row
+public abstract class DungeonBuilder { // TODO idea for generation: the same path cannot turn the same direction twice in a row
+
+    //TODO FIRST STEP TO RE-STRUCTURING THE BUILDER: make this class an interface
 
     /**
      * The chance that a room will choose the left branch off direction when generating the maze.
@@ -32,10 +29,7 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
      */
     private Set<Pillars> myPlacedPillars;
 
-    /**
-     * The list of monsters that have not been placed in the dungeon.
-     */
-    private List<Monster> myUnplacedMonsters;
+    private List<Monster> myInitialMonsters;
 
     /**
      * The chance that a pillar will be placed in a room.
@@ -125,7 +119,6 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
         myMazeHeight = theMazeHeight;
         myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
-        myUnplacedMonsters = new LinkedList<>();
         myMaxRoomBranchOffChance = theMaxBranchOffChance;
         myPillarChance = thePillarChance;
         myMonsterChance = theMonsterChance;
@@ -134,12 +127,12 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
         myDifficulty = theDifficulty;
 
 
-        readMonsters(myDifficulty);
+//        makeMonsters(); // TODO take out makeMonsters() and instead use percentages within the concrete builder classes
 
         // step 1: fill the dungeon COMPLETELY with walls
         fillWithWalls();
 
-        // step 2: randomly place empty rooms
+        // step 2: randomly place empty rooms with recursive algorithm
         fillWithEmptyRooms();
 
         // step 3: fill empty rooms with objects
@@ -149,7 +142,7 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
         addEntrance();
         addExit();
 
-        // step 5: keep building dungeons until we find one that's traversable
+        // step 5: keep building dungeons until we find one that's traversable (always traversable in this setup)
 //            while(!isTraversable()) {
 //                buildDungeon();
 //            }
@@ -176,9 +169,8 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
 
         myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
-        myUnplacedMonsters = new LinkedList<>();
 
-        readMonsters(myDifficulty);
+//        makeMonsters();
 
         // step 1: fill the dungeon COMPLETELY with walls
         fillWithWalls();
@@ -198,9 +190,8 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
 
         myMaze = new Room[myMazeHeight + 2][myMazeWidth + 2];
         myPlacedPillars = new HashSet<>();
-        myUnplacedMonsters = new LinkedList<>();
 
-        readMonsters(myDifficulty);
+//        makeMonsters();
 
         // step 1: fill the dungeon COMPLETELY with walls
         fillWithWalls();
@@ -212,60 +203,81 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
         fillWithObjects();
     }
 
-    /**
-     * read the monsters from the database
-     * @param theDifficulty the difficulty of the dungeon
-     */
-    private void readMonsters(final Difficulty theDifficulty) {
+//    /**
+//     * read the monsters from the database
+//     * @param theDifficulty the difficulty of the dungeon
+//     */
+//    private void readMonsters(final Difficulty theDifficulty) {
+//
+//        SQLiteDataSource ds = null;
+//
+//        try {
+//            ds = new SQLiteDataSource();
+//            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monsters.db").getPath());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(0);
+//        }
+//
+//        String query = "SELECT * FROM " + theDifficulty.toString();
+//
+//        try (Connection conn = ds.getConnection();
+//             Statement stmt = conn.createStatement()) {
+//
+//            ResultSet rs = stmt.executeQuery(query);
+//
+//            while ( rs.next() ) {
+//                String monsterType = rs.getString( "TYPE" );
+//
+//                if(monsterType.equals("GREMLIN")) {
+//                    myUnplacedMonsters.add(new MonsterGremlin());
+//
+//                } else if (monsterType.equals("OGRE")) {
+//                    myUnplacedMonsters.add(new MonsterOgre());
+//
+//                } else if (monsterType.equals("SKELETON")) {
+//                    myUnplacedMonsters.add(new MonsterSkeleton());
+//
+//                } else if (monsterType.equals("WARLOCK")) {
+//                    myUnplacedMonsters.add(new MonsterWarlock());
+//
+//                } else if (monsterType.equals("SPIDER")) {
+//                    myUnplacedMonsters.add(new MonsterSpider());
+//
+//                } else {
+//                    System.out.println("Invalid monster type");
+//                    System.exit(0);
+//                }
+//
+//            }
+//        } catch ( SQLException e ) {
+//            System.out.println("Could not access database");
+//            e.printStackTrace();
+//            System.exit( 0 );
+//        }
+//
+//        Collections.shuffle(myUnplacedMonsters); // shuffle the monsters so they are placed randomly, regardless of type
+//    }
 
-        SQLiteDataSource ds = null;
+    private Monster createRandomMonster() { // temp
 
-        try {
-            ds = new SQLiteDataSource();
-            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monster_Database.db").getPath());
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
+            Monster monster;
 
-        String query = "SELECT * FROM " + theDifficulty.toString();
+            int random = rand.nextInt(5);
 
-        try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement()) {
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            while ( rs.next() ) {
-                String monsterType = rs.getString( "TYPE" );
-
-                if(monsterType.equals("GREMLIN")) {
-                    myUnplacedMonsters.add(new MonsterGremlin());
-
-                } else if (monsterType.equals("OGRE")) {
-                    myUnplacedMonsters.add(new MonsterOgre());
-
-                } else if (monsterType.equals("SKELETON")) {
-                    myUnplacedMonsters.add(new MonsterSkeleton());
-
-                } else if (monsterType.equals("WARLOCK")) {
-                    myUnplacedMonsters.add(new MonsterWarlock());
-
-                } else if (monsterType.equals("SPIDER")) {
-                    myUnplacedMonsters.add(new MonsterSpider());
-
-                } else {
-                    System.out.println("Invalid monster type");
-                    System.exit(0);
-                }
-
+            if (random == 0) {
+                monster = MonsterFactory.buildMonster(MonsterTypes.GREMLIN);
+            } else if (random == 1) {
+                monster = MonsterFactory.buildMonster(MonsterTypes.OGRE);
+            } else if (random == 2) {
+                monster = MonsterFactory.buildMonster(MonsterTypes.SKELETON);
+            } else if (random == 3) {
+                monster = MonsterFactory.buildMonster(MonsterTypes.WARLOCK);
+            } else { // random == 4
+                monster = MonsterFactory.buildMonster(MonsterTypes.SPIDER);
             }
-        } catch ( SQLException e ) {
-            System.out.println("Could not access database");
-            e.printStackTrace();
-            System.exit( 0 );
-        }
 
-        Collections.shuffle(myUnplacedMonsters); // shuffle the monsters so they are placed randomly, regardless of type
+            return monster;
     }
 
     /**
@@ -411,7 +423,7 @@ public abstract class DungeonBuilder implements java.io.Serializable { // TODO i
                 if (room.isEmpty()) { // provided the wall was removed, place items in the room
 
                     if (Math.random() < myMonsterChance) { //TODO limit the number of enemies in the dungeon - probably not
-                        room.placeMonster(myUnplacedMonsters);             //TODO use a list to accomplish this?
+                        room.placeMonster(myDifficulty);             //TODO use a list to accomplish this?
                     }
                     if (Math.random() < myPotionChance) {
                         room.placePotion();

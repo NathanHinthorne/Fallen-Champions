@@ -36,6 +36,7 @@ FallenChampions\model\characters\heroes\HeroFactory.class
 FallenChampions\model\dungeon\Parchment$4.class
 FallenChampions\model\dungeon\Dungeon$SmallDungeonBuilder.class
 FallenChampions\model\dungeon\Pillars$2.class
+FallenChampions\controller\Main.class
 FallenChampions\model\characters\boss\Missile.class
 FallenChampions\model\characters\Ability.class
 FallenChampions\model\dungeon\Parchment$3.class

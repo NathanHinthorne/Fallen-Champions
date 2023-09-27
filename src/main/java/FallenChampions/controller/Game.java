@@ -17,13 +17,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-import org.sqlite.SQLiteDataSource;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -61,8 +56,11 @@ import java.util.concurrent.CompletableFuture;
         *
 
 
-        * With his dying breath, the boss starts the goose virus
+        * With his dying breath, the boss starts the desktop goose virus
 
+
+        * Vary the monster's health between -20 and +20 of their default health
+        * (do this in monster class)
  */
 
 
@@ -82,6 +80,11 @@ public class Game extends Application implements Serializable {
      * The list of heroes to choose from
      */
     private static List<Hero> heroes;
+
+    /**
+     * The list of possible hero names
+     */
+    private static Map<Character, List<String>> heroNames;
 
     /**
      * The game's cheat mode. If true, the player will be given extra items and abilities.
@@ -204,6 +207,10 @@ public class Game extends Application implements Serializable {
     @Override
     public void start(final Stage primaryStage) {
 
+        // Set up the database
+        preGameSetup();
+
+
         if (debugMode) {
             // Create a new stage for the game screen
             Stage gameStage = new Stage();
@@ -316,16 +323,29 @@ public class Game extends Application implements Serializable {
         });
     }
 
+    private void preGameSetup() {
 
-
-
-    private void startGame() {
         audio = AudioManager.getInstance();
         tui = TUI.getInstance();
         console = Console.getInstance();
 
         heroes = createHeroList();
         codes = createCodesMap();
+
+        // Initialize the databases (not working yet)
+        DatabaseInitializer dbInitializer = DatabaseInitializer.getInstance();
+//        heroNames = dbInitializer.readNames();
+//        monsters = dbInitializer.readMonsters();
+
+        // temp solution
+        heroNames = dbInitializer.tempReadNames();
+
+
+        //TODO generate some dungeons here?
+    }
+
+
+    private void startGame() {
 
         // TODO generate dungeons of different types here?
 
@@ -576,12 +596,15 @@ public class Game extends Application implements Serializable {
             suffix = giveSpecialSuffix(theFirstName);
 
         } else {
-            List<String> names = makeNamesList(theFirstName);
+            String firstLetter = theFirstName.substring(0, 1).toUpperCase();
+            char firstLetterChar = firstLetter.charAt(0);
+
+            List<String> namesWithLetter = heroNames.get(firstLetterChar);
+            System.out.println("names with letter: " + namesWithLetter);
 
             // randomize the suffixes
-            Collections.shuffle(names);
-            int randomIndex = (int) (Math.random() * names.size());
-            suffix = names.get(randomIndex);
+            Collections.shuffle(namesWithLetter);
+            suffix = namesWithLetter.get(0);
         }
 
         // make the full name
@@ -607,41 +630,79 @@ public class Game extends Application implements Serializable {
         return suffix;
     }
 
-    private static List<String> makeNamesList(final String theFirstName) {
+    
+//    private static List<String> makeNamesList(final String theFirstName) {
+//
+//        // establish connection to database
+//        SQLiteDataSource ds = new SQLiteDataSource();
+//
+//        // try to open the database
+//        try {
+//            ds = new SQLiteDataSource();
+////            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Hero_Names.db").getPath()); // can't access instance stuff here?
+////            ds.setUrl("jdbc:sqlite:" + Game.class.getResource("/Hero_Names.db").getPath()); // hopefully this works instead
+//            System.out.println("Current working directory: " + System.getProperty("user.dir"));
+//            ds.setUrl("jdbc:sqlite:" + ClassLoader.getSystemResource("Hero_Names.db"));
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(0);
+//        }
+//
+//        String firstLetter = theFirstName.substring(0, 1).toUpperCase();
+//        List<String> names = new ArrayList<>();
+//        String query = "SELECT " + firstLetter + " FROM Names";
+//
+//        try (Connection conn = ds.getConnection();
+//             Statement statement = conn.createStatement()) {
+//            ResultSet rs = statement.executeQuery(query);
+//
+//            while ( rs.next() ) {
+//                String word = rs.getString( firstLetter );
+//                names.add(word);
+//            }
+//        } catch ( SQLException e ) {
+//            System.out.println("Could not access database");
+//            e.printStackTrace();
+//            System.exit( 0 );
+//        }
+//
+//        return names;
+//    }
 
-        // establish connection to database
-        SQLiteDataSource ds = new SQLiteDataSource();
-
-        // try to open the database
-        try {
-            ds = new SQLiteDataSource();
-//            ds.setUrl("jdbc:sqlite:" + getClass().getResource("/Monster_Database.db").getPath()); // can't access instance stuff here?
-            ds.setUrl("jdbc:sqlite:" + Game.class.getResource("/Hero_Names.db").getPath()); // hopefully this works instead
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        String firstLetter = theFirstName.substring(0, 1).toUpperCase();
-        List<String> names = new ArrayList<>();
-        String query = "SELECT " + firstLetter + " FROM Names";
-
-        try (Connection conn = ds.getConnection();
-             Statement statement = conn.createStatement()) {
-            ResultSet rs = statement.executeQuery(query);
-
-            while ( rs.next() ) {
-                String word = rs.getString( firstLetter );
-                names.add(word);
-            }
-        } catch ( SQLException e ) {
-            System.out.println("Could not access database");
-            e.printStackTrace();
-            System.exit( 0 );
-        }
-
-        return names;
-    }
+//     private static List<String> makeNamesList(final String theFirstName) { //TODO turn into a chooseName() method using the first letter of the name
+//
+//         String firstLetter = theFirstName.substring(0, 1).toUpperCase();
+//         List<String> names = new ArrayList<>();
+//         String query = "SELECT " + firstLetter + " FROM Names";
+//
+//         try (InputStream inputStream = Game.class.getResourceAsStream("/Hero_Names.db")) {
+//             if (inputStream != null) {
+//                 SQLiteDataSource ds = new SQLiteDataSource();
+//                 ds.setUrl("jdbc:sqlite::memory:");
+//
+//                 // Read the database file from the input stream and create an in-memory database
+//                 try (Connection conn = ds.getConnection()) {
+//                     conn.createStatement().execute("ATTACH DATABASE ':memory:' AS 'filedb'");
+//                     conn.createStatement().execute("CREATE TABLE filedb.Names AS SELECT * FROM main.Names");
+//                     ResultSet rs = conn.createStatement().executeQuery(query);
+//
+//                     while (rs.next()) {
+//                         String word = rs.getString(firstLetter);
+//                         names.add(word);
+//                     }
+//                 }
+//             } else {
+//                 System.err.println("Could not access the database file.");
+//                 System.exit(1);
+//             }
+//         } catch (SQLException | IOException e) {
+//             e.printStackTrace();
+//             System.exit(1);
+//         }
+//
+//         return names;
+//     }
 
 
     /**
@@ -681,27 +742,24 @@ public class Game extends Application implements Serializable {
      *
      * @param theDifficulty the difficulty of the dungeon
      */
-    public static void setupDungeon(final int theDifficulty) {
+    public static void setupDungeon(final Difficulty theDifficulty) {
 
         switch(theDifficulty) {
-            case '1':
-                // Easy
+            case EASY:
                 Dungeon.SmallDungeonBuilder theSmallDungeonBuilder = new Dungeon.SmallDungeonBuilder(); //original: DungeonBuilder theSmallDungeonBuilder...
-                dungeon = theSmallDungeonBuilder.buildDungeon();
-                difficulty = Difficulty.EASY;
+                dungeon = theSmallDungeonBuilder.buildDungeon();                                        //TODO re-structure the dungeon builder to be less weird and conform to builder design pattern
                 break;
-            case '2':
-                // Medium
+
+            case MEDIUM:
                 Dungeon.MediumDungeonBuilder  theMediumDungeonBuilder = new Dungeon.MediumDungeonBuilder();
                 dungeon = theMediumDungeonBuilder.buildDungeon();
-                difficulty = Difficulty.MEDIUM;
                 break;
-            case '3':
-                // Hard
+
+            case HARD:
                 Dungeon.LargeDungeonBuilder  theLargeDungeonBuilder = new Dungeon.LargeDungeonBuilder();
                 dungeon = theLargeDungeonBuilder.buildDungeon();
-                difficulty = Difficulty.HARD;
                 break;
+
             default:
                 audio.playSFX(audio.error, 1.00);
                 tui.displayWrongInput();
@@ -1293,7 +1351,7 @@ public class Game extends Application implements Serializable {
             tui.displayChainSpacer();
             tui.println();
             tui.println();
-            setupDungeon(userInput);
+            setupDungeon(difficulty);
 
             System.out.println("The program is still running after setting up the dungeon");
         });

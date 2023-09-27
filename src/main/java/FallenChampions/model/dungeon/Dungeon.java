@@ -1,9 +1,11 @@
 package FallenChampions.model.dungeon;
 
+import FallenChampions.controller.DatabaseInitializer;
 import FallenChampions.model.potions.Potion;
 import FallenChampions.model.characters.monsters.Monster;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -64,7 +66,6 @@ public class Dungeon implements java.io.Serializable {
 
     /**
      * Builds a small dungeon with the given parameters.
-     *
      */
     public static class SmallDungeonBuilder extends DungeonBuilder {
 

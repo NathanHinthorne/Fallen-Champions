@@ -299,21 +299,10 @@ public class Room implements java.io.Serializable {
 
     /**
      * places a monster in the room
-     * @param theUnplacedMonsters the list of unplaced monsters
-     */
-    public void placeMonster(List<Monster> theUnplacedMonsters) {
-        //read from myMonsters to determine which monster to place
-        if (theUnplacedMonsters.isEmpty()) {
-            myMonster = MonsterFactory.buildMonster(MonsterTypes.OGRE); // default to ogre when list is empty (should never happen)
-        }
-        myMonster = theUnplacedMonsters.remove(0); // remove the first monster from the list
-    }
-
-    /**
-     * places a monster in the room
      * @param theDifficulty the difficulty of dungeon
      */
-    public void placeMonster(Difficulty theDifficulty) {
+    public void placeMonster(Difficulty theDifficulty) { //TODO re-write this to simply place a monster, not containing the logic for which monster to place.
+                                                         // That logic should be in each concrete dungeon builder class.
 
         double skeletonChance = 0.0;
         double gremlinChance = 0.0;
