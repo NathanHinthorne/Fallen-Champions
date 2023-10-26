@@ -1,6 +1,6 @@
 # Fallen Champions
 A dungeon crawler game. 
-Select a hero with unique abilties and go exploring within a treacherous dungeon packed with monsters, potions, and traps.
+Select a hero with unique abilities and go exploring within a treacherous dungeon packed with monsters, potions, and traps.
 
 # What I learned
 
