@@ -4,32 +4,27 @@ Select a hero with unique abilities and go exploring within a treacherous dungeo
 
 # Software Design
 ## Design Patterns
-**MVC**  
-Separated the game into three major components: Model, View, and Controller.
-With the model being the game logic, view being the UI, and controller mediating between the two.
+In this project, we have implemented several design patterns to ensure the code is well-structured, maintainable, and scalable. Here is a brief overview:
 
-**Singleton**  
-Used to ensure only one instance of TUI, AudioManager, and Game is created.
+**Model-View-Controller (MVC):**  
+The project is structured following the MVC architectural pattern. The model consists of classes and enums representing the game's logic, the view handles the user interface, and the controller mediates between the model and the view, managing user input and updating the view based on changes in the model.
 
-**Momento**  
+**Singleton:**  
+This pattern is used to ensure a single instance of `TUI`, `AudioManager`, and `Game` classes, providing a global point of access to these resources throughout the application.
 
+**Momento:**  
+This pattern is utilized to implement the save/load functionality. By leveraging Java's serialization mechanism, we can capture and store the current state of the game, allowing the player to resume their progress at a later time.
 
-**Builder**  
+**Builder:**  
+We use this pattern to construct different types of dungeons. The `DungeonBuilderSmall`, `DungeonBuilderMedium`, and `DungeonBuilderLarge` classes are concrete builders that create dungeons of varying sizes, providing flexibility in the gameplay experience.
 
+**Factory:**  
+This pattern is employed to create different types of heroes. The `HeroFactory` class has a `buildHero(HeroTypes)` method that takes a `HeroTypes` enum as an argument and returns a new instance of the corresponding hero type. This approach centralizes hero creation and makes the code more maintainable.
 
-**Factory**  
+**Mock Object:**  
+During the development of this project, we utilized the Mock Object pattern to facilitate effective unit testing. This pattern was particularly useful in isolating the behavior of individual components and ensuring that our tests were not affected by dependencies.
 
-
-**Mock Object**  
-
-
-## UML Diagrams
-**Model**  
-
-**View**  
-
-**Controller**  
-
+For instance, when testing the game logic in the Game class, we created mock objects for the Hero and Dungeon classes. These mock objects simulated the behavior of real Hero and Dungeon instances, allowing us to test the Game class in a controlled environment.
 
 
 # What I learned
