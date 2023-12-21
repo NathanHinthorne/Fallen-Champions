@@ -1,0 +1,131 @@
+@startuml FallenChampions_UML_Diagram
+
+abstract class DungeonCharacter {
+    -myPassiveMsgs: Queue<String>
+    -myOffensiveMsgs: List<String>
+    -myAttackResult: String
+    +attack(): void
+    +defend(): void
+    +die(): void
+}
+
+abstract class Hero {
+    -myInventory: Inventory
+    -myAbilities: List<Ability>
+    -myBuffs: List<Buff>
+    -myDebuffs: List<Debuff>
+    +useAbility(): void
+    +useItem(): void
+    +gainExperience(): void
+}
+
+class HeroArcher {
+}
+
+class HeroSwordsman {
+}
+
+class HeroMage {
+}
+
+class HeroScientist {
+}
+
+class HeroJuggernaut {
+}
+
+class HeroDoctor {
+}
+
+abstract class Monster {
+    -myDebuffs: List<Debuff>
+    +attack(): void
+    +defend(): void
+    +die(): void
+}
+
+class MonsterGremlin {
+}
+
+class MonsterOgre {
+}
+
+class MonsterSkeleton {
+}
+
+class MonsterSpider {
+}
+
+class MonsterWarlock {
+}
+
+class Buff {
+    +applyBuff(): void
+}
+
+class Debuff {
+    +applyDebuff(): void
+}
+
+interface Potion {
+    +effect(): void
+}
+
+class HealthPotion {
+    -myHealAmount: int
+    +effect(thePlayer: Hero): void
+    +heal(theCharacter: DungeonCharacter): void
+}
+
+class DamagePotion {
+    -myDamageAmount: int
+    +effect(theMonster: Monster): void
+}
+
+class PoisonPotion {
+    -myPoisonAmount: int
+    +effect(theMonster: Monster): void
+}
+
+class Room {
+    -monsters: List<Monster>
+    -items: List<Item>
+    +getMonsters(): List<Monster>
+    +getItems(): List<Item>
+}
+
+class Dungeon {
+    -rooms: List<Room>
+    -currentRoom: Room
+    +moveToRoom(): void
+    +getCurrentRoom(): Room
+}
+
+interface Healable {
+    +heal(theCharacter: DungeonCharacter): void
+}
+
+HeroArcher --|> Hero
+HeroSwordsman --|> Hero
+HeroMage --|> Hero
+HeroScientist --|> Hero
+HeroJuggernaut --|> Hero
+HeroDoctor --|> Hero
+
+MonsterGremlin --|> Monster
+MonsterOgre --|> Monster
+MonsterSkeleton --|> Monster
+MonsterSpider --|> Monster
+MonsterWarlock --|> Monster
+
+Hero --|> DungeonCharacter
+Monster --|> DungeonCharacter
+
+Dungeon o-- Room
+
+HealthPotion ..|> Healable
+HealthPotion --|> Potion
+DamagePotion --|> Potion
+PoisonPotion --|> Potion
+
+@enduml
